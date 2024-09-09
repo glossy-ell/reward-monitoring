@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
     @Query("SELECT m FROM Member m WHERE m.createdAt > :startDate")
     public List<Member> findByStartDate(@Param("startDate") ZonedDateTime startDate);
 
-    @Query("SELECT m FROM Member m WHERE m.createdAt < : endDate")
+    @Query("SELECT m FROM Member m WHERE m.createdAt < :endDate")
     public List<Member> findByEndDate(@Param("endDate") ZonedDateTime endDate);
 
 

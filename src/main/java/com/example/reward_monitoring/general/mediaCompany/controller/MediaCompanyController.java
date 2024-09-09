@@ -2,10 +2,12 @@ package com.example.reward_monitoring.general.mediaCompany.controller;
 
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyEditDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyReadDto;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompanyRepository;
 import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 
+import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -94,5 +96,16 @@ public class MediaCompanyController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    //CRUD
+    @Operation(summary = "매체사 검색", description = "조건에 맞는 매체사를 검색합니다")
+    @PostMapping("/meadiacompany/search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public ResponseEntity<List<MediaCompany>> searchMediaCompany(@RequestBody MediaCompanySearchDto dto){
+        List<MediaCompany> result = mediaCompanyService.searchMediaCompany(dto);
+        return (result != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }

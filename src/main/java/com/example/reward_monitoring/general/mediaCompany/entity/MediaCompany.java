@@ -47,6 +47,9 @@ public class MediaCompany {
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
+    @Column(name = "operation_type", nullable = false, updatable = false)
+    private boolean operationType;
+
     @PrePersist
     protected void onCreate() {
         createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));

@@ -121,13 +121,13 @@ public class MemberController {
     @Operation(summary = "관리자 검색", description = "조건에 맞는 관리자를 검색합니다")
     @PostMapping("/member/search")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
     public ResponseEntity<List<Member>> searchMember(@RequestBody MemberSearchDto dto){
         List<Member> result = memberService.searchMember(dto);
         return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result):
+                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 

@@ -2,9 +2,12 @@ package com.example.reward_monitoring.general.advertiser.controller;
 
 import com.example.reward_monitoring.general.advertiser.dto.AdvertiserEditDto;
 import com.example.reward_monitoring.general.advertiser.dto.AdvertiserReadDto;
+import com.example.reward_monitoring.general.advertiser.dto.AdvertiserSearchDto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
+import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
+import com.example.reward_monitoring.general.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,7 +87,7 @@ public class AdvertiserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료"),
     })
-    public ResponseEntity<List<Advertiser>> getMember(){
+    public ResponseEntity<List<Advertiser>> getAdvertisers(){
         return ResponseEntity.status(HttpStatus.OK).body(advertiserService.getAdvertisers());
     }
     @Operation(summary = "광고주 삭제", description = "IDX와 일치하는 단일 광고주정보를 삭제합니다")
@@ -102,6 +105,21 @@ public class AdvertiserController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
+
+    @Operation(summary = "광고주 검색", description = "조건에 맞는 광고주를 검색합니다")
+    @PostMapping("/advertiser/search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public ResponseEntity<List<Advertiser>> searchAdvertiser(@RequestBody AdvertiserSearchDto dto){
+        List<Advertiser> result = advertiserService.searchAdvertiser(dto);
+        return (result != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
 
 
 }

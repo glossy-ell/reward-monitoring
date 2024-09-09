@@ -110,13 +110,12 @@ public class MemberService {
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getStartDate().atStartOfDay(zoneId);
+                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
 
                 target_date = memberRepository.findByEndDate(end_time);
             }
 
         }
-
         if(dto.getIsActive() != null){
             target_is_active = memberRepository.findByIsActive(dto.getIsActive());
         }
@@ -127,6 +126,7 @@ public class MemberService {
         if(dto.getName()!=null){
             target_name = memberRepository.findByName_search(dto.getName());
         }
+
         if(target_date!=null) {
             result = new ArrayList<>(target_date);
             if(target_is_active!=null)
@@ -141,13 +141,14 @@ public class MemberService {
             if(target_name !=null)
                 result.retainAll(target_name);
             if(target_id != null)
-                result.retainAll(target.id);
+                result.retainAll(target_id);
             
         } else if (target_name != null) {
-
-
+            result = new ArrayList<>(target_name);
         }
-        else if(target_id !+ null)
+        else if(target_id != null){
+            result = new ArrayList<>(target_id);
+        }
         return result;
 
     }

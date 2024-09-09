@@ -1,5 +1,6 @@
 package com.example.reward_monitoring.general.userServer.service;
 
+import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.userServer.dto.ServerEditDto;
 import com.example.reward_monitoring.general.userServer.dto.ServerReadDto;
@@ -9,6 +10,9 @@ import com.example.reward_monitoring.general.userServer.repository.ServerReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,8 +54,41 @@ public class ServerService {
         return serverRepository.findAll();
     }
 
-    public List<Server> searchMember(ServerSearchDto dto) {
-        return null;
-    }
 
+    public List<Server> searchMember(ServerSearchDto dto) {
+        List<Server> target_server_url=null;
+        List<Server> target_server_name=null;
+        List<Server> target_is_active = null;
+        List<Server> result=null;
+
+
+        if(dto.getIsActive() != null){
+            target_is_active = serverRepository.findByIsActive(dto.getIsActive());
+        }
+        if(dto.getServerUrl()!=null){
+            target_server_url = serverRepository.findByServerUrl(dto.getServerUrl());
+        }
+
+        if(dto.getServerName()!=null){
+            target_server_name = serverRepository.findByServerName(dto.getServerName());
+        }
+
+        if(target_is_active!=null) {
+            result = new ArrayList<>(target_is_active);
+            if(target_server_name!=null)
+                result.retainAll(target_server_name);
+            else if(target_server_url!=null)
+                result.retainAll(target_server_url);
+
+        }
+        else if(target_server_url !=null){
+            result = new ArrayList<>(target_server_url);
+
+        } else if (target_server_name != null) {
+            result = new ArrayList<>(target_server_name);
+        }
+
+        return result;
+
+    }
 }

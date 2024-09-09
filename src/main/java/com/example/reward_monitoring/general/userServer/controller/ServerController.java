@@ -103,8 +103,12 @@ public class ServerController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
-    @Operation(summary = "미구현", description = "해당 API는 아직 구현되지않음")
-    @GetMapping("/server/search")
+    @Operation(summary = "사용자 서버 검색", description = "조건에 맞는 사용자 서버 목록을 검색합니다")
+    @PostMapping("/server/search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
     public ResponseEntity<List<Server>> searchServer(@RequestBody ServerSearchDto dto){
         List<Server> result = serverService.searchMember(dto);
         return (result != null) ?
