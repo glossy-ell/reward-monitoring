@@ -1,0 +1,123 @@
+package com.example.reward_monitoring.mission.saveMsn.entity;
+
+
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Comment;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@ToString
+@Table(name = "save_msn")
+public class SaveMsn {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idx;
+
+    @Comment("미션 기본 수량")
+    @Column(name = "mission_default_qty", nullable = false)
+    private int missionDefaultQty;
+
+
+    @Column(name = "mission_daily_cap", nullable = false)
+    private int missionDailyCap;
+
+    @Comment("광고주(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
+    Advertiser advertiser;
+
+    @Column(name = "advertiser_details")
+    private int advertiserDetails;
+
+    @Column(name = "mission_title",nullable = false)
+    private String missionTitle;
+
+    @Comment("검색 키워드")
+    @Column(name = "search_keyword",nullable = false)
+    private String searchKeyword;
+
+    @Comment("미션 시작일시")
+    @Column(name = "start_at_msn", nullable = false, updatable = false)
+    @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
+    private ZonedDateTime startAtMsn;
+
+    @Comment("미션 종료일시")
+    @Column(name = "end_at_msn", nullable = false, updatable = false)
+    @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
+    private ZonedDateTime endAtMsn;
+
+    @Comment("데일리캡 시작일시")
+    @Column(name = "start_at", nullable = false, updatable = false)
+    @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
+    private LocalDate startAtCap;
+
+    @Comment("데일리캡 종료일시")
+    @Column(name = "end_at", nullable = false, updatable = false)
+    @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
+    private LocalDate  endAtCap;
+
+
+    @Builder.Default
+    @Comment("미션 사용여부")
+    @Column(name = "mission_active", nullable = false)
+    @Schema(description = "미션 사용여부", example = "true")
+    private boolean missionActive =true;
+
+    @Comment("미션 노출여부")
+    @Column(name = "mission_exp", nullable = false)
+    @Schema(description = "미션 노출여부", example = "true")
+    private boolean missionExposure;
+
+    @Comment("중복 참여 가능 여부(+1 Day)")
+    @Column(name = "dup_participation", nullable = false)
+    @Schema(description = "중복 참여 가능여부", example = "true")
+    private boolean dupParticipation;
+
+    @Comment("재참여 가능일")
+    @Column(name = "re_engagementDay" )
+    @Schema(description = "재참여 가능일", example = "1")
+    private int reEngagementDay;
+
+    @Comment("전체 랜딩수")
+    @Column(name = "total_landing_cnt")
+    @Schema(description = "전체 랜딩수")
+    private int totalLandingCnt;
+
+    @Comment("전체 참여수")
+    @Column(name = "전체 참여수")
+    private int totalPartCnt;
+
+
+    @Builder
+    public SaveMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,int advertiserDetails
+            ,String missionTitle,String searchKeyword,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
+            ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
+            ,boolean dupParticipation,int reEngagementDay) {
+        this.missionDefaultQty = missionDefaultQty;
+        this.missionDailyCap = missionDailyCap;
+        this.advertiser = advertiser;
+        this.advertiserDetails = advertiserDetails;
+        this.missionTitle = missionTitle;
+        this.searchKeyword = searchKeyword;
+        this.startAtMsn = startAtMsn;
+        this.endAtMsn = endAtMsn;
+        this.startAtCap = startAtCap;
+        this.endAtCap = endAtCap;
+        this.missionExposure = missionExposure;
+        this.dupParticipation = dupParticipation;
+        this.reEngagementDay = reEngagementDay;
+
+    }
+
+}
