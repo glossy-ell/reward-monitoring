@@ -2,15 +2,20 @@ package com.example.reward_monitoring.mission.saveMsn.controller;
 
 import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnEditDto;
 import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnReadDto;
+import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnSearchDto;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
 import com.example.reward_monitoring.mission.saveMsn.service.SaveMsnService;
+import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -97,6 +104,34 @@ public class SaveMsnController {
         return (deleted != null) ?
                 ResponseEntity.status(HttpStatus.NO_CONTENT).build():
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+    }
+    public ResponseEntity<List<SaveMsn>> searchMember(@RequestBody SaveMsnSearchDto dto){
+        List<SaveMsn> result = saveMsnService.searchSaveMsn(dto);
+        return (result != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    public ResponseEntity<Void> excelDownload(HttpServletResponse response) throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            List<SaveMsn> list = saveMsnService.getSaveMsns();
+            Sheet sheet = saveMsnService.excelDownload(list, wb);
+
+            if (sheet != null) {
+                String fileName = URLEncoder.encode("저장미션 리스트.xlsx", StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
 
     }
 }

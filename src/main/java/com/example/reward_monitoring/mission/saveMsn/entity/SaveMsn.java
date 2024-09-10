@@ -65,8 +65,12 @@ public class SaveMsn {
     @Comment("데일리캡 종료일시")
     @Column(name = "end_at", nullable = false, updatable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
-    private LocalDate  endAtCap;
+    private LocalDate endAtCap;
 
+    @Comment("중복 참여 가능 여부(+1 Day)")
+    @Column(name = "dup_participation", nullable = false)
+    @Schema(description = "중복 참여 가능여부", example = "true")
+    private boolean dupParticipation;
 
     @Builder.Default
     @Comment("미션 사용여부")
@@ -79,10 +83,10 @@ public class SaveMsn {
     @Schema(description = "미션 노출여부", example = "true")
     private boolean missionExposure;
 
-    @Comment("중복 참여 가능 여부(+1 Day)")
-    @Column(name = "dup_participation", nullable = false)
-    @Schema(description = "중복 참여 가능여부", example = "true")
-    private boolean dupParticipation;
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    private boolean dataType = true;
 
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )

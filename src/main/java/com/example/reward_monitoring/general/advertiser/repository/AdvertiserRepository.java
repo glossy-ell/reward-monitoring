@@ -15,17 +15,20 @@ public interface AdvertiserRepository extends JpaRepository<Advertiser,Integer> 
 
 
     @Query("SELECT a FROM Advertiser a WHERE a.createdAt > :startDate")
-    List<Advertiser> findByStartDate(ZonedDateTime startTime);
+    List<Advertiser> findByStartDate(ZonedDateTime startDate);
 
     @Query("SELECT a FROM Advertiser a WHERE a.createdAt < :endDate")
-    List<Advertiser> findByEndDate(ZonedDateTime endTime);
+    List<Advertiser> findByEndDate(ZonedDateTime endDate);
 
     @Query("SELECT a FROM Advertiser a WHERE a.createdAt BETWEEN :startDate AND :endDate")
-    List<Advertiser> findByBothDate(ZonedDateTime startTime, ZonedDateTime endTime);
+    List<Advertiser> findByBothDate(ZonedDateTime startDate, ZonedDateTime endDate);
 
     @Query("SELECT a FROM Advertiser a WHERE a.isActive = :isActive")
     List<Advertiser> findByIsActive(Boolean isActive);
 
     @Query("SELECT a FROM Advertiser a WHERE a.advertiser LIKE %:keyword% ")
     List<Advertiser> findByAdvertiser(String keyword);
+
+    @Query("SELECT a FROM Advertiser a WHERE a.advertiser = :keyword")
+    Advertiser findByAdvertiser_(String keyword);
 }

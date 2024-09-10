@@ -36,14 +36,14 @@ public class AnswerMsn {
 
     @Comment("광고주(외래키)")
     @ManyToOne(cascade=CascadeType.REMOVE)
-    @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
+    @JoinColumn(name="advertiser", referencedColumnName = "advertiser" , nullable = false )
     @Schema(description = "광고주", example = "원픽")
     Advertiser advertiser;
     
     @Comment("광고주 상세")
     @Column(name = "advertiser_details")
     @Schema(description = "광고주 상세", example = "82652333318")
-    private int advertiserDetails;
+    private String advertiserDetails;
     
     @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
@@ -52,7 +52,7 @@ public class AnswerMsn {
 
     @Comment("미션 정답")
     @Column(name = "mission_answer",nullable = false)
-    @Schema(description = "미션 제목", example = "5107811272")
+    @Schema(description = "미션 정답", example = "5107811272")
     private String missionAnswer;
     
 
@@ -75,7 +75,7 @@ public class AnswerMsn {
     @Comment("데일리캡 종료일시")
     @Column(name = "end_at", nullable = false, updatable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
-    private LocalDate  endAtCap;
+    private LocalDate endAtCap;
 
     @Builder.Default
     @Comment("미션 사용여부")
@@ -107,8 +107,13 @@ public class AnswerMsn {
     @Column(name = "전체 참여수")
     private int totalPartCnt;
 
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    private boolean dataType = true;
+
     @Builder
-    public AnswerMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,int advertiserDetails
+    public AnswerMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
     ,String missionTitle,String missionAnswer,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn,LocalDate  startAtCap
             ,LocalDate  endAtCap,boolean missionExposure,boolean dupParticipation,int reEngagementDay) {
         this.missionDefaultQty = missionDefaultQty;

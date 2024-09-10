@@ -27,13 +27,14 @@ public class CustomSessionExpiredStrategy implements SessionInformationExpiredSt
         if ((currentTime - lastRequestTime) >= sessionTimeoutInMillis) { //마지막 요청과 30분 이상 차이날경우 세션만료 간주
             // 세션 타임아웃으로 인한 만료
             session.setAttribute("SESSION_TIMEOUT", true);
-            response.sendRedirect("/session-timeout");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"SESSION_TIMEOUT\",\"message\":\"세션이 만료되었습니다. 다시 로그인 해주세요.\"}");
         } else {
             // 중복 로그인으로 인한 세션 만료
             session.setAttribute("DUPLICATE_LOGIN", true);
-            response.sendRedirect("/duplicate-login");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"DUPLICATE_LOGIN\",\"message\":\"중복 로그인 감지. 다시 로그인 해주세요.\"}");
         }
 
-        response.sendRedirect("/login");
     }
 }

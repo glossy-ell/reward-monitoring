@@ -20,6 +20,7 @@ spring:
     servlet:
       session:
         timeout: 1800s
+        tracking-modes: cookie
 
   springdoc:
     default-consumes-media-type: application/json;charset=UTF-8

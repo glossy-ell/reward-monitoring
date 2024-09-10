@@ -102,7 +102,7 @@ public class MemberService {
                 }else{
                     ZoneId zoneId = ZoneId.of("Asia/Seoul");
                     ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
-                    ZonedDateTime end_time = dto.getStartDate().atStartOfDay(zoneId);
+                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
 
                     target_date = memberRepository.findByBothDate(start_time,end_time);
                 }

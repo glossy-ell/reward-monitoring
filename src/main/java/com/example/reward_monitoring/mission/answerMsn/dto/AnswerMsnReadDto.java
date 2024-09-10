@@ -1,17 +1,25 @@
 package com.example.reward_monitoring.mission.answerMsn.dto;
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 public class AnswerMsnReadDto {
 
     @Schema(description = "미션 기본 수량", example = "50")
     private Integer missionDefaultQty;
     @Schema(description = "미션 데일리 캡", example = "50")
     private Integer missionDailyCap;
+    @Schema(description = "광고주, 문자열로 입력시 Server class에서 객체를 찾음", example = "광고주")
+    private String advertiser;
     @Schema(description = "미션 제목", example = "무쇠웍")
     private String missionTitle;
     @Schema(description = "미션 제목", example = "5107811272")
@@ -33,11 +41,12 @@ public class AnswerMsnReadDto {
     @Schema(description = "재참여 가능일", example = "1")
     private Integer reEngagementDay;
 
-    public AnswerMsn toEntity(){
+    public AnswerMsn toEntity(Advertiser advertiserEntity){
 
         return AnswerMsn.builder()
                 .missionDefaultQty(missionDefaultQty)
                 .missionDailyCap(missionDailyCap)
+                .advertiser(advertiserEntity)
                 .missionTitle(missionTitle)
                 .missionAnswer(missionAnswer)
                 .startAtMsn(startAtMsn)
@@ -50,4 +59,5 @@ public class AnswerMsnReadDto {
                 .reEngagementDay(reEngagementDay)
                 .build();
     }
+
 }

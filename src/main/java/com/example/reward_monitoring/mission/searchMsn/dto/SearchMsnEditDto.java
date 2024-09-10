@@ -1,12 +1,14 @@
 package com.example.reward_monitoring.mission.searchMsn.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 
 @Getter
+@Setter
 public class SearchMsnEditDto {
     private Integer missionDefaultQty;
     private Integer missionDailyCap;

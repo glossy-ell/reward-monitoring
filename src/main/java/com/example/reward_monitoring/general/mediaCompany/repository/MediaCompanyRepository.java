@@ -28,9 +28,9 @@ public interface MediaCompanyRepository extends JpaRepository<MediaCompany,Integ
     @Query("SELECT m FROM MediaCompany m WHERE m.createdAt > :startDate")
     public List<MediaCompany> findByStartDate(@Param("startDate") ZonedDateTime startDate);
 
-    @Query("SELECT m FROM MediaCompany m WHERE m WHERE m.createdAt < :endDate")
+    @Query("SELECT m FROM MediaCompany m WHERE m.createdAt < :endDate")
     public List<MediaCompany> findByEndDate(@Param("endDate") ZonedDateTime endDate);
 
-    @Query("SELECT m FROM MediaCompany m WHERE M.operationType = :type")
+    @Query("SELECT m FROM MediaCompany m WHERE m.operationType = :type")
     public List<MediaCompany> findByOperationType(@Param("type") boolean type);
 }

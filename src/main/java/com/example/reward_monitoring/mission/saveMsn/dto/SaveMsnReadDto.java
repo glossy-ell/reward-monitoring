@@ -1,14 +1,16 @@
 package com.example.reward_monitoring.mission.saveMsn.dto;
 
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
+
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Getter
+@Setter
 public class SaveMsnReadDto {
     @Schema(description = "미션 기본 수량", example = "50")
     private Integer missionDefaultQty;

@@ -45,6 +45,7 @@ public class SearchMsn {
     @Schema(description = "광고주 상세", example = "82652333318")
     private int advertiserDetails;
 
+    @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
     private String missionTitle;
 
@@ -72,6 +73,10 @@ public class SearchMsn {
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate  endAtCap;
 
+    @Comment("중복 참여 가능 여부(+1 Day)")
+    @Column(name = "dup_participation", nullable = false)
+    @Schema(description = "중복 참여 가능여부", example = "true")
+    private boolean dupParticipation;
 
     @Builder.Default
     @Comment("미션 사용여부")
@@ -84,10 +89,10 @@ public class SearchMsn {
     @Schema(description = "미션 노출여부", example = "true")
     private boolean missionExposure;
 
-    @Comment("중복 참여 가능 여부(+1 Day)")
-    @Column(name = "dup_participation", nullable = false)
-    @Schema(description = "중복 참여 가능여부", example = "true")
-    private boolean dupParticipation;
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    private boolean dataType = true;
 
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
@@ -101,7 +106,6 @@ public class SearchMsn {
     @Comment("전체 참여수")
     @Column(name = "total_part_cnt")
     private int totalPartCnt;
-
 
     @Builder
     public SearchMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,int advertiserDetails
