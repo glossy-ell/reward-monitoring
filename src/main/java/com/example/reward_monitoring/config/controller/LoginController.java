@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@Tag(name = "Member", description = "로그인 , 세션,회원정보 컨트롤러 ")
+@Tag(name = "login", description = "로그인 , 세션,회원정보 컨트롤러 ")
 @SessionAttributes("member")
-public class loginController {
+public class LoginController {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -54,13 +53,14 @@ public class loginController {
         return ResponseEntity.status(HttpStatus.OK).body(compare);
     }
 
-    @Operation(summary = "로그아웃", description = "로그아웃합니다. 세션은 더이상 유효하지않습니다.")
-    @GetMapping("/logout")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
-    })
-    public ResponseEntity<Void>logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
+//    @Operation(summary = "로그아웃", description = "로그아웃합니다. 세션은 더이상 유효하지않습니다.")
+//    @GetMapping("/logout")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
+//    })
+//    public ResponseEntity<Void>logout(HttpSession session) {
+//        session.invalidate();
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//    }
+
 }

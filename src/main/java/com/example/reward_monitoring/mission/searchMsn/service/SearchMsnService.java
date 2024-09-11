@@ -2,28 +2,40 @@ package com.example.reward_monitoring.mission.searchMsn.service;
 
 
 
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnEditDto;
 import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnReadDto;
 import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnSearchDto;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class SearchMsnService {
 
     @Autowired
     private SearchMsnRepository searchMsnRepository;
+    @Autowired
+    private AdvertiserRepository advertiserRepository;
 
     public SearchMsn edit(int idx, SearchMsnEditDto dto) {
         SearchMsn searchMsn =searchMsnRepository.findByIdx(idx);
@@ -64,7 +76,8 @@ public class SearchMsnService {
     }
 
     public SearchMsn add(SearchMsnReadDto dto) {
-        return dto.toEntity();
+        Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
+        return dto.toEntity(advertiserEntity);
     }
 
     public SearchMsn getSearchMsn(int idx) {
@@ -283,8 +296,8 @@ public class SearchMsnService {
 
         int size = list.size();
         Sheet sheet = wb.createSheet("정답 미션 목록");
-        Row row = null;
-        Cell cell = null;
+        Row row;
+        Cell cell;
         CellStyle cellStyle = wb.createCellStyle();
         applyCellStyle(cellStyle);
         int rowNum = 0;
@@ -419,5 +432,63 @@ public class SearchMsnService {
         cellStyle.setBorderTop(BorderStyle.THIN);
         cellStyle.setBorderRight(BorderStyle.THIN);
         cellStyle.setBorderBottom(BorderStyle.THIN);
+    }
+
+    @Transactional
+    public boolean readExcel(MultipartFile file)throws IOException {
+
+
+
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        SearchMsnReadDto dto = new SearchMsnReadDto();
+        Advertiser advertiserEntity=null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter_date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
+
+            XSSFRow row = worksheet.getRow(i);
+
+            if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC) {
+                dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
+            }
+            if(row.getCell(2)!=null)
+                dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
+
+            advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
+            //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
+            if(row.getCell(4)!=null)
+                dto.setAdvertiserDetail(row.getCell(4).getStringCellValue());
+            if(row.getCell(5)!=null)
+                dto.setMissionTitle(row.getCell(5).getStringCellValue());
+            if(row.getCell(6)!=null)
+                dto.setSearchKeyword(row.getCell(6).getStringCellValue());
+            if(row.getCell(7)!=null)
+                dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
+            if(row.getCell(8)!=null)
+                dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
+            if(row.getCell(9)!=null)
+                dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
+            if(row.getCell(10)!=null)
+                dto.setEndAtCap(LocalDate.parse(row.getCell(10).getStringCellValue(),formatter_date));
+
+            if(Objects.equals(row.getCell(11).getStringCellValue(), "활성"))
+                dto.setMissionActive(true);
+            else
+                dto.setMissionActive(false);
+            if(Objects.equals(row.getCell(12).getStringCellValue(), "노출"))
+                dto.setMissionExposure(true);
+            else
+                dto.setMissionExposure(false);
+            if(Objects.equals(row.getCell(13).getStringCellValue(),"중복 허용"))
+                dto.setDupParticipation(true);
+            else
+                dto.setDupParticipation(false);
+            dto.setReEngagementDay((int)row.getCell(14).getNumericCellValue());
+
+            searchMsnRepository.save(dto.toEntity(advertiserEntity));
+
+        }
+        return true;
     }
 }

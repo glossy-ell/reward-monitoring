@@ -37,8 +37,8 @@ public class SaveMsn {
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
     Advertiser advertiser;
 
-    @Column(name = "advertiser_details")
-    private int advertiserDetails;
+    @Column(name = "advertiser_details" )
+    private String advertiserDetails;
 
     @Column(name = "mission_title",nullable = false)
     private String missionTitle;
@@ -104,7 +104,7 @@ public class SaveMsn {
 
 
     @Builder
-    public SaveMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,int advertiserDetails
+    public SaveMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
             ,String missionTitle,String searchKeyword,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
             ,boolean dupParticipation,int reEngagementDay) {

@@ -43,7 +43,7 @@ public class SearchMsn {
     @Comment("광고주 상세")
     @Column(name = "advertiser_details")
     @Schema(description = "광고주 상세", example = "82652333318")
-    private int advertiserDetails;
+    private String advertiserDetails;
 
     @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
@@ -108,7 +108,7 @@ public class SearchMsn {
     private int totalPartCnt;
 
     @Builder
-    public SearchMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,int advertiserDetails
+    public SearchMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
             ,String missionTitle,String searchKeyword,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
             ,boolean dupParticipation,int reEngagementDay) {

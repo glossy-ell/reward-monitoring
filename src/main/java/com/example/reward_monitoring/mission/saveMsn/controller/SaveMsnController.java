@@ -6,7 +6,6 @@ import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnSearchDto;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
 import com.example.reward_monitoring.mission.saveMsn.service.SaveMsnService;
-import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -106,6 +106,12 @@ public class SaveMsnController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
+    @Operation(summary = "저장미션 검색", description = "조건에 맞는 저장미션을 검색합니다")
+    @PostMapping("/saveMsn/search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
     public ResponseEntity<List<SaveMsn>> searchMember(@RequestBody SaveMsnSearchDto dto){
         List<SaveMsn> result = saveMsnService.searchSaveMsn(dto);
         return (result != null) ?
@@ -113,6 +119,17 @@ public class SaveMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    protected int ind() {
+        int in = 50;
+        return in;
+    }
+
+    @Operation(summary = "엑셀 다운로드", description = "저장미션 리스트 엑셀파일을 다운로드합니다")
+    @GetMapping("/saveMsn/excel/download")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
     public ResponseEntity<Void> excelDownload(HttpServletResponse response) throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             List<SaveMsn> list = saveMsnService.getSaveMsns();
@@ -134,4 +151,19 @@ public class SaveMsnController {
 
 
     }
+
+    @Operation(summary = "엑셀 업로드", description = "업로드한 엑셀파일을 DTO로 변환하여 DB에 추가합니다.")
+    @PostMapping("/saveMsn/excel/upload")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
+    })
+    public ResponseEntity<Void> excelUpload(@RequestParam("file") MultipartFile file)throws IOException {
+        boolean result = saveMsnService.readExcel(file);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
 }

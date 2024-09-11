@@ -8,6 +8,7 @@ import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnReadDto;
 import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -432,6 +433,8 @@ public class AnswerMsnService {
         cellStyle.setBorderRight(BorderStyle.THIN);
         cellStyle.setBorderBottom(BorderStyle.THIN);
     }
+
+    @Transactional
     public boolean readExcel(MultipartFile file)throws IOException{
 
 
@@ -448,19 +451,27 @@ public class AnswerMsnService {
 
             XSSFRow row = worksheet.getRow(i);
 
-            if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC) {
+            if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC)
                 dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
-            }
-            dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
+            if(row.getCell(2)!=null)
+                dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
+
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
-            //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
-            dto.setMissionTitle(row.getCell(4).getStringCellValue());
-            dto.setMissionTitle(row.getCell(5).getStringCellValue());
-            dto.setMissionAnswer(row.getCell(6).getStringCellValue());
-            dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
-            dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
-            dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
-            dto.setEndAtCap(LocalDate.parse(row.getCell(10).getStringCellValue(),formatter_date));
+                //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
+            if(row.getCell(4)!=null)
+                dto.setAdvertiserDetail(row.getCell(4).getStringCellValue());
+            if(row.getCell(5)!=null)
+                dto.setMissionTitle(row.getCell(5).getStringCellValue());
+            if(row.getCell(6)!=null)
+                dto.setMissionAnswer(row.getCell(6).getStringCellValue());
+            if(row.getCell(7)!=null)
+                dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
+            if(row.getCell(8)!=null)
+                dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
+            if(row.getCell(9)!=null)
+                dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
+            if(row.getCell(10)!=null)
+                dto.setEndAtCap(LocalDate.parse(row.getCell(10).getStringCellValue(),formatter_date));
 
             if(Objects.equals(row.getCell(11).getStringCellValue(), "활성"))
                 dto.setMissionActive(true);

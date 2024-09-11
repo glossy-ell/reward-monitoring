@@ -18,8 +18,10 @@ public class AnswerMsnReadDto {
     private Integer missionDefaultQty;
     @Schema(description = "미션 데일리 캡", example = "50")
     private Integer missionDailyCap;
-    @Schema(description = "광고주, 문자열로 입력시 Server class에서 객체를 찾음", example = "광고주")
+    @Schema(description = "광고주", example = "광고주")
     private String advertiser;
+    @Schema(description = "광고주 상세", example = "광고주")
+    private String advertiserDetail;
     @Schema(description = "미션 제목", example = "무쇠웍")
     private String missionTitle;
     @Schema(description = "미션 제목", example = "5107811272")

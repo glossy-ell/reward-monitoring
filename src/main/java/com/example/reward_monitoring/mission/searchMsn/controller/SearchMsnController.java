@@ -2,9 +2,11 @@ package com.example.reward_monitoring.mission.searchMsn.controller;
 
 
 
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnEditDto;
 import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnReadDto;
+import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnSearchDto;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
 
@@ -23,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -103,7 +106,20 @@ public class SearchMsnController {
 
     }
 
+    @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션을 검색합니다")
+    @PostMapping("/searchMsn/search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public ResponseEntity<List<SearchMsn>> searchAnswerMsn(@RequestBody SearchMsnSearchDto dto){
+        List<SearchMsn> result = searchMsnService.searchSearchMsn(dto);
+        return (result != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 
+    
     @Operation(summary = "엑셀 다운로드", description = "검색미션 리스트 엑셀파일을 다운로드합니다")
     @GetMapping("/searchMsn/excel/download")
     @ApiResponses(value = {
@@ -131,4 +147,19 @@ public class SearchMsnController {
 
 
     }
+
+    @Operation(summary = "엑셀 업로드", description = "업로드한 엑셀파일을 DTO로 변환하여 DB에 추가합니다.")
+    @PostMapping("/searchMsn/excel/upload")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
+    })
+    public ResponseEntity<Void> excelUpload(@RequestParam("file") MultipartFile file)throws IOException {
+        boolean result = searchMsnService.readExcel(file);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
 }

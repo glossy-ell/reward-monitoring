@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.mission.saveMsn.dto;
 
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -16,6 +17,10 @@ public class SaveMsnReadDto {
     private Integer missionDefaultQty;
     @Schema(description = "미션 데일리 캡", example = "50")
     private Integer missionDailyCap;
+    @Schema(description = "광고주", example = "광고주")
+    private String advertiser;
+    @Schema(description = "광고주 상세", example = "광고주")
+    private String advertiserDetail;
     @Schema(description = "미션 제목", example = "무쇠웍")
     private String missionTitle;
     @Schema(description = "검색 키워드", example = "비산동 치과 큐플란트의원")
@@ -38,11 +43,12 @@ public class SaveMsnReadDto {
     private Integer reEngagementDay;
 
 
-    public SaveMsn toEntity(){
+    public SaveMsn toEntity(Advertiser advertiserEntity){
 
         return SaveMsn.builder()
                 .missionDefaultQty(missionDefaultQty)
                 .missionDailyCap(missionDailyCap)
+                .advertiser(advertiserEntity)
                 .missionTitle(missionTitle)
                 .searchKeyword(searchKeyword)
                 .startAtMsn(startAtMsn)
