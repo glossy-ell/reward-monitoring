@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
+import org.json.JSONArray;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -78,22 +79,22 @@ public class AnswerMsn {
     private String missionContent;
 
     @Comment("미션 시작일시")
-    @Column(name = "start_at_msn", nullable = false, updatable = false)
+    @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
 
     @Comment("미션 종료일시")
-    @Column(name = "end_at_msn", nullable = false, updatable = false)
+    @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
     private ZonedDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
-    @Column(name = "start_at", nullable = false, updatable = false)
+    @Column(name = "start_at", nullable = false)
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;
 
     @Comment("데일리캡 종료일시")
-    @Column(name = "end_at", nullable = false, updatable = false)
+    @Column(name = "end_at", nullable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
@@ -101,17 +102,19 @@ public class AnswerMsn {
     @Comment("미션 사용여부")
     @Column(name = "mission_active", nullable = false)
     @Schema(description = "미션 사용여부", example = "true")
-    private boolean missionActive =true;
-    
+    private boolean missionActive =false;
+
+    @Builder.Default
     @Comment("미션 노출여부")
     @Column(name = "mission_exp", nullable = false)
     @Schema(description = "미션 노출여부", example = "true")
-    private boolean missionExposure;
-    
+    private boolean missionExposure=false;
+
+    @Builder.Default
     @Comment("중복 참여 가능 여부(+1 Day)")
     @Column(name = "dup_participation", nullable = false)
     @Schema(description = "중복 참여 가능여부", example = "true")
-    private boolean dupParticipation;
+    private boolean dupParticipation=false;
 
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
@@ -120,39 +123,36 @@ public class AnswerMsn {
 
 
 
-    @Comment("참여 제외할 매체 IDX,JSON타입으로 넣어야함")
+    @Comment("참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함")
     @Column(name = "except_Media" ,columnDefinition = "TEXT")
-    @Schema(description = "참여 제외할 매체 IDX,JSON타입으로 넣어야함", example = "[1, 2, 3]",nullable = true)
+    @Schema(description = "참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함", example = "1|2|3|4|5",nullable = true)
     private String exceptMedia;
 
     @Transient
     private int[] intArray;
 
-//    public int[] getIntArray() {
-//        return intArray;
-//    }
 
-    public void setIntArray(int[] intArray) {
-        this.intArray = intArray;
-        this.exceptMedia= convertArrayToJson(intArray);
+
+    public JSONArray convertDataToJson(String data){
+        String[] elements = data.split("\\|");
+        JSONArray jsonArray = new JSONArray();
+        for (String element : elements) {
+            jsonArray.put(Integer.parseInt(element)); // 정수형으로 변환하여 추가
+        }
+        return jsonArray;
     }
 
-    public String convertArrayToJson(int[] array) {
+    public String convertJsonToString(JSONArray json){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(array);
+            return objectMapper.writeValueAsString(json);
         } catch (JsonProcessingException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
-    public int[] convertJsonToArray(String json) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(json, int[].class);
-        } catch (JsonProcessingException e) {
-            return null;
-        }
-    }
+
+
+
     @Comment("미션 URL 1")
     @Column(name = "msn_url1" )
     @Schema(description = "미션 URL1", example = "www.abc.com",nullable = true)
@@ -215,40 +215,63 @@ public class AnswerMsn {
     @Builder.Default
     @Comment("전체 참여수")
     @Column(name = "전체 참여수")
+    @Schema(description = "전체 참여수")
     private int totalPartCnt=0;
 
     @Builder.Default
     @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
     @Column(name = "data_type")
+    @Schema(description = "미션 데이터 타입")
     private boolean dataType = true;
 
-
+    @Comment("이미지 파일")
     @Lob
-    @Column(name = "image_data", nullable = false)
+    @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
+    @Schema(description = "이미피 파일")
     private byte[] imageData;
 
-    @Column(name = "image_name", nullable = false)
+    @Comment("이미지 파일명")
+    @Column(name = "image_name")
+    @Schema(description = "이미피 파일명")
     private String imageName;
 
 
 
     @Builder
     public AnswerMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
-    ,String missionTitle,String missionAnswer,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn,LocalDate  startAtCap
-            ,LocalDate  endAtCap,boolean missionExposure,boolean dupParticipation,int reEngagementDay) {
+    ,String missionTitle,String missionDetailTitle,String missionAnswer,String missionContent,ZonedDateTime startAtMsn,
+                     ZonedDateTime endAtMsn,LocalDate  startAtCap,LocalDate endAtCap,boolean missionActive,boolean missionExposure,
+                     boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl1,String msnUrl2,String msnUrl3,String msnUrl4,
+                     String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,byte[]imageData,String imageName) {
+
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
         this.advertiser = advertiser;
         this.advertiserDetails = advertiserDetails;
         this.missionTitle = missionTitle;
-        this.missionAnswer = missionAnswer;
+        this.missionDetailTitle = missionDetailTitle;
+        this.missionAnswer =missionAnswer;
+        this.missionContent = missionContent;
         this.startAtMsn = startAtMsn;
         this.endAtMsn = endAtMsn;
         this.startAtCap = startAtCap;
         this.endAtCap = endAtCap;
+        this.missionActive = missionActive;
         this.missionExposure = missionExposure;
         this.dupParticipation = dupParticipation;
         this.reEngagementDay = reEngagementDay;
+        this.exceptMedia =   convertJsonToString(convertDataToJson(exceptMedia));
+        this.msnUrl1 = msnUrl1;
+        this.msnUrl2 = msnUrl2;
+        this.msnUrl3 = msnUrl3;
+        this.msnUrl4 = msnUrl4;
+        this.msnUrl5 = msnUrl5;
+        this.msnUrl6 = msnUrl6;
+        this.msnUrl7 = msnUrl7;
+        this.msnUrl8 = msnUrl8;
+        this.msnUrl9 = msnUrl9;
+        this.imageData = imageData;
+        this.imageName = imageName;
 
     }
 }

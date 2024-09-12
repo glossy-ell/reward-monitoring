@@ -61,7 +61,7 @@ public class Member {
     @Comment("전화번호")
     @Column(name = "phone", nullable = false)
     @Schema(description = "전화번호",example = "01012345678")
-    private int phone;
+    private String phone;
 
     @Builder.Default
     @Comment("계정 상태")
@@ -385,7 +385,7 @@ public class Member {
     }
 
     @Builder
-    public Member(String id,String password,String name,String department,CtryCode ctryCode,int phone,Lang lang) {
+    public Member(String id,String password,String name,String department,CtryCode ctryCode,String phone,Lang lang) {
         this.id = id;
         this.password = password;
         this.name = name;

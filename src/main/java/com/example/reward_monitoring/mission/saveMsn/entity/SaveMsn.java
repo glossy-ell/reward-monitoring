@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
+import org.json.JSONArray;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -104,47 +105,37 @@ public class SaveMsn {
     @Schema(description = "미션 노출여부", example = "true")
     private boolean missionExposure;
 
-    @Builder.Default
-    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
-    @Column(name = "data_type")
-    private boolean dataType = true;
 
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
     @Schema(description = "재참여 가능일", example = "1")
     private int reEngagementDay;
 
-    @Comment("참여 제외할 매체 IDX,JSON타입으로 넣어야함")
+    @Comment("참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함")
     @Column(name = "except_Media" ,columnDefinition = "TEXT")
-    @Schema(description = "참여 제외할 매체 IDX,JSON타입으로 넣어야함", example = "[1, 2, 3]",nullable = true)
+    @Schema(description = "참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함", example = "1|2|3|4|5",nullable = true)
     private String exceptMedia;
 
     @Transient
     private int[] intArray;
 
-//    public int[] getIntArray() {
-//        return intArray;
-//    }
 
-    public void setIntArray(int[] intArray) {
-        this.intArray = intArray;
-        this.exceptMedia= convertArrayToJson(intArray);
-    }
 
-    public String convertArrayToJson(int[] array) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(array);
-        } catch (JsonProcessingException e) {
-            return null;
+    public JSONArray convertDataToJson(String data){
+        String[] elements = data.split("\\|");
+        JSONArray jsonArray = new JSONArray();
+        for (String element : elements) {
+            jsonArray.put(Integer.parseInt(element)); // 정수형으로 변환하여 추가
         }
+        return jsonArray;
     }
-    public int[] convertJsonToArray(String json) {
+
+    public String convertJsonToString(JSONArray json){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(json, int[].class);
+            return objectMapper.writeValueAsString(json);
         } catch (JsonProcessingException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -162,34 +153,50 @@ public class SaveMsn {
     @Column(name = "search_keyword",nullable = false)
     private String searchKeyword;
 
+    @Builder.Default
     @Comment("전체 랜딩수")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
     private int totalLandingCnt;
 
+    @Builder.Default
     @Comment("전체 참여수")
     @Column(name = "전체 참여수")
+    @Schema(description = "전체 참여수")
     private int totalPartCnt;
 
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    @Schema(description = "미션 데이터 타입")
+    private boolean dataType = true;
+
+
+    @Comment("이미지 파일")
     @Lob
-    @Column(name = "image_data", nullable = false)
+    @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
+    @Schema(description = "이미피 파일")
     private byte[] imageData;
 
-    @Column(name = "image_name", nullable = false)
+    @Comment("이미지 파일명")
+    @Column(name = "image_name")
+    @Schema(description = "이미피 파일명")
     private String imageName;
 
 
     @Builder
-    public SaveMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
-            ,String missionTitle,String searchKeyword,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
+    public SaveMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails
+            ,String missionTitle,String missionDetailTitle,String missionContent,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
-            ,boolean dupParticipation,int reEngagementDay) {
+            ,boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl,String msnFinalUrl,String searchKeyword,byte[]imageData,
+                   String imageName) {
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
         this.advertiser = advertiser;
         this.advertiserDetails = advertiserDetails;
         this.missionTitle = missionTitle;
-        this.searchKeyword = searchKeyword;
+        this.missionDetailTitle = missionDetailTitle;
+        this.missionContent = missionContent;
         this.startAtMsn = startAtMsn;
         this.endAtMsn = endAtMsn;
         this.startAtCap = startAtCap;
@@ -197,7 +204,12 @@ public class SaveMsn {
         this.missionExposure = missionExposure;
         this.dupParticipation = dupParticipation;
         this.reEngagementDay = reEngagementDay;
-
+        this.exceptMedia= convertJsonToString(convertDataToJson(exceptMedia));
+        this.searchKeyword = searchKeyword;
+        this.msnUrl = msnUrl;
+        this.msnFinalUrl =msnFinalUrl;
+        this.imageData = imageData;
+        this.imageName = imageName;
     }
 
 }

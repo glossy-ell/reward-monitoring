@@ -3,9 +3,7 @@ package com.example.reward_monitoring.mission.answerMsn.service;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.member.dto.MemberReadDto;
-import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnEditDto;
-import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnReadDto;
-import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AnswerMsnService {
@@ -41,8 +40,14 @@ public class AnswerMsnService {
             answerMsn.setMissionDefaultQty(dto.getMissionDefaultQty());
         if(dto.getMissionDailyCap() !=null)
             answerMsn.setMissionDailyCap(dto.getMissionDailyCap());
+        if(dto.getMissionExpOrder()!=null)
+            answerMsn.setMissionExpOrder(dto.getMissionExpOrder());
+        if(dto.getAdvertiser()!=null)
+            answerMsn.setAdvertiser(advertiserRepository.findByAdvertiser_(dto.getAdvertiser()));
         if(dto.getMissionTitle()!=null)
             answerMsn.setMissionTitle(dto.getMissionTitle());
+        if(dto.getMissionDetailTitle()!=null)
+            answerMsn.setMissionDetailTitle(dto.getMissionDetailTitle());
         if(dto.getMissionAnswer()!=null)
             answerMsn.setMissionAnswer(dto.getMissionAnswer());
         if (dto.getStartAtMsn() != null)
@@ -65,9 +70,33 @@ public class AnswerMsnService {
             boolean bool = dto.getDupParticipation();
             answerMsn.setDupParticipation(bool);
         }
-        if (dto.getReEngagementDay() != null) {
+        if (dto.getReEngagementDay() != null)
             answerMsn.setReEngagementDay(dto.getReEngagementDay());
+        if(dto.getExceptMedia() !=null)
+            answerMsn.setExceptMedia(answerMsn.convertJsonToString(answerMsn.convertDataToJson(dto.getExceptMedia())));
+        if(dto.getMsnUrl1()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl1());
+        if(dto.getMsnUrl2()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl2());
+        if(dto.getMsnUrl3()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl3());
+        if(dto.getMsnUrl4()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl4());
+        if(dto.getMsnUrl5()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl5());
+        if(dto.getMsnUrl6()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl6());
+        if(dto.getMsnUrl7()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl7());
+        if(dto.getMsnUrl8()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl8());
+        if(dto.getMsnUrl9()!=null)
+            answerMsn.setMsnUrl1(dto.getMsnUrl9());
+        if(dto.getDataType()!=null) {
+            boolean bool = dto.getDataType();
+            answerMsn.setDupParticipation(bool);
         }
+
         return answerMsn;
     }
 
@@ -95,34 +124,35 @@ public class AnswerMsnService {
 
     public List<AnswerMsn> searchAnswerMsn(AnswerMsnSearchDto dto) {
 
-        List<AnswerMsn> target_date=null;
-        List<AnswerMsn> target_dailyCap = null;
+        List<AnswerMsn> target_date;
+        List<AnswerMsn> target_dailyCap;
 
-        List<AnswerMsn> target_dup_Participation = null;
-        List<AnswerMsn> target_mission_active = null;
-        List<AnswerMsn> target_mission_exposure = null;
-        List<AnswerMsn> target_data_Type = null;
+        List<AnswerMsn> target_dup_Participation;
+        List<AnswerMsn> target_mission_active;
+        List<AnswerMsn> target_mission_exposure;
+        List<AnswerMsn> target_data_Type;
 
-        List<AnswerMsn> target_advertiser=null;
-        List<AnswerMsn> target_advertiser_details=null; // 선택 1
-        List<AnswerMsn> target_mission_title = null; // 선택 2
+        List<AnswerMsn> target_advertiser;
+        List<AnswerMsn> target_advertiser_details; // 선택 1
+        List<AnswerMsn> target_mission_title; // 선택 2
 
 
-        List<AnswerMsn> result=null;
+        List<AnswerMsn> result = new ArrayList<>();
 
 
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                 if(dto.getEndAtMsn() == null){
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                     target_date = answerMsnRepository.findByStartDate(start_time);
+                    result.addAll(target_date);
                 }else{
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                     ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
 
                     target_date = answerMsnRepository.findByBothDate(start_time,end_time);
+
+                    result.addAll(target_date);
                 }
 
             }
@@ -131,6 +161,7 @@ public class AnswerMsnService {
                 ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
 
                 target_date = answerMsnRepository.findByEndDate(end_time);
+                result.addAll(target_date);
             }
 
         }
@@ -139,156 +170,57 @@ public class AnswerMsnService {
             if(dto.getStartAtCap() != null){
                 if(dto.getEndAtCap() == null){
                     target_dailyCap = answerMsnRepository.findByStartAtCap(dto.getStartAtCap());
+                    result.addAll(target_dailyCap);
                 }else{
                     target_dailyCap = answerMsnRepository.findByBothCap(dto.getStartAtCap(),dto.getEndAtCap());
+                    result.addAll(target_dailyCap);
                 }
 
             }
             else {
                 target_dailyCap = answerMsnRepository.findByEndAtCap(dto.getEndAtCap());
+                result.addAll(target_dailyCap);
             }
 
         }
 
+        // 검색
+
         if(dto.getMissionActive() != null){
             target_mission_active = answerMsnRepository.findByMissionActive(dto.getMissionActive());
+            result.addAll(target_mission_active);
         }
 
         if(dto.getDupParticipation() != null){
             target_dup_Participation = answerMsnRepository.findByDupParticipation(dto.getDupParticipation());
+            result.addAll(target_dup_Participation);
         }
         if(dto.getMissionExposure() != null){
             target_mission_exposure = answerMsnRepository.findByMissionExposure(dto.getMissionExposure());
+            result.addAll(target_mission_exposure);
         }
 
         if(dto.getDataType() != null){
             target_data_Type= answerMsnRepository.findByDataType(dto.getDataType());
+            result.addAll(target_data_Type);
         }
 
         if(dto.getAdvertiser()!=null){
             target_advertiser = answerMsnRepository.findByAdvertiser(dto.getAdvertiser());
+            result.addAll(target_advertiser);
         }
 
         if(dto.getAdvertiserDetails()!=null){
             target_advertiser_details = answerMsnRepository.findByAdvertiserDetails(dto.getAdvertiserDetails());
+            result.addAll(target_advertiser_details);
         }
 
         if(dto.getMissionTitle()!= null) {
             target_mission_title = answerMsnRepository.findByMissionTitle(dto.getMissionTitle());
+            result.addAll(target_mission_title);
         }
 
-
-        if(target_date!=null) {
-            result = new ArrayList<>(target_date);
-            if(target_dailyCap != null)
-                result.retainAll(target_dailyCap);
-
-            if(target_dup_Participation !=null)
-                result.retainAll(target_dup_Participation);
-            if(target_mission_active != null)
-                result.retainAll(target_mission_active);
-            if(target_mission_exposure != null)
-                result.retainAll(target_mission_exposure);
-            if(target_data_Type != null)
-                result.retainAll(target_data_Type);
-
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-
-
-        else if(target_dailyCap !=null) {
-            result = new ArrayList<>(target_dailyCap);
-
-            if(target_dup_Participation !=null)
-                result.retainAll(target_dup_Participation);
-            if(target_mission_active != null)
-                result.retainAll(target_mission_active);
-            if(target_mission_exposure != null)
-                result.retainAll(target_mission_exposure);
-            if(target_data_Type != null)
-                result.retainAll(target_data_Type);
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-
-        }
-
-        else if(target_dup_Participation !=null) {
-            result = new ArrayList<>(target_dup_Participation);
-
-            if(target_mission_active != null)
-                result.retainAll(target_mission_active);
-            if(target_mission_exposure != null)
-                result.retainAll(target_mission_exposure);
-            if(target_data_Type != null)
-                result.retainAll(target_data_Type);
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-        else if(target_mission_active !=null) {
-            result = new ArrayList<>(target_mission_active);
-
-            if(target_mission_exposure != null)
-                result.retainAll(target_mission_exposure);
-            if(target_data_Type != null)
-                result.retainAll(target_data_Type);
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-        else if(target_mission_exposure !=null) {
-            result = new ArrayList<>(target_mission_exposure);
-
-            if(target_data_Type != null)
-                result.retainAll(target_data_Type);
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-        else if(target_data_Type !=null) {
-            result = new ArrayList<>(target_data_Type);
-
-            if(target_advertiser != null)
-                result.retainAll(target_advertiser);
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-        else if(target_advertiser !=null) {
-            result = new ArrayList<>(target_advertiser);
-
-            if(target_advertiser_details != null)
-                result.retainAll(target_advertiser_details);
-            if(target_mission_title != null)
-                result.retainAll(target_mission_title);
-        }
-        else if (target_advertiser_details != null)
-            result = new ArrayList<>(target_advertiser_details);
-        else if (target_mission_title != null)
-            result = new ArrayList<>(target_mission_title);
-
-
-
-        return result;
+        return result.stream().distinct().collect(Collectors.toList());
 
     }
 
@@ -424,8 +356,7 @@ public class AnswerMsnService {
     }
 
     private void applyCellStyle(CellStyle cellStyle) {
-        XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
-//        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//        XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle.setBorderLeft(BorderStyle.THIN);
@@ -447,8 +378,6 @@ public class AnswerMsnService {
         DateTimeFormatter formatter_date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
 
-
-
             XSSFRow row = worksheet.getRow(i);
 
             if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC)
@@ -459,7 +388,7 @@ public class AnswerMsnService {
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
                 //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
             if(row.getCell(4)!=null)
-                dto.setAdvertiserDetail(row.getCell(4).getStringCellValue());
+                dto.setAdvertiserDetails(row.getCell(4).getStringCellValue());
             if(row.getCell(5)!=null)
                 dto.setMissionTitle(row.getCell(5).getStringCellValue());
             if(row.getCell(6)!=null)
@@ -490,6 +419,53 @@ public class AnswerMsnService {
             answerMsnRepository.save(dto.toEntity(advertiserEntity));
 
         }
+        return true;
+    }
+
+    public boolean allMissionEnd() {
+
+        List<AnswerMsn> target = getAnswerMsns();
+        if(target == null)
+            return false;
+
+        for(AnswerMsn answerMsn : target){
+            answerMsn.setMissionExposure(false);
+            answerMsn.setMissionActive(false);
+            answerMsnRepository.save(answerMsn);
+        }
+        return true;
+    }
+
+    public List<AnswerMsn> searchAnswerMsnByConsumed(AnswerMsnSearchDto dto) {
+        return null;
+    }
+
+    public boolean changeAbleDay(AnswerMsnAbleDayDto dto, int idx) {
+        AnswerMsn answerMsn = answerMsnRepository.findByIdx(idx);
+        if(answerMsn == null)
+            return false;
+
+        answerMsn.setDupParticipation(dto.isDupParticipation());
+        if(dto.getReEngagementDay()!=null)
+            answerMsn.setReEngagementDay(dto.getReEngagementDay());
+        return true;
+
+    }
+
+    public boolean changeMissionActive(int idx, activeDto dto) {
+        AnswerMsn target =answerMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setMissionActive(dto.isActive());
+        return true;
+    }
+
+    public boolean changeMissionExpose(int idx, exposeDto dto) {
+
+        AnswerMsn target =answerMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setMissionExposure(dto.isExpose());
         return true;
     }
 }

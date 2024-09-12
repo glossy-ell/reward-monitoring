@@ -2,6 +2,7 @@ package com.example.reward_monitoring.general.member.model;
 
 import lombok.Getter;
 
+
 @Getter
 public enum CtryCode {
     KOR("+82"),
@@ -10,6 +11,7 @@ public enum CtryCode {
     JPN("+81"),
     CHN("+86");
 
+    // getter 메서드
     private final String code;
 
     // 생성자 정의
@@ -17,8 +19,4 @@ public enum CtryCode {
         this.code = code;
     }
 
-    // getter 메서드
-    public String getCode() {
-        return code;
-    }
 }

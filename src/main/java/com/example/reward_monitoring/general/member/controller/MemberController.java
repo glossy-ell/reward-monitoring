@@ -144,21 +144,22 @@ public class MemberController {
     })
     public ResponseEntity<Void> join(HttpSession session,@RequestBody MemberReadDto dto){
 
-        Member sessionMember= (Member) session.getAttribute("member");
-        if(sessionMember == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } // 세션만료
+//        Member sessionMember= (Member) session.getAttribute("member");
+//        if(sessionMember == null){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        } // 세션만료
+//
+//        Member member =memberRepository.findById( sessionMember.getId());
+//        if (member == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }//데이터 없음
+//
+//        if(member.isNauthMember()) // 비권한 활성화시
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        if(member.getAuthMember()== Auth.READ) // 읽기 권한만 존재할경우
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }//데이터 없음
-
-        if(member.isNauthMember()) // 비권한 활성화시
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        if(member.getAuthMember()== Auth.READ) // 읽기 권한만 존재할경우
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
+//테스트 위해 임시 주석 처리
         Member created = memberService.join(dto);
         if(created == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

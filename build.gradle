@@ -40,6 +40,7 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.2.2' // 파일
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8" //타임리프
+	implementation 'org.json:json:20210307'//JSON
 }
 
 tasks.named('test') {

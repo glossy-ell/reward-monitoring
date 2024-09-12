@@ -23,10 +23,10 @@ public class MemberReadDto {
     private String name;
     @Schema(description = "부서")
     private String department;
-    @Schema(description = "지역 코드",example = "+82,+852,+1,+81,+86")
+    @Schema(description = "지역 코드",example = " KOR,HKG,USA,JPN,CHN")
     private CtryCode ctryCode;
     @Schema(description = "전화번호",example = "01012345678")
-    private Integer phone;
+    private String phone;
     @Schema(description = "기본 언어",example = "한국어,English,中文,日本語")
     private Lang lang;
 
@@ -37,6 +37,9 @@ public class MemberReadDto {
                 .password(password)
                 .name(name)
                 .department(department)
+                .ctryCode(ctryCode)
+                .phone(phone)
+                .lang(lang)
                 .build();
     }
 }

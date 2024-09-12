@@ -1,8 +1,6 @@
 package com.example.reward_monitoring.general.userServer.controller;
 
-import com.example.reward_monitoring.general.member.dto.MemberEditDto;
-import com.example.reward_monitoring.general.member.dto.MemberReadDto;
-import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
+
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;

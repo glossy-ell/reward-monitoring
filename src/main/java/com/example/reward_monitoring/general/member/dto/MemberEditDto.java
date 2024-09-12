@@ -31,13 +31,13 @@ public class MemberEditDto {
     private CtryCode ctryCode;
 
     @Schema(description = "전화번호",example = "01012345678")
-    private Integer phone;
+    private String phone;
 
     @Schema(description = "기본 언어",example = "한국어,English,中文,日本語")
     private Lang lang;
 
     @Schema(description = "계정상태",example = "true")
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Schema(description = "관리자 메모 ")
     private String memo;
