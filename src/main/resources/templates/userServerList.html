@@ -202,7 +202,6 @@
 </script>
 <script src="./userServerList_files/bootstrap-select(1).js.다운로드" type="text/javascript"></script>
 
-
                 <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
 											
 					<div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
@@ -234,18 +233,33 @@
 												<div class="k-form__group">
 													<div class="row">
                                                         <div class="input-group col-lg-3 col-sm-3">
-                                                            <div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="">= 사용여부 =</option>
-<option value="1">사용함</option>
-<option value="2">사용안함</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 사용여부 ="><div class="filter-option"><div class="filter-option-inner">= 사용여부 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+                                                            <div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 사용여부 =</option>
+																	<option value="1">사용함</option>
+																	<option value="2">사용안함</option>
+																</select>
+																<button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 사용여부 =">
+																	<div class="filter-option">
+																		<div class="filter-option-inner">= 사용여부 =</div>
+																	</div>&nbsp;
+																	<span class="bs-caret">
+																		<span class="caret"></span>
+																	</span>
+																</button>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show"></ul>
+																	</div>
+																</div>
+															</div>
                                                         </div>
 														<div class="input-group col-lg-9 col-sm-9">
 															<div class="input-group-prepend">
 																<select name="sOpt" class="custom-select form-control">
-<option value="sName">서버명</option>
-<option value="sUrl">서버 URL</option>
-</select>
+																	<option value="sName">서버명</option>
+																	<option value="sUrl">서버 URL</option>
+																</select>
 															</div>
 															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
@@ -280,12 +294,10 @@
 										</table>										
 									</div>
                                     <hr class="my-4">
-                                        								</div>	
+								</div>
 							</div>
-					</div>                    
-
-				</div>
-
+						</div>
+					</div>
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
 						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/Site/userServerList#" target="_blank" class="k-link">Conan</a>
@@ -294,8 +306,5 @@
 			</div>
 		</div>
 		</div>
-
-    
-	
 
 </body><!-- end::Body --></html>

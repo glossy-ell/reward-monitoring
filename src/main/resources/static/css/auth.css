@@ -1,0 +1,114 @@
+@charset "utf-8";
+
+
+/**********************************************/
+/* Auth 공통 **********************************/
+/**********************************************/
+.auth {
+	height: 100vh;
+	background: #f7f7f7;
+}
+.auth .container {
+	top: 50%;
+	transform: translateY(-50%);
+}
+.auth .content {
+	max-width: 500px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 3rem;
+	background: #ffffff;
+	border: 1px solid #dddddd;
+	border-radius: 15px;
+}
+.auth .content .content__body {
+	margin-top: 2rem;
+}
+.auth .content .content__head p {
+	font-size: 1rem;
+}
+.auth.admin {
+	background: url('../images/auth_admin_bg.png') center center no-repeat;
+	background-size: cover;
+}
+.auth.admin:before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background: rgba(0,0,0,0.7);
+	content: '';
+}
+.auth.admin .content .content__head p {
+	font-size: 1.5rem;
+}
+.auth .form-group {
+	width: 100%;
+	margin-top: 1rem;
+}
+.auth input,
+.auth select {
+	border-bottom: 1px solid #dddddd;
+}
+.auth input:focus,
+.auth select:focus {
+	border-bottom: 1px solid #c30f42;
+}
+.auth .nice-select {
+	width: 100%;
+}
+.auth .nice-select .list {
+	width: 100%;
+}
+.auth.admin .copyright {
+	color: #aaaaaa;
+}
+
+@media screen and (max-width: 768px) {
+	.auth.admin .content {
+		padding: 2rem;
+	}
+}
+
+
+/**********************************************/
+/* Auth - 사용자 회원가입  ********************/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 사용자 로그인 ***********************/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 사용자 아이디 찾기 ******************/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 사용자 아이디 찾기 결과 *************/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 사용자 비밀번호 찾기 ****************/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 사용자 비밀번호 찾기 결과 ***********/
+/**********************************************/
+
+
+/**********************************************/
+/* Auth - 관리자 로그인 ***********************/
+/**********************************************/
+
+
+
+
+/**********************************************/
+/* Auth - 파트너 로그인 ***********************/
+/**********************************************/
