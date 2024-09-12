@@ -1,7 +1,5 @@
 package com.example.reward_monitoring.general.userServer.repository;
 
-
-import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +19,6 @@ public interface ServerRepository extends JpaRepository<Server,Integer> {
     @Query("SELECT s FROM Server s WHERE s.serverName LIKE %:keyword% ")
     public List<Server> findByServerName(@Param("keyword") String keyword);
 
+    @Query("SELECT s FROM Server s WHERE s.serverUrl = :keyword")
+    public Server findByServerUrl_(@Param("keyword")String keyword);
 }

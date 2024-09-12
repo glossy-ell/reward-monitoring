@@ -1,32 +1,33 @@
 package com.example.reward_monitoring.general.mediaCompany.service;
 
-import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyEditDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyReadDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompanyRepository;
-import com.example.reward_monitoring.general.member.entity.Member;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
+
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MediaCompanyService {
 
     @Autowired
     private MediaCompanyRepository mediaCompanyRepository;
-
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
 
     public MediaCompany edit(int idx,MediaCompanyEditDto dto) {
@@ -49,12 +50,23 @@ public class MediaCompanyService {
             boolean bool = dto.getIsActive();
             mediaCompany.setActive(bool);
         }
+        if(dto.getType()!=null)
+            mediaCompany.setType(dto.getType());
+        if(dto.getCompanyReturnUrl()!=null)
+            mediaCompany.setCompanyReturnUrl(dto.getCompanyReturnUrl());
+        if(dto.getCompanyReturnParameter()!=null)
+            mediaCompany.setCompanyReturnParameter(dto.getCompanyReturnParameter());
+        if(dto.getCompanyUserSaving()!=null)
+            mediaCompany.setCompanyUserSaving(dto.getCompanyUserSaving());
+        if(dto.getMemo()!=null)
+            mediaCompany.setMemo(dto.getMemo());
 
         return mediaCompany;
     }
 
     public MediaCompany add(MediaCompanyReadDto dto) {
-        return dto.toEntity();
+        Server server = serverRepository.findByServerUrl_(dto.getServerUrl());
+        return dto.toEntity(server);
     }
 
 
@@ -75,33 +87,26 @@ public class MediaCompanyService {
         return target;
     }
 
-    @Operation(summary = "관리자 검색", description = "조건에 맞는 관리자를 검색합니다")
-    @PostMapping("/member/search")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
-    })
     public List<MediaCompany> searchMediaCompany(MediaCompanySearchDto dto) {
-        List<MediaCompany>  target_date=null;
-        List<MediaCompany>  target_is_active=null;
-        List<MediaCompany> target_operation_type = null;
-        List<MediaCompany> target_name=null;
-        List<MediaCompany> target_api=null;
-        List<MediaCompany> result=null;
+        List<MediaCompany>  target_date;
+        List<MediaCompany>  target_is_active;
+        List<MediaCompany> target_operation_type;
+        List<MediaCompany> target_name;
+        List<MediaCompany> target_api;
+        List<MediaCompany> result = new ArrayList<>();
 
 
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
                 if(dto.getEndDate() == null){
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
                     target_date = mediaCompanyRepository.findByStartDate(start_time);
+                    result.addAll(target_date);
                 }else{
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
-                    ZonedDateTime end_time = dto.getStartDate().atStartOfDay(zoneId);
-
+                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
                     target_date = mediaCompanyRepository.findByBothDate(start_time,end_time);
+                    result.addAll(target_date);
                 }
 
             }
@@ -110,58 +115,31 @@ public class MediaCompanyService {
                 ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
 
                 target_date = mediaCompanyRepository.findByEndDate(end_time);
+                result.addAll(target_date);
             }
 
         }
         if(dto.getIsActive() != null){
             target_is_active = mediaCompanyRepository.findByIsActive(dto.getIsActive());
+            result.addAll(target_is_active);
         }
         if(dto.getOperationType()!=null){
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());
+            result.addAll(target_operation_type);
         }
 
         if(dto.getName()!=null){
             target_name = mediaCompanyRepository.findByName(dto.getName());
+            result.addAll(target_name);
         }
 
         if(dto.getApi()!=null){
             target_api = mediaCompanyRepository.findByApi(dto.getApi());
+            result.addAll(target_api);
         }
 
-        if(target_date!=null) {
-            result = new ArrayList<>(target_date);
-            if(target_is_active!=null)
-                result.retainAll(target_is_active);
-            if(target_operation_type!=null)
-                result.retainAll(target_operation_type);
-            if(target_name!=null)
-                result.retainAll(target_name);
-            if(target_api!=null)
-                result.retainAll(target_api);
-        }
-        else if(target_is_active !=null){
-            result = new ArrayList<>(target_is_active);
 
-            if(target_operation_type!=null)
-                result.retainAll(target_operation_type);
-            if(target_name !=null)
-                result.retainAll(target_name);
-            if(target_api != null)
-                result.retainAll(target_api);
-
-        } else if (target_operation_type!=null) {
-            result = new ArrayList<>(target_operation_type);
-            if(target_name !=null)
-                result.retainAll(target_name);
-            if(target_api != null)
-                result.retainAll(target_api);
-        }
-        else if(target_name != null){
-            result = new ArrayList<>(target_name);
-        } else if(target_api != null){
-            result = new ArrayList<>(target_api);
-        }
-        return result;
+        return result.stream().distinct().collect(Collectors.toList());
 
     }
 }

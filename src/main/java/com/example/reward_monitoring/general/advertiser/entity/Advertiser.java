@@ -16,8 +16,8 @@ import java.util.Objects;
 @Builder
 @Entity
 @ToString
+@EqualsAndHashCode
 @Table(name = "advertisers")
-
 public class Advertiser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,15 +29,17 @@ public class Advertiser {
     @Schema(description = "광고주명")
     private String advertiser;
 
+    @Builder.Default
     @Comment("광고주 담당자")
     @Column(name = "manager")
     @Schema(description = "광고주 담당자")
-    private String manager;
+    private String manager="미정";
 
+    @Builder.Default
     @Comment("광고주 담당자 연락처")
     @Column(name = "manager_phone_num")
     @Schema(description = "광고주 담당자 연락처")
-    private String managerPhoneNum;
+    private String managerPhoneNum="미정";
 
     @Builder.Default
     @Comment("활성여부")
@@ -51,7 +53,7 @@ public class Advertiser {
 
     @Comment("관리자 메모")
     @Column(name = "memo")
-    @Schema(hidden = true)
+    @Schema(description = "관리자 메모")
     private String memo;
 
     @PrePersist
@@ -60,9 +62,11 @@ public class Advertiser {
     }
 
     @Builder
-    public Advertiser(String advertiser,String manager,String managerPhoneNum) {
+    public Advertiser(String advertiser,String manager,String managerPhoneNum,boolean isActive,String memo) {
         this.advertiser = advertiser;
-        this.manager = Objects.requireNonNullElse(manager, "미정");
-        this.managerPhoneNum = Objects.requireNonNullElse(managerPhoneNum, "미정");
+        this.manager = manager;
+        this.managerPhoneNum = managerPhoneNum;
+        this.isActive = isActive;
+        this.memo = memo;
     }
 }

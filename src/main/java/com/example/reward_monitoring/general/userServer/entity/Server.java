@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 @Builder
 @Entity
 @ToString
+@EqualsAndHashCode
 @Table(name = "servers")
 public class Server {
     @Id
@@ -42,9 +43,9 @@ public class Server {
     private ZonedDateTime createdAt;
 
     @Comment("서버 통신 키")
-    @Column(name = "key", nullable = false,unique = true)
+    @Column(name = "server_key", nullable = false,unique = true)
     @Schema(description = "서버 통신 키")
-    private String key;
+    private String serverKey;
 
 
     @Comment("관리자 메모")
@@ -60,11 +61,11 @@ public class Server {
     }
 
     @Builder
-    public Server(String serverName,String serverUrl,boolean isActive, String key, String memo) {
+    public Server(String serverName,String serverUrl,boolean isActive, String serverKey, String memo) {
         this.serverName = serverName;
         this.serverUrl = serverUrl;
         this.isActive = isActive;
-        this.key = key;
+        this.serverKey = serverKey;
         this.memo = memo;
     }
 

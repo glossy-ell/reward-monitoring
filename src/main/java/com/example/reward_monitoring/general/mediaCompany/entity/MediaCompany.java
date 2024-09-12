@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.general.mediaCompany.entity;
+
 import com.example.reward_monitoring.general.mediaCompany.model.Type;
-import com.example.reward_monitoring.general.member.model.Lang;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,66 +18,86 @@ import java.util.Objects;
 @Builder
 @Entity
 @ToString
+@EqualsAndHashCode
 @Table(name = "mediacompanys")
-
 public class MediaCompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
 
+    @Comment("매체사명")
     @Column(name = "company_name", nullable = false)
+    @Schema(description = "매체사명")
     private  String companyName;
+
+    @Comment("사용자 서버(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = false )
+    @Schema(description = "사용자 서버", example = "https://ocb.srk.co.kr")
+    Server server;
 
     @Comment("매체사 ID")
     @Column(name = "company_id", nullable = false ,unique = true)
+    @Schema(description = "매체사아이디")
     private  String companyID;
 
     @Comment("매체사  비밀번호")
     @Column(name = "company_password", nullable = false )
+    @Schema(description = "매체사 비밀번호")
     private  String password;
 
+    @Builder.Default
     @Comment("매체사 담당자")
     @Column(name = "company_manager")
-    private String companyManager;
+    @Schema(description = "매체사 담당자")
+    private String companyManager="미정";
 
 
+    @Builder.Default
     @Comment("매체사 담당자 연락처")
     @Column(name = "company_manage_phone_num")
-    private String companyManagePhoneNum;
+    @Schema(description = "매체사 담당자 연락처")
+    private String companyManagePhoneNum="미정";
 
+    @Comment("API Key")
     @Column(name = "api_key", nullable = false,unique = true)
-    private String APIKey;
+    @Schema(description = "API Key")
+    private String APIKey; //어떻게 생성?
 
-    @Comment("생성일시")
+    @Builder.Default
+    @Comment("매체사 사용 여부")
     @Column(name = "is_active", nullable = false)
-    @Schema(description = "생성일시")
-    private boolean isActive;
+    @Schema(description = "매체사 사용 여부")
+    private boolean isActive = false;
 
     @Comment("생성일시")
     @Column(name = "created_at", nullable = false, updatable = false)
     @Schema(description = "생성일시")
     private ZonedDateTime createdAt;
-    
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
+    @Comment("매체사 개발/운영")
     @Column(name="type") // 개발 , 운영
-    @Schema(description = "운영 타입 ",example = "개발,운영")
-    private Type type;
+    @Schema(description = "매체사 개발/운영",example = "develop,operate")
+    private Type type = Type.operate;
 
 
     @Comment("매체사 리턴 URL")
-    @Column(name = "company_return_url",unique = true)
+    @Column(name = "company_return_url")
     @Schema(description = "매체사 리턴 URL ")
     private  String companyReturnUrl;
 
     @Comment("매체사 리턴 파라미터")
     @Column(name = "company_return_parameter" ,unique = true)
     @Schema(description = "매체사 리턴 파라미터 ")
-    private  String companyReturnParameter;
+    private String companyReturnParameter;
 
+    @Builder.Default
     @Comment("매체사 유저 적립금")
     @Column(name = "company_user_saving" ,unique = true)
     @Schema(description = "매체사 유저 적립금 ")
-    private  int companyUserSaving;
+    private  int companyUserSaving=0;
 
     @Comment("관리자 메모")
     @Column(name = "memo")
@@ -91,12 +112,19 @@ public class MediaCompany {
 
 
     @Builder
-    public MediaCompany(String companyName,String companyID,String companyManager,String companyManagePhoneNum,String APIKey) {
+    public MediaCompany(String companyName,Server server,String companyID,String companyManager,String companyManagePhoneNum,String APIKey
+    ,boolean isActive,Type type,String companyReturnUrl,String companyReturnParameter,int companyUserSaving,String memo) {
     this.companyName = companyName;
+    this.server = server;
     this.companyID = companyID;
-    this.companyManager = Objects.requireNonNullElse(companyManager, "미정");
-    this.companyManagePhoneNum= Objects.requireNonNullElse(companyManagePhoneNum, "미정");
+    this.companyManager = companyManager;
+    this.companyManagePhoneNum= companyManagePhoneNum;
     this.APIKey = APIKey;
+    this.isActive = isActive;
+    this.type = type;
+    this.companyReturnUrl = companyReturnUrl;
+    this.companyReturnParameter = companyReturnParameter;
+    this.companyUserSaving = companyUserSaving;
 
     }
 }

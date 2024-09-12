@@ -36,11 +36,11 @@ public class ServerController {
 
     @Autowired
     private ServerRepository serverRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
     @Autowired
     private ServerService serverService;
+    @Autowired
+    private MemberRepository memberRepository;
+
 
 
     @Operation(summary = "사용자 서버 정보 수정", description = "사용자 서버 정보를 수정합니다")
@@ -106,8 +106,8 @@ public class ServerController {
     @GetMapping("server/{idx}")  //서버검색(ID)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 정보 검색 완료 "),
+            @ApiResponse(responseCode = "204", description = "일치하는 서버 정보를 찾을 수 없음"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "204", description = "일치하는 서버 정보를 찾을 수 없음")
     })
     public ResponseEntity<Server> getServer(HttpSession session,@PathVariable int idx){
         Member sessionMember= (Member) session.getAttribute("member");
@@ -195,7 +195,7 @@ public class ServerController {
         List<Server> result = serverService.searchMember(dto);
         return (result != null) ?
                 ResponseEntity.status(HttpStatus.OK).body(result):
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 }

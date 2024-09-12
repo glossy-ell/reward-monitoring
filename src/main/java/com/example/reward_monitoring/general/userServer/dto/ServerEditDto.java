@@ -12,7 +12,7 @@ public class ServerEditDto {
     @Schema(description = "서버 사용여부",example = "true,false")
     private Boolean isActive;
     @Schema(description = "서버 통신 키",example = "1234")
-    private String key;
+    private String serverKey;
     @Schema(description = "관리자 메모")
     private String memo;
 }

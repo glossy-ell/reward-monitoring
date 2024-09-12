@@ -1,5 +1,6 @@
 package com.example.reward_monitoring.general.mediaCompany.repository;
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.model.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,5 @@ public interface MediaCompanyRepository extends JpaRepository<MediaCompany,Integ
 
     @Query("SELECT m FROM MediaCompany m WHERE m.type = :type")
     public List<MediaCompany> findByOperationType(@Param("type") Type type);
+
 }

@@ -7,8 +7,6 @@ import com.example.reward_monitoring.general.member.model.Lang;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 import java.time.ZoneId;
@@ -21,8 +19,8 @@ import java.time.ZonedDateTime;
 @Builder
 @Entity
 @ToString
+@EqualsAndHashCode
 @Table(name = "members")
-@Slf4j
 public class Member {
 
     @Id
@@ -150,7 +148,7 @@ public class Member {
     @Comment("저장 리스트 소진량(저장) 비권한 메뉴")
     @Column(name = "nauth_cur_save",nullable = false)
     @Schema(description = "현재 리스트 소진량(저장) 메뉴 ")
-    private boolean nauthCurSave=false ;
+    private boolean nauthCurSave=false;
 
     @Builder.Default
     @Comment("저장 미션 일괄 업로드 비권한 메뉴")
@@ -180,7 +178,7 @@ public class Member {
     @Comment("검색 미션 데일리 통계 비권한 메뉴")
     @Column(name = "nauth_search_daily",nullable = false)
     @Schema(description = "검색 미션 데일리 통계 비권한 메뉴 ")
-    private boolean nauthSearchDaily;
+    private boolean nauthSearchDaily=false;
 
     @Builder.Default
     @Comment("검색미션별 통계 비권한 메뉴")
@@ -247,14 +245,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_answer_msn")
     @Schema(description = "정답 미션 목록 권한",example = "READ,WRITE")
-    private Auth authAnswerMsn=Auth.READ;;
+    private Auth authAnswerMsn=Auth.READ;
 
     @Builder.Default
     @Comment("현재 리스트 소진량(정답)권한")
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_cur_answer")
     @Schema(description = "현재 리스트 소진량(정답) 메뉴 ",example = "READ,WRITE")
-    private Auth authCurAnswer=Auth.READ;;
+    private Auth authCurAnswer=Auth.READ;
 
     @Builder.Default
     @Comment("정답 미션 일괄 업로드 권한")
@@ -303,7 +301,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_save_upload")
     @Schema(description = "저장 미션 일괄 업로드 권한",example = "READ,WRITE")
-    private Auth authSaveUpload=Auth.READ;;
+    private Auth authSaveUpload=Auth.READ;
 
     @Builder.Default
     @Comment("미션 CS 권한")
@@ -383,15 +381,17 @@ public class Member {
     @PrePersist
     protected void onCreate() {
         createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusHours(9); //시간 호환 문제
-        log.info(String.valueOf(createdAt));
         isActive = true;
     }
 
     @Builder
-    public Member(String id,String password,String name,String department) {
+    public Member(String id,String password,String name,String department,CtryCode ctryCode,int phone,Lang lang) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.department = department;
+        this.ctryCode=ctryCode;
+        this.phone=phone;
+        this.lang = lang;
     }
 }

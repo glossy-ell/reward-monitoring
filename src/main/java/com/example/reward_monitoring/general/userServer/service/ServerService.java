@@ -1,7 +1,7 @@
 package com.example.reward_monitoring.general.userServer.service;
 
-import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
-import com.example.reward_monitoring.general.member.entity.Member;
+
+import com.example.reward_monitoring.general.userServer.RandomKeyGenerator;
 import com.example.reward_monitoring.general.userServer.dto.ServerEditDto;
 import com.example.reward_monitoring.general.userServer.dto.ServerReadDto;
 import com.example.reward_monitoring.general.userServer.dto.ServerSearchDto;
@@ -10,10 +10,9 @@ import com.example.reward_monitoring.general.userServer.repository.ServerReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServerService {
@@ -21,6 +20,8 @@ public class ServerService {
 
     @Autowired
     private ServerRepository serverRepository;
+
+
 
     public Server delete(int idx) {
         return null;
@@ -37,8 +38,8 @@ public class ServerService {
         if(dto.getIsActive()!=null){
             server.setActive(dto.getIsActive());
         }
-        if(dto.getKey()!=null){
-            server.setKey(dto.getKey());
+        if(dto.getServerKey()!=null){
+            server.setServerKey(dto.getServerKey());
         }
         if(dto.getMemo()!=null){
             server.setMemo(dto.getMemo());
@@ -48,6 +49,8 @@ public class ServerService {
     }
 
     public Server add(ServerReadDto dto) {
+        String key = RandomKeyGenerator.generateRandomKey(15);
+        dto.setServerKey(key);
         return dto.toEntity();
     }
 
@@ -61,39 +64,25 @@ public class ServerService {
 
 
     public List<Server> searchMember(ServerSearchDto dto) {
-        List<Server> target_server_url=null;
-        List<Server> target_server_name=null;
-        List<Server> target_is_active = null;
-        List<Server> result=null;
+        List<Server> target_server_url;
+        List<Server> target_server_name;
+        List<Server> target_is_active;
+        List<Server> result = new ArrayList<>();
 
 
         if(dto.getIsActive() != null){
             target_is_active = serverRepository.findByIsActive(dto.getIsActive());
+            result.addAll(target_is_active);
         }
         if(dto.getServerUrl()!=null){
             target_server_url = serverRepository.findByServerUrl(dto.getServerUrl());
+            result.addAll(target_server_url);
         }
 
         if(dto.getServerName()!=null){
             target_server_name = serverRepository.findByServerName(dto.getServerName());
+            result.addAll(target_server_name);
         }
-
-        if(target_is_active!=null) {
-            result = new ArrayList<>(target_is_active);
-            if(target_server_name!=null)
-                result.retainAll(target_server_name);
-            else if(target_server_url!=null)
-                result.retainAll(target_server_url);
-
-        }
-        else if(target_server_url !=null){
-            result = new ArrayList<>(target_server_url);
-
-        } else if (target_server_name != null) {
-            result = new ArrayList<>(target_server_name);
-        }
-
-        return result;
-
+        return result.stream().distinct().collect(Collectors.toList());
     }
 }
