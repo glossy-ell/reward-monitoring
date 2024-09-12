@@ -1,7 +1,7 @@
 package com.example.reward_monitoring.general.mediaCompany.repository;
 
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
-import com.example.reward_monitoring.general.member.entity.Member;
+import com.example.reward_monitoring.general.mediaCompany.model.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +31,6 @@ public interface MediaCompanyRepository extends JpaRepository<MediaCompany,Integ
     @Query("SELECT m FROM MediaCompany m WHERE m.createdAt < :endDate")
     public List<MediaCompany> findByEndDate(@Param("endDate") ZonedDateTime endDate);
 
-    @Query("SELECT m FROM MediaCompany m WHERE m.operationType = :type")
-    public List<MediaCompany> findByOperationType(@Param("type") boolean type);
+    @Query("SELECT m FROM MediaCompany m WHERE m.type = :type")
+    public List<MediaCompany> findByOperationType(@Param("type") Type type);
 }

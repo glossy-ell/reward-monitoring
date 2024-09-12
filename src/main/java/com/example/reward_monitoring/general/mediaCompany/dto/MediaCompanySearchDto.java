@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.general.mediaCompany.dto;
 
 
+import com.example.reward_monitoring.general.mediaCompany.model.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,5 @@ public class MediaCompanySearchDto {
     @Schema(description = "API키")
     private String api;
     @Schema(description = "운영 타입")
-    private Boolean operationType;
+    private Type operationType;
 }

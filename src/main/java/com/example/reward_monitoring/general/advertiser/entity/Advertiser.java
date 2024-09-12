@@ -49,6 +49,11 @@ public class Advertiser {
     @Schema(description = "생성시간")
     private ZonedDateTime createdAt;
 
+    @Comment("관리자 메모")
+    @Column(name = "memo")
+    @Schema(hidden = true)
+    private String memo;
+
     @PrePersist
     protected void onCreate() {
         createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));

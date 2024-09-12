@@ -2,6 +2,8 @@ package com.example.reward_monitoring.mission.saveMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,13 +26,25 @@ public class SaveMsn {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
 
+    @Builder.Default
     @Comment("미션 기본 수량")
-    @Column(name = "mission_default_qty", nullable = false)
-    private int missionDefaultQty;
+    @Column(name = "mission_default_qty")
+    @Schema(description = "미션 기본 수량", example = "50")
+    private int missionDefaultQty = 50;
+
+    @Builder.Default
+    @Comment("미션 데일리 캡")
+    @Column(name = "mission_daily_cap")
+    @Schema(description = "미션 데일리 캡", example = "50")
+    private int missionDailyCap = 50;
+
+    @Builder.Default
+    @Comment("미션 노출 순서")
+    @Column(name = "mission_exp_order")
+    @Schema(description = "미션 노출 순서", example = "100")
+    private int missionExpOrder = 100;
 
 
-    @Column(name = "mission_daily_cap", nullable = false)
-    private int missionDailyCap;
 
     @Comment("광고주(외래키)")
     @ManyToOne(cascade=CascadeType.REMOVE)
@@ -43,9 +57,16 @@ public class SaveMsn {
     @Column(name = "mission_title",nullable = false)
     private String missionTitle;
 
-    @Comment("검색 키워드")
-    @Column(name = "search_keyword",nullable = false)
-    private String searchKeyword;
+    @Comment("미션 상세 제목")
+    @Column(name = "mission_detail_title",nullable = false)
+    @Schema(description = "미션 상세 제목", example = "아주 단단한 무쇠웍")
+    private String missionDetailTitle;
+
+    @Comment("미션 내용")
+    @Column(name = "mission_content",length = 500)
+    @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
+    private String missionContent;
+
 
     @Comment("미션 시작일시")
     @Column(name = "start_at_msn", nullable = false, updatable = false)
@@ -93,6 +114,54 @@ public class SaveMsn {
     @Schema(description = "재참여 가능일", example = "1")
     private int reEngagementDay;
 
+    @Comment("참여 제외할 매체 IDX,JSON타입으로 넣어야함")
+    @Column(name = "except_Media" ,columnDefinition = "TEXT")
+    @Schema(description = "참여 제외할 매체 IDX,JSON타입으로 넣어야함", example = "[1, 2, 3]",nullable = true)
+    private String exceptMedia;
+
+    @Transient
+    private int[] intArray;
+
+//    public int[] getIntArray() {
+//        return intArray;
+//    }
+
+    public void setIntArray(int[] intArray) {
+        this.intArray = intArray;
+        this.exceptMedia= convertArrayToJson(intArray);
+    }
+
+    public String convertArrayToJson(int[] array) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(array);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+    public int[] convertJsonToArray(String json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json, int[].class);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    @Comment("미션 URL")
+    @Column(name = "msn_url" )
+    @Schema(description = "미션 URL", example = "www.abc.com",nullable = true)
+    private String msnUrl;
+
+    @Comment("미션 최종 URL")
+    @Column(name = "msn_final_url" )
+    @Schema(description = "미션 최종 URL", example = "www.abc.com",nullable = true)
+    private String msnFinalUrl;
+
+    @Comment("검색 키워드")
+    @Column(name = "search_keyword",nullable = false)
+    private String searchKeyword;
+
     @Comment("전체 랜딩수")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
@@ -101,6 +170,13 @@ public class SaveMsn {
     @Comment("전체 참여수")
     @Column(name = "전체 참여수")
     private int totalPartCnt;
+
+    @Lob
+    @Column(name = "image_data", nullable = false)
+    private byte[] imageData;
+
+    @Column(name = "image_name", nullable = false)
+    private String imageName;
 
 
     @Builder

@@ -34,12 +34,24 @@ public class Server {
     @Comment("활성여부")
     @Column(name = "is_active", nullable = false)
     @Schema(description = "활성여부")
-    private boolean isActive = true;
+    private boolean isActive = false;
 
     @Comment("생성일자")
     @Column(name = "created_at", nullable = false, updatable = false)
     @Schema(description = "생성일자")
     private ZonedDateTime createdAt;
+
+    @Comment("서버 통신 키")
+    @Column(name = "key", nullable = false,unique = true)
+    @Schema(description = "서버 통신 키")
+    private String key;
+
+
+    @Comment("관리자 메모")
+    @Column(name = "memo")
+    @Schema(hidden = true)
+    private String memo;
+
 
 
     @PrePersist
@@ -48,9 +60,12 @@ public class Server {
     }
 
     @Builder
-    public Server(String serverName,String serverUrl) {
+    public Server(String serverName,String serverUrl,boolean isActive, String key, String memo) {
         this.serverName = serverName;
         this.serverUrl = serverUrl;
+        this.isActive = isActive;
+        this.key = key;
+        this.memo = memo;
     }
 
 }

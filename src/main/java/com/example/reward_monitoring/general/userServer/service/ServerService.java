@@ -35,8 +35,13 @@ public class ServerService {
         if(dto.getServerUrl()!=null)
             server.setServerUrl(dto.getServerUrl());
         if(dto.getIsActive()!=null){
-            boolean bool = dto.getIsActive();
-            server.setActive(bool);
+            server.setActive(dto.getIsActive());
+        }
+        if(dto.getKey()!=null){
+            server.setKey(dto.getKey());
+        }
+        if(dto.getMemo()!=null){
+            server.setMemo(dto.getMemo());
         }
          serverRepository.save(server);
         return server;
