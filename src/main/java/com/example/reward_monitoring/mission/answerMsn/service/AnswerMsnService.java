@@ -2,7 +2,6 @@ package com.example.reward_monitoring.mission.answerMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
-import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
@@ -149,9 +148,7 @@ public class AnswerMsnService {
                     result.addAll(target_date);
                 }else{
                     ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
-
                     target_date = answerMsnRepository.findByBothDate(start_time,end_time);
-
                     result.addAll(target_date);
                 }
 
@@ -452,7 +449,7 @@ public class AnswerMsnService {
 
     }
 
-    public boolean changeMissionActive(int idx, activeDto dto) {
+    public boolean changeMissionActive(int idx, AnswerMsnActiveDto dto) {
         AnswerMsn target =answerMsnRepository.findByIdx(idx);
         if(target ==null)
             return false;
@@ -460,7 +457,7 @@ public class AnswerMsnService {
         return true;
     }
 
-    public boolean changeMissionExpose(int idx, exposeDto dto) {
+    public boolean changeMissionExpose(int idx, AnswerMsnExposeDto dto) {
 
         AnswerMsn target =answerMsnRepository.findByIdx(idx);
         if(target ==null)

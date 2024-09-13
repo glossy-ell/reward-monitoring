@@ -288,8 +288,6 @@ public class AnswerMsnController {
 
         if(member.isNauthCurAnswer()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        if(member.getAuthCurAnswer()== Auth.READ) // 읽기 권한만 존재할경우
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
 
         List<AnswerMsn> result = answerMsnService.searchAnswerMsnByConsumed(dto);
@@ -326,7 +324,7 @@ public class AnswerMsnController {
         boolean result = answerMsnService.allMissionEnd();
 
         return (result) ?
-                ResponseEntity.status(HttpStatus.OK).build(): // 일치하는 결과가 없을경우 빈 리스트 반환
+                ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
@@ -405,7 +403,7 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "")
     })
-    public ResponseEntity<Void> changeMissionActive(HttpSession session, @PathVariable int idx , @RequestBody activeDto dto)throws IOException {
+    public ResponseEntity<Void> changeMissionActive(HttpSession session, @PathVariable int idx , @RequestBody AnswerMsnActiveDto dto)throws IOException {
 
 
         boolean result = answerMsnService.changeMissionActive(idx,dto);
@@ -423,7 +421,7 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
     })
-    public ResponseEntity<Void> changeMissionExpose(HttpSession session, @PathVariable int idx , @RequestBody exposeDto dto)throws IOException {
+    public ResponseEntity<Void> changeMissionExpose(HttpSession session, @PathVariable int idx , @RequestBody AnswerMsnExposeDto dto)throws IOException {
 
         boolean result = answerMsnService.changeMissionExpose(idx,dto);
 

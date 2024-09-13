@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.answerMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -235,7 +236,11 @@ public class AnswerMsn {
     @Schema(description = "이미피 파일명")
     private String imageName;
 
-
+    @Comment("서버URL(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = true )
+    @Schema(description = "서버URL(외래키)")
+    Server serverUrl;
 
     @Builder
     public AnswerMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails

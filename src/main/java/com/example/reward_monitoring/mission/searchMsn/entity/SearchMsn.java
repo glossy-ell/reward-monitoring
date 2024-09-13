@@ -2,12 +2,14 @@ package com.example.reward_monitoring.mission.searchMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
+import org.json.JSONArray;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -41,24 +43,24 @@ public class SearchMsn {
     @Builder.Default
     @Comment("미션 노출 순서")
     @Column(name = "mission_exp_order")
-    @Schema(description = "미션 노출 순서", example = "50")
+    @Schema(description = "미션 노출 순서", example = "100")
     private int missionExpOrder = 100;
+
 
 
     @Comment("광고주(외래키)")
     @ManyToOne(cascade=CascadeType.REMOVE)
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
-    @Schema(description = "광고주", example = "원픽")
     Advertiser advertiser;
 
     @Comment("광고주 상세")
-    @Column(name = "advertiser_details")
-    @Schema(description = "광고주 상세", example = "82652333318")
+    @Column(name = "advertiser_details" )
+    @Schema(description = "광고주 상세", example = "-")
     private String advertiserDetails;
 
     @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
-    @Schema(description = "미션 제목", example = "무쇠웍")
+    @Schema(description = "미션 제목", example = "-")
     private String missionTitle;
 
     @Comment("미션 상세 제목")
@@ -70,6 +72,7 @@ public class SearchMsn {
     @Column(name = "mission_content",length = 500)
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
     private String missionContent;
+
 
     @Comment("미션 시작일시")
     @Column(name = "start_at_msn", nullable = false, updatable = false)
@@ -89,7 +92,7 @@ public class SearchMsn {
     @Comment("데일리캡 종료일시")
     @Column(name = "end_at", nullable = false, updatable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
-    private LocalDate  endAtCap;
+    private LocalDate endAtCap;
 
     @Comment("중복 참여 가능 여부(+1 Day)")
     @Column(name = "dup_participation", nullable = false)
@@ -107,47 +110,37 @@ public class SearchMsn {
     @Schema(description = "미션 노출여부", example = "true")
     private boolean missionExposure;
 
-    @Builder.Default
-    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
-    @Column(name = "data_type")
-    private boolean dataType = true;
 
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
     @Schema(description = "재참여 가능일", example = "1")
     private int reEngagementDay;
 
-    @Comment("참여 제외할 매체 IDX,JSON타입으로 넣어야함")
+    @Comment("참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함")
     @Column(name = "except_Media" ,columnDefinition = "TEXT")
-    @Schema(description = "참여 제외할 매체 IDX,JSON타입으로 넣어야함", example = "[1, 2, 3]",nullable = true)
+    @Schema(description = "참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함", example = "1|2|3|4|5",nullable = true)
     private String exceptMedia;
 
     @Transient
     private int[] intArray;
 
-//    public int[] getIntArray() {
-//        return intArray;
-//    }
 
-    public void setIntArray(int[] intArray) {
-        this.intArray = intArray;
-        this.exceptMedia= convertArrayToJson(intArray);
-    }
 
-    public String convertArrayToJson(int[] array) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(array);
-        } catch (JsonProcessingException e) {
-            return null;
+    public JSONArray convertDataToJson(String data){
+        String[] elements = data.split("\\|");
+        JSONArray jsonArray = new JSONArray();
+        for (String element : elements) {
+            jsonArray.put(Integer.parseInt(element)); // 정수형으로 변환하여 추가
         }
+        return jsonArray;
     }
-    public int[] convertJsonToArray(String json) {
+
+    public String convertJsonToString(JSONArray json){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(json, int[].class);
+            return objectMapper.writeValueAsString(json);
         } catch (JsonProcessingException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -158,45 +151,68 @@ public class SearchMsn {
 
     @Comment("검색 키워드")
     @Column(name = "search_keyword",nullable = false)
+    @Schema(description = "미션 URL", example = "www.abc.com",nullable = true)
     private String searchKeyword;
 
     @Comment("미션 정답")
-    @Column(name = "mission_answer",nullable = false)
-    @Schema(description = "미션 정답", example = "5107811272")
-    private String missionAnswer;
+    @Column(name = "msn_answer")
+    @Schema(description = "미션 정답", example = "정답1")
+    private String msnAnswer;
 
     @Comment("미션 정답2")
-    @Column(name = "mission_answer2",nullable = false)
-    @Schema(description = "미션 정답2", example = "5107811272")
-    private String missionAnswe2r;
+    @Column(name = "msn_answer2")
+    @Schema(description = "미션 정답2", example = "정답2")
+    private String msnAnswer2;
 
+    @Builder.Default
     @Comment("전체 랜딩수")
     @Column(name = "total_landing_cnt")
-    private int totalLandingCnt;
+    @Schema(description = "전체 랜딩수")
+    private int totalLandingCnt=0;
 
+    @Builder.Default
     @Comment("전체 참여수")
-    @Column(name = "total_part_cnt")
-    private int totalPartCnt;
+    @Column(name = "전체 참여수")
+    @Schema(description = "전체 참여수")
+    private int totalPartCnt=0;
 
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    @Schema(description = "미션 데이터 타입")
+    private boolean dataType = true;
+
+
+    @Comment("이미지 파일")
     @Lob
-    @Column(name = "image_data", nullable = false)
+    @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
+    @Schema(description = "이미피 파일")
     private byte[] imageData;
 
-    @Column(name = "image_name", nullable = false)
+    @Comment("이미지 파일명")
+    @Column(name = "image_name")
+    @Schema(description = "이미피 파일명")
     private String imageName;
 
+    @Comment("서버URL(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = true )
+    @Schema(description = "서버URL(외래키)")
+    Server serverUrl;
 
     @Builder
-    public SearchMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
-            ,String missionTitle,String searchKeyword,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
+    public SearchMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails
+            ,String missionTitle,String missionDetailTitle,String missionContent,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
-            ,boolean dupParticipation,int reEngagementDay) {
+            ,boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl,String msnAnswer,String msnAnswer2,String searchKeyword,byte[]imageData,
+                   String imageName) {
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
         this.advertiser = advertiser;
         this.advertiserDetails = advertiserDetails;
         this.missionTitle = missionTitle;
-        this.searchKeyword = searchKeyword;
+        this.missionDetailTitle = missionDetailTitle;
+        this.missionContent = missionContent;
         this.startAtMsn = startAtMsn;
         this.endAtMsn = endAtMsn;
         this.startAtCap = startAtCap;
@@ -204,5 +220,12 @@ public class SearchMsn {
         this.missionExposure = missionExposure;
         this.dupParticipation = dupParticipation;
         this.reEngagementDay = reEngagementDay;
-
-    }}
+        this.exceptMedia= convertJsonToString(convertDataToJson(exceptMedia));
+        this.searchKeyword = searchKeyword;
+        this.msnUrl = msnUrl;
+        this.msnAnswer = msnAnswer;
+        this.msnAnswer2 = msnAnswer2;
+        this.imageData = imageData;
+        this.imageName = imageName;
+    }
+}

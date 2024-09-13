@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.saveMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,10 +53,14 @@ public class SaveMsn {
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
     Advertiser advertiser;
 
+    @Comment("광고주 상세")
     @Column(name = "advertiser_details" )
+    @Schema(description = "광고주 상세", example = "-")
     private String advertiserDetails;
 
+    @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
+    @Schema(description = "미션 제목", example = "-")
     private String missionTitle;
 
     @Comment("미션 상세 제목")
@@ -157,13 +162,13 @@ public class SaveMsn {
     @Comment("전체 랜딩수")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
-    private int totalLandingCnt;
+    private int totalLandingCnt=0;
 
     @Builder.Default
     @Comment("전체 참여수")
     @Column(name = "전체 참여수")
     @Schema(description = "전체 참여수")
-    private int totalPartCnt;
+    private int totalPartCnt=0;
 
     @Builder.Default
     @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
@@ -183,6 +188,11 @@ public class SaveMsn {
     @Schema(description = "이미피 파일명")
     private String imageName;
 
+    @Comment("서버URL(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = true )
+    @Schema(description = "서버URL(외래키)")
+    Server serverUrl;
 
     @Builder
     public SaveMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails

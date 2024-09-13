@@ -4,9 +4,12 @@ package com.example.reward_monitoring.mission.searchMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
-import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnEditDto;
-import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnReadDto;
-import com.example.reward_monitoring.mission.searchMsn.dto.SearchMsnSearchDto;
+import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnAbleDayDto;
+import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnActiveDto;
+import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnExposeDto;
+import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnSearchDto;
+import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
+import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
 import jakarta.transaction.Transactional;
@@ -458,7 +461,7 @@ public class SearchMsnService {
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
             //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
             if(row.getCell(4)!=null)
-                dto.setAdvertiserDetail(row.getCell(4).getStringCellValue());
+                dto.setAdvertiserDetails(row.getCell(4).getStringCellValue());
             if(row.getCell(5)!=null)
                 dto.setMissionTitle(row.getCell(5).getStringCellValue());
             if(row.getCell(6)!=null)
@@ -489,6 +492,51 @@ public class SearchMsnService {
             searchMsnRepository.save(dto.toEntity(advertiserEntity));
 
         }
+        return true;
+    }
+
+    public boolean allMissionEnd() {
+
+        List<SearchMsn> target = getSearchMsns();
+        if(target == null)
+            return false;
+
+        for(SearchMsn searchMsn : target){
+            searchMsn.setMissionExposure(false);
+            searchMsn.setMissionActive(false);
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+    public List<SearchMsn> searchSearchMsnByConsumed(SearchMsnSearchDto dto) {//현재리스트 소진량(검색)에서 검색
+        return null;
+    }
+
+    public boolean changeAbleDay(SearchMsnAbleDayDto dto, int idx) {
+        SearchMsn searchMsn = searchMsnRepository.findByIdx(idx);
+        if(searchMsn == null)
+            return false;
+
+        searchMsn.setDupParticipation(dto.isDupParticipation());
+        if(dto.getReEngagementDay()!=null)
+            searchMsn.setReEngagementDay(dto.getReEngagementDay());
+        return true;
+
+    }
+
+    public boolean changeMissionActive(int idx, SearchMsnActiveDto dto) {
+        SearchMsn target =searchMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setMissionActive(dto.isActive());
+        return true;
+    }
+    public boolean changeMissionExpose(int idx, SearchMsnExposeDto dto) {
+
+        SearchMsn target =searchMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setMissionExposure(dto.isExpose());
         return true;
     }
 }
