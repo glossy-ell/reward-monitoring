@@ -2,6 +2,8 @@ package com.example.reward_monitoring.mission.answerMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
@@ -30,9 +32,11 @@ public class AnswerMsnService {
     private AnswerMsnRepository answerMsnRepository;
     @Autowired
     private AdvertiserRepository advertiserRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
     public AnswerMsn edit(int idx, AnswerMsnEditDto dto) {
-        AnswerMsn answerMsn =answerMsnRepository.findByIdx(idx);
+        AnswerMsn answerMsn = answerMsnRepository.findByIdx(idx);
         if(answerMsn==null)
             return null;
         if(dto.getMissionDefaultQty() != null)
@@ -100,8 +104,9 @@ public class AnswerMsnService {
     }
 
     public AnswerMsn add(AnswerMsnReadDto dto) {
+        Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
-        return dto.toEntity(advertiserEntity);
+        return dto.toEntity(advertiserEntity,serverEntity);
     }
 
     public AnswerMsn getAnswerMsn(int idx) {
@@ -413,7 +418,7 @@ public class AnswerMsnService {
                 dto.setDupParticipation(false);
             dto.setReEngagementDay((int)row.getCell(14).getNumericCellValue());
 
-            answerMsnRepository.save(dto.toEntity(advertiserEntity));
+            answerMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
         }
         return true;
@@ -450,7 +455,7 @@ public class AnswerMsnService {
     }
 
     public boolean changeMissionActive(int idx, AnswerMsnActiveDto dto) {
-        AnswerMsn target =answerMsnRepository.findByIdx(idx);
+        AnswerMsn target = answerMsnRepository.findByIdx(idx);
         if(target ==null)
             return false;
         target.setMissionActive(dto.isActive());
@@ -459,7 +464,7 @@ public class AnswerMsnService {
 
     public boolean changeMissionExpose(int idx, AnswerMsnExposeDto dto) {
 
-        AnswerMsn target =answerMsnRepository.findByIdx(idx);
+        AnswerMsn target = answerMsnRepository.findByIdx(idx);
         if(target ==null)
             return false;
         target.setMissionExposure(dto.isExpose());

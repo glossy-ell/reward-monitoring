@@ -30,6 +30,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "userServer", description = "사용자 서버 API")
+@RequestMapping("/Site/userServerList")
 public class ServerController {
 
     @Autowired
@@ -43,7 +44,7 @@ public class ServerController {
 
     @Operation(summary = "사용자 서버 정보 수정", description = "사용자 서버 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 사용자 서버 정보의 IDX")
-    @PostMapping("server/edit/{idx}")
+    @PostMapping("/edit/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -74,14 +75,14 @@ public class ServerController {
     }
 
     @Operation(summary = "서버 정보 생성", description = "서버 정보를 생성합니다")
-    @PostMapping("server/add")
+    @PostMapping("/add")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "백앤드 오류로 서버생성이 되지않음")
     })
-    public ResponseEntity<Void> join(HttpSession session,@RequestBody ServerReadDto dto){
+    public ResponseEntity<Void> add(HttpSession session,@RequestBody ServerReadDto dto){
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -101,7 +102,7 @@ public class ServerController {
 
     @Operation(summary = "서버 정보 요청", description = "IDX와 일치하는 단일 사용자 서버 정보를 반환합니다")
     @Parameter(name = "idx", description = "관리자 IDX")
-    @GetMapping("server/{idx}")  //서버검색(ID)
+    @GetMapping("/{idx}")  //서버검색(ID)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 정보 검색 완료 "),
             @ApiResponse(responseCode = "204", description = "일치하는 서버 정보를 찾을 수 없음"),
@@ -125,7 +126,7 @@ public class ServerController {
 
 
     @Operation(summary = "전체 사용자 서버 정보 요청", description = "전체 관리자 정보를 반환합니다")
-    @GetMapping("server/servers")  //멤버 리스트 반환
+    @GetMapping("/servers")  //멤버 리스트 반환
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨")
@@ -149,7 +150,7 @@ public class ServerController {
 
     @Operation(summary = "사용자 서버 삭제", description = "IDX와 일치하는 단일 사자정보를 삭제합니다")
     @Parameter(name = "idx", description = "관리자정보 IDX")
-    @DeleteMapping("server/delete/{idx}")  // 회원탈퇴
+    @DeleteMapping("/delete/{idx}")  // 회원탈퇴
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 완료 "),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -176,7 +177,7 @@ public class ServerController {
 
     }
     @Operation(summary = "사용자 서버 검색", description = "조건에 맞는 사용자 서버 목록을 검색합니다")
-    @PostMapping("/server/search")
+    @PostMapping("/search")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),

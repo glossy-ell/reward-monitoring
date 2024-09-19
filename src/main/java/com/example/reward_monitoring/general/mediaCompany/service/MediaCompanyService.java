@@ -9,6 +9,7 @@ import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompan
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MediaCompanyService {
 
     @Autowired
@@ -66,6 +68,8 @@ public class MediaCompanyService {
 
     public MediaCompany add(MediaCompanyReadDto dto) {
         Server server = serverRepository.findByServerUrl_(dto.getServerUrl());
+        log.info(dto.getApiKey());
+        log.info(dto.getCompanyID());
         return dto.toEntity(server);
     }
 

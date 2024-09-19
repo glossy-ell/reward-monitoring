@@ -369,7 +369,7 @@ public class AnswerMsnController {
     })
     public ResponseEntity<Void> excelUpload(HttpSession session,@RequestParam("file") MultipartFile file)throws IOException {
 
-        Member sessionMember= (Member)session.getAttribute("member");
+        Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } // 세션만료
@@ -384,8 +384,6 @@ public class AnswerMsnController {
 
         if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-
         boolean result = answerMsnService.readExcel(file);
 
         return (result) ?
@@ -405,6 +403,22 @@ public class AnswerMsnController {
     })
     public ResponseEntity<Void> changeMissionActive(HttpSession session, @PathVariable int idx , @RequestBody AnswerMsnActiveDto dto)throws IOException {
 
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
 
         boolean result = answerMsnService.changeMissionActive(idx,dto);
 
@@ -422,6 +436,21 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
     })
     public ResponseEntity<Void> changeMissionExpose(HttpSession session, @PathVariable int idx , @RequestBody AnswerMsnExposeDto dto)throws IOException {
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = answerMsnService.changeMissionExpose(idx,dto);
 
@@ -439,6 +468,24 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
     })
     public ResponseEntity<Void> changeAbleDay(HttpSession session,AnswerMsnAbleDayDto dto,@PathVariable int idx)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+
         boolean result = answerMsnService.changeAbleDay(dto,idx);
 
         return (result) ?
@@ -448,7 +495,21 @@ public class AnswerMsnController {
 
 
     @GetMapping("/")
-    public String quizList(){
+    public String quizList(HttpSession session){
+//        Member sessionMember= (Member) session.getAttribute("member");
+//        if(sessionMember == null){
+//            return "redirect:/loginForm";
+//        } // 세션만료
+//
+//        Member member =memberRepository.findById( sessionMember.getId());
+//        if (member == null) {
+//            return "redirect:/loginForm";
+//        }//데이터 없음
+//
+//        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+//            return "redirect:/accessDenied";
+
+
         return "quizList";
     }
 

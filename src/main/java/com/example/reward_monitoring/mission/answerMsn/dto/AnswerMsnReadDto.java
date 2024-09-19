@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.mission.answerMsn.dto;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -102,17 +103,20 @@ public class AnswerMsnReadDto {
     @Schema(description = "이미지 데이터", example = "이미지 데이터")
     private byte[] imageData;
 
-    @Schema(description = "이미지 이름", example = "false = 삭제 데이터 , true = 정상 데이터")
+    @Schema(description = "이미지 이름", example = "-")
     private String imageName;
 
+    @Schema(description = "서버url", example = "https://ocb.srk.co.kr")
+    private String url;
 
-    public AnswerMsn toEntity(Advertiser advertiserEntity){
+    public AnswerMsn toEntity(Advertiser advertiserEntity, Server serverEntity){
 
         return AnswerMsn.builder()
                 .missionDefaultQty(missionDefaultQty)
                 .missionDailyCap(missionDailyCap)
                 .missionExpOrder(missionExpOrder)
                 .advertiser(advertiserEntity)
+                .server(serverEntity)
                 .advertiserDetails(advertiserDetails)
                 .missionTitle(missionTitle)
                 .missionDetailTitle(missionDetailTitle)

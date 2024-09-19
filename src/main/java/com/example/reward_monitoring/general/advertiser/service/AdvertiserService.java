@@ -76,32 +76,25 @@ public class AdvertiserService {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
                 ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
                 if(dto.getEndDate() == null){
-                    target_date = advertiserRepository.findByStartDate(start_time);
-                    result.addAll(target_date);
+                    result.addAll(advertiserRepository.findByStartDate(start_time));
                 }else{
                     ZonedDateTime end_time = dto.getStartDate().atStartOfDay(zoneId);
-                    target_date = advertiserRepository.findByBothDate(start_time,end_time);
-                    result.addAll(target_date);
+                    result.addAll(advertiserRepository.findByBothDate(start_time,end_time));
                 }
 
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
                 ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
-
-                target_date = advertiserRepository.findByEndDate(end_time);
-                result.addAll(target_date);
+                result.addAll(advertiserRepository.findByEndDate(end_time));
             }
 
         }
-        if(dto.getIsActive() != null){
-            target_is_active = advertiserRepository.findByIsActive(dto.getIsActive());
-            result.addAll(target_is_active);
-        }
-        if(dto.getAdvertiser()!=null){
-            target_advertiser = advertiserRepository.findByAdvertiser(dto.getAdvertiser());
-            result.addAll(target_advertiser);
-        }
+        if(dto.getIsActive() != null)
+            result.addAll(advertiserRepository.findByIsActive(dto.getIsActive()));
+        if(dto.getAdvertiser()!=null)
+            result.addAll(advertiserRepository.findByAdvertiser(dto.getAdvertiser()));
+
 
 
         return result.stream().distinct().collect(Collectors.toList());

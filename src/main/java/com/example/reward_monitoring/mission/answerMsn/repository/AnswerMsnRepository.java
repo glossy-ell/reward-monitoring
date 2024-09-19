@@ -1,6 +1,5 @@
 package com.example.reward_monitoring.mission.answerMsn.repository;
 
-import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -54,8 +53,5 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.dataType= : dataType")
     public List<AnswerMsn> findByServerUrl(String url);
-
-
-
 
 }

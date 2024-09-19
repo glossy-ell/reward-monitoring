@@ -15,12 +15,14 @@ public class MediaCompanyReadDto {
     private String serverUrl;
     @Schema(description = "매체사 ID")
     private String companyID;
+    @Schema(description = "매체사 비밀번호")
+    private String password;
     @Schema(description = "매체사 담당자")
     private String companyManager;
     @Schema(description = "매체사 담당자 연락처")
     private String companyManagerPhoneNum;
     @Schema(description = "API Key")
-    private String APIKey;
+    private String apiKey;
     @Schema(description = "활성 여부")
     private Boolean isActive;
     @Schema(description = "매체사 개발/운영")
@@ -41,9 +43,10 @@ public class MediaCompanyReadDto {
                 .companyName(companyName)
                 .server(serverEntity)
                 .companyID(companyID)
+                .password(password)
                 .companyManager(companyManager)
                 .companyManagePhoneNum(companyManagerPhoneNum)
-                .APIKey(APIKey)
+                .APIKey(apiKey)
                 .isActive(isActive)
                 .type(type)
                 .companyReturnUrl(companyReturnUrl)

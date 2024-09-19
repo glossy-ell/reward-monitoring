@@ -3,6 +3,7 @@ package com.example.reward_monitoring.statistics.answerMsnStat.daily.entity;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -28,58 +29,57 @@ public class AnswerMsnDailyStat {
     @Comment("매체사 IDX")
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumns({
-            @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "idx", nullable = false),
-            @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "companyName", nullable = false),
+            @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "idx"),
+            @JoinColumn(name = "company_name", referencedColumnName = "company_name")
     })
-
-    @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "idx", nullable = false)
     @Schema(description = "매체사 IDX", example = "3")
     MediaCompany mediaCompany;
 
-    @Comment("광고주  정보)")
+    @Comment("광고주 정보)")
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumns({
-            @JoinColumn(name = "advertiser", referencedColumnName = "advertiser", nullable = false)
+            @JoinColumn(name = "advertiser_idx", referencedColumnName = "idx"),
+            @JoinColumn(name = "advertiser", referencedColumnName = "advertiser")
     })
     @Schema(description = "광고주 정보")
     Advertiser advertiser;
 
-
-
-    @Comment("광고주 상세")
-    @Column(name = "advertiser_details")
-    @Schema(description = "광고주 상세")
-    private String advertiserDetails;
-
     @Comment("미션 정보")
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumns({
-            @JoinColumn(name = "msn_idx", referencedColumnName = "idx", nullable = false),
-            @JoinColumn(name = "msn_title", referencedColumnName = "mission_title", nullable = false)
+            @JoinColumn(name = "advertiser_details", referencedColumnName = "advertiser_details"),
+            @JoinColumn(name = "answer_msn_idx", referencedColumnName = "idx"),
+            @JoinColumn(name = "mission_title" , referencedColumnName =  "mission_title")
     })
-    @Schema(description = "미션 정보")
+    @Schema(description = "정답 미션 IDX", example = "3")
     AnswerMsn answerMsn;
 
-    @Builder.Default
+    @Comment("서버URL(외래키)")
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @JoinColumn(name="server_url", referencedColumnName = "server_url")
+    @Schema(description = "서버URL(외래키)")
+    Server server;
+
+
     @Comment("랜딩 카운트")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
-    private int landingCnt = 0;
+    private int landingCnt;
 
-    @Builder.Default
     @Comment("참여 카운트")
     @Column(name = "total_part_cnt")
     @Schema(description = "참여 카운트")
-    private int partCnt = 0;
+    private int partCnt;
 
     @Comment("참여일")
     @Column(name = "part_date", nullable = false, updatable = false)
     @Schema(description = "참여일", example = "2024-09-11")
     private LocalDate partDate;
 
+
     @Builder
     public AnswerMsnDailyStat(MediaCompany mediaCompany, Advertiser advertiser, AnswerMsn answerMsn
-            , int landingCnt, int partCnt, LocalDate partDate) {
+            , int landingCnt, int partCnt, LocalDate partDate,Server server) {
 
         this.mediaCompany = mediaCompany;
         this.advertiser = advertiser;
@@ -87,7 +87,7 @@ public class AnswerMsnDailyStat {
         this.landingCnt = landingCnt;
         this.partCnt = partCnt;
         this.partDate = partDate;
-
+        this.server = server;
 
     }
 }

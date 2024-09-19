@@ -190,16 +190,16 @@ public class SaveMsn {
 
     @Comment("서버URL(외래키)")
     @ManyToOne(cascade=CascadeType.REMOVE)
-    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = true )
+    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = false )
     @Schema(description = "서버URL(외래키)")
-    Server serverUrl;
+    Server server;
 
     @Builder
     public SaveMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails
             ,String missionTitle,String missionDetailTitle,String missionContent,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
             ,boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl,String msnFinalUrl,String searchKeyword,byte[]imageData,
-                   String imageName) {
+                   String imageName,Server server) {
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
         this.advertiser = advertiser;
@@ -220,6 +220,7 @@ public class SaveMsn {
         this.msnFinalUrl =msnFinalUrl;
         this.imageData = imageData;
         this.imageName = imageName;
+        this.server = server;
     }
 
 }

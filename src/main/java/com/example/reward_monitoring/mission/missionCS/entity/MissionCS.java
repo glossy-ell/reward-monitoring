@@ -1,5 +1,8 @@
 package com.example.reward_monitoring.mission.missionCS.entity;
 
+
+import com.example.reward_monitoring.mission.missionCS.model.CSType;
+import com.example.reward_monitoring.mission.missionCS.model.MsnType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,27 +23,26 @@ public class MissionCS {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
 
-    @Comment("미션 타입")
-    @Column(name = "mission_type",nullable = false)
-    @Schema(description = "미션 타입", example = "50")
-    private String missionType;
+    @Enumerated(EnumType.STRING)
+    @Column(name="msn_type")
+    @Schema(description = "미션 타입",example = "정답,검색,저장")
+    private MsnType msnType;
 
     @Comment("미션 제목")
-    @Column(name ="mission_title",nullable = false)
-    @Schema(description = "미션 제목", example = "42880 / 욕실선반")
-    private String missionTitle;
+    @Column(name = "msn_title")
+    @Schema(description = "미션 제목", example = "42871 / 거리측정기")
+    private String msnTitle;
 
-    @Builder.Default
     @Comment("문의 카운트")
     @Column(name = "cs_count",nullable = false)
     @Schema(description = "문의 카운트", example = "1")
-    private int CSCount=1;
+    private int CSCount;
 
 
-    @Comment("cs 유형")
+    @Enumerated(EnumType.STRING)
     @Column(name = "cs_type",nullable = false)
-    @Schema(description = "cs 유형", example = "참여하기 URL 확인")
-    private String csType;
+    @Schema(description = "CS 타입", example = "정답제목확인,URL확인,데이터유실")
+    private CSType csType;
 
     @Comment("최초 등록 일시")
     @Column(name = "first_reg_date")
@@ -48,9 +50,9 @@ public class MissionCS {
     private ZonedDateTime firstRegDate;
 
     @Builder
-    public MissionCS(String missionType,String missionTitlet,String csType,ZonedDateTime firstRegDate){
-        this.missionType = missionType;
-        this.missionTitle = missionTitle;
+    public MissionCS(MsnType msnType,String msnTitle,CSType csType,ZonedDateTime firstRegDate){
+        this.msnType = msnType;
+        this.msnTitle = msnTitle;
         this.csType = csType;
         this.firstRegDate = firstRegDate;
     }

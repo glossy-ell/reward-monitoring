@@ -21,6 +21,7 @@ import java.util.Objects;
 @EqualsAndHashCode
 @Table(name = "mediacompanys")
 public class MediaCompany {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
@@ -44,7 +45,7 @@ public class MediaCompany {
     @Comment("매체사  비밀번호")
     @Column(name = "company_password", nullable = false )
     @Schema(description = "매체사 비밀번호")
-    private  String password;
+    private String password;
 
     @Builder.Default
     @Comment("매체사 담당자")
@@ -89,13 +90,13 @@ public class MediaCompany {
     private  String companyReturnUrl;
 
     @Comment("매체사 리턴 파라미터")
-    @Column(name = "company_return_parameter" ,unique = true)
+    @Column(name = "company_return_parameter")
     @Schema(description = "매체사 리턴 파라미터 ")
     private String companyReturnParameter;
 
     @Builder.Default
     @Comment("매체사 유저 적립금")
-    @Column(name = "company_user_saving" ,unique = true)
+    @Column(name = "company_user_saving")
     @Schema(description = "매체사 유저 적립금 ")
     private  int companyUserSaving=0;
 
@@ -112,11 +113,12 @@ public class MediaCompany {
 
 
     @Builder
-    public MediaCompany(String companyName,Server server,String companyID,String companyManager,String companyManagePhoneNum,String APIKey
+    public MediaCompany(String companyName,Server server,String companyID,String password,String companyManager,String companyManagePhoneNum,String APIKey
     ,boolean isActive,Type type,String companyReturnUrl,String companyReturnParameter,int companyUserSaving,String memo) {
     this.companyName = companyName;
     this.server = server;
     this.companyID = companyID;
+    this.password = password;
     this.companyManager = companyManager;
     this.companyManagePhoneNum= companyManagePhoneNum;
     this.APIKey = APIKey;

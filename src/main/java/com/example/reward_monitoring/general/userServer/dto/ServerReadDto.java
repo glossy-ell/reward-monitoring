@@ -25,6 +25,7 @@ public class ServerReadDto {
                 .serverUrl(serverUrl)
                 .isActive(isActive)
                 .serverKey(serverKey)
+                .memo(memo)
                 .build();
     }
 }
