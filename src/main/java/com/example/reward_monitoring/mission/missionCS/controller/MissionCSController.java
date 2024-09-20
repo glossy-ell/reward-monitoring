@@ -25,6 +25,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "MissionCS", description = "미션CS관리 API")
+@RequestMapping(value = "/MissionCs")
 public class MissionCSController {
     @Autowired
     private MissionCSRepository missionCSRepository;
@@ -81,4 +82,16 @@ public class MissionCSController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    @RequestMapping({"missionCsList","/",""})
+    public String missionCSList(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        return "missionCsList";
+    }
 }

@@ -4,11 +4,8 @@ package com.example.reward_monitoring.mission.searchMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
-import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnAbleDayDto;
-import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnActiveDto;
-import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnExposeDto;
-import com.example.reward_monitoring.mission.saveMsn.dto.SaveMsnSearchDto;
-import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
@@ -39,6 +36,8 @@ public class SearchMsnService {
     private SearchMsnRepository searchMsnRepository;
     @Autowired
     private AdvertiserRepository advertiserRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
     public SearchMsn edit(int idx, SearchMsnEditDto dto) {
         SearchMsn searchMsn =searchMsnRepository.findByIdx(idx);
@@ -79,8 +78,9 @@ public class SearchMsnService {
     }
 
     public SearchMsn add(SearchMsnReadDto dto) {
+        Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
-        return dto.toEntity(advertiserEntity);
+        return dto.toEntity(advertiserEntity,serverEntity);
     }
 
     public SearchMsn getSearchMsn(int idx) {
@@ -489,7 +489,7 @@ public class SearchMsnService {
                 dto.setDupParticipation(false);
             dto.setReEngagementDay((int)row.getCell(14).getNumericCellValue());
 
-            searchMsnRepository.save(dto.toEntity(advertiserEntity));
+            searchMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
         }
         return true;

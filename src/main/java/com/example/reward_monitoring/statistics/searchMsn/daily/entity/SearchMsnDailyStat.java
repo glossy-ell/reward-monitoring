@@ -27,7 +27,7 @@ public class SearchMsnDailyStat {
     private int idx;
 
     @Comment("매체사 IDX")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "idx"),
             @JoinColumn(name = "company_name", referencedColumnName = "company_name")
@@ -36,7 +36,7 @@ public class SearchMsnDailyStat {
     MediaCompany mediaCompany;
 
     @Comment("광고주 정보)")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "advertiser_idx", referencedColumnName = "idx"),
             @JoinColumn(name = "advertiser", referencedColumnName = "advertiser")
@@ -45,7 +45,7 @@ public class SearchMsnDailyStat {
     Advertiser advertiser;
 
     @Comment("미션 정보")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "advertiser_details", referencedColumnName = "advertiser_details"),
             @JoinColumn(name = "answer_msn_idx", referencedColumnName = "idx"),

@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.answerMsn.dto;
 
 
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,10 +100,10 @@ public class AnswerMsnEditDto {
     @Schema(description = "미션 데이터 타입", example = "false = 삭제 데이터 , true = 정상 데이터")
     private Boolean dataType;
 
-    @Schema(description = "이미지 데이터", example = "이미지 데이터")
+    @Hidden
     private byte[] imageData;
 
-    @Schema(description = "이미지 이름", example = "false = 삭제 데이터 , true = 정상 데이터")
+    @Hidden
     private String imageName;
 
 

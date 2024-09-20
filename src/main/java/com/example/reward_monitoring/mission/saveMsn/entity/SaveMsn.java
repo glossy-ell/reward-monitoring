@@ -49,7 +49,7 @@ public class SaveMsn {
 
 
     @Comment("광고주(외래키)")
-    @ManyToOne(cascade=CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
     Advertiser advertiser;
 
@@ -189,8 +189,8 @@ public class SaveMsn {
     private String imageName;
 
     @Comment("서버URL(외래키)")
-    @ManyToOne(cascade=CascadeType.REMOVE)
-    @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = false )
+    @ManyToOne()
+    @JoinColumn(name="server_url", referencedColumnName = "server_url",nullable = true)
     @Schema(description = "서버URL(외래키)")
     Server server;
 

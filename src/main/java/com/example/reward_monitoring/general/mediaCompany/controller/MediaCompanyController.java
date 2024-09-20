@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "MediaCompany", description = "매체사 API")
+@RequestMapping("/Affiliate")
 public class MediaCompanyController {
     @Autowired
     private MediaCompanyRepository mediaCompanyRepository;
@@ -42,7 +44,7 @@ public class MediaCompanyController {
 
     @Operation(summary = "매체사 정보 수정", description = "매체사 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 매체사의 IDX")
-    @PostMapping("/mediaCompany/edit/{idx}")
+    @PostMapping("/edit/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -70,7 +72,7 @@ public class MediaCompanyController {
         return ResponseEntity.status(HttpStatus.OK).body(mediaCompany);
     }
     @Operation(summary = "관리자 가입", description = "관리자 정보를 생성합니다")
-    @PostMapping("/mediaCompany/add")
+    @PostMapping("/add")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -100,7 +102,7 @@ public class MediaCompanyController {
     }
     @Operation(summary = "매체사 정보 요청", description = "IDX와 일치하는 단일 매체사정보를 반환합니다")
     @Parameter(name = "idx", description = "관리자 IDX")
-    @GetMapping("mediaCompany/idx/{idx}")  //idx 검색
+    @GetMapping("/idx/{idx}")  //idx 검색
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "관리자 정보 검색 완료 "),
             @ApiResponse(responseCode = "204", description = "일치하는 회원을 찾을 수 없음"),
@@ -124,7 +126,7 @@ public class MediaCompanyController {
     }
 
     @Operation(summary = "전체 매체사 정보 요청", description = "전체 매체사 정보를 반환합니다")
-    @GetMapping("mediaCompany/mediaCompanys")  //매체사 리스트 반환
+    @GetMapping("/Affiliates")  //매체사 리스트 반환
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 완료 "),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -145,7 +147,7 @@ public class MediaCompanyController {
     }
     @Operation(summary = "매체사 삭제", description = "IDX와 일치하는 단일 매체사정보를 삭제합니다")
     @Parameter(name = "idx", description = "매체사정보 IDX")
-    @DeleteMapping("mediaCompany/delete/{idx}")  // 회원탈퇴
+    @DeleteMapping("/delete/{idx}")  // 회원탈퇴
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 완료 "),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -173,7 +175,7 @@ public class MediaCompanyController {
 
 
     @Operation(summary = "매체사 검색", description = "조건에 맞는 매체사를 검색합니다")
-    @PostMapping("/meadiacompany/search")
+    @PostMapping("/search")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -195,4 +197,54 @@ public class MediaCompanyController {
                 ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @GetMapping({"/affiliateList","/",""})
+    public String myProfile(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<MediaCompany> mediaCompanyList = mediaCompanyService.getMediaCompanys();
+        model.addAttribute("mediaCompanyList",mediaCompanyList);
+        return "adminList";
+    }
+
+    @GetMapping("/affiliateWrite")
+    public String affiliateWrite(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "affiliateWrite";
+    }
+
+    @GetMapping("/affiliateWrite/{idx}")
+    public String adminEdit(HttpSession session,Model model,@PathVariable int idx){
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        MediaCompany mediaCompany = mediaCompanyService.getMediaCompany(idx);
+        if(mediaCompany==null)
+            return "error/404";
+        model.addAttribute("member", mediaCompany);
+        return "adminWrite";
+    }
+
 }

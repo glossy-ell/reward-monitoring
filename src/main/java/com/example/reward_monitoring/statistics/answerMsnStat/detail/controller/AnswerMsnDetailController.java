@@ -2,6 +2,8 @@ package com.example.reward_monitoring.statistics.answerMsnStat.detail.controller
 
 
 
+import com.example.reward_monitoring.general.member.entity.Member;
+import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.dto.AnswerMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.service.AnswerMsnDetailService;
@@ -26,6 +28,9 @@ public class AnswerMsnDetailController {
     @Autowired
     AnswerMsnDetailService answerMsnDetailService;
 
+    @Autowired
+    MemberRepository memberRepository;
+
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션 디테일 통계을 검색합니다")
     @PostMapping("/search")
     @ApiResponses(value = {
@@ -39,5 +44,16 @@ public class AnswerMsnDetailController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-
+    @RequestMapping({"/",""})
+    public String statQuiz(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        return "statQuiz";
+    }
 }

@@ -3,6 +3,7 @@ package com.example.reward_monitoring.mission.saveMsn.dto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -61,9 +62,9 @@ public class SaveMsnEditDto {
     private String searchKeyword;
     @Schema(description = "미션 데이터 타입" , example = "true,false")
     private Boolean dataType;
-    @Schema(description = "이미지 파일")
+    @Hidden
     private byte[] imageData;
-    @Schema(description = "이미지 파일명")
+    @Hidden
     private String imageName;
 
 

@@ -9,6 +9,8 @@ import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompan
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,8 +61,17 @@ public class MediaCompanyService {
             mediaCompany.setCompanyReturnUrl(dto.getCompanyReturnUrl());
         if(dto.getCompanyReturnParameter()!=null)
             mediaCompany.setCompanyReturnParameter(dto.getCompanyReturnParameter());
-        if(dto.getCompanyUserSaving()!=null)
-            mediaCompany.setCompanyUserSaving(dto.getCompanyUserSaving());
+        if(dto.getCompanyUserSaving()!=null) {
+            Gson gson = new Gson();
+            Map<String,Integer> data = gson.fromJson(dto.getCompanyUserSaving(), new TypeToken<Map<String, Integer>>(){}.getType());
+            if(data.get("quiz")!=null)
+                dto.setCompanyUserSavingQuiz(data.get("quiz"));
+            if(data.get("search")!=null)
+                dto.setCompanyUserSavingSearch(data.get("search"));
+            if(data.get("sightseeing")!=null)
+                dto.setCompanyUserSavingSightseeing(data.get("sightseeing"));
+        }
+
         if(dto.getMemo()!=null)
             mediaCompany.setMemo(dto.getMemo());
 
@@ -67,9 +79,19 @@ public class MediaCompanyService {
     }
 
     public MediaCompany add(MediaCompanyReadDto dto) {
+        Gson gson = new Gson();
+        if(dto.getCompanyUserSaving() !=null) {
+            Map<String, Integer> data = gson.fromJson(dto.getCompanyUserSaving(), new TypeToken<Map<String, Integer>>() {}.getType());
+            if (data.get("quiz") != null)
+                dto.setCompanyUserSavingQuiz(data.get("quiz"));
+            if (data.get("search") != null)
+                dto.setCompanyUserSavingSearch(data.get("search"));
+            if (data.get("sightseeing") != null)
+                dto.setCompanyUserSavingSightseeing(data.get("sightseeing"));
+        }
+
+
         Server server = serverRepository.findByServerUrl_(dto.getServerUrl());
-        log.info(dto.getApiKey());
-        log.info(dto.getCompanyID());
         return dto.toEntity(server);
     }
 

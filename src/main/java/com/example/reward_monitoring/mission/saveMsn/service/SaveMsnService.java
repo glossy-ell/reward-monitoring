@@ -4,6 +4,8 @@ package com.example.reward_monitoring.mission.saveMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
@@ -34,6 +36,8 @@ public class SaveMsnService {
     private SaveMsnRepository saveMsnRepository;
     @Autowired
     private AdvertiserRepository advertiserRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
     public SaveMsn edit(int idx, SaveMsnEditDto dto) {
         SaveMsn saveMsn =saveMsnRepository.findByIdx(idx);
@@ -74,8 +78,9 @@ public class SaveMsnService {
     }
 
     public SaveMsn add(SaveMsnReadDto dto) {
+        Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
-        return dto.toEntity(advertiserEntity);
+        return dto.toEntity(advertiserEntity,serverEntity);
     }
 
     public SaveMsn getSaveMsn(int idx) {
@@ -381,7 +386,7 @@ public class SaveMsnService {
                 dto.setDupParticipation(false);
             dto.setReEngagementDay((int)row.getCell(14).getNumericCellValue());
 
-            saveMsnRepository.save(dto.toEntity(advertiserEntity));
+            saveMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
         }
         return true;

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "Advertiser", description = "광고주 API")
+@RequestMapping("/Advertiser")
 public class AdvertiserController {
 
     @Autowired
@@ -192,6 +194,57 @@ public class AdvertiserController {
     }
 
 
+    @GetMapping({"/advertiserList","/",""})
+    public String userServerList(HttpSession session, Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
 
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        model.addAttribute("advertisers", advertisers);
+
+        return "/advertiserList";
+    }
+
+
+
+
+    @GetMapping("/advertiserWrite")
+    public String userServerWrite(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "advertiserWrite";
+    }
+
+    @GetMapping("/adminWrite/{idx}")
+    public String adminEdit(HttpSession session,Model model,@PathVariable int idx){
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        Advertiser advertiser = advertiserService.getAdvertiser(idx);
+        if(advertiser==null)
+            return "error/404";
+        model.addAttribute("advertiser", advertiser);
+        return "adminWrite";
+    }
 
 }

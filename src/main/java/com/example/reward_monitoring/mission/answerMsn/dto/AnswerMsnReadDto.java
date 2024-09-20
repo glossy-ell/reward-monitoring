@@ -3,6 +3,7 @@ package com.example.reward_monitoring.mission.answerMsn.dto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,31 +18,31 @@ import java.time.ZonedDateTime;
 public class AnswerMsnReadDto {
 
     @Schema(description = "미션 기본 수량", example = "50")
-    private Integer missionDefaultQty;
+    private Integer missionDefaultQty=50;
 
     @Schema(description = "미션 데일리 캡", example = "50")
-    private Integer missionDailyCap;
+    private Integer missionDailyCap=50;
 
     @Schema(description = "미션 노출 순서", example = "50")
-    private Integer missionExpOrder;
+    private Integer missionExpOrder=50;
 
     @Schema(description = "광고주", example = "원픽")
-    private String advertiser;
+    private String advertiser="";
 
     @Schema(description = "광고주 상세", example = "82652333318")
-    private String advertiserDetails;
+    private String advertiserDetails="";
 
     @Schema(description = "미션 제목", example = "무쇠웍")
-    private String missionTitle;
+    private String missionTitle="";
 
     @Schema(description = "미션 상세 제목", example = "무쇠웍")
-    private String missionDetailTitle;
+    private String missionDetailTitle="";
 
     @Schema(description = "미션 정답", example = "5107811272")
-    private String missionAnswer;
+    private String missionAnswer="";
 
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
-    private String missionContent;
+    private String missionContent="";
 
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
@@ -56,16 +57,16 @@ public class AnswerMsnReadDto {
     private LocalDate endAtCap;
 
     @Schema(description = "미션 사용여부", example = "true")
-    private Boolean missionActive;
+    private Boolean missionActive=true;
 
     @Schema(description = "미션 노출여부", example = "true")
-    private Boolean missionExposure;
+    private Boolean missionExposure=true;
 
     @Schema(description = "중복 참여 가능여부", example = "true")
-    private Boolean dupParticipation;
+    private Boolean dupParticipation=true;
 
     @Schema(description = "재참여 가능일", example = "1")
-    private Integer reEngagementDay;
+    private Integer reEngagementDay=1;
 
     @Schema(description = "제외 매체사 IDX(구분자 |)", example = "1|2|3|4|",nullable = true)
     private String exceptMedia;
@@ -97,13 +98,13 @@ public class AnswerMsnReadDto {
     @Schema(description = "미션 URL9", example = "www.abc.com",nullable = true)
     private String msnUrl9;
 
-    @Schema(description = "미션 데이터 타입", example = "false = 삭제 데이터 , true = 정상 데이터")
-    private Boolean dataType;
+    @Schema(description = "미션 데이터 타입", example = "true")
+    private Boolean dataType=true;
 
-    @Schema(description = "이미지 데이터", example = "이미지 데이터")
+    @Hidden
     private byte[] imageData;
 
-    @Schema(description = "이미지 이름", example = "-")
+    @Hidden
     private String imageName;
 
     @Schema(description = "서버url", example = "https://ocb.srk.co.kr")

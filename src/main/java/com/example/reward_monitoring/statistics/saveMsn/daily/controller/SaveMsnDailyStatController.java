@@ -1,6 +1,8 @@
 package com.example.reward_monitoring.statistics.saveMsn.daily.controller;
 
 
+import com.example.reward_monitoring.general.member.entity.Member;
+import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.statistics.saveMsn.daily.dto.SaveMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.service.SaveMsnDailyService;
@@ -8,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -32,7 +35,10 @@ public class SaveMsnDailyStatController {
     @Autowired
     SaveMsnDailyService saveMsnDailyService;
 
-    @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Operation(summary = "검색미션데일리 통계 검색", description = "조건에 맞는 검색미션 데일리 통계를 검색합니다")
     @PostMapping("/search")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -77,5 +83,17 @@ public class SaveMsnDailyStatController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+    @RequestMapping({"/",""})
+    public String statDailySightseeing(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        return "statDailySightseeing";
     }
 }

@@ -2,7 +2,9 @@ package com.example.reward_monitoring.mission.saveMsn.dto;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import lombok.Getter;
@@ -55,19 +57,23 @@ public class SaveMsnReadDto {
     private String msnFinalUrl;
     @Schema(description = "검색 키워드", example="검색 키워드")
     private String searchKeyword;
-    @Schema(description = "미션 데이터 타입" , example = "true,false")
+    @Schema(description = "미션 데이터 타입" , example = "true")
     private Boolean dataType;
-    @Schema(description = "이미지 파일")
+    @Hidden
     private byte[] imageData;
-    @Schema(description = "이미지 파일명")
+    @Hidden
     private String imageName;
 
-    public SaveMsn toEntity(Advertiser advertiserEntity){
+    @Schema(description = "서버url", example = "https://ocb.srk.co.kr")
+    private String url;
+
+    public SaveMsn toEntity(Advertiser advertiserEntity, Server serverEntity){
 
         return SaveMsn.builder()
                 .missionDefaultQty(missionDefaultQty)
                 .missionDailyCap(missionDailyCap)
                 .advertiser(advertiserEntity)
+                .server(serverEntity)
                 .advertiserDetails(advertiserDetails)
                 .missionTitle(missionTitle)
                 .missionDetailTitle(missionDetailTitle)

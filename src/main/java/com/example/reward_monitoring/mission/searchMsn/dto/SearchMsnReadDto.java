@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.searchMsn.dto;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -63,12 +64,15 @@ public class SearchMsnReadDto {
     private byte[] imageData;
     @Schema(description = "이미지 파일명")
     private String imageName;
-    public SearchMsn toEntity(Advertiser advertiserEntity){
+    @Schema(description = "서버url", example = "https://ocb.srk.co.kr")
+    private String url;
+    public SearchMsn toEntity(Advertiser advertiserEntity, Server serverEntity){
 
         return SearchMsn.builder()
                 .missionDefaultQty(missionDefaultQty)
                 .missionDailyCap(missionDailyCap)
                 .advertiser(advertiserEntity)
+                .server(serverEntity)
                 .missionTitle(missionTitle)
                 .searchKeyword(searchKeyword)
                 .startAtMsn(startAtMsn)

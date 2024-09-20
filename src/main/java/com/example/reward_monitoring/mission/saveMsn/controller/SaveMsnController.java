@@ -3,6 +3,7 @@ package com.example.reward_monitoring.mission.saveMsn.controller;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +33,6 @@ import java.util.List;
 
 @Controller
 @Tag(name = "saveMsn", description = "저장미션 API")
-@RequestMapping(value = "/Mission/sightseeingList")
 public class SaveMsnController {
     @Autowired
     private SaveMsnRepository saveMsnRepository;
@@ -43,7 +44,7 @@ public class SaveMsnController {
 
     @Operation(summary = "저장미션 정보 수정", description = "저장미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 저장미션의 IDX")
-    @PostMapping("/edit/{idx}")
+    @PostMapping("/Mission/sightseeingList/edit/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -94,7 +95,7 @@ public class SaveMsnController {
     }
     
     @Operation(summary = "저장미션 생성", description = "저장미션 정보를 생성합니다")
-    @PostMapping("/add")
+    @PostMapping("/Mission/sightseeingList/add")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -142,7 +143,7 @@ public class SaveMsnController {
 
     @Operation(summary = "저장미션 정보 요청", description = "IDX와 일치하는 미션정보를 반환합니다")
     @Parameter(name = "idx", description = "관리자 IDX")
-    @GetMapping("{idx}")
+    @GetMapping("/Mission/sightseeingList/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "미션 검색 완료 "),
             @ApiResponse(responseCode = "204", description = "일치하는 미션을 찾을 수 없음"),
@@ -169,7 +170,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "전체 미션정보 요청", description = "전체 미션 정보를 반환합니다")
-    @GetMapping("/saveMsns")  //전체 광고주 리스트 반환
+    @GetMapping("/Mission/sightseeingList/all")  //전체 광고주 리스트 반환
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -193,7 +194,7 @@ public class SaveMsnController {
 
     @Operation(summary = "미션 삭제", description = "IDX와 일치하는 단일 미션정보를 삭제합니다")
     @Parameter(name = "idx", description = "미션 IDX")
-    @DeleteMapping("/delete/{idx}")
+    @DeleteMapping("/Mission/sightseeingList/delete/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 완료 "),
             @ApiResponse(responseCode = "400", description = "일치하는 미션이 없음"),
@@ -225,7 +226,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "저장미션 검색", description = "조건에 맞는 저장미션을 검색합니다")
-    @PostMapping("/search")
+    @PostMapping("/Mission/sightseeingList/search")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -251,7 +252,7 @@ public class SaveMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
     @Operation(summary = "저장미션 현재 리스트 소진량 검색", description = "현재 리스트 소진량 페이지에서 조건에 맞는 저장미션을 검색합니다")
-    @PostMapping("/saveMsnByConsumed")
+    @PostMapping("/Mission/sightseeingList/saveMsnByConsumed")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -280,7 +281,7 @@ public class SaveMsnController {
     }
     
     @Operation(summary = "모든 미션 종료", description = "!!DB의 모든 미션을 종료하고 비노출처리합니다!!")
-    @GetMapping("/endAll")
+    @GetMapping("/Mission/sightseeingList/endAll")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "모든 미션 종료 처리"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -312,7 +313,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "엑셀 다운로드", description = "저장미션 리스트 엑셀파일을 다운로드합니다")
-    @GetMapping("/saveMsn/excel/download")
+    @GetMapping("/Mission/sightseeingList/excel/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
@@ -340,7 +341,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "엑셀 업로드", description = "업로드한 엑셀파일을 DTO로 변환하여 DB에 추가합니다.")
-    @PostMapping("/saveMsn/excel/upload")
+    @PostMapping("/Mission/sightseeingList/excel/upload")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
@@ -354,7 +355,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "미션 사용여부 변경", description = "미션 사용여부를 변경합니다")
-    @PostMapping("/reEngagement/{idx}")
+    @PostMapping("/Mission/sightseeingList/reEngagement/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -372,7 +373,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "미션 노출여부 변경", description = "미션 노출여부를 변경합니다.")
-    @PostMapping("/expose/{idx}")
+    @PostMapping("/Mission/sightseeingList/expose/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -389,7 +390,7 @@ public class SaveMsnController {
     }
 
     @Operation(summary = "가능일 변경", description = "가능일을 변경합니다")
-    @PostMapping("/{idx}/changeDay")
+    @PostMapping("/Mission/sightseeingList/{idx}/changeDay")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -405,20 +406,88 @@ public class SaveMsnController {
     }
 
 
-    @GetMapping("")
-    public String quizList(){
-        return "searchList";
+    @GetMapping("/Mission/sightseeingList")
+    public String quizList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<SaveMsn> saveMsns = saveMsnService.getSaveMsns();
+        model.addAttribute("saveMsns",saveMsns);
+        return "sightseeingList";
     }
 
-    @GetMapping("/Mission/quizCurrentList")
-    public void quizCurrentList(HttpSession session, HttpServletResponse response) throws IOException {
-//        // 권한 검사 로직 (예시)
-//        if (!hasPermission()) {
-//            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized"); // 401 오류를 반환
-//            return;
-//        }
-//
-//        // 권한이 있을 경우 다른 페이지로 리다이렉트
-//        response.sendRedirect("/anotherPage"); // 이동할 URL
+
+
+    @GetMapping("/Mission/sightseeingWrite")
+    public String sightSeeingWrite(HttpSession session) throws IOException {
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "sightseeingWrite";
+
+    }
+
+    @GetMapping("/Mission/sightseeingWrite/{idx}")
+    public String sightSeeingEdit(HttpSession session, Model model , @PathVariable int idx) {
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+
+        SaveMsn saveMsn = saveMsnService.getSaveMsn(idx);
+        if(saveMsn==null)
+            return "error/404";
+        model.addAttribute("saveMsn", saveMsn);
+        return "sightseeingWrite";
+    }
+
+    @GetMapping("/Mission/sightseeingCurrentList")
+    public String sightSeeingCurrent(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+
+        List<SaveMsn> saveMsns = saveMsnService.getSaveMsns();
+        model.addAttribute("saveMsns",saveMsns);
+        return "sightseeingCurrentList";
+    }
+
+    @GetMapping("/Mission/sightseeingMultiTempList")
+    public String sightSeeingMultiTempList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "sightseeingMultiTempList";
     }
 }

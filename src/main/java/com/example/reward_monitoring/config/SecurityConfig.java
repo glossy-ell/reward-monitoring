@@ -94,7 +94,7 @@ public class SecurityConfig {
                                 .usernameParameter("id")
                                 .passwordParameter("password")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/Profile/myProfileWrite")
                                 .successHandler(customAuthenticationSuccessHandler())
                                 .failureHandler(customAuthenticationFailureHandler())
 

@@ -20,7 +20,7 @@ import java.time.LocalDate;
 public class SearchMsnSumStat {
 
     @Comment("광고주 정보)")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "advertiser_idx", referencedColumnName = "idx"),
             @JoinColumn(name = "advertiser", referencedColumnName = "advertiser"),
@@ -29,7 +29,7 @@ public class SearchMsnSumStat {
     Advertiser advertiser;
 
     @Comment("매체사 IDX")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "mediaCompany_idx", referencedColumnName = "idx"),
             @JoinColumn(name = "company_name", referencedColumnName = "company_name")
@@ -38,7 +38,7 @@ public class SearchMsnSumStat {
     MediaCompany mediaCompany;
 
     @Comment("서버URL(외래키)")
-    @ManyToOne(cascade=CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumn(name="server_url", referencedColumnName = "server_url")
     @Schema(description = "서버URL(외래키)")
     Server server;

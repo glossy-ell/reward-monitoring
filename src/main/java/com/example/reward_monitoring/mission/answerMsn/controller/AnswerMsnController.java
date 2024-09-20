@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,6 @@ import java.util.List;
 
 @Controller
 @Tag(name = "AnswerMsn", description = "정답미션관리 API")
-@RequestMapping("/Mission/quizList")
 public class AnswerMsnController {
     @Autowired
     private AnswerMsnRepository answerMsnRepository;
@@ -44,7 +44,7 @@ public class AnswerMsnController {
 
     @Operation(summary = "정답미션 정보 수정", description = "정답미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 정답미션의 IDX")
-    @PostMapping("/edit/{idx}")
+    @PostMapping("/Mission/quizList/edit/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -97,7 +97,7 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "정답미션 생성", description = "정답미션 정보를 생성합니다")
-    @PostMapping("/add")
+    @PostMapping("/Mission/quizWrite/add")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -147,7 +147,7 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "정답미션 정보 요청", description = "IDX와 일치하는 미션정보를 반환합니다")
-    @Parameter(name = "idx", description = "관리자 IDX")
+    @Parameter(name = "/Mission/quizList/idx", description = "관리자 IDX")
     @GetMapping("/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "미션 검색 완료 "),
@@ -179,7 +179,7 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "전체 미션정보 요청", description = "전체 미션 정보를 반환합니다")
-    @GetMapping("/answerMsns")
+    @GetMapping("/Mission/quizList/answerMsns")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -205,7 +205,7 @@ public class AnswerMsnController {
 
     @Operation(summary = "미션 삭제", description = "IDX와 일치하는 단일 미션정보를 삭제합니다")
     @Parameter(name = "idx", description = "미션 IDX")
-    @DeleteMapping("/delete/{idx}")
+    @DeleteMapping("/Mission/quizList/delete/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 완료 "),
             @ApiResponse(responseCode = "400", description = "일치하는 미션이 없음"),
@@ -238,7 +238,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
-    @PostMapping("/search")
+    @PostMapping("/Mission/quizList/search")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -297,7 +297,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "모든 미션 종료", description = "!!DB의 모든 미션을 종료하고 비노출처리합니다!!")
-    @GetMapping("/endAll")
+    @GetMapping("/Mission/quizList/endAll")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "모든 미션 종료 처리"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -330,7 +330,7 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "엑셀 다운로드", description = "정답미션 리스트 엑셀파일을 다운로드합니다")
-    @GetMapping("/excel/download")
+    @GetMapping("/Mission/quizList/excel/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -360,7 +360,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "엑셀 업로드", description = "업로드한 엑셀파일을 DTO로 변환하여 DB에 추가합니다.")
-    @PostMapping("/excel/upload")
+    @PostMapping("/Mission/quizList/excel/upload")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -394,7 +394,7 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "미션 사용여부 변경", description = "미션 사용여부를 변경합니다")
-    @PostMapping("/reEngagement/{idx}")
+    @PostMapping("/Mission/quizList/reEngagement/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -428,7 +428,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "미션 노출여부 변경", description = "미션 노출여부를 변경합니다.")
-    @PostMapping("/expose/{idx}")
+    @PostMapping("/Mission/quizList/expose/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -460,7 +460,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "가능일 변경", description = "가능일을 변경합니다")
-    @PostMapping("/{idx}/changeDay")
+    @PostMapping("/Mission/quizList/{idx}/changeDay")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -493,35 +493,87 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    @GetMapping("/Mission/quizList")
+    public String quizList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
 
-    @GetMapping("/")
-    public String quizList(HttpSession session){
-//        Member sessionMember= (Member) session.getAttribute("member");
-//        if(sessionMember == null){
-//            return "redirect:/loginForm";
-//        } // 세션만료
-//
-//        Member member =memberRepository.findById( sessionMember.getId());
-//        if (member == null) {
-//            return "redirect:/loginForm";
-//        }//데이터 없음
-//
-//        if(member.isNauthAnswerMsn()) // 비권한 활성화시
-//            return "redirect:/accessDenied";
-
-
+        List<AnswerMsn> answerMsns = answerMsnService.getAnswerMsns();
+        model.addAttribute("answerMsns",answerMsns);
         return "quizList";
     }
 
+
+
+    @GetMapping("/Mission/quizWrite")
+    public String quizWrite(HttpSession session) throws IOException {
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "quizWrite";
+
+    }
+
+    @GetMapping("/Mission/quizWrite/{idx}")
+    public String quizEdit(HttpSession session, Model model , @PathVariable int idx) {
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+
+        AnswerMsn answerMsn = answerMsnService.getAnswerMsn(idx);
+        if(answerMsn==null)
+            return "error/404";
+        model.addAttribute("answerMsn", answerMsn);
+        return "quizWrite";
+    }
+
     @GetMapping("/Mission/quizCurrentList")
-    public void quizCurrentList(HttpSession session, HttpServletResponse response) throws IOException {
-//        // 권한 검사 로직 (예시)
-//        if (!hasPermission()) {
-//            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized"); // 401 오류를 반환
-//            return;
-//        }
-//
-//        // 권한이 있을 경우 다른 페이지로 리다이렉트
-//        response.sendRedirect("/anotherPage"); // 이동할 URL
+    public String quizCurrentList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<AnswerMsn> answerMsns = answerMsnService.getAnswerMsns();
+        model.addAttribute("answerMsns",answerMsns);
+        return "quizCurrentList";
+    }
+
+    @GetMapping("/Mission/quizMultiTempList")
+    public String quizMultiTempList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "quizMultiTempList";
     }
 }

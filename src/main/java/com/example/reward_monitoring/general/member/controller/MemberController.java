@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "Member", description = "관리자 api ")
+@RequestMapping("/Admin")
 public class MemberController {
 
 
@@ -46,27 +48,7 @@ public class MemberController {
     private MemberService memberService;
 
 
-    @Operation(summary = "본인 회원정보 조회", description = "로그인한 유저의 회원정보를 가져옵니다.")
-    @GetMapping("/Profile/myProfileWrite")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원정보 조회 성공"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "404", description = "조회 실패(세션은 있지만 세션정보가 DB에 없음)")
-    })
-    public ResponseEntity<Member> myProfile(HttpSession session){
 
-        Member sessionMember= (Member) session.getAttribute("member");
-        if(sessionMember == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } // 세션만료
-
-        Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }//데이터 없음
-
-        return ResponseEntity.status(HttpStatus.OK).body(member);
-    }
 
     @Operation(summary = "본인 회원정보수정", description = " 본인 회원정보를 수정합니다.")
     @PostMapping("/Profile/myProfileWrite")
@@ -281,12 +263,60 @@ public class MemberController {
         }//데이터 없음
         if(member.isNauthMember()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-
         List<Member> result = memberService.searchMember(dto);
         return (result != null) ?
                 ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
+
+    @GetMapping({"/adminList","/",""})
+    public String myProfile(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        List<Member> members = memberService.getMembers();
+        model.addAttribute("members",members);
+        return "adminList";
+    }
+
+    @GetMapping("/adminWrite")
+    public String adminWrite(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        return "adminWrite";
+    }
+
+    @GetMapping("/adminWrite/{idx}")
+    public String adminEdit(HttpSession session,Model model,@PathVariable int idx){
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        Member foundMember = memberService.getMember(idx);
+        if(foundMember==null)
+            return "error/404";
+        model.addAttribute("member", foundMember);
+        return "adminWrite";
     }
 
 

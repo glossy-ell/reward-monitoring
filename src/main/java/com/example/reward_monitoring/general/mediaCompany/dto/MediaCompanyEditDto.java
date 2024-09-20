@@ -4,6 +4,7 @@ package com.example.reward_monitoring.general.mediaCompany.dto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.model.Type;
 import com.example.reward_monitoring.general.userServer.entity.Server;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import lombok.Builder;
@@ -36,10 +37,20 @@ public class MediaCompanyEditDto {
     private String companyReturnUrl;
     @Schema(description = "매체사 리턴 파라미터 ")
     private String companyReturnParameter;
-    @Schema(description = "매체사 유저 적립금 ")
-    private  Integer companyUserSaving;
     @Schema(description = "관리자 메모 ")
     private String memo;
+
+    @Schema(description = "관리자 메모 ",example = "{\"quiz\":5,\"search\":5,\"sightseeing\":5}")
+    private String companyUserSaving;
+
+    @Hidden
+    private Integer companyUserSavingQuiz;
+
+    @Hidden
+    private Integer  companyUserSavingSearch;
+
+    @Hidden
+    private Integer companyUserSavingSightseeing;
 
 
 }

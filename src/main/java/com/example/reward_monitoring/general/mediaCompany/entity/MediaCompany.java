@@ -32,7 +32,7 @@ public class MediaCompany {
     private  String companyName;
 
     @Comment("사용자 서버(외래키)")
-    @ManyToOne(cascade=CascadeType.REMOVE)
+    @ManyToOne()
     @JoinColumn(name="server_url", referencedColumnName = "server_url" , nullable = false )
     @Schema(description = "사용자 서버", example = "https://ocb.srk.co.kr")
     Server server;
@@ -94,16 +94,30 @@ public class MediaCompany {
     @Schema(description = "매체사 리턴 파라미터 ")
     private String companyReturnParameter;
 
+
     @Builder.Default
-    @Comment("매체사 유저 적립금")
-    @Column(name = "company_user_saving")
-    @Schema(description = "매체사 유저 적립금 ")
-    private  int companyUserSaving=0;
+    @Comment("매체사 유저 적립금-정답미션")
+    @Column(name = "company_user_saving_quiz")
+    @Schema(description = "매체사 유저 적립금-정답미션")
+    private  int companyUserSavingQuiz=5;
+
+    @Builder.Default
+    @Comment("매체사 유저 적립금-검색미션")
+    @Column(name = "company_user_saving_search")
+    @Schema(description = "매체사 유저 적립금-검색미션")
+    private  int companyUserSavingSearch=5;
+
+    @Builder.Default
+    @Comment("매체사 유저 적립금-저장미션")
+    @Column(name = "company_user_saving_sightseeing")
+    @Schema(description = "매체사 유저 적립금-저장미션")
+    private  int companyUserSavingSightseeing=5;
 
     @Comment("관리자 메모")
     @Column(name = "memo")
     @Schema(description = "관리자 메모 ")
     private String memo;
+
 
 
     @PrePersist
@@ -114,7 +128,8 @@ public class MediaCompany {
 
     @Builder
     public MediaCompany(String companyName,Server server,String companyID,String password,String companyManager,String companyManagePhoneNum,String APIKey
-    ,boolean isActive,Type type,String companyReturnUrl,String companyReturnParameter,int companyUserSaving,String memo) {
+    ,boolean isActive,Type type,String companyReturnUrl,String companyReturnParameter,String memo,int companyUserSavingQuiz,
+                        int companyUserSavingSearch, int companyUserSavingSightseeing) {
     this.companyName = companyName;
     this.server = server;
     this.companyID = companyID;
@@ -126,7 +141,10 @@ public class MediaCompany {
     this.type = type;
     this.companyReturnUrl = companyReturnUrl;
     this.companyReturnParameter = companyReturnParameter;
-    this.companyUserSaving = companyUserSaving;
+    this.memo = memo;
+    this.companyUserSavingQuiz = companyUserSavingQuiz;
+    this.companyUserSavingSearch = companyUserSavingSearch;
+    this.companyUserSavingSightseeing = companyUserSavingSightseeing;
 
     }
 }

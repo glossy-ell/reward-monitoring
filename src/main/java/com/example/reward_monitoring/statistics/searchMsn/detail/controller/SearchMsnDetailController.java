@@ -3,6 +3,8 @@ package com.example.reward_monitoring.statistics.searchMsn.detail.controller;
 
 
 
+import com.example.reward_monitoring.general.member.entity.Member;
+import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.statistics.searchMsn.detail.dto.SearchMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.detail.entity.SearchMsnDetailsStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.service.SearchMsnDetailService;
@@ -27,6 +29,9 @@ public class SearchMsnDetailController {
     @Autowired
     SearchMsnDetailService searchMsnDetailService;
 
+    @Autowired
+    MemberRepository memberRepository;
+
     @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션 디테일 통계을 검색합니다")
     @PostMapping("/search")
     @ApiResponses(value = {
@@ -40,5 +45,16 @@ public class SearchMsnDetailController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-
+    @RequestMapping({"/",""})
+    public String statSearch(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        return "statSearch";
+    }
 }

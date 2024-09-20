@@ -21,16 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Controller
 @Tag(name = "userServer", description = "사용자 서버 API")
-@RequestMapping("/Site/userServerList")
+@RequestMapping("/Site")
 public class ServerController {
 
     @Autowired
@@ -197,4 +195,52 @@ public class ServerController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    @GetMapping({"/userServerList","/",""})
+    public String userServerList(HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<Server> servers = serverService.getServers();
+        model.addAttribute("servers",servers);
+        return "userServerList";
+    }
+
+    @GetMapping("/userServerWrite")
+    public String userServerWrite(HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+
+        return "userServerWrite";
+    }
+
+    @GetMapping("/userServerWrite/{idx}")
+    public String userServerEdit(HttpSession session, Model model,@PathVariable int idx){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        Server server = serverService.getServer(idx);
+        if(server==null)
+            return "error/404";
+        model.addAttribute("member", server);
+
+        return "userServerWrite";
+    }
 }
