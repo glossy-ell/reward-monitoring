@@ -124,7 +124,7 @@
 
 		<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
 			<div class="k-header-mobile__logo">
-				<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite"></a>
+				<a href="myProfileWrite.html"></a>
 			</div>
 			<div class="k-header-mobile__toolbar">
 				<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
@@ -141,7 +141,7 @@
 
 					<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
 						<div class="k-aside__brand-logo">
-							<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite">
+							<a href="myProfileWrite.html">
 
 							</a>
 						</div>
@@ -768,34 +768,52 @@
 											<!-- //버튼 영역 -->											
 
                                             <!-- 툴바 영역 -->
-											<div class="toolbar col-xl-6 col-lg-12">                                                
-                                                <div class="k-form__group">
-													<div class="row">                                                        
-                                                        <div class="input-group col-xl-3 col-lg-3 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn form-control k_"><select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-<option value="">= 광고주 =</option>
-<option value="1">시크릿 K</option>
-<option value="2">올앤올</option>
-<option value="3">애드닷</option>
-<option value="4">탑플랜</option>
-<option value="5">네이버스</option>
-<option value="6">키봅</option>
-<option value="7">셀렉티드</option>
-<option value="8">골든커머스</option>
-<option value="9">원픽</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 광고주 ="><div class="filter-option"><div class="filter-option-inner">= 광고주 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
-														</div>	
-                                                        <div class="input-group col-xl-3 col-lg-3 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="1" selected="selected">https://ocb.srk.co.kr</option>
-</select><button type="button" class="btn dropdown-toggle btn-light" data-toggle="dropdown" role="button" title="https://ocb.srk.co.kr"><div class="filter-option"><div class="filter-option-inner">https://ocb.srk.co.kr</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
-														</div>	
-                                                        <div class="input-group col-xl-6 col-lg-6 col-sm-12">
+											<div class="toolbar col-xl-6 col-lg-12">
+												<div class="k-form__group">
+													<div class="row">
+														<div class="input-group col-xl-3 col-lg-3 col-sm-12">
+															<div class="dropdown bootstrap-select input-group-btn form-control k_">
+																<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 광고주 =</option>
+																	<option value="1">시크릿 K</option>
+																	<option value="2">올앤올</option>
+																	<option value="3">애드닷</option>
+																	<option value="4">탑플랜</option>
+																	<option value="5">네이버스</option>
+																	<option value="6">키봅</option>
+																	<option value="7">셀렉티드</option>
+																	<option value="8">골든커머스</option>
+																	<option value="9">원픽</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="input-group col-xl-3 col-lg-3 col-sm-12">
+															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="1" selected="selected">https://ocb.srk.co.kr</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="input-group col-xl-6 col-lg-6 col-sm-12">
 															<div class="input-group-prepend">
 																<select name="sOpt" class="custom-select form-control">
-<option value="sTitle">검색 미션 제목</option>
-<option value="sAdvertiserDetail">광고주 상세</option>
-</select>
+																	<option value="sTitle">정답 미션 제목</option>
+																	<option value="sAdvertiserDetail">광고주 상세</option>
+																</select>
 															</div>
 															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
@@ -803,7 +821,7 @@
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
 															</div>
 															<input type="text" value="" style="display:none;">
-														</div>     
+														</div>
 													</div>
 												</div>
 											</div>
@@ -811,7 +829,7 @@
 
 										</div>										
 									</form>
-									<div class="table-responsive">
+									<div class="table-responsive"> <!--데이터 들어가는부분 -->
 										<div class="mb-3">Total : 5 Count (1/1)Page</div>
 										<table class="table table--slim table-bordered table-hover">
 											<thead class="thead-light">
@@ -896,7 +914,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/Mission/searchCurrentList#" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="searchCurrentList.html" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

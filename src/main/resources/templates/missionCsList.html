@@ -124,7 +124,7 @@
 
 		<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
 			<div class="k-header-mobile__logo">
-				<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite"></a>
+				<a href="myProfileWrite.html"></a>
 			</div>
 			<div class="k-header-mobile__toolbar">
 				<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
@@ -141,7 +141,7 @@
 
 					<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
 						<div class="k-aside__brand-logo">
-							<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite">
+							<a href="myProfileWrite.html">
 
 							</a>
 						</div>
@@ -511,20 +511,60 @@
 												<div class="k-form__group">
 													<div class="row">
                                                         <div class="input-group col-xl-3 col-lg-12 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sCsType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="">= 문의 유형 =</option>
-<option value="1">정답/제목 확인</option>
-<option value="2">URL 확인</option>
-<option value="3">데이터 유실</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 문의 유형 =" aria-expanded="false"><div class="filter-option"><div class="filter-option-inner">= 문의 유형 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu" role="combobox" x-placement="bottom-start" style="max-height: 854px; overflow: hidden; min-height: 160px; position: absolute; transform: translate3d(1px, 43px, 0px); top: 0px; left: 0px; will-change: transform;"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1" style="max-height: 824px; overflow-y: auto; min-height: 130px;"><ul class="dropdown-menu inner show"><li class="selected active"><a role="option" class="dropdown-item selected active" aria-disabled="false" tabindex="0" aria-selected="true"><span class=" bs-ok-default check-mark"></span><span class="text">= 문의 유형 =</span></a></li><li><a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false"><span class=" bs-ok-default check-mark"></span><span class="text">정답/제목 확인</span></a></li><li><a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false"><span class=" bs-ok-default check-mark"></span><span class="text">URL 확인</span></a></li><li><a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false"><span class=" bs-ok-default check-mark"></span><span class="text">데이터 유실</span></a></li></ul></div></div></div>
+															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sCsType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 문의 유형 =</option>
+																	<option value="1">정답/제목 확인</option>
+																	<option value="2">URL 확인</option>
+																	<option value="3">데이터 유실</option>
+																</select>
+																<div class="dropdown-menu" role="combobox" x-placement="bottom-start" style="max-height: 854px; overflow: hidden; min-height: 160px; position: absolute; transform: translate3d(1px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1" style="max-height: 824px; overflow-y: auto; min-height: 130px;">
+																		<ul class="dropdown-menu inner show">
+																			<li class="selected active">
+																				<a role="option" class="dropdown-item selected active" aria-disabled="false" tabindex="0" aria-selected="true">
+																					<span class=" bs-ok-default check-mark"></span>
+																					<span class="text">= 문의 유형 =</span>
+																				</a>
+																			</li>
+																			<li>
+																				<a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false">
+																					<span class=" bs-ok-default check-mark"></span>
+																					<span class="text">정답/제목 확인</span>
+																				</a>
+																			</li>
+																			<li>
+																				<a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false">
+																					<span class=" bs-ok-default check-mark"></span><span class="text">URL 확인</span>
+																				</a>
+																			</li>
+																			<li>
+																				<a role="option" class="dropdown-item" aria-disabled="false" tabindex="0" aria-selected="false">
+																					<span class=" bs-ok-default check-mark"></span>
+																					<span class="text">데이터 유실</span>
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</div>
+															</div>
 														</div>		
                                                         <div class="input-group col-xl-3 col-lg-12 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sMissionType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="">= 미션 타입 =</option>
-<option value="Q">정답 미션</option>
-<option value="R">검색 미션</option>
-<option value="S">저장 미션</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 미션 타입 ="><div class="filter-option"><div class="filter-option-inner">= 미션 타입 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sMissionType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 미션 타입 =</option>
+																	<option value="Q">정답 미션</option>
+																	<option value="R">검색 미션</option>
+																	<option value="S">저장 미션</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
 														</div>		
 														<div class="k-form__control col-xl-6 col-lg-12">
 															<div class="input-daterange input-group">
@@ -542,8 +582,8 @@
 														<div class="input-group col-lg-12 col-sm-12">
 															<div class="input-group-prepend">
 																<select name="sOpt" class="custom-select form-control">
-<option value="sTitle">미션 제목</option>
-</select>
+																	<option value="sTitle">미션 제목</option>
+																</select>
 															</div>
 															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
@@ -559,7 +599,7 @@
 
 										</div>										
 									</form>
-									<div class="table-responsive">
+									<div class="table-responsive"> <!--데이터 들어가는부분 -->
 										<div class="mb-3">Total : 5011 Count (1/51)Page</div>
 										<table class="table table--slim table-bordered table-hover">
 											<thead class="thead-light">
@@ -584,7 +624,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/MissionCs/missionCsList#" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="missionCsList.html" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

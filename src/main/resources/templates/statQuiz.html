@@ -125,7 +125,7 @@
 
 		<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
 			<div class="k-header-mobile__logo">
-				<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite"></a>
+				<a href="myProfileWrite.html"></a>
 			</div>
 			<div class="k-header-mobile__toolbar">
 				<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
@@ -142,7 +142,7 @@
 
 					<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
 						<div class="k-aside__brand-logo">
-							<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite">
+							<a href="myProfileWrite.html">
 
 							</a>
 						</div>
@@ -510,9 +510,18 @@
 												<div class="k-form__group">
 													<div class="row">
 														<div class="input-group col-lg-3 col-sm-12"> 
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="1" selected="selected">https://ocb.srk.co.kr</option>
-</select><button type="button" class="btn dropdown-toggle btn-light" data-toggle="dropdown" role="button" title="https://ocb.srk.co.kr"><div class="filter-option"><div class="filter-option-inner">https://ocb.srk.co.kr</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="1" selected="selected">https://ocb.srk.co.kr</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
 														</div>                                                        
 														<div class="k-form__control col-xl-9 col-lg-12">
 															<!-- datepicker 검색 기간 지정 -->
@@ -537,26 +546,35 @@
                                                 <div class="k-form__group">
 													<div class="row">	   
                                                         <div class="input-group col-lg-4 col-sm-12"> 
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control"><select name="sAffiliateIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-<option value="">= 매체사 =</option>
-<option value="1">개발 서버 (1)</option>
-<option value="2">오케이캐시백(QA) (2)</option>
-<option value="3">오케이캐시백(운영) (3)</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 매체사 ="><div class="filter-option"><div class="filter-option-inner">= 매체사 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																<select name="sAffiliateIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 매체사 =</option>
+																	<option value="1">개발 서버 (1)</option>
+																	<option value="2">오케이캐시백(QA) (2)</option>
+																	<option value="3">오케이캐시백(운영) (3)</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
 														</div>                                                        
                                                         <div class="input-group col-lg-4 col-sm-12">
 															<select name="sIsAbuse" class="form-control" onchange="commSearch();">
-<option value="">= 어뷰상태 =</option>
-<option value="1">정상</option>
-<option value="2">어뷰</option>
-</select>
+																<option value="">= 어뷰상태 =</option>
+																<option value="1">정상</option>
+																<option value="2">어뷰</option>
+															</select>
 														</div>
                                                         <div class="input-group col-lg-4 col-sm-12">
 															<select name="sResponseStatus" class="form-control" onchange="commSearch();">
-<option value="">= 응답 확인 =</option>
-<option value="1">성공</option>
-<option value="2">실패</option>
-</select>
+																<option value="">= 응답 확인 =</option>
+																<option value="1">성공</option>
+																<option value="2">실패</option>
+															</select>
 														</div>
                                                         
 													</div>
@@ -565,31 +583,40 @@
 												<div class="k-form__group">                                                    
 													<div class="row">	
                                                         <div class="input-group col-lg-3 col-sm-12">
-                                                            <div class="dropdown bootstrap-select input-group-btn form-control k_"><select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-<option value="">= 광고주 =</option>
-<option value="1">시크릿 K</option>
-<option value="2">올앤올</option>
-<option value="3">애드닷</option>
-<option value="4">탑플랜</option>
-<option value="5">네이버스</option>
-<option value="6">키봅</option>
-<option value="7">셀렉티드</option>
-<option value="8">골든커머스</option>
-<option value="9">원픽</option>
-</select><button type="button" class="btn dropdown-toggle bs-placeholder btn-light" data-toggle="dropdown" role="button" title="= 광고주 ="><div class="filter-option"><div class="filter-option-inner">= 광고주 =</div></div>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+                                                            <div class="dropdown bootstrap-select input-group-btn form-control k_">
+																<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																	<option value="">= 광고주 =</option>
+																	<option value="1">시크릿 K</option>
+																	<option value="2">올앤올</option>
+																	<option value="3">애드닷</option>
+																	<option value="4">탑플랜</option>
+																	<option value="5">네이버스</option>
+																	<option value="6">키봅</option>
+																	<option value="7">셀렉티드</option>
+																	<option value="8">골든커머스</option>
+																	<option value="9">원픽</option>
+																</select>
+																<div class="dropdown-menu " role="combobox">
+																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																</div>
+															</div>
                                                         </div>
                                                         <div class="input-group col-lg-3 col-sm-12">	
                                                             <select name="sOrder" class="form-control" onchange="commSearch();">
-<option value="">= 정렬 방식 =</option>
-<option value="statQuizIdx">최신순</option>
-<option value="memberId">회원별</option>
-</select>
+																<option value="">= 정렬 방식 =</option>
+																<option value="statQuizIdx">최신순</option>
+																<option value="memberId">회원별</option>
+															</select>
 														</div>
 														<div class="input-group col-lg-6 col-sm-12">
 															<div class="input-group-prepend">
 																<select name="sOpt" class="custom-select form-control">
-<option value="sQuizIdx">정답 미션 IDX</option>
-</select>
+																	<option value="sQuizIdx">정답 미션 IDX</option>
+																</select>
 															</div>
 															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
@@ -606,7 +633,7 @@
 										</div>
 									</form>
 
-									<div class="table-responsive">
+									<div class="table-responsive"> <!--데이터 들어가는부분 -->
 										<div class="mb-3">Total : 14014243 Count (1/140143)Page</div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
@@ -636,7 +663,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/Statistics/statQuiz#" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="statQuiz.html" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>
