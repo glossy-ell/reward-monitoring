@@ -5,21 +5,16 @@
     <title>Admin</title>
     <!-- favicon -->
     <link rel="shortcut icon" href="../static/images/auth_admin_bg.png" type="image/x-icon">
-
     <!-- Style Sheet -->
     <link rel="stylesheet" href="../static/css/common.css">
     <link rel="stylesheet" href="../static/css/nice-select.css">
-
     <!-- conan style -->
     <link rel="stylesheet" href="../static/css/conan_style.css">
     <!-- //Style Sheet -->
-
     <script src="../static/js/jquery-3.3.1.min.js"></script>
-
     <!-- select box -->
     <script src="../static/js/jquery.nice-select.min.js"></script>
     <!-- // select box -->
-
     <script src="../static/js/common.js"></script>
 
     <script type="text/javascript">
@@ -79,7 +74,6 @@
 <main id="main" class="auth login admin">
     <div class="container">
         <div class="content">
-
             <!-- content_head -->
             <div class="content__head">
                 <h1 class="content__title text-center">
@@ -87,37 +81,29 @@
                 <p class="content__desc text-center">관리자 로그인</p>
             </div>
             <!-- //content_head -->
-
             <!-- content_body -->
             <div class="content__body">
                 <form id="loginFrm" name="loginFrm" method="post">
-
                     <!-- admin ID -->
                     <div class="form-group">
                         <input type="text" id="adminId" name="adminId" class=" input" placeholder="아이디" autocapitalize="off">
                     </div>
                     <!-- //admin ID -->
-
                     <!-- admin PW -->
                     <div class="form-group">
                         <input type="password" id="adminPw" name="adminPw" class=" input" placeholder="비밀번호" onkeyup="enterkey();" autocomplete="off">
                     </div>
                     <!-- //admin PW -->
-
                     <!-- login btn -->
                     <div class="form-group">
                         <button type="button" class="btn btn-md btn-pill btn-main w-100" onclick="commGoAct();">로그인</button>
                     </div>
                     <!-- //login btn -->
-
                 </form>
             </div>
             <!-- //content_body -->
-
             <!-- content_foot -->
-
             <!-- //content_foot -->
-
         </div>
         <div class="text-center mg-t-1">
             <p class="copyright">© 2023 Conan Co., Ltd. All rights reserved.</p>
@@ -130,6 +116,5 @@
         $('select').niceSelect();
     });
 </script>
-
 
 </body></html>

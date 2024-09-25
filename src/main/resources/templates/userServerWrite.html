@@ -44,7 +44,6 @@
 		<link href="Admin/reform.css" rel="stylesheet" type="text/css">
 		<!-- conan style -->
 		<link href="Admin/conan_style.css" rel="stylesheet" type="text/css">
-
         <!--begin:: Global Mandatory Vendors -->
 		<script src="Admin/jquery.js" type="text/javascript"></script>
 		<script src="Admin/popper.js" type="text/javascript"></script>
@@ -111,31 +110,25 @@
 
 		<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
 			<div class="k-header-mobile__logo">
-				<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite"></a>
+				<a href="myProfileWrite.html"></a>
 			</div>
 			<div class="k-header-mobile__toolbar">
 				<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
 			</div>
 		</div>
-
 		<div class="k-grid k-grid--hor k-grid--root">
 			<div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
 				<button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
-
                 <!-- begin aside -->
 				<div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
-
 					<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
 						<div class="k-aside__brand-logo">
-							<a href="https://ocb-gm.srk.co.kr/Profile/myProfileWrite">
-
-							</a>
+							<a href="myProfileWrite.html"></a>
 						</div>
 						<div class="k-aside__brand-tools">
 							<button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left" id="k_aside_toggler"><span></span></button>
 						</div>
 					</div>
-
 					<div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
 						<div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
 							<ul class="k-menu__nav">
@@ -500,13 +493,10 @@
 <script src="Admin/bootstrap-select(1).js" type="text/javascript"></script>
 
     <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
-    
         <div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
-            
             <div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
                 <div class="row">
 					<div class="col-xl-8 col-lg-12 offset-xl-2 offset-lg-0">
-
                         <!--begin::Portlet-->
                         <div class="k-portlet"> <!--데이터 들어가는부분 -->
                             <div class="k-portlet__head">
@@ -514,11 +504,9 @@
                                     <h3 class="k-portlet__head-title font-weight-bold">사용자 서버 등록 &amp; 수정</h3>
                                 </div>
                             </div>
-
                             <form name="hiddenFrm">
                                 <input type="hidden" name="writeAuth" value="1">
                             </form>
-
                             <form method="get" name="searchFrm">
                                 <!--검색조건-->
                                 <input type="hidden" name="sStartDate" value="">
@@ -527,7 +515,6 @@
                                 <input type="hidden" name="sOpt" value="sName">
                                 <input type="hidden" name="sVal" value="">
                             </form>
-
                             <!--begin::Form-->
                             <form class="k-form" name="writeFrm" method="post">
                                 <!--검색조건-->
@@ -537,8 +524,7 @@
                                 <input type="hidden" name="sOpt" value="sName">
                                 <input type="hidden" name="sVal" value="">
                                 <input type="hidden" name="userServerIdx" id="userServerIdx" value="">
-                                <input type="hidden" name="mode" id="mode" value="ins">                                
-
+                                <input type="hidden" name="mode" id="mode" value="ins">
                                 <div class="k-portlet__body">
 									<div class="row">                                        
 										<div class="col-md-6">
@@ -582,7 +568,6 @@
                                         </div>             							
 									</div>
                                 </div>
-
                                 <div class="k-portlet__foot">
                                     <div class="k-form__actions">
                                         <button type="button" id="saveBtn" class="btn btn-primary btn-main" onclick="commGoAct();">저장</button>
@@ -592,13 +577,11 @@
                             </form>
                             <!--end::Form-->
                         </div>
-
                     </div>
                 </div>
             </div>
             <!-- end:: Content Body -->
         </div>
-
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
 						2023&nbsp;©&nbsp;<a href="userServerWrite.html" target="_blank" class="k-link">Conan</a>
@@ -607,5 +590,4 @@
 			</div>
 		</div>
 	</div>
-
 </body><!-- end::Body --></html>
