@@ -195,7 +195,6 @@ public class SearchMsn {
     private String imageName;
 
     @Comment("서버URL(외래키)")
-    @ManyToOne(cascade=CascadeType.REMOVE)
     @ManyToOne()
     @Schema(description = "서버URL(외래키)")
     Server server;

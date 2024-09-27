@@ -4,7 +4,6 @@ package com.example.reward_monitoring.general.member.controller;
 import com.example.reward_monitoring.general.member.dto.MemberEditDto;
 import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
-import com.example.reward_monitoring.general.member.dto.editMyDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -50,35 +50,7 @@ public class MemberController {
 
 
 
-    @Operation(summary = "본인 회원정보수정", description = " 본인 회원정보를 수정합니다.")
-    @PostMapping("/Profile/myProfileWrite")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원정보 수정 성공"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "404", description = "조회 실패(세션은 있지만 세션정보가 DB에 없음)"),
-            @ApiResponse(responseCode = "500", description = "회원정보 수정 실패")
-    })
-    public ResponseEntity<Void> editInfo(HttpSession session, editMyDto dto){
-        Member sessionMember= (Member) session.getAttribute("member");
 
-        if(sessionMember== null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }//데이터 없음
-
-        if(dto.getPassword()!=null)
-            member.setPassword(passwordEncoder.encode(dto.getPassword()));
-        if(dto.getPhoneNum()!=null)
-            member.setPhone(dto.getPhoneNum());
-        if(dto.getCtryCode()!=null)
-            member.setCtryCode(dto.getCtryCode());
-
-        memberRepository.save(member);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 
 
     @Operation(summary = "관리자 정보 수정", description = "관리자 정보를 수정합니다")
@@ -271,6 +243,7 @@ public class MemberController {
 
 
 
+    /*
     @GetMapping({"/adminList","/",""})
     public String myProfile(HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
@@ -281,10 +254,55 @@ public class MemberController {
         if (member == null) {
             return "error/404";
         }
+
         List<Member> members = memberService.getMembers();
         model.addAttribute("members",members);
         return "adminList";
     }
+    */
+
+    @GetMapping({"/adminList/{pageNumber}", "/adminList", "/", ""})
+    public String myProfile(@PathVariable(required = false) Integer pageNumber, HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<Member> members = memberService.getMembers();
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<Member> limitedMembers;
+        if (startIndex < members.size()) {
+            int endIndex = Math.min(startIndex + limit, members.size());
+            limitedMembers = members.subList(startIndex, endIndex);
+        } else {
+            limitedMembers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) members.size() / limit);
+
+        model.addAttribute("members", limitedMembers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", (int) Math.ceil((double) members.size() / limit));
+        return "adminList";
+    }
+
+
+
 
     @GetMapping("/adminWrite")
     public String adminWrite(HttpSession session){

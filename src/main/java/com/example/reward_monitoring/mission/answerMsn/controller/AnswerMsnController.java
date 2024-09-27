@@ -147,8 +147,8 @@ public class AnswerMsnController {
 
 
     @Operation(summary = "정답미션 정보 요청", description = "IDX와 일치하는 미션정보를 반환합니다")
-    @Parameter(name = "/Mission/quizList/idx", description = "관리자 IDX")
-    @GetMapping("/{idx}")
+    @Parameter(name = "idx", description = "관리자 IDX")
+    @GetMapping("/Mission/quizList/idx{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "미션 검색 완료 "),
             @ApiResponse(responseCode = "204", description = "일치하는 미션을 찾을 수 없음"),

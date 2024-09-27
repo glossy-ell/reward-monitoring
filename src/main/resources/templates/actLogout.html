@@ -1,21 +1,25 @@
-<html lang="ko"><head>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
     <!-- favicon -->
-    <link rel="shortcut icon" href="../static/images/auth_admin_bg.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/auth_admin_bg.png" type="image/x-icon">
+
     <!-- Style Sheet -->
-    <link rel="stylesheet" href="../static/css/common.css">
-    <link rel="stylesheet" href="../static/css/nice-select.css">
-    <!-- conan style -->
-    <link rel="stylesheet" href="../static/css/conan_style.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/nice-select.css">
+    <link rel="stylesheet" href="/css/conan_style.css">
     <!-- //Style Sheet -->
-    <script src="../static/js/jquery-3.3.1.min.js"></script>
+
+    <script src="/js/jquery-3.3.1.min.js"></script>
+
     <!-- select box -->
-    <script src="../static/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
     <!-- // select box -->
-    <script src="../static/js/common.js"></script>
+
+    <script src="/js/common.js"></script>
 
     <script type="text/javascript">
 
@@ -39,33 +43,43 @@
                 commGoAct();
             }
         }
-
-        //등록 submit
         function commGoAct() {
-            var frm = document.loginFrm;
+    var frm = document.loginFrm;
 
-            if(comInputCheck('text','adminId') === true) {
-                alert("아이디를 입력해 주세요.");
-                $('#adminId').focus();
-                return false;
-            }
+    if (comInputCheck('text', 'adminId') === true) {
+        alert("아이디를 입력해 주세요.");
+        $('#adminId').focus();
+        return false;
+    }
 
-            if(comInputCheck('text','adminPw') === true) {
-                alert("비밀번호를 입력해 주세요.");
-                $('#adminPw').focus();
-                return false;
-            }
-             // 아이디와 비밀번호 체크
-             if (frm.adminId.value === "admin" && frm.adminPw.value === "1234qwer!") {
-                // 로그인 성공 시 adminList.html로 이동
-                window.location.href = "myProfileWrite.html";
-            } else {
+    if (comInputCheck('text', 'adminPw') === true) {
+        alert("비밀번호를 입력해 주세요.");
+        $('#adminPw').focus();
+        return false;
+    }
+
+    // 아이디와 비밀번호 체크
+    if (frm.adminId.value && frm.adminPw.value) {
+        const params = "id=" + encodeURIComponent(frm.adminId.value) + "&password=" + encodeURIComponent(frm.adminPw.value);
+
+        $.ajax({
+            url: "/login",
+            type: "POST",
+            contentType: "application/x-www-form-urlencoded",
+            data: params,
+            success: function(response) {
+                // 성공적으로 로그인 시 처리
+                window.location.href = "/Profile/myProfileWrite";
+            },
+            error: function(xhr) {
                 alert("아이디 또는 비밀번호가 올바르지 않습니다.");
             }
-           // frm.action = "/adminList.html";
-           // frm.submit();
+        });
+    } else {
+        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+}
 
-        }
 
     </script>
 </head>
@@ -74,6 +88,7 @@
 <main id="main" class="auth login admin">
     <div class="container">
         <div class="content">
+
             <!-- content_head -->
             <div class="content__head">
                 <h1 class="content__title text-center">
@@ -81,29 +96,37 @@
                 <p class="content__desc text-center">관리자 로그인</p>
             </div>
             <!-- //content_head -->
+
             <!-- content_body -->
             <div class="content__body">
                 <form id="loginFrm" name="loginFrm" method="post">
+
                     <!-- admin ID -->
                     <div class="form-group">
                         <input type="text" id="adminId" name="adminId" class=" input" placeholder="아이디" autocapitalize="off">
                     </div>
                     <!-- //admin ID -->
+
                     <!-- admin PW -->
                     <div class="form-group">
                         <input type="password" id="adminPw" name="adminPw" class=" input" placeholder="비밀번호" onkeyup="enterkey();" autocomplete="off">
                     </div>
                     <!-- //admin PW -->
+
                     <!-- login btn -->
                     <div class="form-group">
                         <button type="button" class="btn btn-md btn-pill btn-main w-100" onclick="commGoAct();">로그인</button>
                     </div>
                     <!-- //login btn -->
+
                 </form>
             </div>
             <!-- //content_body -->
+
             <!-- content_foot -->
+
             <!-- //content_foot -->
+
         </div>
         <div class="text-center mg-t-1">
             <p class="copyright">© 2023 Conan Co., Ltd. All rights reserved.</p>
@@ -116,5 +139,6 @@
         $('select').niceSelect();
     });
 </script>
+
 
 </body></html>

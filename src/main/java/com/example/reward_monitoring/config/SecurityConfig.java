@@ -100,7 +100,7 @@ public class SecurityConfig {
 
                 ).logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/actLogout")
                         .invalidateHttpSession(true))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/**").permitAll()

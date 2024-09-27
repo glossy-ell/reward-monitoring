@@ -1,446 +1,464 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)https://ocb-gm.srk.co.kr/Affiliate/affiliateList -->
-<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Admin</title>
+<!-- saved from url=(0047)https://ocb-gm.srk.co.kr/Profile/myProfileWrite -->
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-		<!-- favicon -->
-		<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
-		<!--begin:: Global Mandatory Vendors -->
-        <link href="Admin/perfect-scrollbar.css" rel="stylesheet" type="text/css">
-		<!--begin:: Global Optional Vendors -->
-		<link href="Admin/tether.css" rel="stylesheet" type="text/css">
-		<link href="Admin/bootstrap-datepicker3.css" rel="stylesheet" type="text/css">
-		<link href="Admin/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
-		<link href="Admin/bootstrap-timepicker.css" rel="stylesheet" type="text/css">
-		<link href="Admin/daterangepicker.css" rel="stylesheet" type="text/css">
-		<link href="Admin/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css">
-		<link href="Admin/bootstrap-select.css" rel="stylesheet" type="text/css">
-		<link href="Admin/nouislider.css" rel="stylesheet" type="text/css">
-		<link href="Admin/owl.carousel.css" rel="stylesheet" type="text/css">
-		<link href="Admin/owl.theme.default.css" rel="stylesheet" type="text/css">
-		<link href="Admin/dropzone.css" rel="stylesheet" type="text/css">
-		<link href="Admin/summernote.css" rel="stylesheet" type="text/css">
-		<link href="Admin/bootstrap-markdown.min.css" rel="stylesheet" type="text/css">
-		<link href="Admin/animate.css" rel="stylesheet" type="text/css">
-		<link href="Admin/toastr.css" rel="stylesheet" type="text/css">
-		<link href="Admin/morris.css" rel="stylesheet" type="text/css">
-		<link href="Admin/line-awesome.css" rel="stylesheet" type="text/css">
-		<link href="Admin/flaticon.css" rel="stylesheet" type="text/css">
-		<link href="Admin/flaticon(1).css" rel="stylesheet" type="text/css">
-		<link href="Admin/all.min.css" rel="stylesheet" type="text/css">
-		<!--begin::Global Theme Styles -->
-		<link href="Admin/style.bundle.css" rel="stylesheet" type="text/css">
-		<!--begin::Layout Skins -->
-		<link href="Admin/light.css" rel="stylesheet" type="text/css">
-		<link href="Admin/light(1).css" rel="stylesheet" type="text/css">
-		<link href="Admin/navy.css" rel="stylesheet" type="text/css">
-		<link href="Admin/navy(1).css" rel="stylesheet" type="text/css">
-		<!-- swiper gallery -->
-		<link href="Admin/swiper.min.css" rel="stylesheet">
-		<!-- Reform -->
-		<link href="Admin/reform.css" rel="stylesheet" type="text/css">
-		<!-- conan style -->
-		<link href="Admin/conan_style.css" rel="stylesheet" type="text/css">
-        <!--begin:: Global Mandatory Vendors -->
-		<script src="Admin/jquery.js" type="text/javascript"></script>
-		<script src="Admin/popper.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap.min.js" type="text/javascript"></script>
-		<script src="Admin/js.cookie.js" type="text/javascript"></script>
-		<script src="Admin/moment.min.js" type="text/javascript"></script>
-		<script src="Admin/tooltip.min.js" type="text/javascript"></script>
-		<script src="Admin/perfect-scrollbar.js" type="text/javascript"></script>
-		<script src="Admin/sticky.min.js" type="text/javascript"></script>
-		<script src="Admin/wNumb.js" type="text/javascript"></script>
-		<script src="Admin/jquery.form.min.js" type="text/javascript"></script>
-		<script src="Admin/jquery.blockUI.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-datepicker.min.js" type="text/javascript"></script>
-		<script src="Admin/init.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-timepicker.min.js" type="text/javascript"></script>
-		<script src="Admin/init(1).js" type="text/javascript"></script>
-		<script src="Admin/daterangepicker.js" type="text/javascript"></script>
-		<script src="Admin/jquery.bootstrap-touchspin.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-maxlength.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-multiselectsplitter.min.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-select.js" type="text/javascript"></script>
-		<script src="Admin/typeahead.bundle.js" type="text/javascript"></script>
-		<script src="Admin/handlebars.js" type="text/javascript"></script>
-		<script src="Admin/nouislider.js" type="text/javascript"></script>
-		<script src="Admin/owl.carousel.js" type="text/javascript"></script>
-		<script src="Admin/autosize.js" type="text/javascript"></script>
-		<script src="Admin/clipboard.min.js" type="text/javascript"></script>
-		<script src="Admin/dropzone.js" type="text/javascript"></script>
-		<script src="Admin/markdown.js" type="text/javascript"></script>
-		<script src="Admin/bootstrap-markdown.js" type="text/javascript"></script>
-		<script src="Admin/init(2).js" type="text/javascript"></script>
-		<script src="Admin/jquery.validate.js" type="text/javascript"></script>
-		<script src="Admin/additional-methods.js" type="text/javascript"></script>
-		<script src="Admin/init(3).js" type="text/javascript"></script>
-		<script src="Admin/toastr.min.js" type="text/javascript"></script>
-		<script src="Admin/raphael.js" type="text/javascript"></script>
-		<script src="Admin/morris.js" type="text/javascript"></script>
-		<script src="Admin/Chart.bundle.js" type="text/javascript"></script><style type="text/css">/* Chart.js */
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Admin</title>
+	<link rel="stylesheet" href="/css/conan_aside_color.css">
+	<!-- favicon -->
+	<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
+
+	<!--begin:: Global Mandatory Vendors -->
+	<link href="/Front_files/perfect-scrollbar.css" rel="stylesheet" type="text/css">
+
+	<!--begin:: Global Optional Vendors -->
+	<link href="/Front_files/tether.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/bootstrap-datepicker3.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/bootstrap-timepicker.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/daterangepicker.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/bootstrap-select.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/nouislider.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/owl.carousel.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/owl.theme.default.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/dropzone.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/summernote.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/bootstrap-markdown.min.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/animate.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/toastr.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/morris.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/line-awesome.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/flaticon.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/flaticon(1).css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/all.min.css" rel="stylesheet" type="text/css">
+
+	<!--begin::Global Theme Styles -->
+	<link href="/Front_files/style.bundle.css" rel="stylesheet" type="text/css">
+
+	<!--begin::Layout Skins -->
+	<link href="/Front_files/light.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/light(1).css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/navy.css" rel="stylesheet" type="text/css">
+	<link href="/Front_files/navy(1).css" rel="stylesheet" type="text/css">
+
+	<!-- swiper gallery -->
+	<link href="/Front_files/swiper.min.css" rel="stylesheet">
+
+	<!-- Reform -->
+	<link href="/Front_files/reform.css" rel="stylesheet" type="text/css">
+
+	<!-- conan style -->
+	<link href="/Front_files/conan_style.css" rel="stylesheet" type="text/css">
+
+	<!--begin:: Global Mandatory Vendors -->
+	<script src="/Front_files/jquery.js" type="text/javascript"></script>
+	<script src="/Front_files/popper.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap.min.js" type="text/javascript"></script>
+	<script src="/Front_files/js.cookie.js" type="text/javascript"></script>
+	<script src="/Front_files/moment.min.js" type="text/javascript"></script>
+	<script src="/Front_files/tooltip.min.js" type="text/javascript"></script>
+	<script src="/Front_files/perfect-scrollbar.js" type="text/javascript"></script>
+	<script src="/Front_files/sticky.min.js" type="text/javascript"></script>
+	<script src="/Front_files/wNumb.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.form.min.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.blockUI.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-datepicker.min.js" type="text/javascript"></script>
+	<script src="/Front_files/init.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-timepicker.min.js" type="text/javascript"></script>
+	<script src="/Front_files/init(1).js" type="text/javascript"></script>
+	<script src="/Front_files/daterangepicker.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.bootstrap-touchspin.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-maxlength.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-multiselectsplitter.min.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-select.js" type="text/javascript"></script>
+	<script src="/Front_files/typeahead.bundle.js" type="text/javascript"></script>
+	<script src="/Front_files/handlebars.js" type="text/javascript"></script>
+	<script src="/Front_files/nouislider.js" type="text/javascript"></script>
+	<script src="/Front_files/owl.carousel.js" type="text/javascript"></script>
+	<script src="/Front_files/autosize.js" type="text/javascript"></script>
+	<script src="/Front_files/clipboard.min.js" type="text/javascript"></script>
+	<script src="/Front_files/dropzone.js" type="text/javascript"></script>
+	<script src="/Front_files/markdown.js" type="text/javascript"></script>
+	<script src="/Front_files/bootstrap-markdown.js" type="text/javascript"></script>
+	<script src="/Front_files/init(2).js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.validate.js" type="text/javascript"></script>
+	<script src="/Front_files/additional-methods.js" type="text/javascript"></script>
+	<script src="/Front_files/init(3).js" type="text/javascript"></script>
+	<script src="/Front_files/toastr.min.js" type="text/javascript"></script>
+	<script src="/Front_files/raphael.js" type="text/javascript"></script>
+	<script src="/Front_files/morris.js" type="text/javascript"></script>
+	<script src="/Front_files/Chart.bundle.js" type="text/javascript"></script><style type="text/css">/* Chart.js */
 @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
-		<script src="Admin/bootstrap-session-timeout.min.js" type="text/javascript"></script>
-		<script src="Admin/idle-timer.min.js" type="text/javascript"></script>
-		<script src="Admin/jquery.waypoints.js" type="text/javascript"></script>
-		<script src="Admin/jquery.counterup.js" type="text/javascript"></script>
-		<script src="Admin/promise.min.js" type="text/javascript"></script>
-		<script src="Admin/lib.js" type="text/javascript"></script>
-		<script src="Admin/jquery.input.js" type="text/javascript"></script>
-		<script src="Admin/repeater.js" type="text/javascript"></script>
-		<script src="Admin/purify.js" type="text/javascript"></script>
-		<!--begin::Global Theme Bundle -->
-		<script src="Admin/scripts.bundle.js" type="text/javascript"></script>
-		<!--begin::Page Scripts -->
-		<script src="Admin/bootstrap-datepicker.js" type="text/javascript"></script>
-		<!--begin::Global App Bundle -->
-		<script src="Admin/app.bundle.js" type="text/javascript"></script>
-		<!--end::Global App Bundle -->
-        <script src="Admin/common.js"></script>
-		<!-- swiper gallery -->
-		<script src="Admin/swiper.min.js"></script>
-		<!-- //swiper gallery -->
+	<script src="/Front_files/bootstrap-session-timeout.min.js" type="text/javascript"></script>
+	<script src="/Front_files/idle-timer.min.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.waypoints.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.counterup.js" type="text/javascript"></script>
+	<script src="/Front_files/promise.min.js" type="text/javascript"></script>
+	<script src="/Front_files/lib.js" type="text/javascript"></script>
+	<script src="/Front_files/jquery.input.js" type="text/javascript"></script>
+	<script src="/Front_files/repeater.js" type="text/javascript"></script>
+	<script src="/Front_files/purify.js" type="text/javascript"></script>
+
+	<!--begin::Global Theme Bundle -->
+	<script src="/Front_files/scripts.bundle.js" type="text/javascript"></script>
+
+	<!--begin::Page Scripts -->
+	<script src="/Front_files/bootstrap-datepicker.js" type="text/javascript"></script>
+
+	<!--begin::Global App Bundle -->
+	<script src="/Front_files/app.bundle.js" type="text/javascript"></script>
+
+	<!--end::Global App Bundle -->
+	<script src="/Front_files/common.js"></script>
+
+	<!-- swiper gallery -->
+	<script src="/Front_files/swiper.min.js"></script>
+	<!-- //swiper gallery -->
+
 	<script src="chrome-extension://ecmeogcbcoalojmkfkmancobmiahaigg/content_script/content_script.js"></script></head>
 
 <body class="k-header--fixed k-header-mobile--fixed k-aside--enabled k-aside--fixed">
 
-		<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
-			<div class="k-header-mobile__logo">
-				<a href="myProfileWrite.html"></a>
+<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
+	<div class="k-header-mobile__logo">
+		<a href="/Profile/myProfileWrite"></a>
+	</div>
+	<div class="k-header-mobile__toolbar">
+		<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
+	</div>
+</div>
+
+<div class="k-grid k-grid--hor k-grid--root">
+	<div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
+		<button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
+
+
+		<!-- begin aside -->
+		<div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
+
+			<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
+				<div class="k-aside__brand-logo">
+					<a href="/Profile/myProfileWrite">
+
+					</a>
+				</div>
+				<div class="k-aside__brand-tools">
+					<button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left k-aside__brand-aside-toggler--active" id="k_aside_toggler"><span></span></button>
+				</div>
 			</div>
-			<div class="k-header-mobile__toolbar">
-				<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
+
+			<div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
+				<div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
+					<ul class="k-menu__nav">
+						<li class="k-menu__section">
+							<h4 class="k-menu__section-text">일반</h4>
+							<i class="k-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-user "></i>
+								<span class="k-menu__link-text">관리자 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Admin/adminList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">관리자 목록</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-cardiogram "></i>
+								<span class="k-menu__link-text">사이트 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Site/userServerList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">사용자 서버 목록</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon-user-add "></i>
+								<span class="k-menu__link-text">광고주 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Advertiser/advertiserList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">광고주 목록</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon-customer "></i>
+								<span class="k-menu__link-text">매체사 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Affiliate/affiliateList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">매체사 목록</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__section">
+							<h4 class="k-menu__section-text">미션 관리</h4>
+							<i class="k-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-contract "></i>
+								<span class="k-menu__link-text">정답 미션 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
+									<a href="/Mission/quizList" class="k-menu__link">
+										<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+										<span class="k-menu__link-text">정답 미션 목록</span>
+									</a>
+								</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/quizCurrentList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">현재 리스트 소진량(정답)</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/quizMultiTempList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">정답 미션 일괄 업로드</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item k-menu__item--submenu" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-magnifier-tool"></i>
+								<span class="k-menu__link-text">검색 미션 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item" aria-haspopup="true">
+										<a href="/Mission/searchList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">검색 미션 목록</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/searchCurrentList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">현재 리스트 소진량(검색)</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/searchMultiTempList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">검색 미션 일괄 업로드</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-download "></i>
+								<span class="k-menu__link-text">저장 미션 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/sightseeingList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">저장 미션 목록</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/sightseeingCurrentList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">현재 리스트 소진량(저장)</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/sightseeingMultiTempList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">저장 미션 일괄 업로드</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-sms "></i>
+								<span class="k-menu__link-text">미션 CS 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Mission/missionCsList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">미션 CS 내역</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__section"><h4 class="k-menu__section-text">통계 관리</h4>
+							<i class="k-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-contract "></i>
+								<span class="k-menu__link-text">정답 미션 통계 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statDailyQuiz" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">정답 미션 데일리 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statQuiz" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">정답 미션별 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statSumQuiz" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-magnifier-tool "></i>
+								<span class="k-menu__link-text">검색 미션 통계 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statDailySearch" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">검색 미션 데일리 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statSearch.html" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">검색 미션별 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statSumSearch.html" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="javascript:;" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-download "></i>
+								<span class="k-menu__link-text">저장 미션 통계 관리</span>
+								<i class="k-menu__ver-arrow la la-angle-right"></i>
+							</a>
+							<div class="k-menu__submenu">
+								<span class="k-menu__arrow"></span>
+								<ul class="k-menu__subnav">
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statDailySightseeing" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">저장 미션 데일리 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statSightseeing" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">저장 미션별 통계</span>
+										</a>
+									</li>
+									<li class="k-menu__item " aria-haspopup="true">
+										<a href="/Statistics/statSumSightseeing" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="k-menu__section k-menu__item--open">
+							<h4 class="k-menu__section-text">기타</h4>
+							<i class="k-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="k-menu__item k-menu__item--active" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="/Profile/myProfileWrite" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-calendar-3 icon_active"></i>
+								<span class="k-menu__link-text">내 프로필</span>
+								<span class="k-menu__link-badge"></span>
+							</a>
+						</li>
+						<li class="k-menu__item" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+							<a href="/logout" class="k-menu__link k-menu__toggle">
+								<i class="k-menu__link-icon flaticon2-power-button-symbol"></i>
+								<span class="k-menu__link-text">로그아웃</span>
+								<span class="k-menu__link-badge"></span>
+							</a>
+						</li>
+					</ul>
+					<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 300px;"></div></div></div>
 			</div>
 		</div>
+		<!-- end aside -->
 
-		<div class="k-grid k-grid--hor k-grid--root">
-			<div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
-				<button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
-                <!-- begin aside -->
-				<div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
-					<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
-						<div class="k-aside__brand-logo">
-							<a href="myProfileWrite.html"></a>
-						</div>
-						<div class="k-aside__brand-tools">
-							<button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left" id="k_aside_toggler"><span></span></button>
-						</div>
-					</div>
-					<div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
-						<div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
-							<ul class="k-menu__nav">
-								<li class="k-menu__section">
-									<h4 class="k-menu__section-text">일반</h4>
-									<i class="k-menu__section-icon flaticon-more-v2"></i>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-user "></i>
-										<span class="k-menu__link-text">관리자 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="adminList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">관리자 목록</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-cardiogram "></i>
-										<span class="k-menu__link-text">사이트 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="userServerList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">사용자 서버 목록</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon-user-add "></i>
-										<span class="k-menu__link-text">광고주 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="advertiserList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">광고주 목록</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu k-menu__item--open" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon-customer icon_active"></i>
-										<span class="k-menu__link-text">매체사 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item k-menu__item--active" aria-haspopup="true">
-												<a href="affiliateList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">매체사 목록</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__section">
-									<h4 class="k-menu__section-text">미션 관리</h4>
-									<i class="k-menu__section-icon flaticon-more-v2"></i>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-contract "></i>
-										<span class="k-menu__link-text">정답 미션 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-											<a href="quizList.html" class="k-menu__link">
-												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-												<span class="k-menu__link-text">정답 미션 목록</span>
-											</a>
-										</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="quizCurrentList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">현재 리스트 소진량(정답)</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="quizMultiTempList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">정답 미션 일괄 업로드</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item k-menu__item--submenu" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-magnifier-tool"></i>
-										<span class="k-menu__link-text">검색 미션 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item" aria-haspopup="true">
-												<a href="searchList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">검색 미션 목록</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="searchCurrentList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">현재 리스트 소진량(검색)</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="searchMultiTempList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">검색 미션 일괄 업로드</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-download "></i>
-										<span class="k-menu__link-text">저장 미션 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="sightseeingList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">저장 미션 목록</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="sightseeingCurrentList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">현재 리스트 소진량(저장)</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="sightseeingMultiTempList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">저장 미션 일괄 업로드</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-sms "></i>
-										<span class="k-menu__link-text">미션 CS 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="missionCsList.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">미션 CS 내역</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__section"><h4 class="k-menu__section-text">통계 관리</h4>
-									<i class="k-menu__section-icon flaticon-more-v2"></i>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-contract "></i>
-										<span class="k-menu__link-text">정답 미션 통계 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statDailyQuiz.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">정답 미션 데일리 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statQuiz.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">정답 미션별 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statSumQuiz.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-magnifier-tool "></i>
-										<span class="k-menu__link-text">검색 미션 통계 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statDailySearch.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">검색 미션 데일리 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statSearch.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">검색 미션별 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statSumSearch.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="javascript:;" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-download "></i>
-										<span class="k-menu__link-text">저장 미션 통계 관리</span>
-										<i class="k-menu__ver-arrow la la-angle-right"></i>
-									</a>
-									<div class="k-menu__submenu">
-										<span class="k-menu__arrow"></span>
-										<ul class="k-menu__subnav">
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statDailySightseeing.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">저장 미션 데일리 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statSightseeing.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">저장 미션별 통계</span>
-												</a>
-											</li>
-											<li class="k-menu__item " aria-haspopup="true">
-												<a href="statSumSightseeing.html" class="k-menu__link">
-													<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-													<span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</li>
-								<li class="k-menu__section ">
-									<h4 class="k-menu__section-text">기타</h4>
-									<i class="k-menu__section-icon flaticon-more-v2"></i>
-								</li>
-								<li class="k-menu__item " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="myProfileWrite.html" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-calendar-3 "></i>
-										<span class="k-menu__link-text">내 프로필</span>
-										<span class="k-menu__link-badge"></span>
-									</a>
-								</li>
-								<li class="k-menu__item" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-									<a href="actLogout.html" class="k-menu__link k-menu__toggle">
-										<i class="k-menu__link-icon flaticon2-power-button-symbol"></i>
-										<span class="k-menu__link-text">로그아웃</span>
-										<span class="k-menu__link-badge"></span>
-									</a>
-								</li>
-							</ul>
-						<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-							<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-						</div>
-							<div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;"></div>
-						</div>
-					</div>
-				</div>
-				<!-- end aside -->
-<script type="application/javascript">       
+
+		<script type="application/javascript">
 
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -483,10 +501,13 @@
     }
 
 </script>
-<script src="Admin/bootstrap-select(1).js" type="text/javascript"></script>
+<script src="../static/affiliateList_files/bootstrap-select(1).js" type="text/javascript"></script>
+
 
                 <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
+											
 					<div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
+
 						<div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
 							<!-- k-portlet -->
 							<div class="k-portlet">
@@ -578,6 +599,7 @@
 												</div>
 											</div>
 											<!-- //툴바 영역 -->
+
 										</div>										
 									</form>
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
@@ -603,9 +625,10 @@
 										</table>										
 									</div>
                                     <hr class="my-4">
-								</div>
+                                        								</div>	
 							</div>
-					</div>
+					</div>                    
+
 				</div>
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
@@ -615,5 +638,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
+		</div>
+
+    
+	
+
 </body><!-- end::Body --></html>

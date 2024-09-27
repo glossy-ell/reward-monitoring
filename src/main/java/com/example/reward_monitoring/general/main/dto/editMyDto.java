@@ -1,4 +1,4 @@
-package com.example.reward_monitoring.general.member.dto;
+package com.example.reward_monitoring.general.main.dto;
 
 
 import com.example.reward_monitoring.general.member.model.CtryCode;
