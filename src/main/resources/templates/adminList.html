@@ -481,13 +481,10 @@
     function commGoDetail(idx) {
         var frm = document.searchFrm;
         if(idx){
-            frm.adminIdx.value = idx;
-            frm.action ='/Admin/adminWrite?adminIdx='+idx;
-            frm.submit();
+            window.location.href ='/Admin/adminWrite/'+ idx;
             return true;
         } else {
-            frm.action ='/Admin/adminWrite';
-            frm.submit();
+       		window.location.href ='/Admin/adminWrite/';
             return true;
         }
 
@@ -516,7 +513,7 @@
 											<!-- 버튼 영역 -->
                                             <div class="tool-btn col-xl-6 col-lg-12">
 												<div>
-													<button type="button" class="btn btn-secondary btn-main" onclick="location.href='Admin.html'">등록 </button>
+													<button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Admin/adminWrite'">등록 </button>
 												</div>
 											</div>
 											<!--// 버튼 영역 -->
@@ -605,11 +602,11 @@
                                                 </tr>
 											</thead>
 											<tbody>
-												<tr th:each="member : ${members}">
-													<td class="text-center align-middle">1</td>
-													<td th:text="${member.idx}" class="text-center align-middle">1</td>
+												<tr th:each="member, iterStat : ${members}">
+													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
+													<td th:text="${member.idx}" class="text-center align-middle"></td>
 													<td class="text-center align-middle">
-														<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(1);">수정</button>
+														<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" th:onclick="'commGoDetail(' +${member.idx} + ');'">수정</button>
 													</td>
 													<td th:text="${member.id}" class="text-center align-middle"></td>
 													<td th:text="${member.name}" class="text-center align-middle"></td>
@@ -623,14 +620,8 @@
 												</tr>
 											</tbody>
 										</table>
-                                        
-<!--                                        <hr class="my-4">-->
-<!--                                        <div class="intra-pagination-wrap"><div class="intra-pagination on">1</div>-->
-<!--											<div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Admin/adminList/15?" data-ci-pagination-page="15" rel="start">2</a>< /div>-->
-<!--												<div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Admin/adminList/15?" data-ci-pagination-page="15" rel="next">Next</a></div>-->
-<!--												<div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Admin/adminList/15?" data-ci-pagination-page="15">End</a></div></div>-->
-<!--									</div>-->
-										<hr class="my-4">-->
+
+										<hr class="my-4">
 										<div class="intra-pagination-wrap">
 											<div class="intra-pagination">
 												<!-- 현재 페이지 표시 -->

@@ -315,7 +315,7 @@ public class MemberController {
             return "error/404";
         }
 
-        return "adminWrite";
+        return "Admin";
     }
 
     @GetMapping("/adminWrite/{idx}")
@@ -334,7 +334,8 @@ public class MemberController {
         if(foundMember==null)
             return "error/404";
         model.addAttribute("member", foundMember);
-        return "adminWrite";
+        model.addAttribute("currentmember",member);
+        return "Admin";
     }
 
 

@@ -31,3 +31,7 @@ spring:
       display-request-duration: true
       operations-sorter: alpha
 
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    cache: false  # 개발 중에 캐시를 비활성화

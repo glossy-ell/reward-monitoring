@@ -560,11 +560,11 @@
 															<div class="input-group">
 																<div class="input-group-prepend">
 																	<select name="selectCountry" class="custom-select form-control" id="selectCountry">
-																		<option value="+852">HKG +852</option>
-																		<option value="+81">JPN +81</option>
-																		<option value="+82" selected="selected">KOR +82</option>
-																		<option value="+1">USA +1</option>
-																		<option value="+86">CHN +86</option>
+																		<option value="+852" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).HKG}">HKG +852</option>
+																		<option value="+81" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).JPN}">JPN +81</option>
+																		<option value="+82" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).KOR}">KOR +82</option>
+																		<option value="+1" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).USA}">USA +1</option>
+																		<option value="+86" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).CHN}">CHN +86</option>
 																	</select>
 																</div>
 																<input type="text" name="phone" class="form-control" placeholder="모바일 번호를 입력해 주세요." id="adminMobile" th:value=${member.phone} autocomplete="off">
@@ -587,7 +587,6 @@
 
 						<!-- end:: Content Body -->
 					</div>
-
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
 						2023&nbsp;©&nbsp;<a href="myProfileWrite.html" target="_blank" class="k-link">Conan</a>

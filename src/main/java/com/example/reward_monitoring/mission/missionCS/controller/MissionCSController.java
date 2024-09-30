@@ -25,7 +25,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "MissionCS", description = "미션CS관리 API")
-@RequestMapping(value = "/MissionCs")
+@RequestMapping(value = "/Mission")
 public class MissionCSController {
     @Autowired
     private MissionCSRepository missionCSRepository;

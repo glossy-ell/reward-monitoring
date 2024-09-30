@@ -5,7 +5,6 @@ import com.example.reward_monitoring.general.member.dto.MemberEditDto;
 import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
-import com.example.reward_monitoring.general.member.model.CtryCode;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class MemberService {
         
         // 기본 회원정보 설정
         if(dto.getPassword()!=null)
-            member.setPassword(dto.getPassword());
+            member.setPassword(passwordEncoder.encode(dto.getPassword()));
         if(dto.getName()!=null)
             member.setName(dto.getName());
         if(dto.getDepartment()!=null)
