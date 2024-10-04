@@ -6,10 +6,10 @@ import com.example.reward_monitoring.general.advertiser.dto.AdvertiserSearchDto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
-import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,8 +25,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 @Controller
@@ -43,14 +45,14 @@ public class AdvertiserController {
 
     @Operation(summary = "광고주 정보 수정", description = "광고주 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 광고주의 IDX")
-    @PostMapping("/advertiser/edit/{idx}") //UPDATED
+    @PostMapping("/edit/{idx}") //UPDATED
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "일치하는 회원을 찾을 수 없음")
     })
-    public ResponseEntity<Advertiser> edit(HttpSession session,@PathVariable int idx, @RequestBody AdvertiserEditDto dto, HttpServletResponse response){
+    public ResponseEntity<Advertiser> edit(HttpSession session,@PathVariable("idx") int idx, @RequestBody AdvertiserEditDto dto, HttpServletResponse response){
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -107,7 +109,7 @@ public class AdvertiserController {
             @ApiResponse(responseCode = "204", description = "일치하는 서버 정보를 찾을 수 없음"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
     })
-    public ResponseEntity<Advertiser> getAdvertiser(HttpSession session, @PathVariable int idx){
+    public ResponseEntity<Advertiser> getAdvertiser(HttpSession session, @PathVariable("idx") int idx){
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -152,7 +154,7 @@ public class AdvertiserController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "404", description = "일치하는 정보가 없음"),
     })
-    public ResponseEntity<String> delete(HttpSession session,@PathVariable int idx)throws IOException{
+    public ResponseEntity<String> delete(HttpSession session,@PathVariable("idx") int idx)throws IOException{
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -173,29 +175,63 @@ public class AdvertiserController {
     }
 
     @Operation(summary = "광고주 검색", description = "조건에 맞는 광고주를 검색합니다")
-    @PostMapping("/advertiser/search")
+    @PostMapping({"/advertiser/search","/advertiser/search/{pageNumber}"})
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public ResponseEntity<List<Advertiser>> searchAdvertiser(HttpSession session,@RequestBody AdvertiserSearchDto dto){
+    public Map<String, Object> searchAdvertiser(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, @RequestBody AdvertiserSearchDto dto){
         Member sessionMember= (Member) session.getAttribute("member");
-        if(sessionMember == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();//세션만료
+
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        }
+
         Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //데이터 없음
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }
+        if(member.isNauthMember()){
+            response.put("error", "403");
+            return response;
+        }
+
 
         List<Advertiser> result = advertiserService.searchAdvertiser(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<Advertiser> limitedAdvertisers;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAdvertisers = result.subList(startIndex, endIndex);
+        } else {
+            limitedAdvertisers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        response.put("advertisers", limitedAdvertisers);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        return response; // JSON 형태로 반환
     }
 
 
-    @GetMapping({"/advertiserList","/",""})
-    public String userServerList(HttpSession session, Model model){
+    @GetMapping({"/userServerList/{pageNumber}","/advertiserList","/",""})
+    public String advertiserList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -205,9 +241,32 @@ public class AdvertiserController {
             return "error/404";
         }
 
-        List<Advertiser> advertisers = advertiserService.getAdvertisers();
-        model.addAttribute("advertisers", advertisers);
 
+
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<Advertiser> limitedAdvertisers;
+        if (startIndex < advertisers.size()) {
+            int endIndex = Math.min(startIndex + limit, advertisers.size());
+            limitedAdvertisers = advertisers.subList(startIndex, endIndex);
+        } else {
+            limitedAdvertisers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", (int) Math.ceil((double) advertisers.size() / limit));
         return "/advertiserList";
     }
 
@@ -229,7 +288,7 @@ public class AdvertiserController {
     }
 
     @GetMapping("/adminWrite/{idx}")
-    public String adminEdit(HttpSession session,Model model,@PathVariable int idx){
+    public String adminEdit(HttpSession session,Model model,@PathVariable(required = false,value = "idx") int idx){
 
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
@@ -243,6 +302,7 @@ public class AdvertiserController {
         Advertiser advertiser = advertiserService.getAdvertiser(idx);
         if(advertiser==null)
             return "error/404";
+
         model.addAttribute("advertiser", advertiser);
         return "adminWrite";
     }

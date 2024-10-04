@@ -389,13 +389,13 @@
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션별 통계</span>
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSumSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
 										</a>
@@ -469,8 +469,54 @@
     //검색
     function commSearch() {
         var frm = document.searchFrm;
-        frm.action = "/Affiliate/affiliateList";
-        frm.submit();
+		var formData = new FormData(frm);
+		var jsonData = {};
+		formData.forEach((value, key) => {
+            jsonData[key] = value; // FormData를 JSON 객체로 변환
+        });
+         $.ajax({
+        	url: `/Affiliate/search`,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(jsonData),
+
+
+            success: function(response) {
+            	const affiliatesListContainer = $('#affiliateList'); // 회원 목록을 표시할 컨테이너 선택
+            	affiliatesListContainer.empty();
+            	if (response.affiliates.length === 0) {
+				//affiliateList가 빈 리스트인 경우 메시지 추가
+					$('#affiliateList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+				} else {
+					response.affiliates.forEach(function(affiliate,index) {
+					$('#affiliateList').append(
+						'<tr>' +
+						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+						'<td class="text-center align-middle">' + affiliate.idx + '</td>' +
+						'<td class="text-center align-middle">' + affiliate.companyName + '</td>' +
+						'<td class="text-center align-middle">' + affiliate.companyID + '</td>' +
+  						'<td class="text-center align-middle">' + (affiliate.companyManager || '') + '</td>' +  // null일 경우 빈 문자열
+    					'<td class="text-center align-middle">' + (affiliate.companyManagePhoneNum || '') + '</td>' +  // null일 경우 빈 문자열
+						'<td class="text-center align-middle">' + affiliate.APIKey + '</td>' +
+						'<td class="text-center align-middle">' + (affiliate.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
+						'<td class="text-center align-middle">' + affiliate.createdAt + '</td>' +
+						'<td class="text-center align-middle">' +
+							'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>' +
+						'</td>' +
+						'<td class="text-center align-middle">' +
+							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + affiliate.idx + ');">수정</button>' +
+						'</td>' +
+						'</tr>'
+					);
+				 });
+				$('#currentPage').text(response.currentPage);
+				$('#totalPages').text(response.totalPages);
+				}
+                       },
+            error: function(xhr) {
+            	alert("검색중 오류가 발생하였습니다.");
+        	}
+    	});
     }
 
     //검색 초기화
@@ -482,13 +528,13 @@
     function commGoDetail(idx) {
         var frm = document.searchFrm;
 
-        frm.affiliateIdx.value = "";
-
-        if(idx){
-            frm.affiliateIdx.value = idx;
+		if(idx){
+            window.location.href ='/Affiliate/affiliateWrite/'+ idx;
+            return true;
+        } else {
+       		window.location.href ='/Affiliate/affiliateWrite';
+            return true;
         }
-        frm.action ='/Affiliate/affiliateWrite';
-        frm.submit();
     }
 
     function commGoReport(affiliateId) {
@@ -500,6 +546,21 @@
         winPopupCenter(popUrl, "매체 리포트 리포트", width, height, 'yes', 'yes');
     }
 
+	function updateInputName() {
+		const selectElement = document.getElementById("searchSelect");
+		const selectedValue = selectElement.value;
+
+		// input 요소를 가져옴
+		const inputElement = document.getElementById("searchInput");
+
+		if (selectedValue === "sName") {
+			inputElement.name = "companyName";
+			inputElement.placeholder = "매체사명을 입력하세요.";
+		} else if (selectedValue === "sAPI") {
+			inputElement.name = "APIKey";
+			inputElement.placeholder = "매체사 API키를 입력하세요.";
+		}
+	}
 </script>
 <script src="../static/affiliateList_files/bootstrap-select(1).js" type="text/javascript"></script>
 
@@ -525,7 +586,7 @@
 											<!-- 버튼 영역 -->
 											<div class="tool-btn col-xl-6 col-lg-12">
 												<div>
-													<button type="button" class="btn btn-secondary btn-main" onclick="location.href='affiliateWrite.html'">등록</button>
+													<button type="button" class="btn btn-secondary btn-main" onclick="commGoDetail()">등록</button>
 												</div>
 											</div>
 											<!-- //버튼 영역 -->
@@ -537,16 +598,16 @@
 														<div class="k-form__label col-xl-3 col-lg-12">등록일 기간검색</div>
 														<div class="k-form__control col-xl-6 col-lg-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startDate" placeholder="시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endDate" placeholder="종료일" value="" autocomplete="off">
 															</div>
 														</div>                                                       
                                                         <div class="input-group col-xl-3 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 사용여부 =</option>
 																	<option value="1">사용함</option>
 																	<option value="2">사용안함</option>
@@ -568,9 +629,9 @@
 													<div class="row">
                                                         <div class="input-group col-xl-3 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsDev" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="1">개발</option>
-																	<option value="2" selected="selected">운영</option>
+																<select name="operationType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="develop">개발</option>
+																	<option value="operate">운영</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -583,12 +644,13 @@
 														</div>
 														<div class="input-group col-lg-9 col-sm-12">
 															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
+																<select name="sOpt" id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
+																	<option value="" selected hidden>= 검색옵션 =</option>
 																	<option value="sName">매체사명</option>
 																	<option value="sApiKey">매체사 API키</option>
 																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" id="searchInput" class="form-control" name="companyName" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -600,7 +662,7 @@
 											</div>
 											<!-- //툴바 영역 -->
 
-										</div>										
+										</div>
 									</form>
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
 										<div class="mb-3">Total : 3 Count (1/1)Page</div>
@@ -620,8 +682,26 @@
                                                     <th class="text-center font-weight-bold">수정</th>
 												</tr>
 											</thead>
-											<tbody>
-												<tr><td class="text-center align-middle">1</td><td class="text-center align-middle">1</td><td class="text-center align-middle">개발 서버</td><td class="text-center align-middle">secretk</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">bHfk43PuKP6YeN7</td><td class="text-center align-middle">사용함</td><td class="text-center align-middle">2024-01-02 14:14:05</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button></td><td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" onclick="commGoDetail(1);">수정</button></td></tr><tr><td class="text-center align-middle">2</td><td class="text-center align-middle">2</td><td class="text-center align-middle">오케이캐시백(QA)</td><td class="text-center align-middle">ocbq</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">n64YOs0iZojIP5k</td><td class="text-center align-middle">사용함</td><td class="text-center align-middle">2024-03-29 04:42:13</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;ocbq&quot;)">매체 리포트</button></td><td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" onclick="commGoDetail(2);">수정</button></td></tr><tr><td class="text-center align-middle">3</td><td class="text-center align-middle">3</td><td class="text-center align-middle">오케이캐시백(운영)</td><td class="text-center align-middle">ocbo</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">미정</td><td class="text-center align-middle">NbtdWj8CaJ4WojW</td><td class="text-center align-middle">사용함</td><td class="text-center align-middle">2024-03-29 05:01:05</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;ocbo&quot;)">매체 리포트</button></td><td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" onclick="commGoDetail(3);">수정</button></td></tr>											</tbody>
+											<tbody  id = "affiliateList">
+												<tr th:each="affiliate,iterStat : ${mediaCompanyList}">
+													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
+													<td th:text="${affiliate.idx}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.companyName}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.companyID}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.companyManager}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.companyManagePhoneNum}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.APIKey}" class="text-center align-middle"></td>
+													<td th:text="${affiliate.isActive ? '활성' : '비활성'}" class="text-center align-middle">
+														<span class="color-blue" th:if="${affiliate.isActive}">사용함</span>
+														<span class="color-red" th:if="${!affiliate.isActive}">사용안함</span>
+													</td>
+													<td th:text="${affiliate.createdAt}" class="text-center align-middle"></td>
+													<td>
+														<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>
+													</td>
+													<td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" th:onclick="'commGoDetail(' +${affiliate.idx} + ');'">수정</button></td>
+												</tr>
+											</tbody>
 										</table>										
 									</div>
                                     <hr class="my-4">
@@ -633,7 +713,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="affiliateList.html" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="affiliateList" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

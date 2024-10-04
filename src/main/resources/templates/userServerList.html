@@ -389,13 +389,13 @@
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션별 통계</span>
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSumSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
 										</a>
@@ -467,8 +467,48 @@
     //검색
     function commSearch() {
         var frm = document.searchFrm;
-        frm.action = "/Site/userServerList";
-        frm.submit();
+		var formData = new FormData(frm);
+		var jsonData = {};
+		formData.forEach((value, key) => {
+            jsonData[key] = value; // FormData를 JSON 객체로 변환
+        });
+        $.ajax({
+        	url: `/Site/search`,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(jsonData),
+
+
+            success: function(response) {
+            	const serverListContainer = $('#serverList'); // 회원 목록을 표시할 컨테이너 선택
+            	serverListContainer.empty();
+            	if (response.servers.length === 0) {
+				//servers가 빈 리스트인 경우 메시지 추가
+					$('#serverList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+				} else {
+					response.servers.forEach(function(server,index) {
+					$('#serverList').append(
+						'<tr>' +
+						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+						'<td class="text-center align-middle">' + server.idx + '</td>' +
+						'<td class="text-center align-middle">' + server.serverName + '</td>' +
+						'<td class="text-center align-middle">' + server.serverUrl + '</td>' +
+						'<td class="text-center align-middle">' + (server.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
+						'<td class="text-center align-middle">' + server.createdAt + '</td>' +
+						'<td class="text-center align-middle">' +
+							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + server.idx + ');">수정</button>' +
+						'</td>' +
+						'</tr>'
+					);
+				 });
+				$('#currentPage').text(response.currentPage);
+				$('#totalPages').text(response.totalPages);
+				}
+                       },
+            error: function(xhr) {
+            	alert("검색중 오류가 발생하였습니다.");
+        	}
+    	});
     }
 
     //검색 초기화
@@ -480,15 +520,30 @@
     function commGoDetail(idx) {
         var frm = document.searchFrm;
 
-        frm.userServerIdx.value = "";
-
         if(idx){
-            frm.userServerIdx.value = idx;
+            window.location.href ='/Site/userServerWrite/'+ idx;
+            return true;
+        } else {
+       		window.location.href ='/Site/userServerWrite';
+            return true;
         }
-        frm.action ='/Site/userServerWrite';
-        frm.submit();
     }
 
+	function updateInputName() {
+		const selectElement = document.getElementById("searchSelect");
+		const selectedValue = selectElement.value;
+
+		// input 요소를 가져옴
+		const inputElement = document.getElementById("searchInput");
+
+		if (selectedValue === "sName") {
+			inputElement.name = "serverName";
+			inputElement.placeholder = "서버명을 입력하세요.";
+		} else if (selectedValue === "sUrl") {
+			inputElement.name = "serverUrl";
+			inputElement.placeholder = "서버URL을 입력하세요.";
+		}
+	}
 </script>
 <script src="../static/userServerList_files/bootstrap-select(1).js" type="text/javascript"></script>
 
@@ -513,7 +568,7 @@
 											<!-- 버튼 영역 -->
 											<div class="tool-btn col-xl-6 col-lg-12">
 												<div>
-													<button type="button" class="btn btn-secondary btn-main" onclick="location.href='userServerWrite.html'">등록</button>
+													<button type="button" class="btn btn-secondary btn-main" th:onclick="commGoDetail();">등록</button>
 												</div>
 											</div>
 											<!-- //버튼 영역 -->
@@ -524,7 +579,7 @@
 													<div class="row">
                                                         <div class="input-group col-lg-3 col-sm-3">
                                                             <div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 사용여부 =</option>
 																	<option value="1">사용함</option>
 																	<option value="2">사용안함</option>
@@ -538,12 +593,13 @@
                                                         </div>
 														<div class="input-group col-lg-9 col-sm-9">
 															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
+																<select name="sOpt" id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
+																	<option value="" selected hidden>= 검색옵션 =</option>
 																	<option value="sName">서버명</option>
 																	<option value="sUrl">서버 URL</option>
 																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" id="searchInput" class="form-control" name="serverName" value="" placeholder="검색 옵션을 선택해 주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -571,8 +627,23 @@
                                                     <th class="text-center font-weight-bold">수정</th>
 												</tr>
 											</thead>
-											<tbody>
-												<tr><td class="text-center align-middle">1</td><td class="text-center align-middle">1</td><td class="text-center align-middle">오케이캐시백</td><td class="text-center align-middle">https://ocb.srk.co.kr</td><td class="text-center align-middle">사용함</td><td class="text-center align-middle">2024-01-02 14:15:53</td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(1);">수정</button></td></tr>											</tbody>
+											<tbody id = "serverList">
+												<tr th:each="server, iterStat : ${servers}">
+													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
+													<td th:text="${server.idx}" class="text-center align-middle"></td>
+													<td th:text="${server.serverName}" class="text-center align-middle"></td>
+													<td th:text="${server.serverUrl}" class="text-center align-middle"></td>
+													<td th:text="${server.isActive ? '활성' : '비활성'}" class="text-center align-middle">
+														<span class="color-blue" th:if="${server.isActive}">활성</span>
+														<span class="color-red" th:if="${!server.isActive}">비활성</span>
+													</td>
+													<td th:text="${server.createdAt}" class="text-center align-middle"></td>
+													<td class="text-center align-middle">
+														<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" th:onclick="'commGoDetail(' +${server.idx} + ');'">수정</button>
+													</td>
+
+												</tr>
+											</tbody>
 										</table>										
 									</div>
                                     <hr class="my-4">

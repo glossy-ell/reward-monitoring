@@ -17,7 +17,7 @@ import org.hibernate.annotations.Comment;
 @Setter
 public class MediaCompanyEditDto {
 
-    @Schema(description = "생성일시")
+    @Schema(description = "매체사명")
     private String companyName;
     @Schema(description = "서버 URL")
     private String serverUrl;
@@ -42,15 +42,6 @@ public class MediaCompanyEditDto {
 
     @Schema(description = "관리자 메모 ",example = "{\"quiz\":5,\"search\":5,\"sightseeing\":5}")
     private String companyUserSaving;
-
-    @Hidden
-    private Integer companyUserSavingQuiz;
-
-    @Hidden
-    private Integer  companyUserSavingSearch;
-
-    @Hidden
-    private Integer companyUserSavingSightseeing;
 
 
 }

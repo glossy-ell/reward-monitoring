@@ -9,6 +9,7 @@ import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRep
 import com.example.reward_monitoring.general.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequestMapping("/Advertiser")
 public class AdvertiserService {
 
     @Autowired
@@ -60,6 +62,7 @@ public class AdvertiserService {
     public Advertiser getAdvertiser(int idx) {
         return advertiserRepository.findByIdx(idx);
     }
+
     public List<Advertiser> getAdvertisers() {
         return advertiserRepository.findAll();
     }
@@ -90,11 +93,24 @@ public class AdvertiserService {
             }
 
         }
-        if(dto.getIsActive() != null)
-            result.addAll(advertiserRepository.findByIsActive(dto.getIsActive()));
-        if(dto.getAdvertiser()!=null)
-            result.addAll(advertiserRepository.findByAdvertiser(dto.getAdvertiser()));
 
+        if(dto.getIsActive() != null) {
+            target_is_active = advertiserRepository.findByIsActive(dto.getIsActive());
+            if(result.isEmpty())
+                result.addAll(target_is_active);
+            else{
+                result.retainAll(target_is_active);
+            }
+        }
+
+        if(dto.getAdvertiser()!=null){
+            target_advertiser=advertiserRepository.findByAdvertiser(dto.getAdvertiser());
+            if(result.isEmpty())
+                result.addAll(target_advertiser);
+            else{
+                result.retainAll(target_advertiser);
+            }
+        }
 
 
         return result.stream().distinct().collect(Collectors.toList());

@@ -472,46 +472,44 @@
         formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+        $.ajax({
+        	url: `/Admin/member/search`,
+        	type: "POST",
+        	contentType: "application/json",
+        	data: JSON.stringify(jsonData),
 
-         $.ajax({
-                       url: `/Admin/member/search`,
-                       type: "POST",
-                       contentType: "application/json",
-                       data: JSON.stringify(jsonData),
-
-                       success: function(response) {
-            				const memberListContainer = $('#memberList'); // 회원 목록을 표시할 컨테이너 선택
-            				memberListContainer.empty();
-            				if (response.members.length === 0) {
-									// members가 빈 리스트인 경우 메시지 추가
-									$('#memberList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-								} else {
-								response.members.forEach(function(member,index) {
-								$('#memberList').append(
-									'<tr>' +
-									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-									'<td class="text-center align-middle">' + member.idx + '</td>' +
-									'<td class="text-center align-middle">' +
-										'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + member.idx + ');">수정</button>' +
-									'</td>' +
-									'<td class="text-center align-middle">' + member.id + '</td>' +
-									'<td class="text-center align-middle">' + member.name + '</td>' +
-									'<td class="text-center align-middle">' + member.department + '</td>' +
-									'<td class="text-center align-middle">' + (member.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
-									'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? member.lastLoginAt : '') + '</td>' +
-									'<td class="text-center align-middle">' + member.createdAt + '</td>' +
-									'</tr>'
-									);
-								 });
-							$('#currentPage').text(response.currentPage);
-							$('#totalPages').text(response.totalPages);
-					   		}
-                       },
-                       error: function(xhr) {
-                           alert("검색중 오류가 발생하였습니다.");
-                       }
-
-                   });
+            success: function(response) {
+            	const memberListContainer = $('#memberList'); // 회원 목록을 표시할 컨테이너 선택
+            	memberListContainer.empty();
+            	if (response.members.length === 0) {
+				// members가 빈 리스트인 경우 메시지 추가
+						$('#memberList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+				} else {
+					response.members.forEach(function(member,index) {
+					$('#memberList').append(
+						'<tr>' +
+						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+						'<td class="text-center align-middle">' + member.idx + '</td>' +
+						'<td class="text-center align-middle">' +
+							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + member.idx + ');">수정</button>' +
+						'</td>' +
+						'<td class="text-center align-middle">' + member.id + '</td>' +
+						'<td class="text-center align-middle">' + member.name + '</td>' +
+						'<td class="text-center align-middle">' + member.department + '</td>' +
+						'<td class="text-center align-middle">' + (member.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
+						'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? member.lastLoginAt : '') + '</td>' +
+						'<td class="text-center align-middle">' + member.createdAt + '</td>' +
+						'</tr>'
+					);
+				});
+				$('#currentPage').text(response.currentPage);
+				$('#totalPages').text(response.totalPages);
+				}
+            },
+            error: function(xhr) {
+            	alert("검색중 오류가 발생하였습니다.");
+            }
+        });
 
     }
 
@@ -572,7 +570,7 @@
 											<!-- 버튼 영역 -->
                                             <div class="tool-btn col-xl-6 col-lg-12">
 												<div>
-													<button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Admin/adminWrite'">등록 </button>
+													<button type="button" class="btn btn-secondary btn-main" th:onclick="commGoDetail();">등록 </button>
 												</div>
 											</div>
 											<!--// 버튼 영역 -->
@@ -624,7 +622,7 @@
 														<div class="input-group col-lg-9 col-sm-12">
 															<div class="input-group-prepend">
 																<select name="sOpt" id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
-																	<option value="">= 검색옵션 =</option>
+																	<option value="" selected hidden>= 검색옵션 =</option>
 																	<option value="sId">아이디</option>
 																	<option value="sName">이름</option>
 																</select>

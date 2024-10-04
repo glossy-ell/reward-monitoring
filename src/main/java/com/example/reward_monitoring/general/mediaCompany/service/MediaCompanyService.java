@@ -7,6 +7,7 @@ import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearch
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompanyRepository;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.RandomKeyGenerator;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.google.gson.Gson;
@@ -49,6 +50,7 @@ public class MediaCompanyService {
             mediaCompany.setCompanyManager(dto.getCompanyManager());
         if(dto.getCompanyManagerPhoneNum()!=null)
             mediaCompany.setCompanyManagePhoneNum(dto.getCompanyManagerPhoneNum());
+
         if(dto.getAPIKey()!=null)
             mediaCompany.setAPIKey(dto.getAPIKey());
         if(dto.getIsActive() !=null) {
@@ -64,22 +66,24 @@ public class MediaCompanyService {
         if(dto.getCompanyUserSaving()!=null) {
             Gson gson = new Gson();
             Map<String,Integer> data = gson.fromJson(dto.getCompanyUserSaving(), new TypeToken<Map<String, Integer>>(){}.getType());
-            if(data.get("quiz")!=null)
-                dto.setCompanyUserSavingQuiz(data.get("quiz"));
+            if(data.get("quiz")!=null) {
+                mediaCompany.setCompanyUserSavingQuiz(data.get("quiz"));
+            }
             if(data.get("search")!=null)
-                dto.setCompanyUserSavingSearch(data.get("search"));
+                mediaCompany.setCompanyUserSavingSearch(data.get("search"));
             if(data.get("sightseeing")!=null)
-                dto.setCompanyUserSavingSightseeing(data.get("sightseeing"));
+                mediaCompany.setCompanyUserSavingSightseeing(data.get("sightseeing"));
         }
 
         if(dto.getMemo()!=null)
             mediaCompany.setMemo(dto.getMemo());
-
+        mediaCompanyRepository.save(mediaCompany);
         return mediaCompany;
     }
 
     public MediaCompany add(MediaCompanyReadDto dto) {
         Gson gson = new Gson();
+        log.info(dto.getCompanyUserSaving());
         if(dto.getCompanyUserSaving() !=null) {
             Map<String, Integer> data = gson.fromJson(dto.getCompanyUserSaving(), new TypeToken<Map<String, Integer>>() {}.getType());
             if (data.get("quiz") != null)
@@ -89,7 +93,8 @@ public class MediaCompanyService {
             if (data.get("sightseeing") != null)
                 dto.setCompanyUserSavingSightseeing(data.get("sightseeing"));
         }
-
+        String key = RandomKeyGenerator.generateRandomKey(15);
+        dto.setApiKey(key);
 
         Server server = serverRepository.findByServerUrl_(dto.getServerUrl());
         return dto.toEntity(server);
@@ -129,6 +134,7 @@ public class MediaCompanyService {
                 if(dto.getEndDate() == null){
                     target_date = mediaCompanyRepository.findByStartDate(start_time);
                     result.addAll(target_date);
+
                 }else{
                     ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
                     target_date = mediaCompanyRepository.findByBothDate(start_time,end_time);
@@ -147,21 +153,37 @@ public class MediaCompanyService {
         }
         if(dto.getIsActive() != null){
             target_is_active = mediaCompanyRepository.findByIsActive(dto.getIsActive());
-            result.addAll(target_is_active);
+            if(result.isEmpty())
+                result.addAll(target_is_active);
+            else{
+                result.retainAll(target_is_active);
+            }
         }
         if(dto.getOperationType()!=null){
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());
-            result.addAll(target_operation_type);
+            if(result.isEmpty())
+                result.addAll(target_operation_type);
+            else{
+                result.retainAll(target_operation_type);
+            }
         }
 
-        if(dto.getName()!=null){
-            target_name = mediaCompanyRepository.findByName(dto.getName());
-            result.addAll(target_name);
+        if(dto.getCompanyName()!=null){
+            target_name = mediaCompanyRepository.findByName(dto.getCompanyName());
+            if(result.isEmpty())
+                result.addAll(target_name);
+            else{
+                result.retainAll(target_name);
+            }
         }
 
-        if(dto.getApi()!=null){
-            target_api = mediaCompanyRepository.findByApi(dto.getApi());
-            result.addAll(target_api);
+        if(dto.getAPIKey()!=null){
+            target_api = mediaCompanyRepository.findByApi(dto.getAPIKey());
+            if(result.isEmpty())
+                result.addAll(target_api);
+            else{
+                result.retainAll(target_api);
+            }
         }
 
 

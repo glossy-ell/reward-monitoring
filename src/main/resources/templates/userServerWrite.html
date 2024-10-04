@@ -389,13 +389,13 @@
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션별 통계</span>
 										</a>
 									</li>
 									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumSearch.html" class="k-menu__link">
+										<a href="/Statistics/statSumSearch" class="k-menu__link">
 											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
 											<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
 										</a>
@@ -458,17 +458,17 @@
 		<!-- end aside -->
 <script type="application/javascript">        
 
-    function commGoAct() {
-        var frm         = document.writeFrm;
-        var hiddenFrm   = document.hiddenFrm;
+    function commGoAct(idx=-1) {
+        var frm = document.writeFrm;
+        var formData = new FormData(frm);
+        var jsonData = {};
+
+        formData.forEach((value, key) => {
+
+               jsonData[key] = value; // FormData를 JSON 객체로 변환
+         });
 
         $('#saveBtn').attr('disabled',true);
-
-        if(hiddenFrm.writeAuth.value != true) {
-            $('#saveBtn').attr('disabled',false);
-            alert("쓰기 권한이 없습니다.");
-            return false;
-        }        
 
         if(comInputCheck('text','userServerName') === true) {
             $('#saveBtn').attr('disabled',false);
@@ -489,21 +489,60 @@
             alert("서버 통신 키 값을 입력해주세요.");
             $('#userServerKey').focus();
             return false;
-        } 
-
-        if(confirm("저장하시겠습니까?")){
-            frm.action = "/Site/actUserServerWrite";
-            frm.submit();
-        } else {
-            $('#saveBtn').attr('disabled',false);
-            return false;
         }
+		const radios = document.getElementsByName('isActive');
+		let isChecked = false;
+		for (const radio of radios) {
+			if (radio.checked) {
+				isChecked = true;
+				break;
+			}
+		}
+		if (!isChecked) {
+        	alert("활성여부를 입력해주세요.");
+        	return false;
+   		}
+
+		if (confirm("저장하시겠습니까?")) {
+               if (idx === -1) {
+                   // 신규 생성 요청
+                   $.ajax({
+                       url: "/Site/add",
+                       type: "POST",
+                       contentType: "application/json",
+                       data: JSON.stringify(jsonData),
+                       success: function(response) {
+                           // 성공적으로 생성 시
+                           window.location.href = "/Site/userServerList";
+                       },
+                       error: function(xhr) {
+                           alert("서버정보 추가 실패.");
+                       }
+                   });
+               } else {
+                   // 정보 수정 요청
+                   $.ajax({
+                       url: `/Site/edit/${idx}`,
+                       type: "POST",
+                       contentType: "application/json",
+                       data: JSON.stringify(jsonData),
+                       success: function(response) {
+                           // 성공적으로 수정 시
+                           window.location.href = "/Site/userServerList";
+                       },
+                       error: function(xhr) {
+                           alert("서버정보 수정 실패.");
+                       }
+                   });
+               }
+           } else {
+               $('#saveBtn').attr('disabled', false);
+               return false;
+           }
     }
 
     function commGoList(str) {
-        var frm = document.searchFrm;
-        frm.action = str;
-        frm.submit();
+		window.location.href = "/Site/userServerList";
     }
 
 </script>
@@ -525,78 +564,59 @@
                                 </div>
                             </div>
 
-                            <form name="hiddenFrm">
-                                <input type="hidden" name="writeAuth" value="1">
-                            </form>
-
-                            <form method="get" name="searchFrm">
-                                <!--검색조건-->
-                                <input type="hidden" name="sStartDate" value="">
-                                <input type="hidden" name="sEndDate" value="">
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sOpt" value="sName">
-                                <input type="hidden" name="sVal" value="">
-                            </form>
-
                             <!--begin::Form-->
                             <form class="k-form" name="writeFrm" method="post">
-                                <!--검색조건-->
-                                <input type="hidden" name="sStartDate" value="">
-                                <input type="hidden" name="sEndDate" value="">
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sOpt" value="sName">
-                                <input type="hidden" name="sVal" value="">
-                                <input type="hidden" name="userServerIdx" id="userServerIdx" value="">
-                                <input type="hidden" name="mode" id="mode" value="ins">                                
 
                                 <div class="k-portlet__body">
 									<div class="row">                                        
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">서버명</label>
-												<input type="text" class="form-control" name="userServerName" id="userServerName" value="" placeholder="서버명을 입력해주세요." autocomplete="off">
+												<input type="text" class="form-control" name="serverName" id="userServerName" th:value="${server?.serverName}" placeholder="서버명을 입력해주세요." autocomplete="off">
 											</div>
 										</div>
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">서버 URL</label>
-												<input type="text" class="form-control" name="userServerUrl" id="userServerUrl" value="" placeholder="서버 URL을 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="serverUrl" id="userServerUrl" th:value="${server?.serverUrl}" placeholder="서버 URL을 입력해주세요" autocomplete="off">
 											</div>
 										</div>
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">서버 통신 키</label>
-												<input type="text" class="form-control" name="userServerKey" id="userServerKey" value="" placeholder="서버 통신 키 값을 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="serverKey" id="userServerKey" th:value="${server?.serverKey}" placeholder="서버 통신 키 값을 입력해주세요" autocomplete="off">
 											</div>
 										</div>
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">서버 사용여부</label>
 												<div class="k-radio-inline mx-2">
-													 <div class="d-inline-block mr-3">
-														 <input type="radio" name="isUsed" value="1" checked="checked" class="custom-control-input" id="isUsed1">
-														 <label for="isUsed1">사용함</label>
-													 </div>
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isUsed" value="2" class="custom-control-input" id="isUsed2">
-														 <label for="isUsed2">사용안함</label>
+														<input type="radio" name="isActive" value="true" th:checked="${server?.isActive}" class="custom-control-input" id="1">
+														<label for="1">활성</label>
 													</div>
+													<div class="d-inline-block mr-3">
+														<input type="radio" name="isActive" value="false" class="custom-control-input" th:checked="${server != null && !server.isActive}" id="2">
+														<label for="2">비활성</label>
+													</div>
+												</div>
 												</div>
 											</div>
 										</div>                                        										                                  
 										<div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="label__icon">관리자 메모</label>
-												<textarea id="adminMemo" name="adminMemo" class="form-control" rows="10" placeholder="관리자 메모를 남겨주세요"></textarea>
+												<textarea id="adminMemo" name="memo" class="form-control" rows="10" placeholder="관리자 메모를 남겨주세요"th:text="${server?.memo}">
+												</textarea>
                                             </div>
                                         </div>             							
 									</div>
-                                </div>
+
 
                                 <div class="k-portlet__foot">
                                     <div class="k-form__actions">
-                                        <button type="button" id="saveBtn" class="btn btn-primary btn-main" onclick="commGoAct();">저장</button>
-                                        <button type="button" class="btn btn-secondary btn-outline--sub" onclick="commGoList(&#39;/Site/userServerList&#39;);">목록</button>
+										<button type="button" id="saveBtn" class="btn btn-primary btn-main"   th:onclick="${server != null} ? 'commGoAct(' + ${server.idx} + ');' : 'commGoAct()'">저장</button>
+                                        <button type="button" class="btn btn-secondary btn-outline--sub" onclick="commGoList();">목록</button>
                                     </div>
                                 </div>
                             </form>

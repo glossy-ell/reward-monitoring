@@ -18,9 +18,9 @@ public class MediaCompanySearchDto {
     @Schema(description = "활성여부")
     private Boolean isActive;
     @Schema(description = "매체사명")
-    private String name;
+    private String companyName;
     @Schema(description = "API키")
-    private String api;
+    private String APIKey;
     @Schema(description = "운영 타입")
     private Type operationType;
 }

@@ -229,23 +229,23 @@ public class MemberController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public Map<String, Object> searchMember(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody MemberSearchDto dto, Model model){
+    public Map<String, Object> searchMember(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody MemberSearchDto dto){
 
         Member sessionMember= (Member) session.getAttribute("member");
         Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
             response.put("error", "404"); // 멤버가 없는 경우
-            return response; // JSON 형태로 반환
+            return response;
         }
 
         Member member =memberRepository.findById( sessionMember.getId());
         if (member == null) {
-            response.put("error", "404"); // 비권한 사용자인 경우
-            return response; // JSON 형태로 반환
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
         }
         if(member.isNauthMember()){
-            response.put("error", "400");
-            return response; // JSON 형태로 반환
+            response.put("error", "403");
+            return response;
         }
 
 

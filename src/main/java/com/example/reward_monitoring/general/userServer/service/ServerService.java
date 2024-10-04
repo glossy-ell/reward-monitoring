@@ -44,13 +44,14 @@ public class ServerService {
         if(dto.getMemo()!=null){
             server.setMemo(dto.getMemo());
         }
-         serverRepository.save(server);
+        serverRepository.save(server);
         return server;
     }
 
     public Server add(ServerReadDto dto) {
         String key = RandomKeyGenerator.generateRandomKey(15);
-        dto.setServerKey(key);
+        if(dto.getServerKey() ==null )
+            dto.setServerKey(key);
         return dto.toEntity();
     }
 
@@ -63,7 +64,7 @@ public class ServerService {
     }
 
 
-    public List<Server> searchMember(ServerSearchDto dto) {
+    public List<Server> searchServer(ServerSearchDto dto) {
         List<Server> target_server_url;
         List<Server> target_server_name;
         List<Server> target_is_active;
@@ -76,12 +77,20 @@ public class ServerService {
         }
         if(dto.getServerUrl()!=null){
             target_server_url = serverRepository.findByServerUrl(dto.getServerUrl());
-            result.addAll(target_server_url);
+            if(result.isEmpty())
+                result.addAll(target_server_url);
+            else{
+                result.retainAll(target_server_url);
+            }
         }
 
         if(dto.getServerName()!=null){
             target_server_name = serverRepository.findByServerName(dto.getServerName());
-            result.addAll(target_server_name);
+            if(result.isEmpty())
+                result.addAll(target_server_name);
+            else{
+                result.retainAll(target_server_name);
+            }
         }
         return result.stream().distinct().collect(Collectors.toList());
     }
