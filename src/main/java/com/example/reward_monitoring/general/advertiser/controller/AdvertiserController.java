@@ -9,7 +9,6 @@ import com.example.reward_monitoring.general.advertiser.service.AdvertiserServic
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
-import com.example.reward_monitoring.general.userServer.entity.Server;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -175,7 +175,7 @@ public class AdvertiserController {
     }
 
     @Operation(summary = "광고주 검색", description = "조건에 맞는 광고주를 검색합니다")
-    @PostMapping({"/advertiser/search","/advertiser/search/{pageNumber}"})
+    @PostMapping({"/search","/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -230,7 +230,7 @@ public class AdvertiserController {
     }
 
 
-    @GetMapping({"/userServerList/{pageNumber}","/advertiserList","/",""})
+    @GetMapping({"/advertiserList/{pageNumber}","/advertiserList","/",""})
     public String advertiserList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
@@ -274,7 +274,7 @@ public class AdvertiserController {
 
 
     @GetMapping("/advertiserWrite")
-    public String userServerWrite(HttpSession session){
+    public String advertiserWrite(HttpSession session){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -287,8 +287,8 @@ public class AdvertiserController {
         return "advertiserWrite";
     }
 
-    @GetMapping("/adminWrite/{idx}")
-    public String adminEdit(HttpSession session,Model model,@PathVariable(required = false,value = "idx") int idx){
+    @GetMapping("/advertiserWrite/{idx}")
+    public String advertiserEdit(HttpSession session,Model model,@PathVariable(required = false,value = "idx") int idx){
 
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
@@ -304,7 +304,13 @@ public class AdvertiserController {
             return "error/404";
 
         model.addAttribute("advertiser", advertiser);
-        return "adminWrite";
+        return "advertiserWrite";
     }
-
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
+        if (ex.getMessage().contains("Duplicate entry")) {
+            return new ResponseEntity<>("아이디가 중복되었습니다.", HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("데이터베이스 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

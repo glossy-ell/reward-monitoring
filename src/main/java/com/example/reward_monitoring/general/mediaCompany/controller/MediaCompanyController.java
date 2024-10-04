@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -311,4 +312,11 @@ public class MediaCompanyController {
         return "affiliateWrite";
     }
 
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
+        if (ex.getMessage().contains("Duplicate entry")) {
+            return new ResponseEntity<>("아이디가 중복되었습니다.", HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("데이터베이스 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

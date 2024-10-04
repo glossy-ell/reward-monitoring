@@ -31,11 +31,10 @@ public class Server {
     @Schema(description = "서버URL")
     private String serverUrl;
 
-    @Builder.Default
     @Comment("활성여부")
     @Column(name = "is_active", nullable = false)
     @Schema(description = "활성여부")
-    private boolean isActive = false;
+    private boolean isActive;
 
     @Comment("생성일자")
     @Column(name = "created_at", nullable = false, updatable = false)

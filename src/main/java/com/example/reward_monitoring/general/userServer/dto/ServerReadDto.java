@@ -23,7 +23,7 @@ public class ServerReadDto {
         return Server.builder()
                 .serverName(serverName)
                 .serverUrl(serverUrl)
-                .isActive(isActive)
+                .isActive(isActive!=null ? isActive:false)
                 .serverKey(serverKey)
                 .memo(memo)
                 .build();

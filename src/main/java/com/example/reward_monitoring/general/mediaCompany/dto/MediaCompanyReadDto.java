@@ -23,7 +23,7 @@ public class MediaCompanyReadDto {
     @Schema(description = "매체사 담당자")
     private String companyManager;
     @Schema(description = "매체사 담당자 연락처")
-    private String companyManagerPhoneNum;
+    private String companyManagePhoneNum;
     @Schema(description = "API Key")
     private String apiKey;
     @Schema(description = "활성 여부")
@@ -56,8 +56,8 @@ public class MediaCompanyReadDto {
                 .server(serverEntity)
                 .companyID(companyID)
                 .password(password)
-                .companyManager(companyManager)
-                .companyManagePhoneNum(companyManagerPhoneNum)
+                .companyManager(companyManager != null && !companyManager.isEmpty() ? companyManager : "미정")
+                .companyManagePhoneNum(companyManagePhoneNum != null && !companyManagePhoneNum.isEmpty() ? companyManagePhoneNum : "미정")
                 .APIKey(apiKey)
                 .isActive(isActive)
                 .type(type)

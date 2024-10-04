@@ -94,24 +94,21 @@ public class MediaCompany {
     @Schema(description = "매체사 리턴 파라미터 ")
     private String companyReturnParameter;
 
-
-    @Builder.Default
     @Comment("매체사 유저 적립금-정답미션")
     @Column(name = "company_user_saving_quiz")
     @Schema(description = "매체사 유저 적립금-정답미션")
-    private  int companyUserSavingQuiz=5;
+    private  int companyUserSavingQuiz;
 
-    @Builder.Default
+
     @Comment("매체사 유저 적립금-검색미션")
     @Column(name = "company_user_saving_search")
     @Schema(description = "매체사 유저 적립금-검색미션")
-    private  int companyUserSavingSearch=5;
+    private  int companyUserSavingSearch;
 
-    @Builder.Default
     @Comment("매체사 유저 적립금-저장미션")
     @Column(name = "company_user_saving_sightseeing")
     @Schema(description = "매체사 유저 적립금-저장미션")
-    private  int companyUserSavingSightseeing=5;
+    private  int companyUserSavingSightseeing;
 
     @Comment("관리자 메모")
     @Column(name = "memo")

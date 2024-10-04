@@ -26,8 +26,8 @@ public class AdvertiserReadDto {
 
         return Advertiser.builder()
                 .advertiser(advertiser)
-                .manager(manager)
-                .managerPhoneNum(managerPhoneNum)
+                .manager(manager!=null ? manager : "미정")
+                .managerPhoneNum(managerPhoneNum!=null ?managerPhoneNum : "미정")
                 .isActive(isActive)
                 .memo(memo)
                 .build();
