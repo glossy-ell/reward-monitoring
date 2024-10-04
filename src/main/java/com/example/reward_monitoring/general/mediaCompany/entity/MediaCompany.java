@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -76,6 +78,11 @@ public class MediaCompany {
     @Schema(description = "생성일시")
     private ZonedDateTime createdAt;
 
+    @Transient
+    private LocalDateTime createdAtLocalDateTime;
+    @Transient
+    private LocalDate createdAtLocalDate;
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Comment("매체사 개발/운영")
@@ -142,6 +149,13 @@ public class MediaCompany {
     this.companyUserSavingQuiz = companyUserSavingQuiz;
     this.companyUserSavingSearch = companyUserSavingSearch;
     this.companyUserSavingSightseeing = companyUserSavingSightseeing;
+
+    }
+
+    @PostLoad
+    public void changeDTypeDateTime(){
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
+        this.createdAtLocalDate = this.createdAt.toLocalDate();
 
     }
 }

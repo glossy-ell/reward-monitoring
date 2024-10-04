@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -51,6 +53,12 @@ public class Advertiser {
     @Schema(description = "생성시간")
     private ZonedDateTime createdAt;
 
+    @Transient
+    private LocalDateTime createdAtLocalDateTime;
+
+    @Transient
+    private LocalDate createdAtLocalDate;
+
     @Comment("관리자 메모")
     @Column(name = "memo")
     @Schema(description = "관리자 메모")
@@ -68,5 +76,11 @@ public class Advertiser {
         this.managerPhoneNum = managerPhoneNum;
         this.isActive = isActive;
         this.memo = memo;
+    }
+
+    @PostLoad
+    public void changeDTypeDateTime(){
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
+        this.createdAtLocalDate = this.createdAt.toLocalDate();
     }
 }

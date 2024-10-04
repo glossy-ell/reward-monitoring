@@ -111,8 +111,6 @@ public class AdvertiserService {
                 result.retainAll(target_advertiser);
             }
         }
-
-
         return result.stream().distinct().collect(Collectors.toList());
     }
 }

@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -74,6 +76,12 @@ public class Member {
     @Schema(description = "마지막 로그인 일시",example = "2024-09-05 12:56:16")
     private ZonedDateTime lastLoginAt;
 
+    @Transient
+    private LocalDateTime lastLoginAtLocalDateTime;
+    @Transient
+    private LocalDate lastLoginAtLocalDate;
+
+
     @Enumerated(EnumType.STRING)
     @Column(name="lang")
     @Schema(description = "기본 언어",example = "한국어,English,中文,日本語")
@@ -84,10 +92,20 @@ public class Member {
     @Schema(description = "계정 생성일시",example = "2024-09-05 12:56:16")
     private ZonedDateTime createdAt;
 
+    @Transient
+    private LocalDateTime createdAtLocalDateTime;
+    @Transient
+    private LocalDate createdAtLocalDate;
+
     @Comment("정보 수정 일시")
     @Column(name = "edited_at")
     @Schema(description = "정보 수정 일시")
     private ZonedDateTime editedAt;
+
+    @Transient
+    private LocalDateTime editedAtLocalDateTime;
+    @Transient
+    private LocalDate editedAtLocalDate;
 
     @Comment("관리자 메모")
     @Column(name = "memo")
@@ -393,5 +411,23 @@ public class Member {
         this.ctryCode=ctryCode;
         this.phone=phone;
         this.lang = lang;
+    }
+
+
+    @PostLoad
+    public void changeDTypeDateTime(){
+
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
+        this.createdAtLocalDate = this.createdAt.toLocalDate();
+
+        if(editedAt !=null) {
+            this.editedAtLocalDateTime = this.editedAt.toLocalDateTime();
+            this.editedAtLocalDate = this.editedAt.toLocalDate();
+        }
+
+        if(lastLoginAt != null) {
+            this.lastLoginAtLocalDateTime = this.lastLoginAt.toLocalDateTime();
+            this.lastLoginAtLocalDate = this.lastLoginAt.toLocalDate();
+        }
     }
 }

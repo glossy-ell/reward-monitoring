@@ -526,7 +526,7 @@
             window.location.href ='/Admin/adminWrite/'+ idx;
             return true;
         } else {
-       		window.location.href ='/Admin/adminWrite/';
+       		window.location.href ='/Admin/adminWrite';
             return true;
         }
 
@@ -672,8 +672,8 @@
 														<span class="color-blue" th:if="${member.isActive}">활성</span>
 														<span class="color-red" th:if="${!member.isActive}">비활성</span>
 													</td>
-													<td th:text="${member.lastLoginAt}" class="text-center align-middle"></td>
-													<td th:text="${member.createdAt}" class="text-center align-middle"></td>
+													<td th:text="${member.lastLoginAtLocalDateTime != null ? #temporals.format(member.lastLoginAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss') : '기록 없음'}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(member.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

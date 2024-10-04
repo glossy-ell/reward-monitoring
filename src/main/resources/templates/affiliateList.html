@@ -695,7 +695,7 @@
 														<span class="color-blue" th:if="${affiliate.isActive}">사용함</span>
 														<span class="color-red" th:if="${!affiliate.isActive}">사용안함</span>
 													</td>
-													<td th:text="${affiliate.createdAt}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(affiliate.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 													<td>
 														<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>
 													</td>

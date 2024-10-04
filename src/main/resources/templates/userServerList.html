@@ -637,7 +637,7 @@
 														<span class="color-blue" th:if="${server.isActive}">활성</span>
 														<span class="color-red" th:if="${!server.isActive}">비활성</span>
 													</td>
-													<td th:text="${server.createdAt}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(server.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 													<td class="text-center align-middle">
 														<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" th:onclick="'commGoDetail(' +${server.idx} + ');'">수정</button>
 													</td>

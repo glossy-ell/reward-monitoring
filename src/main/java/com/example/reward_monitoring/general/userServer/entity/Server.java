@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -41,6 +43,12 @@ public class Server {
     @Schema(description = "생성일자")
     private ZonedDateTime createdAt;
 
+    @Transient
+    private LocalDateTime createdAtLocalDateTime;
+    @Transient
+    private LocalDate createdAtLocalDate;
+
+
     @Comment("서버 통신 키")
     @Column(name = "server_key", nullable = false,unique = true)
     @Schema(description = "서버 통신 키")
@@ -67,5 +75,11 @@ public class Server {
         this.serverKey = serverKey;
         this.memo = memo;
     }
+    @PostLoad
+    public void changeDTypeDateTime(){
 
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
+        this.createdAtLocalDate = this.createdAt.toLocalDate();
+
+    }
 }
