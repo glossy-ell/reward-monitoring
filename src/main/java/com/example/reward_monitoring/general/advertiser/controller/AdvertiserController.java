@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -214,6 +215,7 @@ public class AdvertiserController {
 
         // 전체 리스트의 크기 체크
         List<Advertiser> limitedAdvertisers;
+
         if (startIndex < result.size()) {
             int endIndex = Math.min(startIndex + limit, result.size());
             limitedAdvertisers = result.subList(startIndex, endIndex);

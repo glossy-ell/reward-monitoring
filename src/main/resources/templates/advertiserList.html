@@ -479,7 +479,6 @@
             contentType: "application/json",
             data: JSON.stringify(jsonData),
 
-
             success: function(response) {
             	const advertisersListContainer = $('#advertiserList'); // 회원 목록을 표시할 컨테이너 선택
             	advertisersListContainer.empty();
@@ -488,10 +487,10 @@
 					$('#advertiserList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 				} else {
 					response.advertisers.forEach(function(advertiser,index) {
-					$('#serverList').append(
+					$('#advertiserList').append(
 						'<tr>' +
 						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-						'<td class="text-center align-middle">' + advertise.idx + '</td>' +
+						'<td class="text-center align-middle">' + advertiser.idx + '</td>' +
 						'<td class="text-center align-middle">' + advertiser.advertiser + '</td>' +
 						'<td class="text-center align-middle">' + advertiser.manager + '</td>' +
 						'<td class="text-center align-middle">' + advertiser.managerPhoneNum + '</td>' +
@@ -524,13 +523,28 @@
          var frm = document.searchFrm;
 
         if(idx){
-            window.location.href ='/Site/advertiserWrite/'+ idx;
+            window.location.href ='/Advertiser/advertiserWrite/'+ idx;
             return true;
         } else {
        		window.location.href ='/Site/advertiserWrite';
             return true;
         }
     }
+	function updateInputName() {
+		const selectElement = document.getElementById("searchSelect");
+		const selectedValue = selectElement.value;
+
+		// input 요소를 가져옴
+		const inputElement = document.getElementById("searchInput");
+
+		if (selectedValue === "sId") {
+			inputElement.name = "id";
+			inputElement.placeholder = "아이디를 입력하세요.";
+		} else if (selectedValue === "sName") {
+			inputElement.name = "name";
+			inputElement.placeholder = "이름을 입력하세요.";
+		}
+	}
 
 </script>
 <script src="../static/advertiserList_files/bootstrap-select(1).js" type="text/javascript"></script>
@@ -551,7 +565,6 @@
 								
 								<div class="k-portlet__body">
 									<form class="k-form" method="get" name="searchFrm">
-                                        <input type="hidden" name="advertiserIdx" value="" id="advertiserIdx">
 										<div class="k-portlet__body-tool row">
 
 											<!-- 버튼 영역 -->
@@ -569,16 +582,16 @@
 														<div class="k-form__label col-xl-3 col-lg-12">등록일 기간검색</div>
 														<div class="k-form__control col-xl-6 col-lg-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="StartDate" placeholder="시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="EndDate" placeholder="종료일" value="" autocomplete="off">
 															</div>
 														</div>                                                       
                                                         <div class="input-group col-xl-3 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 사용여부 =</option>
 																	<option value="1">사용함</option>
 																	<option value="2">사용안함</option>
@@ -597,11 +610,11 @@
 													<div class="row">
 														<div class="input-group col-lg-12 col-sm-12">
 															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
-<option value="sName">광고주명</option>
-</select>
+																<select name="sOpt" id="searchSelect" class="custom-select form-control" onchange="updateInputName();" >
+																	<option value="sName" selected>광고주명</option>
+																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" class="form-control" name="advertiser" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>

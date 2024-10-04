@@ -633,7 +633,7 @@
 													<td th:text="${server.idx}" class="text-center align-middle"></td>
 													<td th:text="${server.serverName}" class="text-center align-middle"></td>
 													<td th:text="${server.serverUrl}" class="text-center align-middle"></td>
-													<td th:text="${server.isActive ? '활성' : '비활성'}" class="text-center align-middle">
+													<td  class="text-center align-middle">
 														<span class="color-blue" th:if="${server.isActive}">활성</span>
 														<span class="color-red" th:if="${!server.isActive}">비활성</span>
 													</td>

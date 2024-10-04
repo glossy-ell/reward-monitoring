@@ -691,7 +691,7 @@
 													<td th:text="${affiliate.companyManager}" class="text-center align-middle"></td>
 													<td th:text="${affiliate.companyManagePhoneNum}" class="text-center align-middle"></td>
 													<td th:text="${affiliate.APIKey}" class="text-center align-middle"></td>
-													<td th:text="${affiliate.isActive ? '활성' : '비활성'}" class="text-center align-middle">
+													<td class="text-center align-middle">
 														<span class="color-blue" th:if="${affiliate.isActive}">사용함</span>
 														<span class="color-red" th:if="${!affiliate.isActive}">사용안함</span>
 													</td>

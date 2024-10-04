@@ -668,7 +668,7 @@
 													<td th:text="${member.id}" class="text-center align-middle"></td>
 													<td th:text="${member.name}" class="text-center align-middle"></td>
 													<td th:text="${member.department}" class="text-center align-middle"></td>
-													<td th:text="${member.isActive ? '활성' : '비활성'}" class="text-center align-middle">
+													<td class="text-center align-middle">
 														<span class="color-blue" th:if="${member.isActive}">활성</span>
 														<span class="color-red" th:if="${!member.isActive}">비활성</span>
 													</td>
