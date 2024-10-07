@@ -84,7 +84,7 @@ public class ServerService {
             }
         }
 
-        if(dto.getServerName()!=null){
+        if(dto.getServerName()!=null && !dto.getServerName().isEmpty()){
             target_server_name = serverRepository.findByServerName(dto.getServerName());
             if(result.isEmpty())
                 result.addAll(target_server_name);

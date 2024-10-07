@@ -459,17 +459,18 @@
 
 		<script type="application/javascript">
 
-    function commGoAct() {
-        var frm         = document.writeFrm;
-        var hiddenFrm   = document.hiddenFrm;
+    function commGoAct(idx=-1) {
+        var frm = document.writeFrm;
 
+        var formData = new FormData(frm);
+        var jsonData = {};
+     	formData.forEach((value, key) => {
+
+              jsonData[key] = value; // FormData를 JSON 객체로 변환
+         });
         $('#saveBtn').attr('disabled',true);
 
-        if(hiddenFrm.writeAuth.value != true) {
-            $('#saveBtn').attr('disabled',false);
-            alert("쓰기 권한이 없습니다.");
-            return false;
-        }        
+
 
         if(comInputCheck('text','advertiserName') === true) {
             $('#saveBtn').attr('disabled',false);
@@ -479,8 +480,38 @@
         }    
 
         if(confirm("저장하시겠습니까?")){
-            frm.action = "/Advertiser/actAdvertiserWrite";
-            frm.submit();
+               if (idx === -1) {
+                   // 신규 생성 요청
+                   $.ajax({
+                       url: "/Advertiser/add",
+                       type: "POST",
+                       contentType: "application/json",
+                       data: JSON.stringify(jsonData),
+                       success: function(response) {
+                           // 성공적으로 생성 시
+                           window.location.href = "/Site/userServerList";
+                       },
+                       error: function(xhr) {
+                           alert("서버정보 추가 실패.");
+                       }
+                   });
+               } else {
+                   // 정보 수정 요청
+                   $.ajax({
+                       url: `/Advertiser/edit/${idx}`,
+                       type: "POST",
+                       contentType: "application/json",
+                       data: JSON.stringify(jsonData),
+                       success: function(response) {
+                           // 성공적으로 수정 시
+                           window.location.href = "/Advertiser/advertiserList";
+                       },
+                       error: function(xhr) {
+                           alert("서버정보 수정 실패.");
+                       }
+                   });
+               }
+
         } else {
             $('#saveBtn').attr('disabled',false);
             return false;
@@ -512,36 +543,16 @@
                                 </div>
                             </div>
 
-                            <form name="hiddenFrm">
-                                <input type="hidden" name="writeAuth" value="1">
-                            </form>
 
-                            <form method="get" name="searchFrm">
-                                <!--검색조건-->
-                                <input type="hidden" name="sStartDate" value="">
-                                <input type="hidden" name="sEndDate" value="">
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sOpt" value="sName">
-                                <input type="hidden" name="sVal" value="">
-                            </form>
 
                             <!--begin::Form-->
                             <form class="k-form" name="writeFrm" method="post">
-                                <!--검색조건-->
-                                <input type="hidden" name="sStartDate" value="">
-                                <input type="hidden" name="sEndDate" value="">
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sOpt" value="sName">
-                                <input type="hidden" name="sVal" value="">
-                                <input type="hidden" name="advertiserIdx" id="advertiserIdx" value="">
-                                <input type="hidden" name="mode" id="mode" value="ins">                                
-
                                 <div class="k-portlet__body">
 									<div class="row">                                        
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주명</label>
-												<input type="text" class="form-control" name="advertiserName" id="advertiserName" value="" placeholder="광고주 명을 입력해주세요." autocomplete="off">
+												<input type="text" class="form-control" name="advertiser" id="advertiserName" th:value="${advertiser?.advertiser}" placeholder="광고주 명을 입력해주세요." autocomplete="off">
 											</div>
 										</div>
                                         <div class="col-md-6">
@@ -549,12 +560,12 @@
 												<label class="label__icon">광고주 사용여부</label>
 												<div class="k-radio-inline mx-2">
 													 <div class="d-inline-block mr-3">
-														 <input type="radio" name="isUsed" value="1" checked="checked" class="custom-control-input" id="isUsed1">
-														 <label for="isUsed1">사용함</label>
+														 <input type="radio" name="isActive" value="true" th:checked="${advertiser?.isActive}" class="custom-control-input" id="1">
+														 <label for="1">사용함</label>
 													 </div>
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isUsed" value="2" class="custom-control-input" id="isUsed2">
-														 <label for="isUsed2">사용안함</label>
+														<input type="radio" name="isActive" value="false"  th:checked="${affiliate!= null && !affiliate.isActive}" class="custom-control-input" id="2">
+														 <label for="2">사용안함</label>
 													</div>
 												</div>
 											</div>
@@ -562,13 +573,13 @@
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주 담당자</label>
-												<input type="text" class="form-control" name="advertiserManager" id="advertiserManager" value="" placeholder="광고주 담당자 정보를 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="manager" id="advertiserManager" th:value="${advertiser?.manager}" placeholder="광고주 담당자 정보를 입력해주세요" autocomplete="off">
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주 담당자 연락처</label>
-												<input type="text" class="form-control" name="advertiserTel" id="advertiserTel" value="" placeholder="광고주 담당자 연락처 정보를 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="advertiserTel" id="advertiserTel" th:value="${advertiser?. managerPhoneNum}" placeholder="광고주 담당자 연락처 정보를 입력해주세요" autocomplete="off">
 											</div>
 										</div>                                        
 										<div class="col-md-12">
@@ -582,7 +593,7 @@
 
                                 <div class="k-portlet__foot">
                                     <div class="k-form__actions">
-                                        <button type="button" id="saveBtn" class="btn btn-primary btn-main" onclick="commGoAct();">저장</button>
+										<button type="button" id="saveBtn" class="btn btn-primary btn-main"   th:onclick="${advertiser != null} ? 'commGoAct(' + ${advertiser.idx} + ');' : 'commGoAct()'">저장</button>
                                         <button type="button" class="btn btn-secondary btn-outline--sub" onclick="commGoList(&#39;/Advertiser/advertiserList&#39;);">목록</button>
                                     </div>
                                 </div>

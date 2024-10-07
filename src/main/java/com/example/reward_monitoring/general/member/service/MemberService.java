@@ -247,6 +247,7 @@ public class MemberService {
 
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
+
                 if(dto.getEndDate() == null){
                     ZoneId zoneId = ZoneId.of("Asia/Seoul");
                     ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
@@ -271,11 +272,11 @@ public class MemberService {
         if(dto.getIsActive() != null){
             target_is_active = memberRepository.findByIsActive(dto.getIsActive());
         }
-        if(dto.getId()!=null){
+        if(dto.getId()!=null && !dto.getId().isEmpty()){
             target_id = memberRepository.findById_search(dto.getId());
         }
 
-        if(dto.getName()!=null){
+        if(dto.getName()!=null &&!dto.getName().isEmpty()){
             target_name = memberRepository.findByName_search(dto.getName());
         }
 
@@ -301,6 +302,8 @@ public class MemberService {
         else if(target_id != null){
             result = new ArrayList<>(target_id);
         }
+        if(result ==null)
+            result = new ArrayList<>();
         return result;
     }
 }

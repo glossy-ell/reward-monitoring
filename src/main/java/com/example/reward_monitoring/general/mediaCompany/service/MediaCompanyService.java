@@ -5,6 +5,7 @@ import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyEditDt
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyReadDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+import com.example.reward_monitoring.general.mediaCompany.model.Type;
 import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompanyRepository;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.RandomKeyGenerator;
@@ -125,8 +126,9 @@ public class MediaCompanyService {
         List<MediaCompany> target_name;
         List<MediaCompany> target_api;
         List<MediaCompany> result = new ArrayList<>();
+        int inserted = 0;
 
-
+        log.info(dto.getCompanyName());
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
@@ -134,7 +136,6 @@ public class MediaCompanyService {
                 if(dto.getEndDate() == null){
                     target_date = mediaCompanyRepository.findByStartDate(start_time);
                     result.addAll(target_date);
-
                 }else{
                     ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
                     target_date = mediaCompanyRepository.findByBothDate(start_time,end_time);
@@ -159,7 +160,7 @@ public class MediaCompanyService {
                 result.retainAll(target_is_active);
             }
         }
-        if(dto.getOperationType()!=null){
+        if(dto.getOperationType()!=null && dto.getOperationType() != Type.none){
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());
             if(result.isEmpty())
                 result.addAll(target_operation_type);
@@ -168,7 +169,7 @@ public class MediaCompanyService {
             }
         }
 
-        if(dto.getCompanyName()!=null){
+        if(dto.getCompanyName()!=null && !dto.getCompanyName().isEmpty()){
             target_name = mediaCompanyRepository.findByName(dto.getCompanyName());
             if(result.isEmpty())
                 result.addAll(target_name);
@@ -177,7 +178,7 @@ public class MediaCompanyService {
             }
         }
 
-        if(dto.getAPIKey()!=null){
+        if(dto.getAPIKey()!=null && !dto.getAPIKey().isEmpty()){
             target_api = mediaCompanyRepository.findByApi(dto.getAPIKey());
             if(result.isEmpty())
                 result.addAll(target_api);
@@ -185,8 +186,7 @@ public class MediaCompanyService {
                 result.retainAll(target_api);
             }
         }
-
-
+        log.info(result.toString());
         return result.stream().distinct().collect(Collectors.toList());
 
     }

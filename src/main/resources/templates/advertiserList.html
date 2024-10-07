@@ -456,8 +456,28 @@
 			</div>
 		</div>
 		<!-- end aside -->
-
 		<script type="application/javascript">
+
+			$(document).ready(function() {
+    var startDateInput = $('input[name="StartDate"]');
+    var endDateInput = $('input[name="EndDate"]');
+
+    // 시작일 선택 시 종료일의 minDate 설정
+    startDateInput.datepicker({
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(selectedDate) {
+            endDateInput.datepicker("option", "minDate", selectedDate);
+        }
+    });
+
+    // 종료일 선택 시 시작일의 maxDate 설정
+    endDateInput.datepicker({
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(selectedDate) {
+            startDateInput.datepicker("option", "maxDate", selectedDate);
+        }
+    });
+});
 
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -495,7 +515,7 @@
 						'<td class="text-center align-middle">' + advertiser.manager + '</td>' +
 						'<td class="text-center align-middle">' + advertiser.managerPhoneNum + '</td>' +
 						'<td class="text-center align-middle">' + (advertiser.active ? '<span class="color-blue">사용함</span>' : '<span class="color-red">사용안함</span>') + '</td>' +
-						'<td class="text-center align-middle">' + advertiser.createdAt + '</td>' +
+						'<td class="text-center align-middle">' +formatDateTime(advertiser.createdAtLocalDateTime) + '</td>' +
 						'<td class="text-center align-middle">' +
 							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + advertiser.idx + ');">수정</button>' +
 						'</td>' +
@@ -512,6 +532,21 @@
     	});
 
     }
+	// 날짜 포맷 함수
+	function formatDateTime(dateTimeStr) {
+		if (!dateTimeStr) {
+			return ''; // null 또는 undefined일 때 빈 문자열 반환
+		}
+		const date = new Date(dateTimeStr);
+		const year = date.getFullYear();
+		const month = ('0' + (date.getMonth() + 1)).slice(-2);
+		const day = ('0' + date.getDate()).slice(-2);
+		const hours = ('0' + date.getHours()).slice(-2);
+		const minutes = ('0' + date.getMinutes()).slice(-2);
+		const seconds = ('0' + date.getSeconds()).slice(-2);
+
+		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+	}
 
     //검색 초기화
     function commSearchReset() {
@@ -526,7 +561,7 @@
             window.location.href ='/Advertiser/advertiserWrite/'+ idx;
             return true;
         } else {
-       		window.location.href ='/Site/advertiserWrite';
+       		window.location.href ='/Advertiser/advertiserWrite';
             return true;
         }
     }
@@ -582,11 +617,11 @@
 														<div class="k-form__label col-xl-3 col-lg-12">등록일 기간검색</div>
 														<div class="k-form__control col-xl-6 col-lg-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="StartDate" placeholder="시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startDate" placeholder="시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="EndDate" placeholder="종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endDate" placeholder="종료일" value="" autocomplete="off">
 															</div>
 														</div>                                                       
                                                         <div class="input-group col-xl-3 col-lg-6 col-sm-12">

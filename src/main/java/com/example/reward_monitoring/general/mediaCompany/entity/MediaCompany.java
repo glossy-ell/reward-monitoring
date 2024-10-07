@@ -65,7 +65,7 @@ public class MediaCompany {
     @Comment("API Key")
     @Column(name = "api_key", nullable = false,unique = true)
     @Schema(description = "API Key")
-    private String APIKey; //어떻게 생성?
+    private String APIKey;
 
     @Builder.Default
     @Comment("매체사 사용 여부")
@@ -154,8 +154,8 @@ public class MediaCompany {
 
     @PostLoad
     public void changeDTypeDateTime(){
-        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
-        this.createdAtLocalDate = this.createdAt.toLocalDate();
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime().minusHours(9);
+        this.createdAtLocalDate = this.createdAt.toLocalDateTime().minusHours(9).toLocalDate();
 
     }
 }

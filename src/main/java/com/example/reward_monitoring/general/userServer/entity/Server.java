@@ -78,8 +78,8 @@ public class Server {
     @PostLoad
     public void changeDTypeDateTime(){
 
-        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
-        this.createdAtLocalDate = this.createdAt.toLocalDate();
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime().minusHours(9);
+        this.createdAtLocalDate = this.createdAt.toLocalDateTime().minusHours(9).toLocalDate();
 
     }
 }

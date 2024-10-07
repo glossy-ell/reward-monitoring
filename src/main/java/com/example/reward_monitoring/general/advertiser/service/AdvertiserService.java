@@ -6,7 +6,6 @@ import com.example.reward_monitoring.general.advertiser.dto.AdvertiserReadDto;
 import com.example.reward_monitoring.general.advertiser.dto.AdvertiserSearchDto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
-import com.example.reward_monitoring.general.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +80,7 @@ public class AdvertiserService {
                 if(dto.getEndDate() == null){
                     result.addAll(advertiserRepository.findByStartDate(start_time));
                 }else{
-                    ZonedDateTime end_time = dto.getStartDate().atStartOfDay(zoneId);
+                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
                     result.addAll(advertiserRepository.findByBothDate(start_time,end_time));
                 }
 
@@ -103,7 +102,7 @@ public class AdvertiserService {
             }
         }
 
-        if(dto.getAdvertiser()!=null){
+        if(dto.getAdvertiser()!=null && !dto.getAdvertiser().isEmpty()){
             target_advertiser=advertiserRepository.findByAdvertiser(dto.getAdvertiser());
             if(result.isEmpty())
                 result.addAll(target_advertiser);

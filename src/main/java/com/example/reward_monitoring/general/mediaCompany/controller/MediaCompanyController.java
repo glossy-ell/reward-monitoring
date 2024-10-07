@@ -210,10 +210,9 @@ public class MediaCompanyController {
             return response;
         }
 
-
         List<MediaCompany> result = mediaCompanyService.searchMediaCompany(dto);
 
-        log.info(result.toString());
+
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;

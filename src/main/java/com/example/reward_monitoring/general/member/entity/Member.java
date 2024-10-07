@@ -417,17 +417,17 @@ public class Member {
     @PostLoad
     public void changeDTypeDateTime(){
 
-        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime();
-        this.createdAtLocalDate = this.createdAt.toLocalDate();
+        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime().minusHours(9);
+        this.createdAtLocalDate = this.createdAt.toLocalDateTime().minusHours(9).toLocalDate();
 
         if(editedAt !=null) {
-            this.editedAtLocalDateTime = this.editedAt.toLocalDateTime();
-            this.editedAtLocalDate = this.editedAt.toLocalDate();
+            this.editedAtLocalDateTime = this.editedAt.toLocalDateTime().minusHours(9);
+            this.editedAtLocalDate = this.editedAt.toLocalDateTime().minusHours(9).toLocalDate();
         }
 
         if(lastLoginAt != null) {
-            this.lastLoginAtLocalDateTime = this.lastLoginAt.toLocalDateTime();
-            this.lastLoginAtLocalDate = this.lastLoginAt.toLocalDate();
+            this.lastLoginAtLocalDateTime = this.lastLoginAt.toLocalDateTime().minusHours(9);
+            this.lastLoginAtLocalDate = this.lastLoginAt.toLocalDateTime().minusHours(9).toLocalDate();
         }
     }
 }

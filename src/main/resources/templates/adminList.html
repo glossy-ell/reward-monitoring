@@ -497,8 +497,8 @@
 						'<td class="text-center align-middle">' + member.name + '</td>' +
 						'<td class="text-center align-middle">' + member.department + '</td>' +
 						'<td class="text-center align-middle">' + (member.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
-						'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? member.lastLoginAt : '') + '</td>' +
-						'<td class="text-center align-middle">' + member.createdAt + '</td>' +
+						'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? formatDateTime(member.lastLoginAtLocalDateTime) : '기록 없음') + '</td>' +
+						'<td class="text-center align-middle">' + formatDateTime(member.createdAtLocalDateTime) + '</td>' +
 						'</tr>'
 					);
 				});
@@ -513,6 +513,21 @@
 
     }
 
+	// 날짜 포맷 함수
+	function formatDateTime(dateTimeStr) {
+		if (!dateTimeStr) {
+			return ''; // null 또는 undefined일 때 빈 문자열 반환
+		}
+		const date = new Date(dateTimeStr);
+		const year = date.getFullYear();
+		const month = ('0' + (date.getMonth() + 1)).slice(-2);
+		const day = ('0' + date.getDate()).slice(-2);
+		const hours = ('0' + date.getHours()).slice(-2);
+		const minutes = ('0' + date.getMinutes()).slice(-2);
+		const seconds = ('0' + date.getSeconds()).slice(-2);
+
+		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+	}
 
     //검색 초기화
     function commSearchReset() {
