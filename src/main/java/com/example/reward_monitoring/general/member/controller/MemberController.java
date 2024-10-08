@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.general.member.controller;
 
 
+import com.example.reward_monitoring.config.RateLimited;
 import com.example.reward_monitoring.general.member.dto.MemberEditDto;
 import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
@@ -37,6 +38,7 @@ import java.util.Map;
 @Controller
 @Tag(name = "Member", description = "관리자 api ")
 @RequestMapping("/Admin")
+@RateLimited
 @Slf4j
 public class MemberController {
 
@@ -282,7 +284,6 @@ public class MemberController {
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         }
-
         Member member = memberRepository.findById(sessionMember.getId());
         if (member == null) {
             return "error/404";

@@ -51,7 +51,8 @@ public class MediaCompanyService {
             mediaCompany.setCompanyManager(dto.getCompanyManager());
         if(dto.getCompanyManagerPhoneNum()!=null)
             mediaCompany.setCompanyManagePhoneNum(dto.getCompanyManagerPhoneNum());
-
+        if(dto.getPassword()!=null)
+            mediaCompany.setPassword(dto.getPassword());
         if(dto.getAPIKey()!=null)
             mediaCompany.setAPIKey(dto.getAPIKey());
         if(dto.getIsActive() !=null) {
@@ -78,6 +79,9 @@ public class MediaCompanyService {
 
         if(dto.getMemo()!=null)
             mediaCompany.setMemo(dto.getMemo());
+        if(dto.getServerUrl()!=null)
+            mediaCompany.setServer(serverRepository.findByServerUrl_(dto.getServerUrl()));
+
         mediaCompanyRepository.save(mediaCompany);
         return mediaCompany;
     }
@@ -186,7 +190,6 @@ public class MediaCompanyService {
                 result.retainAll(target_api);
             }
         }
-        log.info(result.toString());
         return result.stream().distinct().collect(Collectors.toList());
 
     }

@@ -8,6 +8,7 @@ import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+
 public class AnswerMsnService {
 
     @Autowired
@@ -370,31 +374,45 @@ public class AnswerMsnService {
     @Transactional
     public boolean readExcel(MultipartFile file)throws IOException{
 
+        Workbook workbook;
+        DecimalFormat df = new DecimalFormat("0");
+        String fileName = file.getOriginalFilename();
 
+        // 확장자에 따라 Workbook 결정
+        try (InputStream is = file.getInputStream()) {
+            if (fileName.endsWith(".xlsx")) {
+                workbook = new XSSFWorkbook(is); // For OOXML (.xlsx)
+            } else if (fileName.endsWith(".xls")) {
+                workbook = new HSSFWorkbook(is); // For OLE2 (.xls)
+            } else {
+                throw new IllegalArgumentException("지원되지 않는 파일 형식입니다: " + fileName);
+            }
+        }
 
-        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-        XSSFSheet worksheet = workbook.getSheetAt(0);
+        Sheet worksheet = workbook.getSheetAt(0);
         AnswerMsnReadDto dto = new AnswerMsnReadDto();
-        Advertiser advertiserEntity=null;
+        Advertiser advertiserEntity = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter formatter_date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
 
-            XSSFRow row = worksheet.getRow(i);
+            Row row = worksheet.getRow(i);
 
             if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC)
                 dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
             if(row.getCell(2)!=null)
                 dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
 
+
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
                 //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
             if(row.getCell(4)!=null)
-                dto.setAdvertiserDetails(row.getCell(4).getStringCellValue());
+                dto.setAdvertiserDetails(df.format(row.getCell(4).getNumericCellValue()));
             if(row.getCell(5)!=null)
                 dto.setMissionTitle(row.getCell(5).getStringCellValue());
             if(row.getCell(6)!=null)
-                dto.setMissionAnswer(row.getCell(6).getStringCellValue());
+                dto.setMissionAnswer(df.format(row.getCell(6).getNumericCellValue()));
             if(row.getCell(7)!=null)
                 dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
             if(row.getCell(8)!=null)

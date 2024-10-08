@@ -662,10 +662,41 @@
 										</table>										
 									</div>
                                     <hr class="my-4">
+									<div class="intra-pagination-wrap">
+										<div class="intra-pagination">
+											<!-- 현재 페이지 표시 -->
+											<span th:text="${currentPage}"></span>
+										</div>
+										<!-- First 버튼 -->
+										<div class="intra-pagination" th:if="${currentPage > 1}">
+											<a th:href="@{/Site/userServerList/{page}(page=1)}">First</a>
+										</div>
+										<!-- Previous 버튼 -->
+										<div class="intra-pagination" th:if="${currentPage > 1}">
+											<a th:href="@{/Site/userServerList/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
+										</div>
+
+										<!-- 페이지 링크 생성 -->
+										<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
+											<a th:href="@{/Site/userServerList/{page}(page=${i})}"
+											   th:classappend="${currentPage == i} ? 'on' : ''">
+												<span th:text="${i}"></span>
+											</a>
+										</div>
+										<!-- Next 링크 -->
+										<div class="intra-pagination" th:if="${currentPage < totalPages}">
+											<a th:href="@{/Site/userServerList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
+										</div>
+										<!-- End 링크 -->
+										<div class="intra-pagination" th:if="${currentPage < totalPages}">
+											<a th:href="@{/Site/userServerList/{page}(page=${totalPages})}">End</a>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
 						2023&nbsp;©&nbsp;<a href="userServerList.html" target="_blank" class="k-link">Conan</a>

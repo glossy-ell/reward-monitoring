@@ -466,8 +466,11 @@
                var jsonData = {};
 
                formData.forEach((value, key) => {
+               		if (key === 'serverUrl' && value === '') {
 
-                      jsonData[key] = value; // FormData를 JSON 객체로 변환
+        			} else {
+            			jsonData[key] = value; // FormData를 JSON 객체로 변환
+        				}
                 });
 
                $('#saveBtn').attr('disabled',true);
@@ -504,25 +507,29 @@
         			return false;
    				}
 
-<!--               if(comInputCheck('text','userServerIdx') === true) {-->
-<!--                   $('#saveBtn').attr('disabled',false);-->
-<!--                   alert("서버 URL을 선택해주세요.");-->
-<!--                   $('#userServerUrl').focus();-->
-<!--                   return false;-->
-<!--               }-->
 
                if(comInputCheck('text','affiliateId') === true) {
                    $('#saveBtn').attr('disabled',false);
                    alert("매체사 아이디를 입력해주세요.");
-                   $('#userServerKey').focus();
+                   $('#affiliateId').focus();
                    return false;
                }
+
                if(comInputCheck('text','affiliatePw') === true) {
                    $('#saveBtn').attr('disabled',false);
                    alert("매체사 비밀번호를 입력해주세요.");
-                   $('#userServerKey').focus();
+                   $('#affiliatePw').focus();
                    return false;
                }
+
+     			const selectElement = document.getElementById("userServerIdx");
+        		const selectedValue = selectElement.value;
+
+             	if (selectedValue === "" && idx ===-1) {
+           			 alert("서버를 선택해주세요.");
+           			 $('#userServerIdx').focus();
+           			 return false;
+        		}
 
 
 
@@ -640,7 +647,7 @@
                                                 <div class="input-group">
                                                     <div class="dropdown bootstrap-select input-group-btn form-control k_">
 														<select name="serverUrl" class="form-control k_selectpicker" data-live-search="true" id="userServerIdx" tabindex="-98">
-															<option value="https://ocb.srk.co.kr" selected="selected">서버 선택</option>
+															<option value="" selected="selected" hidden>서버 선택</option>
 															<option th:each="server : ${servers}" th:value="${server.serverUrl}" th:text="${server.serverUrl}"></option>
 														</select>
 
@@ -734,7 +741,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/Affiliate/affiliateWrite?affiliateIdx=&amp;sStartDate=&amp;sEndDate=&amp;sIsUsed=&amp;sIsDev=2&amp;sOpt=sName&amp;sVal=#" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/Affiliate/affiliateList">Conan</a>
 					</div>
 				</div>
 			</div>

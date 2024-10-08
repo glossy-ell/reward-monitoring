@@ -12,7 +12,9 @@ import org.hibernate.annotations.Comment;
 import org.json.JSONArray;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -99,11 +101,28 @@ public class AnswerMsn {
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
+    @Transient
+    private LocalDateTime startAtMsnLocalDateTime;
+    @Transient
+    private LocalDateTime endAtMsnLocalDateTime;
+
+    @Transient
+    private String bothAtMsnLocalDateTime;
+    @Transient
+    private String bothAtCap;
+
     @Builder.Default
     @Comment("미션 사용여부")
     @Column(name = "mission_active", nullable = false)
     @Schema(description = "미션 사용여부", example = "true")
     private boolean missionActive =false;
+
+
+    @Builder.Default
+    @Comment("미션 삭제여부")
+    @Column(name = "is_hidden", nullable = false)
+    @Schema(description = "미션 삭제여부", example = "true")
+    private boolean isHidden =false;
 
     @Builder.Default
     @Comment("미션 노출여부")
@@ -207,6 +226,11 @@ public class AnswerMsn {
     @Schema(description = "미션 URL1", example = "www.abc.com",nullable = true)
     private String msnUrl9;
 
+    @Comment("미션 URL 9")
+    @Column(name = "msn_url10" )
+    @Schema(description = "미션 URL1", example = "www.abc.com",nullable = true)
+    private String msnUrl10;
+
     @Builder.Default
     @Comment("전체 랜딩수")
     @Column(name = "total_landing_cnt")
@@ -250,7 +274,7 @@ public class AnswerMsn {
     ,String missionTitle,String missionDetailTitle,String missionAnswer,String missionContent,ZonedDateTime startAtMsn,
                      ZonedDateTime endAtMsn,LocalDate  startAtCap,LocalDate endAtCap,boolean missionActive,boolean missionExposure,
                      boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl1,String msnUrl2,String msnUrl3,String msnUrl4,
-                     String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,byte[]imageData,String imageName,Server server) {
+                     String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,String msnUrl10,byte[]imageData,String imageName,Server server) {
 
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
@@ -278,9 +302,21 @@ public class AnswerMsn {
         this.msnUrl7 = msnUrl7;
         this.msnUrl8 = msnUrl8;
         this.msnUrl9 = msnUrl9;
+        this.msnUrl10 = msnUrl10;
         this.imageData = imageData;
         this.imageName = imageName;
         this.server = server;
+    }
+    @PostLoad
+    public void changeDTypeDateTime() {
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime().minusHours(9);
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime().minusHours(9);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        bothAtCap= startAtCap.format(formatter) + " ~ " + endAtCap.format(formatter);
+
     }
 }
 

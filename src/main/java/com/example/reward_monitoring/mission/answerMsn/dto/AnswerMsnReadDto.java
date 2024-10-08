@@ -59,8 +59,13 @@ public class AnswerMsnReadDto {
     @Schema(description = "미션 사용여부", example = "true")
     private Boolean missionActive=true;
 
+    @Schema(description = "미션 사용여부", example = "false")
+    private Boolean isHidden=false;
+
     @Schema(description = "미션 노출여부", example = "true")
     private Boolean missionExposure=true;
+
+
 
     @Schema(description = "중복 참여 가능여부", example = "true")
     private Boolean dupParticipation=true;
@@ -109,6 +114,8 @@ public class AnswerMsnReadDto {
 
     @Schema(description = "서버url", example = "https://ocb.srk.co.kr")
     private String url;
+
+
 
     public AnswerMsn toEntity(Advertiser advertiserEntity, Server serverEntity){
 
