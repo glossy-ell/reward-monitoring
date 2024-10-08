@@ -120,913 +120,975 @@
 
 	<script src="chrome-extension://ecmeogcbcoalojmkfkmancobmiahaigg/content_script/content_script.js"></script></head>
 
-<body class="k-header--fixed k-header-mobile--fixed k-aside--enabled k-aside--fixed">
+	<body class="k-header--fixed k-header-mobile--fixed k-aside--enabled k-aside--fixed">
 
-<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
-	<div class="k-header-mobile__logo">
-		<a href="/Profile/myProfileWrite"></a>
-	</div>
-	<div class="k-header-mobile__toolbar">
-		<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
-	</div>
-</div>
-
-<div class="k-grid k-grid--hor k-grid--root">
-	<div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
-		<button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
-
-
-		<!-- begin aside -->
-		<div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
-
-			<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
-				<div class="k-aside__brand-logo">
-					<a href="/Profile/myProfileWrite">
-
-					</a>
-				</div>
-				<div class="k-aside__brand-tools">
-					<button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left k-aside__brand-aside-toggler--active" id="k_aside_toggler"><span></span></button>
-				</div>
-			</div>
-
-			<div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
-				<div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
-					<ul class="k-menu__nav">
-						<li class="k-menu__section">
-							<h4 class="k-menu__section-text">일반</h4>
-							<i class="k-menu__section-icon flaticon-more-v2"></i>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-user "></i>
-								<span class="k-menu__link-text">관리자 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Admin/adminList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">관리자 목록</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-cardiogram "></i>
-								<span class="k-menu__link-text">사이트 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Site/userServerList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">사용자 서버 목록</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon-user-add "></i>
-								<span class="k-menu__link-text">광고주 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Advertiser/advertiserList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">광고주 목록</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon-customer "></i>
-								<span class="k-menu__link-text">매체사 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Affiliate/affiliateList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">매체사 목록</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__section">
-							<h4 class="k-menu__section-text">미션 관리</h4>
-							<i class="k-menu__section-icon flaticon-more-v2"></i>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu k-menu__item--open" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-contract icon_active"></i>
-								<span class="k-menu__link-text">정답 미션 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav"><li class="k-menu__item k-menu__item--active" aria-haspopup="true">
-									<a href="/Mission/quizList" class="k-menu__link">
-										<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-										<span class="k-menu__link-text">정답 미션 목록</span>
-									</a>
-								</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/quizCurrentList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">현재 리스트 소진량(정답)</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/quizMultiTempList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">정답 미션 일괄 업로드</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item k-menu__item--submenu" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-magnifier-tool"></i>
-								<span class="k-menu__link-text">검색 미션 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item" aria-haspopup="true">
-										<a href="/Mission/searchList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">검색 미션 목록</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/searchCurrentList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">현재 리스트 소진량(검색)</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/searchMultiTempList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">검색 미션 일괄 업로드</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-download "></i>
-								<span class="k-menu__link-text">저장 미션 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/sightseeingList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">저장 미션 목록</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/sightseeingCurrentList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">현재 리스트 소진량(저장)</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/sightseeingMultiTempList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">저장 미션 일괄 업로드</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-sms "></i>
-								<span class="k-menu__link-text">미션 CS 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Mission/missionCsList" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">미션 CS 내역</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__section"><h4 class="k-menu__section-text">통계 관리</h4>
-							<i class="k-menu__section-icon flaticon-more-v2"></i>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-contract "></i>
-								<span class="k-menu__link-text">정답 미션 통계 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statDailyQuiz" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">정답 미션 데일리 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statQuiz" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">정답 미션별 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumQuiz" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-magnifier-tool "></i>
-								<span class="k-menu__link-text">검색 미션 통계 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statDailySearch" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">검색 미션 데일리 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSearch" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">검색 미션별 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumSearch" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="javascript:;" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-download "></i>
-								<span class="k-menu__link-text">저장 미션 통계 관리</span>
-								<i class="k-menu__ver-arrow la la-angle-right"></i>
-							</a>
-							<div class="k-menu__submenu">
-								<span class="k-menu__arrow"></span>
-								<ul class="k-menu__subnav">
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statDailySightseeing" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">저장 미션 데일리 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSightseeing" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">저장 미션별 통계</span>
-										</a>
-									</li>
-									<li class="k-menu__item " aria-haspopup="true">
-										<a href="/Statistics/statSumSightseeing" class="k-menu__link">
-											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
-											<span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="k-menu__section">
-							<h4 class="k-menu__section-text">기타</h4>
-							<i class="k-menu__section-icon flaticon-more-v2"></i>
-						</li>
-						<li class="k-menu__item " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="/Profile/myProfileWrite" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-calendar-3 "></i>
-								<span class="k-menu__link-text">내 프로필</span>
-								<span class="k-menu__link-badge"></span>
-							</a>
-						</li>
-						<li class="k-menu__item" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-							<a href="/logout" class="k-menu__link k-menu__toggle">
-								<i class="k-menu__link-icon flaticon2-power-button-symbol"></i>
-								<span class="k-menu__link-text">로그아웃</span>
-								<span class="k-menu__link-badge"></span>
-							</a>
-						</li>
-					</ul>
-					<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 300px;"></div></div></div>
-			</div>
+	<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
+		<div class="k-header-mobile__logo">
+			<a href="/Profile/myProfileWrite"></a>
 		</div>
-		<!-- end aside -->
+		<div class="k-header-mobile__toolbar">
+			<button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
+		</div>
+	</div>
+
+	<div class="k-grid k-grid--hor k-grid--root">
+		<div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
+			<button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
 
 
-		<!-- end aside -->
-<script type="application/javascript">       
+			<!-- begin aside -->
+			<div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
 
-    function enterkey() {
-        if (window.event.keyCode == 13) {
-            commSearch();
-        }
-    }
+				<div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
+					<div class="k-aside__brand-logo">
+						<a href="/Profile/myProfileWrite">
 
-    //검색
-    function commSearch() {
-        var frm = document.searchFrm;
-        frm.action = "/Mission/quizList";
-        frm.submit();
-    }
+						</a>
+					</div>
+					<div class="k-aside__brand-tools">
+						<button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left k-aside__brand-aside-toggler--active" id="k_aside_toggler"><span></span></button>
+					</div>
+				</div>
 
-    //검색 초기화
-    function commSearchReset() {
-        location.href = "/Mission/quizList";   
-    }
-
-    function commGoAllReg() {
-        location.href = "/Mission/quizMultiTempList";   
-    }
-
-    // 등록, 수정 버튼
-    function commGoDetail(idx) {
-        var frm = document.searchFrm;
-
-        frm.quizIdx.value = "";
-
-        if(idx){
-            frm.quizIdx.value = idx;
-        }
-        frm.action ='/Mission/quizWrite';
-        frm.submit();
-    }
-
-    //Excel 다운로드
-    function commDownExcel() {
-        var frm = document.searchFrm;        
-
-        frm.action ='/Mission/excelQuizList';
-        frm.submit();
-    }
-
-    function commGoReport(missionIdx) {
-        var popUrl = "/Mission/quizStaticList?quizIdx="+missionIdx;
-
-        var width = 1200;
-        var height = 900;
-
-        winPopupCenter(popUrl, "정답 미션 리포트", width, height, 'yes', 'yes');
-    }
-
-    function openSetOverlapModal(missionIdx,isOverlap,overlapDay,missionTitle) {
-
-        var overlapFrm = document.overlapFrm;
-
-        $('#modalTitle').html(missionTitle);    
-        $("input:radio[name='isOverlap']").prop('checked',false);
-        $("input:radio[name='isOverlap'][value='"+isOverlap+"']").prop('checked',true);
-
-        overlapFrm.overlapDay.value = overlapDay;
-        overlapFrm.missionIdx.value = missionIdx;
-        overlapFrm.missionTitle.value = missionTitle;
-        
-        $("#setOverlap").modal();
-    }
-
-    function setOverlap() {
-
-        var overlapFrm = document.overlapFrm;
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOverlap'
-            , data : {  
-                missionType: 'Q',
-                missionIdx: overlapFrm.missionIdx.value,
-                isOverlap: overlapFrm.isOverlap.value,
-                overlapDay: overlapFrm.overlapDay.value
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    $('#isOverlap_'+overlapFrm.missionIdx.value).html(data.data.isOverlapTxt);      
-                    $('#overlapDay_'+overlapFrm.missionIdx.value).html(data.data.overlapDay);                     
-                    $('#overlapBtn_'+overlapFrm.missionIdx.value).html("<button class='btn btn-outline-primary btn-xs' onClick='openSetOverlapModal(\""+overlapFrm.missionIdx.value+"\",\""+overlapFrm.isOverlap.value+"\",\""+data.data.overlapDay+"\",\""+overlapFrm.missionTitle.value+"\");'>가능일 변경하기</button>");
-
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-
-        $("#setOverlap").modal('hide');
-
-    }
- 
-
-    function setIsUsed(missionIdx, isUsed) {
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setMissionIsUsed'
-            , data : {  
-                missionType: 'Q',
-                missionIdx: missionIdx,
-                isUsed: isUsed
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    $('#isUsedBtn_'+missionIdx).html(data.data.isUsedTxt);                    
-
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-
-    }
-
-    function setIsView(missionIdx, isView) {
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setMissionIsView'
-            , data : {  
-                missionType: 'Q',
-                missionIdx: missionIdx,
-                isView: isView
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    $('#isViewBtn_'+missionIdx).html(data.data.isViewTxt);                    
-
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-
-    }
-
-    function commSetAllIsUsed() {
-
-        var frm = document.searchFrm;      
-        var i;
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMissionIsUsed'
-            , data : {  
-                missionType: 'Q',
-                missionIdxArr: frm.currentQuizIdxArr.value
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);                    
-                    for(i=0;i<data.data.missionIdxCount;i++) {                        
-                        $('#isUsedBtn_'+data.data.missionIdxArr[i]).html("비활성");
-                    }
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
-
-    function commSetAllIsView() {
-
-        var frm = document.searchFrm;      
-        var i;
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMissionIsView'
-            , data : {  
-                missionType: 'Q',
-                missionIdxArr: frm.currentQuizIdxArr.value
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);                    
-                    for(i=0;i<data.data.missionIdxCount;i++) {                        
-                        $('#isViewBtn_'+data.data.missionIdxArr[i]).html("비노출");
-                    }
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
-
-
-    function commAllOffMission() {
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMission'
-            , data : {  
-                missionType: 'Q'
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);      
-                    location.reload();                    
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
-
-    function setIsHidden(missionIdx) {
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setMissionIsHidden'
-            , data : {  
-                missionType: 'Q',
-                missionIdx: missionIdx,
-                isHidden: '1'
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    location.reload();                
-
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-
-    }
-
-	
-
-</script>
-<script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
-
-
-                <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
-											
-					<div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
-
-						<div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
-							<!-- k-portlet -->
-							<div class="k-portlet">
-								<div class="k-portlet__head">
-									<div class="k-portlet__head-label">
-										<h3 class="k-portlet__head-title font-weight-bold">정답 미션 목록
-                                        <span class="text-danger" style="font-size:0.9rem;"> ( 다양한 검색 및 디테일한 기능들은 일정잡아 추가하겠습니다. )</span></h3>      
-									</div>
+				<div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
+					<div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
+						<ul class="k-menu__nav">
+							<li class="k-menu__section">
+								<h4 class="k-menu__section-text">일반</h4>
+								<i class="k-menu__section-icon flaticon-more-v2"></i>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-user "></i>
+									<span class="k-menu__link-text">관리자 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Admin/adminList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">관리자 목록</span>
+											</a>
+										</li>
+									</ul>
 								</div>
-								
-								<div class="k-portlet__body">	
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-cardiogram "></i>
+									<span class="k-menu__link-text">사이트 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Site/userServerList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">사용자 서버 목록</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon-user-add "></i>
+									<span class="k-menu__link-text">광고주 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Advertiser/advertiserList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">광고주 목록</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon-customer "></i>
+									<span class="k-menu__link-text">매체사 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Affiliate/affiliateList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">매체사 목록</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__section">
+								<h4 class="k-menu__section-text">미션 관리</h4>
+								<i class="k-menu__section-icon flaticon-more-v2"></i>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu k-menu__item--open" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-contract icon_active"></i>
+									<span class="k-menu__link-text">정답 미션 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav"><li class="k-menu__item k-menu__item--active" aria-haspopup="true">
+										<a href="/Mission/quizList" class="k-menu__link">
+											<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+											<span class="k-menu__link-text">정답 미션 목록</span>
+										</a>
+									</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/quizCurrentList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">현재 리스트 소진량(정답)</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/quizMultiTempList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">정답 미션 일괄 업로드</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item k-menu__item--submenu" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-magnifier-tool"></i>
+									<span class="k-menu__link-text">검색 미션 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item" aria-haspopup="true">
+											<a href="/Mission/searchList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">검색 미션 목록</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/searchCurrentList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">현재 리스트 소진량(검색)</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/searchMultiTempList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">검색 미션 일괄 업로드</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-download "></i>
+									<span class="k-menu__link-text">저장 미션 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/sightseeingList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">저장 미션 목록</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/sightseeingCurrentList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">현재 리스트 소진량(저장)</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/sightseeingMultiTempList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">저장 미션 일괄 업로드</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-sms "></i>
+									<span class="k-menu__link-text">미션 CS 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Mission/missionCsList" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">미션 CS 내역</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__section"><h4 class="k-menu__section-text">통계 관리</h4>
+								<i class="k-menu__section-icon flaticon-more-v2"></i>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-contract "></i>
+									<span class="k-menu__link-text">정답 미션 통계 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statDailyQuiz" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">정답 미션 데일리 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statQuiz" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">정답 미션별 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statSumQuiz" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-magnifier-tool "></i>
+									<span class="k-menu__link-text">검색 미션 통계 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statDailySearch" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">검색 미션 데일리 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statSearch" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">검색 미션별 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statSumSearch" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="javascript:;" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-download "></i>
+									<span class="k-menu__link-text">저장 미션 통계 관리</span>
+									<i class="k-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="k-menu__submenu">
+									<span class="k-menu__arrow"></span>
+									<ul class="k-menu__subnav">
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statDailySightseeing" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">저장 미션 데일리 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statSightseeing" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">저장 미션별 통계</span>
+											</a>
+										</li>
+										<li class="k-menu__item " aria-haspopup="true">
+											<a href="/Statistics/statSumSightseeing" class="k-menu__link">
+												<i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+												<span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="k-menu__section">
+								<h4 class="k-menu__section-text">기타</h4>
+								<i class="k-menu__section-icon flaticon-more-v2"></i>
+							</li>
+							<li class="k-menu__item " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="/Profile/myProfileWrite" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-calendar-3 "></i>
+									<span class="k-menu__link-text">내 프로필</span>
+									<span class="k-menu__link-badge"></span>
+								</a>
+							</li>
+							<li class="k-menu__item" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+								<a href="/logout" class="k-menu__link k-menu__toggle">
+									<i class="k-menu__link-icon flaticon2-power-button-symbol"></i>
+									<span class="k-menu__link-text">로그아웃</span>
+									<span class="k-menu__link-badge"></span>
+								</a>
+							</li>
+						</ul>
+						<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 300px;"></div></div></div>
+				</div>
+			</div>
+			<!-- end aside -->
 
-									<form class="k-form" method="get" name="searchFrm">
-                                        <input type="hidden" name="quizIdx" value="" id="quizIdx">
-                                        <input type="hidden" id="currentQuizIdxArr" name="currentQuizIdxArr" value="38006|38005|38004|38003|38002|38001|38000|37999|37998|37997|37996|37995|37994|37993|37992|37991|37990|37989|37988|37987|37986|37985|37984|37983|37982|37981|37980|37979|37978|37977">
-										<div class="k-portlet__body-tool row">
 
-                                            <!-- 버튼 영역 -->
-											<div class="tool-btn col-xl-6 col-lg-12">
-                                                <div class="k-section">
-                                                    <div class="k-section__content k-section__content--border">
-                                                        <button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>
-                                                        <button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Mission/quizWrite'">등록</button>
-                                                        <button type="button" class="btn btn-outline--main" onclick="commGoAllReg();">일괄 등록</button>
-                                                    </div>
-                                                </div>
-                                                &nbsp;
-                                                <div class="k-section">                                                    
-                                                    <div class="k-section__content k-section__content--border">  
-                                                        <button type="button" class="btn btn-outline-focus" onclick="commSetAllIsUsed();">화면 비활성</button>
-                                                        <button type="button" class="btn btn-outline-success" onclick="commSetAllIsView();">화면 비노출</button>
-                                                        <button type="button" class="btn btn-outline-danger" onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
-                                                    </div>
-                                                </div>
+			<!-- end aside -->
+	<script type="application/javascript">
+
+		function enterkey() {
+			if (window.event.keyCode == 13) {
+				commSearch();
+			}
+		}
+
+		//검색
+		function commSearch() {
+			var frm = document.searchFrm;
+			frm.action = "/Mission/quizList";
+			frm.submit();
+		}
+
+		//검색 초기화
+		function commSearchReset() {
+			location.href = "/Mission/quizList";
+		}
+
+		function commGoAllReg() {
+			location.href = "/Mission/quizMultiTempList";
+		}
+
+		// 등록, 수정 버튼
+		function commGoDetail(idx) {
+			var frm = document.searchFrm;
+
+			frm.quizIdx.value = "";
+
+			if(idx){
+				frm.quizIdx.value = idx;
+			}
+			frm.action ='/Mission/quizWrite';
+			frm.submit();
+		}
+
+		//Excel 다운로드
+		function commDownExcel() {
+			var frm = document.searchFrm;
+
+			frm.action ='/Mission/excelQuizList';
+			frm.submit();
+		}
+
+		function commGoReport(missionIdx) {
+			var popUrl = "/Mission/quizStaticList?quizIdx="+missionIdx;
+
+			var width = 1200;
+			var height = 900;
+
+			winPopupCenter(popUrl, "정답 미션 리포트", width, height, 'yes', 'yes');
+		}
+
+		function openSetOverlapModal(missionIdx,isOverlap,overlapDay,missionTitle) {
+
+			var overlapFrm = document.overlapFrm;
+
+			$('#modalTitle').html(missionTitle);
+			$("input:radio[name='isOverlap']").prop('checked',false);
+			$("input:radio[name='isOverlap'][value='"+isOverlap+"']").prop('checked',true);
+
+			overlapFrm.overlapDay.value = overlapDay;
+			overlapFrm.missionIdx.value = missionIdx;
+			overlapFrm.missionTitle.value = missionTitle;
+
+			$("#setOverlap").modal();
+		}
+
+		function setOverlap() {
+
+			var overlapFrm = document.overlapFrm;
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setOverlap'
+				, data : {
+					missionType: 'Q',
+					missionIdx: overlapFrm.missionIdx.value,
+					isOverlap: overlapFrm.isOverlap.value,
+					overlapDay: overlapFrm.overlapDay.value
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						$('#isOverlap_'+overlapFrm.missionIdx.value).html(data.data.isOverlapTxt);
+						$('#overlapDay_'+overlapFrm.missionIdx.value).html(data.data.overlapDay);
+						$('#overlapBtn_'+overlapFrm.missionIdx.value).html("<button class='btn btn-outline-primary btn-xs' onClick='openSetOverlapModal(\""+overlapFrm.missionIdx.value+"\",\""+overlapFrm.isOverlap.value+"\",\""+data.data.overlapDay+"\",\""+overlapFrm.missionTitle.value+"\");'>가능일 변경하기</button>");
+
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+
+			$("#setOverlap").modal('hide');
+
+		}
+
+
+		function setIsUsed(missionIdx, isUsed) {
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setMissionIsUsed'
+				, data : {
+					missionType: 'Q',
+					missionIdx: missionIdx,
+					isUsed: isUsed
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						$('#isUsedBtn_'+missionIdx).html(data.data.isUsedTxt);
+
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+
+		}
+
+		function setIsView(missionIdx, isView) {
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setMissionIsView'
+				, data : {
+					missionType: 'Q',
+					missionIdx: missionIdx,
+					isView: isView
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						$('#isViewBtn_'+missionIdx).html(data.data.isViewTxt);
+
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+
+		}
+
+		function commSetAllIsUsed() {
+
+			var frm = document.searchFrm;
+			var i;
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setOffMissionIsUsed'
+				, data : {
+					missionType: 'Q',
+					missionIdxArr: frm.currentQuizIdxArr.value
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						for(i=0;i<data.data.missionIdxCount;i++) {
+							$('#isUsedBtn_'+data.data.missionIdxArr[i]).html("비활성");
+						}
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+		}
+
+		function commSetAllIsView() {
+
+			var frm = document.searchFrm;
+			var i;
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setOffMissionIsView'
+				, data : {
+					missionType: 'Q',
+					missionIdxArr: frm.currentQuizIdxArr.value
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						for(i=0;i<data.data.missionIdxCount;i++) {
+							$('#isViewBtn_'+data.data.missionIdxArr[i]).html("비노출");
+						}
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+		}
+
+
+		function commAllOffMission() {
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setOffMission'
+				, data : {
+					missionType: 'Q'
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						location.reload();
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+		}
+
+		function setIsHidden(missionIdx) {
+
+			$.ajax({
+				type: 'post'
+				, url: '/api/Mission/setMissionIsHidden'
+				, data : {
+					missionType: 'Q',
+					missionIdx: missionIdx,
+					isHidden: '1'
+				}
+				, cache: false
+				, async: false
+				, dataType : 'json'
+				, success: function(data) {
+					if(data.isResult == true) {
+						console.log(data.message);
+						alert(data.data.message);
+						location.reload();
+
+						return true;
+
+					} else {
+						console.log(data.message);
+						alert(data.data.message);
+						return false;
+					}
+				}
+			});
+
+		}
+
+
+
+	</script>
+
+
+					<div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
+
+						<div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
+
+							<div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
+								<!-- k-portlet -->
+								<div class="k-portlet">
+									<div class="k-portlet__head">
+										<div class="k-portlet__head-label">
+											<h3 class="k-portlet__head-title font-weight-bold" >정답 미션 목록</h3>
+
+									</div>
+									</div>
+
+									<div class="k-portlet__body">
+
+										<form class="k-form" method="get" name="searchFrm">
+
+											<div class="k-portlet__body-tool row">
+
+												<!-- 버튼 영역 -->
+												<div class="tool-btn col-xl-6 col-lg-12">
+													<div class="k-section">
+														<div class="k-section__content k-section__content--border">
+															<button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>
+															<button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Mission/quizWrite'">등록</button>
+															<button type="button" class="btn btn-outline--main" onclick="commGoAllReg();">일괄 등록</button>
+														</div>
+													</div>
+													&nbsp;
+													<div class="k-section">
+														<div class="k-section__content k-section__content--border">
+															<button type="button" class="btn btn-outline-focus" onclick="commSetAllIsUsed();">화면 비활성</button>
+															<button type="button" class="btn btn-outline-success" onclick="commSetAllIsView();">화면 비노출</button>
+															<button type="button" class="btn btn-outline-danger" onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
+														</div>
+													</div>
+												</div>
+												<!-- //버튼 영역 -->
+
+												<!-- 툴바 영역 -->
+												<div class="toolbar col-xl-6 col-lg-12">
+													<div class="k-form__group">
+														<div class="row">
+															<div class="input-group col-xl-2 col-lg-2 col-sm-12">
+																<div class="dropdown bootstrap-select input-group-btn form-control k_">
+																	<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																		<option value="">= 광고주 =</option>
+																		<option value="1">시크릿 K</option>
+																		<option value="2">올앤올</option>
+																		<option value="3">애드닷</option>
+																		<option value="4">탑플랜</option>
+																		<option value="5">네이버스</option>
+																		<option value="6">키봅</option>
+																		<option value="7">셀렉티드</option>
+																		<option value="8">골든커머스</option>
+																		<option value="9">원픽</option>
+																	</select>
+																	<div class="dropdown-menu " role="combobox">
+																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																			<ul class="dropdown-menu inner show">
+
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="input-group col-xl-2 col-lg-2 col-sm-12">
+																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																	<select name="sIsOverlap" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="">= 중복 참여 여부 =</option>
+																		<option value="1">중복 참여 허용</option>
+																		<option value="2">중복 참여 불가</option>
+																	</select>
+																	<div class="dropdown-menu " role="combobox">
+																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																			<ul class="dropdown-menu inner show">
+
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+															<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
+																<div class="input-daterange input-group">
+																	<input type="text" class="form-control btn-datepicker" name="sOverOpenStartDate" placeholder="미션 시작일" value="" autocomplete="off">
+																	<div class="input-group-append">
+																		<span class="input-group-text">~</span>
+																	</div>
+																	<input type="text" class="form-control btn-datepicker" name="sUnderOpenEndDate" placeholder="미션 종료일" value="" autocomplete="off">
+																</div>
+															</div>
+															<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
+																<div class="input-daterange input-group">
+																	<input type="text" class="form-control btn-datepicker" name="sOverDCapSDate" placeholder="데캡 시작일" value="" autocomplete="off">
+																	<div class="input-group-append">
+																		<span class="input-group-text">~</span>
+																	</div>
+																	<input type="text" class="form-control btn-datepicker" name="sUnderDCapEDate" placeholder="데캡 종료일" value="" autocomplete="off">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="k-form__group">
+														<div class="row">
+															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
+																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																	<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="">= 미션 상태 =</option>
+																		<option value="1">활성</option>
+																		<option value="2">비활성</option>
+																	</select>
+																	<div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																		<ul class="dropdown-menu inner show">
+
+																		</ul>
+																	</div>
+																	</div>
+																</div>
+															</div>
+															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
+																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																	<select name="sIsView" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="">= 미션 노출여부 =</option>
+																		<option value="1">노출</option>
+																		<option value="2">비노출</option>
+																	</select>
+																	<div class="dropdown-menu " role="combobox">
+																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																			<ul class="dropdown-menu inner show">
+
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
+																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
+																	<select name="sIsHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="1">삭제 데이터</option>
+																		<option value="2" selected="selected">정상 데이터</option>
+																	</select>
+																	<div class="dropdown-menu " role="combobox">
+																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
+																			<ul class="dropdown-menu inner show">
+
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+															<div class="input-group col-xl-6 col-lg-6 col-sm-12">
+																<div class="input-group-prepend">
+																	<select name="sOpt" class="custom-select form-control">
+																		<option value="sTitle">정답 미션 제목</option>
+																		<option value="sAdvertiserDetail">광고주 상세</option>
+																	</select>
+																</div>
+																<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+																<div class="input-group-append">
+																	<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
+																	<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
+																</div>
+																<input type="text" value="" style="display:none;">
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- //툴바 영역 -->
+
 											</div>
-											<!-- //버튼 영역 -->											
-
-                                            <!-- 툴바 영역 -->
-											<div class="toolbar col-xl-6 col-lg-12">                                                
-                                                <div class="k-form__group">
-                                                    <div class="row">      
-                                                        <div class="input-group col-xl-2 col-lg-2 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn form-control k_">
-																<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 광고주 =</option>
-																	<option value="1">시크릿 K</option>
-																	<option value="2">올앤올</option>
-																	<option value="3">애드닷</option>
-																	<option value="4">탑플랜</option>
-																	<option value="5">네이버스</option>
-																	<option value="6">키봅</option>
-																	<option value="7">셀렉티드</option>
-																	<option value="8">골든커머스</option>
-																	<option value="9">원픽</option>
-																</select>
-																<div class="dropdown-menu " role="combobox">
-																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
-																		<ul class="dropdown-menu inner show">
-
-																		</ul>
-																	</div>
+										</form>
+										<div class="table-responsive"> <!--데이터 들어가는부분 -->
+											<div class="mb-3"></div>
+											<table class="table table--slim table-bordered table-hover">
+												<thead class="thead-light">
+													<tr>
+														<th class="text-center font-weight-bold">IDX</th>
+														<th class="text-center font-weight-bold">리포트</th>
+														<th class="text-center font-weight-bold">미션 기본수량</th>
+														<th class="text-center font-weight-bold">미션 데일리캡</th>
+														<th class="text-center font-weight-bold">광고주</th>
+														<th class="text-center font-weight-bold">광고주 상세</th>
+														<th class="text-center font-weight-bold">미션 제목</th>
+														<th class="text-center font-weight-bold">미션 랜딩 URL</th>
+														<th class="text-center font-weight-bold">미션 정답</th>
+														<th class="text-center font-weight-bold">미션 시작일시 / 종료일시</th>
+														<th class="text-center font-weight-bold">데일리캡 시작일 / 종료일</th>
+														<th class="text-center font-weight-bold">미션 사용여부</th>
+														<th class="text-center font-weight-bold">미션 노출여부</th>
+														<th class="text-center font-weight-bold">중복참여(+1day)</th>
+														<th class="text-center font-weight-bold">재참여 가능일</th>
+														<th class="text-center font-weight-bold">가능일 변경</th>
+														<th class="text-center font-weight-bold">데이터 관리</th>
+														<th class="text-center font-weight-bold">데이터 삭제</th>
+													</tr>
+												</thead>
+												<tbody id = "quizList">
+													<tr th:each="quiz, iterStat : ${answerMsns}">
+														<td class="text-center align-middle" th:text="${quiz.idx}"></td>
+														<td class="text-center align-middle">
+															<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${quiz.idx} + ');">리포트</button>
+														</td>
+														<td class="text-center align-middle" th:text="${quiz.missionDefaultQty}"></td>
+														<td class="text-center align-middle" th:text="${quiz.missionDailyCap}"></td>
+														<td class="text-center align-middle" th:text="${quiz.advertiser.advertiser}"></td>
+														<td class="text-center align-middle" th:text="${quiz.advertiserDetails}"></td>
+														<td class="text-center align-middle" th:text="${quiz.missionTitle}"></td>
+														<td class="text-center align-middle">
+															<a class="btn btn-outline-info btn-xs" th:href="quiz.msnUrl1" target="_blank">랜딩 URL</a></td>
+														<td class="text-center align-middle" th:text="${quiz.missionAnswer}"></td>
+														<td class="text-center align-middle" th:text="${quiz.bothAtMsnLocalDateTime}"></td>
+														<td class="text-center align-middle" th:text="${quiz.bothAtCap}"></td>
+														<td class="text-center align-middle">
+															<div class="btn-group"><button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button>
+																<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
+																	<a class="dropdown-item" onclick="setIsUsed(' + ${quiz.idx} + ');">활성</a>
+																	<a class="dropdown-item" onclick="setIsUsedFalse(' + ${quiz.idx} + ');">비활성</a></div>
+															</div>
+														</td>
+														<td class="text-center align-middle">
+															<div class="btn-group"><button type="button" id="isViewBtn_38006" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button>
+																<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
+																	<a class="dropdown-item" onclick="setExpose(' + ${quiz.idx} + ');">노출</a>
+																	<a class="dropdown-item" onclick="setExposeFalse(' + ${quiz.idx} + ');">비노출</a>
 																</div>
+															</div>
+														</td>
+														<td class="text-center align-middle" id="isOverlap_38006"></td>
+														<td class="text-center align-middle" id="overlapDay_38006">1</td>
+														<td class="text-center align-middle" id="overlapBtn_38006">
+															<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + ${quiz.idx} + ');">가능일 변경하기</button>
+														</td>
+														<td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + ${quiz.idx} + '38006);">수정</button>
+														</td>
+														<td class="text-center align-middle">
+															<button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(' + ${quiz.idx} + ');">삭제</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										<hr class="my-4">
+											<div class="intra-pagination-wrap">
+												<div class="intra-pagination">
+													<!-- 현재 페이지 표시 -->
+													<span th:text="${currentPage}"></span>
+												</div>
+												<!-- First 버튼 -->
+												<div class="intra-pagination" th:if="${currentPage > 1}">
+													<a th:href="@{/Mission/quizList/{page}(page=1)}">First</a>
+												</div>
+												<!-- Previous 버튼 -->
+												<div class="intra-pagination" th:if="${currentPage > 1}">
+													<a th:href="@{/Mission/quizList/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
+												</div>
+
+												<!-- 페이지 링크 생성 -->
+												<div class="intra-pagination" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+													<a th:href="@{/Mission/quizList/{page}(page=${i})}"
+													   th:classappend="${currentPage == i} ? 'on' : ''">
+														<span th:text="${i}"></span>
+													</a>
+												</div>
+												<!-- Next 링크 -->
+												<div class="intra-pagination" th:if="${currentPage < totalPages}">
+													<a th:href="@{/Mission/quizList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
+												</div>
+												<!-- End 링크 -->
+												<div class="intra-pagination" th:if="${currentPage < totalPages}">
+													<a th:href="@{/Mission/quizList/{page}(page=${totalPages})}">End</a>
+												</div>
+											</div>
+
+
+						<!-- modal -->
+						<div class="modal fade show" id="setOverlap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display:none; padding-right: 17px;">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header text-left">
+										<h5 id="modalTitle" class="modal-title">중복 참여 변경</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<form class="k-form" method="get" name="overlapFrm">
+											<input type="hidden" id="missionIdx" name="missionIdx" value="">
+											<input type="hidden" id="missionTitle" name="missionTitle" value="">
+											<div class="row">
+												<div class="col-6">
+													<div class="form-group">
+														<label class="label__icon">미션 중복 참여 허용(+1day)</label>
+														<div class="k-radio-inline mx-2">
+															<div class="d-inline-block mr-3">
+																<input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
+															</div>
+															<div class="d-inline-block mr-3">
+																<input type="radio" name="isOverlap" value="2" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
 															</div>
 														</div>
-                                                        <div class="input-group col-xl-2 col-lg-2 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsOverlap" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 중복 참여 여부 =</option>
-																	<option value="1">중복 참여 허용</option>
-																	<option value="2">중복 참여 불가</option>
-																</select>
-																<div class="dropdown-menu " role="combobox">
-																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
-																		<ul class="dropdown-menu inner show">
-
-																		</ul>
-																	</div>
-																</div>
-															</div>
- 
-														</div>
-                                                        <div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
-                                                            <div class="input-daterange input-group">
-                                                                <input type="text" class="form-control btn-datepicker" name="sOverOpenStartDate" placeholder="미션 시작일" value="" autocomplete="off">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">~</span>
-                                                                </div>
-                                                                <input type="text" class="form-control btn-datepicker" name="sUnderOpenEndDate" placeholder="미션 종료일" value="" autocomplete="off">
-                                                            </div>
-                                                        </div>       
-                                                        <div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
-                                                            <div class="input-daterange input-group">
-                                                                <input type="text" class="form-control btn-datepicker" name="sOverDCapSDate" placeholder="데캡 시작일" value="" autocomplete="off">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">~</span>
-                                                                </div>
-                                                                <input type="text" class="form-control btn-datepicker" name="sUnderDCapEDate" placeholder="데캡 종료일" value="" autocomplete="off">
-                                                            </div>
-                                                        </div>                                                          
-                                                    </div>
-                                                </div>
-												<div class="k-form__group">
-													<div class="row">                                                        
-                                                        <div class="input-group col-xl-2 col-lg-6 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 미션 상태 =</option>
-																	<option value="1">활성</option>
-																	<option value="2">비활성</option>
-																</select>
-																<div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
-																	<ul class="dropdown-menu inner show">
-
-																	</ul>
-																</div>
-																</div>
-															</div>
-														</div>
-                                                        <div class="input-group col-xl-2 col-lg-6 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsView" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 미션 노출여부 =</option>
-																	<option value="1">노출</option>
-																	<option value="2">비노출</option>
-																</select>
-																<div class="dropdown-menu " role="combobox">
-																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
-																		<ul class="dropdown-menu inner show">
-
-																		</ul>
-																	</div>
-																</div>
-															</div>
-														</div>
-                                                        <div class="input-group col-xl-2 col-lg-6 col-sm-12">
-															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="1">삭제 데이터</option>
-																	<option value="2" selected="selected">정상 데이터</option>
-																</select>
-																<div class="dropdown-menu " role="combobox">
-																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
-																		<ul class="dropdown-menu inner show">
-
-																		</ul>
-																	</div>
-																</div>
-															</div>
- 
-														</div>                                                        
-														<div class="input-group col-xl-6 col-lg-6 col-sm-12">
-															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
-																	<option value="sTitle">정답 미션 제목</option>
-																	<option value="sAdvertiserDetail">광고주 상세</option>
-																</select>
-															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
-															<div class="input-group-append">
-																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
-																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
-															</div>
-															<input type="text" value="" style="display:none;">
-														</div>                                                        
+													</div>
+												</div>
+												<div class="col-6">
+													<div class="form-group">
+														<label class="label__icon">참여후 재참여 가능일(1,2...,10) </label>
+														<input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" autocomplete="off">
 													</div>
 												</div>
 											</div>
-											<!-- //툴바 영역 -->
-
-										</div>										
-									</form>
-									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 37957 Count (1/1266)Page</div>
-										<table class="table table--slim table-bordered table-hover">
-											<thead class="thead-light">
-												<tr>                                               													
-													<th class="text-center font-weight-bold">IDX</th>
-                                                    <th class="text-center font-weight-bold">리포트</th>
-                                                    <th class="text-center font-weight-bold">미션 기본수량</th>
-                                                    <th class="text-center font-weight-bold">미션 데일리캡</th>
-                                                    <th class="text-center font-weight-bold">광고주</th>
-                                                    <th class="text-center font-weight-bold">광고주 상세</th>
-													<th class="text-center font-weight-bold">미션 제목</th>
-                                                    <th class="text-center font-weight-bold">미션 랜딩 URL</th>	
-                                                    <th class="text-center font-weight-bold">미션 정답</th>    
-                                                    <th class="text-center font-weight-bold">미션 시작일시 / 종료일시</th>
-                                                    <th class="text-center font-weight-bold">데일리캡 시작일 / 종료일</th>
-                                                    <th class="text-center font-weight-bold">미션 사용여부</th>
-                                                    <th class="text-center font-weight-bold">미션 노출여부</th>                                                    
-                                                    <th class="text-center font-weight-bold">중복참여(+1day)</th>
-                                                    <th class="text-center font-weight-bold">재참여 가능일</th>
-                                                    <th class="text-center font-weight-bold">가능일 변경</th>                                                    
-                                                    <th class="text-center font-weight-bold">데이터 관리</th>
-                                                    <th class="text-center font-weight-bold">데이터 삭제</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr><td class="text-center align-middle">38006</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38006);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82678816556</td><td class="text-center align-middle">더치커피</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82678816556&amp;idType=clk&amp;query=%EB%8D%94%EC%B9%98%EC%BB%A4%ED%94%BC" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5134295844</td><td class="text-center align-middle">2024-08-12 22:00:00 ~ 2024-08-12 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-12</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38006" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38006&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38006&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38006" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38006&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38006&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38006">중복 허용</td><td class="text-center align-middle" id="overlapDay_38006">1</td><td class="text-center align-middle" id="overlapBtn_38006"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38006&quot;,&quot;1&quot;,&quot;1&quot;,&quot;더치커피&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38006);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38006);">삭제</button></td></tr><tr><td class="text-center align-middle">38005</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38005);">리포트</button></td><td class="text-center align-middle">160</td><td class="text-center align-middle">160</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">86199525237</td><td class="text-center align-middle">자갈</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=86199525237&amp;idType=clk&amp;query=%EC%9E%90%EA%B0%88" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">8655024914</td><td class="text-center align-middle">2024-08-12 22:00:00 ~ 2024-08-12 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-12</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38005" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38005&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38005&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38005" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38005&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38005&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38005">중복 허용</td><td class="text-center align-middle" id="overlapDay_38005">1</td><td class="text-center align-middle" id="overlapBtn_38005"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38005&quot;,&quot;1&quot;,&quot;1&quot;,&quot;자갈&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38005);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38005);">삭제</button></td></tr><tr><td class="text-center align-middle">38004</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38004);">리포트</button></td><td class="text-center align-middle">400</td><td class="text-center align-middle">400</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87380496412</td><td class="text-center align-middle">대용량텀블러</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87380496412&amp;idType=clk&amp;query=%EB%8C%80%EC%9A%A9%EB%9F%89%ED%85%80%EB%B8%94%EB%9F%AC" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">9835994139</td><td class="text-center align-middle">2024-08-12 22:00:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38004" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38004&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38004&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38004" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38004&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38004&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38004">중복 허용</td><td class="text-center align-middle" id="overlapDay_38004">1</td><td class="text-center align-middle" id="overlapBtn_38004"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38004&quot;,&quot;1&quot;,&quot;1&quot;,&quot;대용량텀블러&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38004);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38004);">삭제</button></td></tr><tr><td class="text-center align-middle">38003</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38003);">리포트</button></td><td class="text-center align-middle">400</td><td class="text-center align-middle">400</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">83041529718</td><td class="text-center align-middle">돌반지</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=83041529718&amp;idType=clk&amp;query=%EB%8F%8C%EB%B0%98%EC%A7%80" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5497034481</td><td class="text-center align-middle">2024-08-12 22:00:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38003" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38003&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38003&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38003" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38003&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38003&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38003">중복 허용</td><td class="text-center align-middle" id="overlapDay_38003">1</td><td class="text-center align-middle" id="overlapBtn_38003"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38003&quot;,&quot;1&quot;,&quot;1&quot;,&quot;돌반지&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38003);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38003);">삭제</button></td></tr><tr><td class="text-center align-middle">38002</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38002);">리포트</button></td><td class="text-center align-middle">400</td><td class="text-center align-middle">400</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82801201856</td><td class="text-center align-middle">커피원두</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82801201856&amp;idType=clk&amp;query=%EC%BB%A4%ED%94%BC%EC%9B%90%EB%91%90" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5256679367</td><td class="text-center align-middle">2024-08-12 22:00:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38002" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38002&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38002&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38002" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38002&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38002&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38002">중복 허용</td><td class="text-center align-middle" id="overlapDay_38002">1</td><td class="text-center align-middle" id="overlapBtn_38002"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38002&quot;,&quot;1&quot;,&quot;1&quot;,&quot;커피원두&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38002);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38002);">삭제</button></td></tr><tr><td class="text-center align-middle">38001</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38001);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">85141197525</td><td class="text-center align-middle">지팡이</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=85141197525&amp;idType=clk&amp;query=%EC%A7%80%ED%8C%A1%EC%9D%B4" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">7596697203</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-22 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-22</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38001" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38001&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38001&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38001" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38001&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38001&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38001">중복 허용</td><td class="text-center align-middle" id="overlapDay_38001">1</td><td class="text-center align-middle" id="overlapBtn_38001"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38001&quot;,&quot;1&quot;,&quot;1&quot;,&quot;지팡이&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38001);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38001);">삭제</button></td></tr><tr><td class="text-center align-middle">38000</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(38000);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82210592412</td><td class="text-center align-middle">독서대</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82210592412&amp;idType=clk&amp;query=%EB%8F%85%EC%84%9C%EB%8C%80" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">4666071778</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_38000" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;38000&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;38000&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_38000" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;38000&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;38000&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_38000">중복 허용</td><td class="text-center align-middle" id="overlapDay_38000">1</td><td class="text-center align-middle" id="overlapBtn_38000"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;38000&quot;,&quot;1&quot;,&quot;1&quot;,&quot;독서대&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(38000);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(38000);">삭제</button></td></tr><tr><td class="text-center align-middle">37999</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37999);">리포트</button></td><td class="text-center align-middle">160</td><td class="text-center align-middle">160</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82992528531</td><td class="text-center align-middle">주방후드필터</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82992528531&amp;idType=clk&amp;query=%EC%A3%BC%EB%B0%A9%ED%9B%84%EB%93%9C%ED%95%84%ED%84%B0" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5448034269</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-17 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-17</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37999" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37999&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37999&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37999" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37999&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37999&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37999">중복 허용</td><td class="text-center align-middle" id="overlapDay_37999">1</td><td class="text-center align-middle" id="overlapBtn_37999"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37999&quot;,&quot;1&quot;,&quot;1&quot;,&quot;주방후드필터&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37999);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37999);">삭제</button></td></tr><tr><td class="text-center align-middle">37998</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37998);">리포트</button></td><td class="text-center align-middle">240</td><td class="text-center align-middle">240</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87151262921</td><td class="text-center align-middle">감로꿀</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87151262921&amp;idType=clk&amp;query=%EA%B0%90%EB%A1%9C%EA%BF%80" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">9606760651</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37998" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37998&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37998&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37998" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37998&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37998&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37998">중복 허용</td><td class="text-center align-middle" id="overlapDay_37998">1</td><td class="text-center align-middle" id="overlapBtn_37998"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37998&quot;,&quot;1&quot;,&quot;1&quot;,&quot;감로꿀&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37998);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37998);">삭제</button></td></tr><tr><td class="text-center align-middle">37997</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37997);">리포트</button></td><td class="text-center align-middle">240</td><td class="text-center align-middle">240</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87653725953</td><td class="text-center align-middle">에코백</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87653725953&amp;idType=clk&amp;query=%EC%97%90%EC%BD%94%EB%B0%B1" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10109223183</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-16 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-16</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37997" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37997&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37997&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37997" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37997&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37997&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37997">중복 허용</td><td class="text-center align-middle" id="overlapDay_37997">1</td><td class="text-center align-middle" id="overlapBtn_37997"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37997&quot;,&quot;1&quot;,&quot;1&quot;,&quot;에코백&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37997);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37997);">삭제</button></td></tr><tr><td class="text-center align-middle">37996</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37996);">리포트</button></td><td class="text-center align-middle">400</td><td class="text-center align-middle">400</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">84112031052</td><td class="text-center align-middle">고양이스크래쳐</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=84112031052&amp;idType=clk&amp;query=%EA%B3%A0%EC%96%91%EC%9D%B4%EC%8A%A4%ED%81%AC%EB%9E%98%EC%B3%90" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">6567530719</td><td class="text-center align-middle">2024-08-12 21:30:00 ~ 2024-08-20 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-20</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37996" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37996&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37996&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37996" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37996&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37996&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37996">중복 허용</td><td class="text-center align-middle" id="overlapDay_37996">1</td><td class="text-center align-middle" id="overlapBtn_37996"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37996&quot;,&quot;1&quot;,&quot;1&quot;,&quot;고양이스크래쳐&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37996);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37996);">삭제</button></td></tr><tr><td class="text-center align-middle">37995</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37995);">리포트</button></td><td class="text-center align-middle">50</td><td class="text-center align-middle">50</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87987817365</td><td class="text-center align-middle">엘라스토머 고무 치퍼용 골프그립</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87987817365&amp;idType=clk&amp;query=%EC%97%98%EB%9D%BC%EC%8A%A4%ED%86%A0%EB%A8%B8%20%EA%B3%A0%EB%AC%B4%20%EC%B9%98%ED%8D%BC%EC%9A%A9%20%EA%B3%A8%ED%94%84%EA%B7%B8%EB%A6%BD" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10443312316</td><td class="text-center align-middle">2024-08-12 21:00:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37995" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37995&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37995&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37995" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37995&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37995&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37995">중복 허용</td><td class="text-center align-middle" id="overlapDay_37995">1</td><td class="text-center align-middle" id="overlapBtn_37995"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37995&quot;,&quot;1&quot;,&quot;1&quot;,&quot;엘라스토머 고무 치퍼용 골프그립&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37995);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37995);">삭제</button></td></tr><tr><td class="text-center align-middle">37994</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37994);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">83829537273</td><td class="text-center align-middle">빵끈</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=83829537273&amp;idType=clk&amp;query=%EB%B9%B5%EB%81%88" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">6285034784</td><td class="text-center align-middle">2024-08-12 21:00:00 ~ 2024-08-12 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-12</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37994" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37994&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37994&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37994" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37994&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37994&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37994">중복 허용</td><td class="text-center align-middle" id="overlapDay_37994">1</td><td class="text-center align-middle" id="overlapBtn_37994"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37994&quot;,&quot;1&quot;,&quot;1&quot;,&quot;빵끈&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37994);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37994);">삭제</button></td></tr><tr><td class="text-center align-middle">37993</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37993);">리포트</button></td><td class="text-center align-middle">160</td><td class="text-center align-middle">160</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">88258175081</td><td class="text-center align-middle">레인코트0808 강아지옷</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://nid.naver.com/nidlogin.login?svctype=262144&amp;url=https%3A%2F%2Fnaver.com" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10713669159</td><td class="text-center align-middle">2024-08-12 21:00:00 ~ 2024-08-13 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-13</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37993" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37993&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37993&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37993" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37993&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37993&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37993">중복 허용</td><td class="text-center align-middle" id="overlapDay_37993">1</td><td class="text-center align-middle" id="overlapBtn_37993"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37993&quot;,&quot;1&quot;,&quot;1&quot;,&quot;레인코트0808 강아지옷&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37993);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37993);">삭제</button></td></tr><tr><td class="text-center align-middle">37992</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37992);">리포트</button></td><td class="text-center align-middle">320</td><td class="text-center align-middle">320</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">11204492854</td><td class="text-center align-middle">베개</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=11204492854&amp;idType=clk&amp;query=%EB%B2%A0%EA%B0%9C" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">685823093</td><td class="text-center align-middle">2024-08-12 21:00:00 ~ 2024-08-21 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-21</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37992" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37992&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37992&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37992" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37992&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37992&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37992">중복 허용</td><td class="text-center align-middle" id="overlapDay_37992">1</td><td class="text-center align-middle" id="overlapBtn_37992"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37992&quot;,&quot;1&quot;,&quot;1&quot;,&quot;베개&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37992);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37992);">삭제</button></td></tr><tr><td class="text-center align-middle">37991</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37991);">리포트</button></td><td class="text-center align-middle">320</td><td class="text-center align-middle">320</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">85439235285</td><td class="text-center align-middle">키케이스</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=85439235285&amp;idType=clk&amp;query=%ED%82%A4%EC%BC%80%EC%9D%B4%EC%8A%A4" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">7894734962</td><td class="text-center align-middle">2024-08-12 21:00:00 ~ 2024-08-17 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-17</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37991" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37991&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37991&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37991" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37991&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37991&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37991">중복 허용</td><td class="text-center align-middle" id="overlapDay_37991">1</td><td class="text-center align-middle" id="overlapBtn_37991"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37991&quot;,&quot;1&quot;,&quot;1&quot;,&quot;키케이스&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37991);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37991);">삭제</button></td></tr><tr><td class="text-center align-middle">37990</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37990);">리포트</button></td><td class="text-center align-middle">50</td><td class="text-center align-middle">50</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">83710922055</td><td class="text-center align-middle">돼지다짐육</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=83710922055&amp;idType=clk&amp;query=%EB%8F%BC%EC%A7%80%EB%8B%A4%EC%A7%90%EC%9C%A1" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">6166422478</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37990" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37990&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37990&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37990" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37990&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37990&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37990">중복 허용</td><td class="text-center align-middle" id="overlapDay_37990">1</td><td class="text-center align-middle" id="overlapBtn_37990"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37990&quot;,&quot;1&quot;,&quot;1&quot;,&quot;돼지다짐육&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37990);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37990);">삭제</button></td></tr><tr><td class="text-center align-middle">37989</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37989);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">88106749361</td><td class="text-center align-middle">Z플립6케이스</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=88106749361&amp;idType=clk&amp;query=Z%ED%94%8C%EB%A6%BD6%EC%BC%80%EC%9D%B4%EC%8A%A4" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10562243836</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37989" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37989&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37989&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37989" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37989&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37989&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37989">중복 허용</td><td class="text-center align-middle" id="overlapDay_37989">1</td><td class="text-center align-middle" id="overlapBtn_37989"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37989&quot;,&quot;1&quot;,&quot;1&quot;,&quot;Z플립6케이스&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37989);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37989);">삭제</button></td></tr><tr><td class="text-center align-middle">37988</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37988);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87769813390</td><td class="text-center align-middle">남자양산</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87769813390&amp;idType=clk&amp;query=%EB%82%A8%EC%9E%90%EC%96%91%EC%82%B0" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10225309839</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-14 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-14</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37988" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37988&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37988&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37988" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37988&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37988&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37988">중복 허용</td><td class="text-center align-middle" id="overlapDay_37988">1</td><td class="text-center align-middle" id="overlapBtn_37988"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37988&quot;,&quot;1&quot;,&quot;1&quot;,&quot;남자양산&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37988);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37988);">삭제</button></td></tr><tr><td class="text-center align-middle">37987</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37987);">리포트</button></td><td class="text-center align-middle">150</td><td class="text-center align-middle">150</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">83158543204</td><td class="text-center align-middle">일회용앞치마</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=83158543204&amp;idType=clk&amp;query=%EC%9D%BC%ED%9A%8C%EC%9A%A9%EC%95%9E%EC%B9%98%EB%A7%88" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5614046703</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37987" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37987&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37987&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37987" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37987&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37987&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37987">중복 허용</td><td class="text-center align-middle" id="overlapDay_37987">1</td><td class="text-center align-middle" id="overlapBtn_37987"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37987&quot;,&quot;1&quot;,&quot;1&quot;,&quot;일회용앞치마&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37987);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37987);">삭제</button></td></tr><tr><td class="text-center align-middle">37986</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37986);">리포트</button></td><td class="text-center align-middle">320</td><td class="text-center align-middle">320</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">11270226281</td><td class="text-center align-middle">테이블매트</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=11270226281&amp;idType=clk&amp;query=%ED%85%8C%EC%9D%B4%EB%B8%94%EB%A7%A4%ED%8A%B8" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">700242094</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-12 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-12</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37986" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37986&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37986&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37986" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37986&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37986&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37986">중복 허용</td><td class="text-center align-middle" id="overlapDay_37986">1</td><td class="text-center align-middle" id="overlapBtn_37986"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37986&quot;,&quot;1&quot;,&quot;1&quot;,&quot;테이블매트&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37986);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37986);">삭제</button></td></tr><tr><td class="text-center align-middle">37985</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37985);">리포트</button></td><td class="text-center align-middle">400</td><td class="text-center align-middle">400</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87465586497</td><td class="text-center align-middle">뿌리볼륨 고데기</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87465586497&amp;idType=clk&amp;query=%EB%BF%8C%EB%A6%AC%EB%B3%BC%EB%A5%A8%20%EA%B3%A0%EB%8D%B0%EA%B8%B0" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">9921084224</td><td class="text-center align-middle">2024-08-12 20:30:00 ~ 2024-08-16 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-16</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37985" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37985&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37985&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37985" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37985&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37985&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37985">중복 허용</td><td class="text-center align-middle" id="overlapDay_37985">1</td><td class="text-center align-middle" id="overlapBtn_37985"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37985&quot;,&quot;1&quot;,&quot;1&quot;,&quot;뿌리볼륨 고데기&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37985);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37985);">삭제</button></td></tr><tr><td class="text-center align-middle">37984</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37984);">리포트</button></td><td class="text-center align-middle">50</td><td class="text-center align-middle">50</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">81110561659</td><td class="text-center align-middle">질레트면도기</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=81110561659&amp;idType=clk&amp;query=%EC%A7%88%EB%A0%88%ED%8A%B8%EB%A9%B4%EB%8F%84%EA%B8%B0" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">3566044308</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-18 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-18</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37984" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37984&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37984&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37984" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37984&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37984&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37984">중복 허용</td><td class="text-center align-middle" id="overlapDay_37984">1</td><td class="text-center align-middle" id="overlapBtn_37984"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37984&quot;,&quot;1&quot;,&quot;1&quot;,&quot;질레트면도기&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37984);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37984);">삭제</button></td></tr><tr><td class="text-center align-middle">37983</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37983);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">88053213484</td><td class="text-center align-middle">맥주잔</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=88053213484&amp;idType=clk&amp;query=%EB%A7%A5%EC%A3%BC%EC%9E%94" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10508708132</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37983" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37983&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37983&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37983" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37983&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37983&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37983">중복 허용</td><td class="text-center align-middle" id="overlapDay_37983">1</td><td class="text-center align-middle" id="overlapBtn_37983"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37983&quot;,&quot;1&quot;,&quot;1&quot;,&quot;맥주잔&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37983);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37983);">삭제</button></td></tr><tr><td class="text-center align-middle">37982</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37982);">리포트</button></td><td class="text-center align-middle">160</td><td class="text-center align-middle">160</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">87494738356</td><td class="text-center align-middle">키크는영양제</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=87494738356&amp;idType=clk&amp;query=%ED%82%A4%ED%81%AC%EB%8A%94%EC%98%81%EC%96%91%EC%A0%9C" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">9950236083</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37982" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37982&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37982&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37982" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37982&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37982&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37982">중복 허용</td><td class="text-center align-middle" id="overlapDay_37982">1</td><td class="text-center align-middle" id="overlapBtn_37982"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37982&quot;,&quot;1&quot;,&quot;1&quot;,&quot;키크는영양제&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37982);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37982);">삭제</button></td></tr><tr><td class="text-center align-middle">37981</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37981);">리포트</button></td><td class="text-center align-middle">240</td><td class="text-center align-middle">240</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">85641140158</td><td class="text-center align-middle">쌍화차 15팩</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=85641140158&amp;idType=clk&amp;query=%EC%8C%8D%ED%99%94%EC%B0%A8%2015%ED%8C%A9" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">8096639835</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-18 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-18</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37981" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37981&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37981&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37981" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37981&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37981&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37981">중복 허용</td><td class="text-center align-middle" id="overlapDay_37981">1</td><td class="text-center align-middle" id="overlapBtn_37981"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37981&quot;,&quot;1&quot;,&quot;1&quot;,&quot;쌍화차 15팩&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37981);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37981);">삭제</button></td></tr><tr><td class="text-center align-middle">37980</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37980);">리포트</button></td><td class="text-center align-middle">240</td><td class="text-center align-middle">240</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">88156426178</td><td class="text-center align-middle">먹태</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=88156426178&amp;idType=clk&amp;query=%EB%A8%B9%ED%83%9C" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10611920588</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37980" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37980&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37980&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37980" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37980&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37980&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37980">중복 허용</td><td class="text-center align-middle" id="overlapDay_37980">1</td><td class="text-center align-middle" id="overlapBtn_37980"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37980&quot;,&quot;1&quot;,&quot;1&quot;,&quot;먹태&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37980);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37980);">삭제</button></td></tr><tr><td class="text-center align-middle">37979</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37979);">리포트</button></td><td class="text-center align-middle">240</td><td class="text-center align-middle">240</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">88100451131</td><td class="text-center align-middle">새즙증후균 제거</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=88100451131&amp;idType=clk&amp;query=%EC%83%88%EC%A6%99%EC%A6%9D%ED%9B%84%EA%B7%A0%20%EC%A0%9C%EA%B1%B0" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">10555945648</td><td class="text-center align-middle">2024-08-12 20:00:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37979" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37979&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37979&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37979" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37979&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37979&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37979">중복 허용</td><td class="text-center align-middle" id="overlapDay_37979">1</td><td class="text-center align-middle" id="overlapBtn_37979"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37979&quot;,&quot;1&quot;,&quot;1&quot;,&quot;새즙증후균 제거&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37979);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37979);">삭제</button></td></tr><tr><td class="text-center align-middle">37978</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37978);">리포트</button></td><td class="text-center align-middle">50</td><td class="text-center align-middle">50</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82793024838</td><td class="text-center align-middle">한돈등뼈2kg</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82793024838&amp;idType=clk&amp;query=%ED%95%9C%EB%8F%88%EB%93%B1%EB%BC%882kg" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">5248502360</td><td class="text-center align-middle">2024-08-12 19:30:00 ~ 2024-08-19 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-19</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37978" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37978&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37978&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37978" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37978&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37978&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37978">중복 허용</td><td class="text-center align-middle" id="overlapDay_37978">1</td><td class="text-center align-middle" id="overlapBtn_37978"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37978&quot;,&quot;1&quot;,&quot;1&quot;,&quot;한돈등뼈2kg&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37978);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37978);">삭제</button></td></tr><tr><td class="text-center align-middle">37977</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(37977);">리포트</button></td><td class="text-center align-middle">80</td><td class="text-center align-middle">80</td><td class="text-center align-middle">원픽</td><td class="text-center align-middle">82405964491</td><td class="text-center align-middle">손알콜티슈</td><td class="text-center align-middle"><a class="btn btn-outline-info btn-xs" href="https://msearch.shopping.naver.com/myai/foryou?fromWhere=000442&amp;&amp;id=82405964491&amp;idType=clk&amp;query=%EC%86%90%EC%95%8C%EC%BD%9C%ED%8B%B0%EC%8A%88" target="_blank">랜딩 URL</a></td><td class="text-center align-middle">4861441132</td><td class="text-center align-middle">2024-08-12 19:30:00 ~ 2024-08-20 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-20</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_37977" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;37977&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;37977&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_37977" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;37977&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;37977&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_37977">중복 허용</td><td class="text-center align-middle" id="overlapDay_37977">1</td><td class="text-center align-middle" id="overlapBtn_37977"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;37977&quot;,&quot;1&quot;,&quot;1&quot;,&quot;손알콜티슈&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(37977);">수정</button></td><td class="text-center align-middle"><button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(37977);">삭제</button></td></tr>											</tbody>
-										</table>										
+										</form>
 									</div>
-                                    <hr class="my-4">
-                                        <div class="intra-pagination-wrap"><div class="intra-pagination on">1</div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/30?sIsHidden=2&amp;" data-ci-pagination-page="30" rel="start">2</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/60?sIsHidden=2&amp;" data-ci-pagination-page="60">3</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/90?sIsHidden=2&amp;" data-ci-pagination-page="90">4</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/120?sIsHidden=2&amp;" data-ci-pagination-page="120">5</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/150?sIsHidden=2&amp;" data-ci-pagination-page="150">6</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/180?sIsHidden=2&amp;" data-ci-pagination-page="180">7</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/210?sIsHidden=2&amp;" data-ci-pagination-page="210">8</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/240?sIsHidden=2&amp;" data-ci-pagination-page="240">9</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/270?sIsHidden=2&amp;" data-ci-pagination-page="270">10</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/30?sIsHidden=2&amp;" data-ci-pagination-page="30" rel="next">Next</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Mission/quizList/37950?sIsHidden=2&amp;" data-ci-pagination-page="37950">End</a></div></div>								</div>	
+									<div class="modal-footer">
+										<button type="button" class="btn btn-brand" onclick="setOverlap();">저장</button>
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+									</div>
+								</div>
 							</div>
-					</div>  
-                    
-                    <!-- modal -->
-					<div class="modal fade show" id="setOverlap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display:none; padding-right: 17px;">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-                                <div class="modal-header text-left">
-                                    <h5 id="modalTitle" class="modal-title">중복 참여 변경</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form class="k-form" method="get" name="overlapFrm">  
-                                        <input type="hidden" id="missionIdx" name="missionIdx" value="">
-                                        <input type="hidden" id="missionTitle" name="missionTitle" value="">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="label__icon">미션 중복 참여 허용(+1day)</label>
-                                                    <div class="k-radio-inline mx-2">
-                                                        <div class="d-inline-block mr-3">
-                                                            <input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>                                                        
-                                                        </div> 
-                                                        <div class="d-inline-block mr-3">
-                                                            <input type="radio" name="isOverlap" value="2" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="label__icon">참여후 재참여 가능일(1,2...,10) </label>
-                                                    <input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" autocomplete="off">
-                                                </div>
-                                            </div>                                            
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-brand" onclick="setOverlap();">저장</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>                                    
-                                </div>
-                            </div>
+						</div>
+						<!-- /modal -->
+
+
+					<div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
+						<div class="k-footer__copyright">
+							2023&nbsp;©&nbsp;<a href="/Mission/quizList" target="_blank" class="k-link">Conan</a>
 						</div>
 					</div>
-					<!-- /modal -->
-
 				</div>
-
-                <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
-					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="quizList.html" target="_blank" class="k-link">Conan</a>
-					</div>
-				</div>
-			</div>
 		</div>
 		</div>
 
-    
-	
-
-</body><!-- end::Body --></html>
+	</body><!-- end::Body --></html>

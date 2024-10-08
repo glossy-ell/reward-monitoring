@@ -28,6 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -384,11 +387,15 @@ public class AnswerMsnController {
 
         if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        boolean result = answerMsnService.readExcel(file);
+        try {
+            boolean result = answerMsnService.readExcel(file);
+            return (result) ?
+                    ResponseEntity.status(HttpStatus.OK).build():
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }catch( IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
-        return (result) ?
-                ResponseEntity.status(HttpStatus.OK).build():
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 
@@ -493,8 +500,8 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @GetMapping("/Mission/quizList")
-    public String quizList(HttpSession session, Model model) {
+    @GetMapping({"/Mission/quizList/{pageNumber}","/Mission/quizList","/Mission/quizList/"})
+    public String quizList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -505,7 +512,35 @@ public class AnswerMsnController {
         }
 
         List<AnswerMsn> answerMsns = answerMsnService.getAnswerMsns();
-        model.addAttribute("answerMsns",answerMsns);
+        Collections.reverse(answerMsns);
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 15개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < answerMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsns.size());
+            limitedAnswerMsns = answerMsns.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) answerMsns.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("answerMsns",limitedAnswerMsns);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "quizList";
     }
 
@@ -547,8 +582,8 @@ public class AnswerMsnController {
         return "quizWrite";
     }
 
-    @GetMapping("/Mission/quizCurrentList")
-    public String quizCurrentList(HttpSession session, Model model) {
+    @GetMapping({"/Mission/quizCurrentList/{pageNumber}","/Mission/quizCurrentList","/Mission/quizCurrentList/"})
+    public String quizCurrentList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -558,9 +593,34 @@ public class AnswerMsnController {
             return "error/404";
         }
 
-        List<AnswerMsn> answerMsns = answerMsnService.getAnswerMsns();
+        ZonedDateTime now = ZonedDateTime.now();
+        List<AnswerMsn> answerMsns = answerMsnRepository.findByCurrentList(now);
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < answerMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsns.size());
+            limitedAnswerMsns = answerMsns.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+
         model.addAttribute("answerMsns",answerMsns);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", (int) Math.ceil((double)answerMsns.size() / limit));
         return "quizCurrentList";
+
+
     }
 
     @GetMapping("/Mission/quizMultiTempList")
@@ -576,4 +636,6 @@ public class AnswerMsnController {
 
         return "quizMultiTempList";
     }
+
+
 }

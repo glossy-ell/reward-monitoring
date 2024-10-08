@@ -54,4 +54,7 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.dataType= : dataType")
     public List<AnswerMsn> findByServerUrl(String url);
 
+    @Query("SELECT a FROM AnswerMsn a WHERE a.endAtMsn > :currentTime AND  a.totalPartCnt>0")
+    public List<AnswerMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
+
 }

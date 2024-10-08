@@ -1,16 +1,11 @@
 package com.example.reward_monitoring.general.mediaCompany.dto;
 
 
-import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+
 import com.example.reward_monitoring.general.mediaCompany.model.Type;
-import com.example.reward_monitoring.general.userServer.entity.Server;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Comment;
 
 
 @Getter
@@ -19,12 +14,14 @@ public class MediaCompanyEditDto {
 
     @Schema(description = "매체사명")
     private String companyName;
-    @Schema(description = "서버 URL")
+    @Schema(description = "서버 URL",example = "https://ocb.srk.co.kr")
     private String serverUrl;
     @Schema(description = "매체사 ID")
     private String companyID;
     @Schema(description = "매체사 담당자")
     private String companyManager;
+    @Schema(description = "비밀번호")
+    private String password;
     @Schema(description = "매체사 담당자 연락처")
     private String companyManagerPhoneNum;
     @Schema(description = "API Key")
@@ -39,7 +36,6 @@ public class MediaCompanyEditDto {
     private String companyReturnParameter;
     @Schema(description = "관리자 메모 ")
     private String memo;
-
     @Schema(description = "관리자 메모 ",example = "{\"quiz\":5,\"search\":5,\"sightseeing\":5}")
     private String companyUserSaving;
 

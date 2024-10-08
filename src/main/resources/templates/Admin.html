@@ -812,7 +812,7 @@
 															</div>
 															<div class="col-lg-6 col-md-6">
 																<div class="form-group">
-																	<label class="label__icon" for="">기본 언어</label>
+																	<label class="label__icon">기본 언어</label>
 																	<select name="lang" class="custom-select form-control">
 																		<option value="한국어" th:selected="${member?.lang == T(com.example.reward_monitoring.general.member.model.Lang).한국어}" >한국어</option>
 																		<option value="English" th:selected="${member?.lang == T(com.example.reward_monitoring.general.member.model.Lang).English}">English</option>
@@ -834,7 +834,7 @@
 															</div>
 															<div class="col-12">
 																<div class="form-group">
-																	<label class="label__icon" for="">관리자 메모</label>
+																	<label class="label__icon">관리자 메모</label>
 																	<textarea name="memo" class="form-control" rows="3" placeholder="기억하고 싶은 내용을 입력해 주세요." th:text="${member?.memo}">
 																	</textarea>
 																</div>

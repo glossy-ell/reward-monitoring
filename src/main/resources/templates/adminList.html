@@ -507,7 +507,11 @@
 				}
             },
             error: function(xhr) {
+              if (xhr.status === 429) { // 429 Too Many Requests
+           			 alert(xhr.responseText); //
+        		} else {
             	alert("검색중 오류가 발생하였습니다.");
+            	}
             }
         });
 
@@ -733,7 +737,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="adminList.html" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/Admin/adminList" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

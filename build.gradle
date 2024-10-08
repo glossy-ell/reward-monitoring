@@ -42,6 +42,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 	implementation 'org.json:json:20210307'//JSON
 	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.bucket4j:bucket4j-core:8.3.0' //Bucket4j
 }
 
 tasks.named('test') {

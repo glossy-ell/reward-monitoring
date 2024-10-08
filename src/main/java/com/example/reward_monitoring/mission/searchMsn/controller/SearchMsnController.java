@@ -476,7 +476,7 @@ public class SearchMsnController{
 
         List<SearchMsn> searchMsns = searchMsnService.getSearchMsns();
         model.addAttribute("searchMsns",searchMsns);
-        return "quizCurrentList";
+        return "searchCurrentList";
     }
 
     @GetMapping("/Mission/searchMultiTempList")
