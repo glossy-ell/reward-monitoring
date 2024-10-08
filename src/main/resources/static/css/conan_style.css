@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
-@import url('/css/conan_brand_color.css');
-@import url('/css/conan_aside_color.css');
+@import url('conan_brand_color.css');
+@import url('conan_aside_color.css');
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR');
 
 

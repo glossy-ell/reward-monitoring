@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Admin</title>
+	<link rel="stylesheet" href="/css/conan_aside_color.css">
 	<!-- favicon -->
 	<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
 
@@ -451,13 +452,7 @@
 							</a>
 						</li>
 					</ul>
-					<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-						<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-					</div>
-					<div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;">
-						<div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 300px;"></div>
-					</div>
-				</div>
+					<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 937px; right: 2px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 300px;"></div></div></div>
 			</div>
 		</div>
 		<!-- end aside -->
@@ -468,22 +463,6 @@
             commSearch();
         }
     }
-
-    // 날짜 포맷 함수
-	function formatDateTime(dateTimeStr) {
-		if (!dateTimeStr) {
-			return ''; // null 또는 undefined일 때 빈 문자열 반환
-		}
-		const date = new Date(dateTimeStr);
-		const year = date.getFullYear();
-		const month = ('0' + (date.getMonth() + 1)).slice(-2);
-		const day = ('0' + date.getDate()).slice(-2);
-		const hours = ('0' + date.getHours()).slice(-2);
-		const minutes = ('0' + date.getMinutes()).slice(-2);
-		const seconds = ('0' + date.getSeconds()).slice(-2);
-
-		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-	}
 
     //검색
     function commSearch() {
@@ -635,68 +614,13 @@
 													<th class="text-center font-weight-bold">참여 카운트 (116,665)</th>
                                                 </tr>
 											</thead>
-											<tbody th:each="item : ${dataList}">
-												<tr>
-													<td class="text-center align-middle" th:text="${item.date}"></td>
-													<td class="text-center align-middle" th:text="${item.landingCount}"></td>
-													<td class="text-center align-middle" th:text="${item.participationCount}"></td>
-												</tr>
-											</tbody>
 											<tbody>
-												<tr>
-													<td class="text-center align-middle">2024-08-11</td>
-													<td class="text-center align-middle">4,817</td>
-													<td class="text-center align-middle">2,377</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-10</td>
-													<td class="text-center align-middle">4,595</td>
-													<td class="text-center align-middle">2,040</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-09</td>
-													<td class="text-center align-middle">2,668</td>
-													<td class="text-center align-middle">1,153</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-08</td>
-													<td class="text-center align-middle">1,872</td>
-													<td class="text-center align-middle">789</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-07</td>
-													<td class="text-center align-middle">3,726</td>
-													<td class="text-center align-middle">1,763</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-06</td>
-													<td class="text-center align-middle">1,622</td>
-													<td class="text-center align-middle">720</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-05</td>
-													<td class="text-center align-middle">2,157</td>
-													<td class="text-center align-middle">1,006</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-04</td>
-													<td class="text-center align-middle">2,269</td>
-													<td class="text-center align-middle">1,007</td>
-												</tr>
-												<tr>
-													<td class="text-center align-middle">2024-08-03</td>
-													<td class="text-center align-middle">2,434</td>
-													<td class="text-center align-middle">1,020</td>
-												</tr>
-											</tbody>
-
+												<tr><td class="text-center align-middle">2024-08-11</td><td class="text-center align-middle">4,817</td><td class="text-center align-middle">2,377</td></tr><tr><td class="text-center align-middle">2024-08-10</td><td class="text-center align-middle">4,595</td><td class="text-center align-middle">2,040</td></tr><tr><td class="text-center align-middle">2024-08-09</td><td class="text-center align-middle">2,668</td><td class="text-center align-middle">1,153</td></tr><tr><td class="text-center align-middle">2024-08-08</td><td class="text-center align-middle">1,872</td><td class="text-center align-middle">789</td></tr><tr><td class="text-center align-middle">2024-08-07</td><td class="text-center align-middle">3,726</td><td class="text-center align-middle">1,763</td></tr><tr><td class="text-center align-middle">2024-08-06</td><td class="text-center align-middle">1,622</td><td class="text-center align-middle">720</td></tr><tr><td class="text-center align-middle">2024-08-05</td><td class="text-center align-middle">2,157</td><td class="text-center align-middle">1,006</td></tr><tr><td class="text-center align-middle">2024-08-04</td><td class="text-center align-middle">2,269</td><td class="text-center align-middle">1,007</td></tr><tr><td class="text-center align-middle">2024-08-03</td><td class="text-center align-middle">2,434</td><td class="text-center align-middle">1,020</td></tr><tr><td class="text-center align-middle">2024-08-02</td><td class="text-center align-middle">1,189</td><td class="text-center align-middle">420</td></tr><tr><td class="text-center align-middle">2024-08-01</td><td class="text-center align-middle">582</td><td class="text-center align-middle">220</td></tr><tr><td class="text-center align-middle">2024-07-31</td><td class="text-center align-middle">854</td><td class="text-center align-middle">271</td></tr><tr><td class="text-center align-middle">2024-07-30</td><td class="text-center align-middle">995</td><td class="text-center align-middle">301</td></tr><tr><td class="text-center align-middle">2024-07-29</td><td class="text-center align-middle">771</td><td class="text-center align-middle">260</td></tr><tr><td class="text-center align-middle">2024-07-28</td><td class="text-center align-middle">743</td><td class="text-center align-middle">263</td></tr><tr><td class="text-center align-middle">2024-07-27</td><td class="text-center align-middle">793</td><td class="text-center align-middle">264</td></tr><tr><td class="text-center align-middle">2024-07-26</td><td class="text-center align-middle">875</td><td class="text-center align-middle">266</td></tr><tr><td class="text-center align-middle">2024-07-25</td><td class="text-center align-middle">7,821</td><td class="text-center align-middle">4,482</td></tr><tr><td class="text-center align-middle">2024-07-24</td><td class="text-center align-middle">9,415</td><td class="text-center align-middle">5,435</td></tr><tr><td class="text-center align-middle">2024-07-23</td><td class="text-center align-middle">6,513</td><td class="text-center align-middle">4,007</td></tr><tr><td class="text-center align-middle">2024-07-22</td><td class="text-center align-middle">9,850</td><td class="text-center align-middle">5,628</td></tr><tr><td class="text-center align-middle">2024-07-21</td><td class="text-center align-middle">10,264</td><td class="text-center align-middle">6,055</td></tr><tr><td class="text-center align-middle">2024-07-20</td><td class="text-center align-middle">11,545</td><td class="text-center align-middle">6,594</td></tr><tr><td class="text-center align-middle">2024-07-19</td><td class="text-center align-middle">10,940</td><td class="text-center align-middle">6,375</td></tr><tr><td class="text-center align-middle">2024-07-18</td><td class="text-center align-middle">11,552</td><td class="text-center align-middle">7,237</td></tr><tr><td class="text-center align-middle">2024-07-17</td><td class="text-center align-middle">11,444</td><td class="text-center align-middle">6,901</td></tr><tr><td class="text-center align-middle">2024-07-16</td><td class="text-center align-middle">11,852</td><td class="text-center align-middle">7,547</td></tr><tr><td class="text-center align-middle">2024-07-15</td><td class="text-center align-middle">16,156</td><td class="text-center align-middle">9,913</td></tr><tr><td class="text-center align-middle">2024-07-14</td><td class="text-center align-middle">15,875</td><td class="text-center align-middle">9,737</td></tr><tr><td class="text-center align-middle">2024-07-13</td><td class="text-center align-middle">17,187</td><td class="text-center align-middle">11,160</td></tr><tr><td class="text-center align-middle">2024-07-12</td><td class="text-center align-middle">17,247</td><td class="text-center align-middle">11,454</td></tr>											</tbody>
                                             <tfoot>
-												<tr>
-													<th class="text-center font-weight-bold">합산</th>
-                                                	<th class="text-center font-weight-bold">200,623</th>
-                                                	<th class="text-center font-weight-bold">116,665</th>
-												</tr>
-											</tfoot>
+												<tr><th class="text-center font-weight-bold">합산</th>													
+                                                <th class="text-center font-weight-bold">200,623</th>
+                                                <th class="text-center font-weight-bold">116,665</th>
+											</tr></tfoot>
 										</table>
                                         
                                         <hr class="my-4">                                        
@@ -709,11 +633,14 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="/Statistics/statSumSightseeing" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="statSumSightseeing.html" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+		</div>
+
+    
+	
 
 </body><!-- end::Body --></html>
