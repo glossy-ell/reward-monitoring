@@ -614,6 +614,13 @@
 													<th class="text-center font-weight-bold">참여 카운트 (3,756,474)</th>
                                                 </tr>
 											</thead>
+											<tbody  id = "statSumQuiz">
+												<tr th:each="statSumQuiz,iterStat : ${mediaCompanyList}">
+													<td th:text="${#temporals.format(statSumQuiz.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
+													<td th:text="${statSumQuiz.landingCount}" class="text-center align-middle"></td>
+													<td th:text="${statSumQuiz.attendCount}" class="text-center align-middle"></td>
+												</tr>
+											</tbody>
 											<tbody>
 												<tr><td class="text-center align-middle">2024-08-11</td><td class="text-center align-middle">242,394</td><td class="text-center align-middle">126,277</td></tr><tr><td class="text-center align-middle">2024-08-10</td><td class="text-center align-middle">242,920</td><td class="text-center align-middle">130,221</td></tr><tr><td class="text-center align-middle">2024-08-09</td><td class="text-center align-middle">213,854</td><td class="text-center align-middle">125,387</td></tr><tr><td class="text-center align-middle">2024-08-08</td><td class="text-center align-middle">202,429</td><td class="text-center align-middle">123,133</td></tr><tr><td class="text-center align-middle">2024-08-07</td><td class="text-center align-middle">192,063</td><td class="text-center align-middle">116,369</td></tr><tr><td class="text-center align-middle">2024-08-06</td><td class="text-center align-middle">246,245</td><td class="text-center align-middle">148,910</td></tr><tr><td class="text-center align-middle">2024-08-05</td><td class="text-center align-middle">270,563</td><td class="text-center align-middle">161,266</td></tr><tr><td class="text-center align-middle">2024-08-04</td><td class="text-center align-middle">312,556</td><td class="text-center align-middle">185,117</td></tr><tr><td class="text-center align-middle">2024-08-03</td><td class="text-center align-middle">309,506</td><td class="text-center align-middle">184,136</td></tr><tr><td class="text-center align-middle">2024-08-02</td><td class="text-center align-middle">306,903</td><td class="text-center align-middle">184,444</td></tr><tr><td class="text-center align-middle">2024-08-01</td><td class="text-center align-middle">295,516</td><td class="text-center align-middle">177,578</td></tr><tr><td class="text-center align-middle">2024-07-31</td><td class="text-center align-middle">312,665</td><td class="text-center align-middle">189,237</td></tr><tr><td class="text-center align-middle">2024-07-30</td><td class="text-center align-middle">309,874</td><td class="text-center align-middle">186,394</td></tr><tr><td class="text-center align-middle">2024-07-29</td><td class="text-center align-middle">278,684</td><td class="text-center align-middle">170,753</td></tr><tr><td class="text-center align-middle">2024-07-28</td><td class="text-center align-middle">282,177</td><td class="text-center align-middle">171,061</td></tr><tr><td class="text-center align-middle">2024-07-27</td><td class="text-center align-middle">284,220</td><td class="text-center align-middle">166,181</td></tr><tr><td class="text-center align-middle">2024-07-26</td><td class="text-center align-middle">103,052</td><td class="text-center align-middle">58,020</td></tr><tr><td class="text-center align-middle">2024-07-25</td><td class="text-center align-middle">87,695</td><td class="text-center align-middle">48,776</td></tr><tr><td class="text-center align-middle">2024-07-24</td><td class="text-center align-middle">100,262</td><td class="text-center align-middle">54,675</td></tr><tr><td class="text-center align-middle">2024-07-23</td><td class="text-center align-middle">142,086</td><td class="text-center align-middle">78,702</td></tr><tr><td class="text-center align-middle">2024-07-22</td><td class="text-center align-middle">131,524</td><td class="text-center align-middle">72,302</td></tr><tr><td class="text-center align-middle">2024-07-21</td><td class="text-center align-middle">160,757</td><td class="text-center align-middle">87,846</td></tr><tr><td class="text-center align-middle">2024-07-20</td><td class="text-center align-middle">132,886</td><td class="text-center align-middle">70,876</td></tr><tr><td class="text-center align-middle">2024-07-19</td><td class="text-center align-middle">113,388</td><td class="text-center align-middle">59,841</td></tr><tr><td class="text-center align-middle">2024-07-18</td><td class="text-center align-middle">159,835</td><td class="text-center align-middle">83,777</td></tr><tr><td class="text-center align-middle">2024-07-17</td><td class="text-center align-middle">140,766</td><td class="text-center align-middle">69,318</td></tr><tr><td class="text-center align-middle">2024-07-16</td><td class="text-center align-middle">148,724</td><td class="text-center align-middle">67,150</td></tr><tr><td class="text-center align-middle">2024-07-15</td><td class="text-center align-middle">199,341</td><td class="text-center align-middle">89,288</td></tr><tr><td class="text-center align-middle">2024-07-14</td><td class="text-center align-middle">230,633</td><td class="text-center align-middle">99,904</td></tr><tr><td class="text-center align-middle">2024-07-13</td><td class="text-center align-middle">248,717</td><td class="text-center align-middle">111,571</td></tr><tr><td class="text-center align-middle">2024-07-12</td><td class="text-center align-middle">349,615</td><td class="text-center align-middle">157,964</td></tr>											</tbody>
                                             <tfoot>
@@ -633,14 +640,13 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="statSumQuiz.html" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/Statistics/statSumQuiz" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>
 		</div>
-		</div>
+	</div>
 
-    
-	
+
 
 </body><!-- end::Body --></html>
