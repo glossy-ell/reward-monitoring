@@ -8,6 +8,7 @@ import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
@@ -18,18 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-
+@Slf4j
 public class AnswerMsnService {
 
     @Autowired
@@ -41,6 +37,9 @@ public class AnswerMsnService {
 
     public AnswerMsn edit(int idx, AnswerMsnEditDto dto) {
         AnswerMsn answerMsn = answerMsnRepository.findByIdx(idx);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
         if(answerMsn==null)
             return null;
         if(dto.getMissionDefaultQty() != null)
@@ -53,14 +52,25 @@ public class AnswerMsnService {
             answerMsn.setAdvertiser(advertiserRepository.findByAdvertiser_(dto.getAdvertiser()));
         if(dto.getMissionTitle()!=null)
             answerMsn.setMissionTitle(dto.getMissionTitle());
+        if(dto.getMissionContent()!=null && !(dto.getMissionContent().isEmpty()))
+            answerMsn.setMissionContent(dto.getMissionContent());
         if(dto.getMissionDetailTitle()!=null)
             answerMsn.setMissionDetailTitle(dto.getMissionDetailTitle());
         if(dto.getMissionAnswer()!=null)
             answerMsn.setMissionAnswer(dto.getMissionAnswer());
-        if (dto.getStartAtMsn() != null)
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setStartAtMsn(dto.getStartAtMsn());
-        if (dto.getEndAtMsn() != null)
+        }
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setEndAtMsn(dto.getEndAtMsn());
+        }
         if (dto.getStartAtCap() != null)
             answerMsn.setStartAtCap(dto.getStartAtCap());
         if (dto.getEndAtCap() != null)
@@ -79,37 +89,64 @@ public class AnswerMsnService {
         }
         if (dto.getReEngagementDay() != null)
             answerMsn.setReEngagementDay(dto.getReEngagementDay());
-        if(dto.getExceptMedia() !=null)
+        if(dto.getExceptMedia() !=null && !(dto.getExceptMedia().isEmpty())) {
             answerMsn.setExceptMedia(answerMsn.convertJsonToString(answerMsn.convertDataToJson(dto.getExceptMedia())));
-        if(dto.getMsnUrl1()!=null)
+        }
+        if(dto.getMsnUrl1()!=null && !(dto.getMsnUrl1().isEmpty())) {
             answerMsn.setMsnUrl1(dto.getMsnUrl1());
-        if(dto.getMsnUrl2()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl2());
-        if(dto.getMsnUrl3()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl3());
-        if(dto.getMsnUrl4()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl4());
-        if(dto.getMsnUrl5()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl5());
-        if(dto.getMsnUrl6()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl6());
-        if(dto.getMsnUrl7()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl7());
-        if(dto.getMsnUrl8()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl8());
-        if(dto.getMsnUrl9()!=null)
-            answerMsn.setMsnUrl1(dto.getMsnUrl9());
+        }
+        if(dto.getMsnUrl2()!=null && !(dto.getMsnUrl2().isEmpty()))
+            answerMsn.setMsnUrl2(dto.getMsnUrl2());
+        if(dto.getMsnUrl3()!=null && !(dto.getMsnUrl3().isEmpty()))
+            answerMsn.setMsnUrl3(dto.getMsnUrl3());
+        if(dto.getMsnUrl4()!=null && !(dto.getMsnUrl4().isEmpty()))
+            answerMsn.setMsnUrl4(dto.getMsnUrl4());
+        if(dto.getMsnUrl5()!=null && !(dto.getMsnUrl5().isEmpty()))
+            answerMsn.setMsnUrl5(dto.getMsnUrl5());
+        if(dto.getMsnUrl6()!=null && !(dto.getMsnUrl6().isEmpty()))
+            answerMsn.setMsnUrl6(dto.getMsnUrl6());
+        if(dto.getMsnUrl7()!=null && !(dto.getMsnUrl7().isEmpty()))
+            answerMsn.setMsnUrl7(dto.getMsnUrl7());
+        if(dto.getMsnUrl8()!=null && !(dto.getMsnUrl8().isEmpty()))
+            answerMsn.setMsnUrl8(dto.getMsnUrl8());
+        if(dto.getMsnUrl9()!=null && !(dto.getMsnUrl9().isEmpty()))
+            answerMsn.setMsnUrl9(dto.getMsnUrl9());
+        if(dto.getMsnUrl10()!=null && !(dto.getMsnUrl10().isEmpty()))
+            answerMsn.setMsnUrl10(dto.getMsnUrl10());
         if(dto.getDataType()!=null) {
             boolean bool = dto.getDataType();
             answerMsn.setDupParticipation(bool);
+        }
+        if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
+            answerMsn.setImageName(dto.getImageName());
+            answerMsn.setImageData(dto.getImageData());
         }
 
         return answerMsn;
     }
 
     public AnswerMsn add(AnswerMsnReadDto dto) {
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+
         Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
+
+
         return dto.toEntity(advertiserEntity,serverEntity);
     }
 
@@ -118,7 +155,7 @@ public class AnswerMsnService {
     }
 
     public List<AnswerMsn> getAnswerMsns() {
-        return answerMsnRepository.findAll();
+        return answerMsnRepository.findAllMission();
     }
 
     public AnswerMsn delete(int idx) {
@@ -399,20 +436,29 @@ public class AnswerMsnService {
 
             Row row = worksheet.getRow(i);
 
-            if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC)
+            if (row.getCell(1) != null) {
                 dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
+            }
             if(row.getCell(2)!=null)
                 dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
 
-
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
                 //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
-            if(row.getCell(4)!=null)
-                dto.setAdvertiserDetails(df.format(row.getCell(4).getNumericCellValue()));
+            if(row.getCell(4)!=null) {
+                if (row.getCell(4).getCellType() == CellType.STRING)
+                    dto.setAdvertiserDetails(row.getCell(4).getStringCellValue());
+                else
+                    dto.setAdvertiserDetails(df.format(row.getCell(4).getNumericCellValue()));
+            }
             if(row.getCell(5)!=null)
                 dto.setMissionTitle(row.getCell(5).getStringCellValue());
-            if(row.getCell(6)!=null)
-                dto.setMissionAnswer(df.format(row.getCell(6).getNumericCellValue()));
+
+            if(row.getCell(6)!=null) {
+                if (row.getCell(6).getCellType() == CellType.STRING)
+                    dto.setMissionAnswer(row.getCell(6).getStringCellValue());
+                else
+                    dto.setMissionAnswer(df.format(row.getCell(6).getNumericCellValue()));
+            }
             if(row.getCell(7)!=null)
                 dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
             if(row.getCell(8)!=null)
@@ -468,15 +514,18 @@ public class AnswerMsnService {
         answerMsn.setDupParticipation(dto.isDupParticipation());
         if(dto.getReEngagementDay()!=null)
             answerMsn.setReEngagementDay(dto.getReEngagementDay());
+        answerMsnRepository.save(answerMsn);
         return true;
 
     }
 
-    public boolean changeMissionActive(int idx, AnswerMsnActiveDto dto) {
+    public boolean changeMissionReEngagementDay(int idx, AnswerMsnAbleDayDto dto) {
         AnswerMsn target = answerMsnRepository.findByIdx(idx);
         if(target ==null)
             return false;
-        target.setMissionActive(dto.isActive());
+       target.setReEngagementDay(dto.getReEngagementDay());
+       target.setDupParticipation(dto.isDupParticipation());
+       answerMsnRepository.save(target);
         return true;
     }
 
@@ -486,6 +535,121 @@ public class AnswerMsnService {
         if(target ==null)
             return false;
         target.setMissionExposure(dto.isExpose());
+        answerMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setOffMissionIsUsed(int idx) {
+
+        List<AnswerMsn> answerMsns = getAnswerMsns();
+        Collections.reverse(answerMsns);
+
+         int pageNumber = idx;
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < answerMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsns.size());
+            limitedAnswerMsns = answerMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (AnswerMsn answerMsn : limitedAnswerMsns) {
+            answerMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            answerMsnRepository.save(answerMsn);
+        }
+        return true;
+    }
+
+    public boolean setOffMissionIsView(int idx) {
+        List<AnswerMsn> answerMsns = getAnswerMsns();
+        Collections.reverse(answerMsns);
+        int pageNumber = idx;
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < answerMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsns.size());
+            limitedAnswerMsns = answerMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (AnswerMsn answerMsn : limitedAnswerMsns) {
+            answerMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
+            answerMsnRepository.save(answerMsn);
+        }
+        return true;
+    }
+
+
+
+    public boolean AllOffMission() {
+
+        List<AnswerMsn> answerMsns = getAnswerMsns();
+        for (AnswerMsn answerMsn : answerMsns) {
+            answerMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            answerMsn.setMissionExposure(false);
+            answerMsnRepository.save(answerMsn);
+        }
+        return true;
+    }
+
+
+    public boolean setMissionIsUsed(int idx) {
+        AnswerMsn target= answerMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionActive(true);
+        answerMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setMissionIsUsedFalse(int idx) {
+        AnswerMsn target= answerMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionActive(false);
+        answerMsnRepository.save(target);
+        return true;
+    }
+
+
+    public boolean setMissionIsView(int idx) {
+        AnswerMsn target= answerMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionExposure(true);
+        answerMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setMissionIsViewFalse(int idx) {
+        AnswerMsn target= answerMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionExposure(false);
+        answerMsnRepository.save(target);
+        return true;
+    }
+
+
+
+    public boolean hidden(int idx) {
+
+        AnswerMsn target= answerMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setHidden(true);
+        answerMsnRepository.save(target);
         return true;
     }
 }

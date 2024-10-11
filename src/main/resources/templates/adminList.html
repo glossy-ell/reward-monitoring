@@ -540,7 +540,6 @@
 
     // 등록, 수정 버튼
     function commGoDetail(idx) {
-        var frm = document.searchFrm;
         if(idx){
             window.location.href ='/Admin/adminWrite/'+ idx;
             return true;
@@ -713,14 +712,14 @@
 											</div>
 
 											<!-- 페이지 링크 생성 -->
-											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
+											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}" th:if="${i > 0}">
 												<a th:href="@{/Admin/adminList/{page}(page=${i})}"
 												   th:classappend="${currentPage == i} ? 'on' : ''">
 													<span th:text="${i}"></span>
 												</a>
 											</div>
 											<!-- Next 링크 -->
-											<div class="intra-pagination" th:if="${currentPage < totalPages}">
+											<div class="intra-pagination" th:if="${currentPage < totalPages} ">
 												<a th:href="@{/Admin/adminList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
 											</div>
 											<!-- End 링크 -->

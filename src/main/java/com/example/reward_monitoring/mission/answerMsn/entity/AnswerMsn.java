@@ -13,6 +13,7 @@ import org.json.JSONArray;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -104,7 +105,17 @@ public class AnswerMsn {
     @Transient
     private LocalDateTime startAtMsnLocalDateTime;
     @Transient
+    private LocalDate startAtMsnLocalDate;
+    @Transient
+    private LocalTime startAtMsnLocalTime;
+
+    @Transient
     private LocalDateTime endAtMsnLocalDateTime;
+    @Transient
+    private LocalDate endAtMsnLocalDate;
+    @Transient
+    private LocalTime endAtMsnLocalTime;
+
 
     @Transient
     private String bothAtMsnLocalDateTime;
@@ -162,13 +173,19 @@ public class AnswerMsn {
         return jsonArray;
     }
 
-    public String convertJsonToString(JSONArray json){
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+    public String convertJsonToString(JSONArray jsonArray) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            result.append(jsonArray.getInt(i));
+
+            // 마지막 요소가 아닐 경우에만 '|' 추가
+            if (i < jsonArray.length() - 1) {
+                result.append("|");
+            }
         }
+
+        return result.toString();
     }
 
 
@@ -309,8 +326,12 @@ public class AnswerMsn {
     }
     @PostLoad
     public void changeDTypeDateTime() {
-        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime().minusHours(9);
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime().plusHours(9);
+        this.startAtMsnLocalDate = this.startAtMsn.plusHours(9).toLocalDate();
+        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime().plusHours(9);
         this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime().minusHours(9);
+        this.endAtMsnLocalDate = this.endAtMsn.plusHours(9).toLocalDate();
+        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime().plusHours(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
 

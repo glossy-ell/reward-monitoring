@@ -44,8 +44,14 @@ public class AnswerMsnReadDto {
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
     private String missionContent="";
 
+
+    private String startAtMsnDate; // 날짜 필드
+    private String startTime;  // 시간 필드
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
+
+    private String endAtMsnDate; // 날짜 필드
+    private String endTime;  // 시간 필드
 
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
     private ZonedDateTime endAtMsn;
@@ -102,6 +108,9 @@ public class AnswerMsnReadDto {
 
     @Schema(description = "미션 URL9", example = "www.abc.com",nullable = true)
     private String msnUrl9;
+
+    @Schema(description = "미션 URL10", example = "www.abc.com",nullable = true)
+    private String msnUrl10;
 
     @Schema(description = "미션 데이터 타입", example = "true")
     private Boolean dataType=true;

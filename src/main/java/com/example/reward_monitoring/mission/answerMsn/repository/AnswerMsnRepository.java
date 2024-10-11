@@ -57,4 +57,6 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.endAtMsn > :currentTime AND  a.totalPartCnt>0")
     public List<AnswerMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
 
+    @Query("SELECT a FROM AnswerMsn a WHERE a.isHidden = false")
+    public List<AnswerMsn> findAllMission();
 }

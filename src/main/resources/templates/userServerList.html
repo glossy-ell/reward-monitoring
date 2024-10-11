@@ -677,7 +677,7 @@
 										</div>
 
 										<!-- 페이지 링크 생성 -->
-										<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
+										<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}" th:if="${i > 0}">
 											<a th:href="@{/Site/userServerList/{page}(page=${i})}"
 											   th:classappend="${currentPage == i} ? 'on' : ''">
 												<span th:text="${i}"></span>
@@ -699,7 +699,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="userServerList.html" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/userServerList" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

@@ -485,23 +485,18 @@
 
 		// 등록, 수정 버튼
 		function commGoDetail(idx) {
-			var frm = document.searchFrm;
-
-			frm.quizIdx.value = "";
-
-			if(idx){
-				frm.quizIdx.value = idx;
-			}
-			frm.action ='/Mission/quizWrite';
-			frm.submit();
+        	if(idx){
+           		window.location.href ='/Mission/quizWrite/'+ idx;
+            	return true;
+        	} else {
+				window.location.href ='/Mission/quizWrite';
+            	return true;
+       		}
 		}
 
 		//Excel 다운로드
 		function commDownExcel() {
-			var frm = document.searchFrm;
-
-			frm.action ='/Mission/excelQuizList';
-			frm.submit();
+			window.location.href = '/Mission/quizList/excel/download';
 		}
 
 		function commGoReport(missionIdx) {
@@ -513,247 +508,218 @@
 			winPopupCenter(popUrl, "정답 미션 리포트", width, height, 'yes', 'yes');
 		}
 
-		function openSetOverlapModal(missionIdx,isOverlap,overlapDay,missionTitle) {
-
-			var overlapFrm = document.overlapFrm;
-
-			$('#modalTitle').html(missionTitle);
-			$("input:radio[name='isOverlap']").prop('checked',false);
-			$("input:radio[name='isOverlap'][value='"+isOverlap+"']").prop('checked',true);
-
-			overlapFrm.overlapDay.value = overlapDay;
-			overlapFrm.missionIdx.value = missionIdx;
-			overlapFrm.missionTitle.value = missionTitle;
-
+		function openSetOverlapModal(idx) {
+			$.ajax({
+        		type: 'GET',  // GET 방식으로 요청
+        		url: `/Mission/quizList/get/${idx}`,  // quiz 데이터 API
+        		dataType: 'json',
+        		success: function(data) {
+            	if (data) {
+                	overlapFrm.idx.value = data.idx; // quiz의 idx
+               		if (data.dupParticipation === true) {
+                    	$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+                	} else {
+                    	$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+                	}
+                	overlapFrm.reEngagementDay.value = data.reEngagementDay
+           		}
+        	},
+        	error: function(error) {
+            	console.error('데이터를 가져오는 데 실패했습니다:', error);
+        	}
+    	});
 			$("#setOverlap").modal();
 		}
 
-		function setOverlap() {
 
+
+		function setOverlap(idx) {
+
+			var idx = document.getElementsByName('idx')[0].value;
 			var overlapFrm = document.overlapFrm;
+            var formData = new FormData(overlapFrm);
+            var jsonData = {};
+            formData.forEach((value, key) => {
+
+               jsonData[key] = value; // FormData를 JSON 객체로 변환
+           });
+
+    		if (jsonData.reEngagementDay > 10) {
+       		 	alert("재참여 가능일은 10을 넘길 수 없습니다.");
+        		return false; // 함수를 종료
+   			}
 
 			$.ajax({
 				type: 'post'
-				, url: '/api/Mission/setOverlap'
-				, data : {
-					missionType: 'Q',
-					missionIdx: overlapFrm.missionIdx.value,
-					isOverlap: overlapFrm.isOverlap.value,
-					overlapDay: overlapFrm.overlapDay.value
-				}
+				,url: `/Mission/quizList/reEngagement/${idx}`
+				,contentType: "application/json"
+				,data: JSON.stringify(jsonData)
 				, cache: false
 				, async: false
-				, dataType : 'json'
-				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						$('#isOverlap_'+overlapFrm.missionIdx.value).html(data.data.isOverlapTxt);
-						$('#overlapDay_'+overlapFrm.missionIdx.value).html(data.data.overlapDay);
-						$('#overlapBtn_'+overlapFrm.missionIdx.value).html("<button class='btn btn-outline-primary btn-xs' onClick='openSetOverlapModal(\""+overlapFrm.missionIdx.value+"\",\""+overlapFrm.isOverlap.value+"\",\""+data.data.overlapDay+"\",\""+overlapFrm.missionTitle.value+"\");'>가능일 변경하기</button>");
+				, success: function(response) {
+					alert("성공적으로 변경되었습니다.");
+					window.location.href = "/Mission/quizList";
+				},
+                error: function(xhr) {
+                	alert("변경중 오류가 발생했습니다.");
 
-						return true;
+                }
 
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
-					}
-				}
 			});
-
 			$("#setOverlap").modal('hide');
-
 		}
 
 
-		function setIsUsed(missionIdx, isUsed) {
+		function setIsUsed(idx) {
 
 			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setMissionIsUsed'
-				, data : {
-					missionType: 'Q',
-					missionIdx: missionIdx,
-					isUsed: isUsed
-				}
+				type: 'get'
+				, url: `/Mission/quizList/setMissionIsUsed/${idx}`
 				, cache: false
-				, async: false
-				, dataType : 'json'
 				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						$('#isUsedBtn_'+missionIdx).html(data.data.isUsedTxt);
-
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
-					}
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
 				}
 			});
 
 		}
 
-		function setIsView(missionIdx, isView) {
+		function setIsUsedFalse(idx) {
 
 			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setMissionIsView'
-				, data : {
-					missionType: 'Q',
-					missionIdx: missionIdx,
-					isView: isView
-				}
+				type: 'get'
+				, url: `/Mission/quizList/setMissionIsUsedFalse/${idx}`
 				, cache: false
-				, async: false
-				, dataType : 'json'
 				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						$('#isViewBtn_'+missionIdx).html(data.data.isViewTxt);
-
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
-					}
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
 				}
 			});
 
 		}
 
-		function commSetAllIsUsed() {
-
-			var frm = document.searchFrm;
-			var i;
+		function setIsView(idx) {
 
 			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setOffMissionIsUsed'
-				, data : {
-					missionType: 'Q',
-					missionIdxArr: frm.currentQuizIdxArr.value
-				}
+				type: 'get'
+				, url: `/Mission/quizList/setMissionIsView/${idx}`
 				, cache: false
 				, async: false
-				, dataType : 'json'
+
 				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						for(i=0;i<data.data.missionIdxCount;i++) {
-							$('#isUsedBtn_'+data.data.missionIdxArr[i]).html("비활성");
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
+				}
+			});
+
+		}
+			function setIsViewFalse(idx) {
+
+			$.ajax({
+				type: 'get'
+				, url: `/Mission/quizList/setMissionIsViewFalse/${idx}`
+				, cache: false
+				, async: false
+				, success: function(data) {
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
+				}
+			});
+
+		}
+
+
+		function commSetAllIsUsed(idx) {
+			if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setOffMissionIsUsed/${idx}`
+					, success: function(data) {
+							alert("비활성화 되었습니다");
+							location.reload(true);
+
+
 						}
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
+					,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
 					}
-				}
-			});
+				});
+			}
 		}
 
-		function commSetAllIsView() {
+		function commSetAllIsView(idx) {
 
-			var frm = document.searchFrm;
-			var i;
+			if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setOffMissionIsView/${idx}`
+					, success: function(data) {
+							alert("현재 페이지의 미션이 비노출로 되었습니다");
+							location.reload(true);
 
-			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setOffMissionIsView'
-				, data : {
-					missionType: 'Q',
-					missionIdxArr: frm.currentQuizIdxArr.value
-				}
-				, cache: false
-				, async: false
-				, dataType : 'json'
-				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						for(i=0;i<data.data.missionIdxCount;i++) {
-							$('#isViewBtn_'+data.data.missionIdxArr[i]).html("비노출");
+
 						}
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
+					,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
 					}
-				}
-			});
+				});
+			}
 		}
 
 
 		function commAllOffMission() {
-
-			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setOffMission'
-				, data : {
-					missionType: 'Q'
-				}
-				, cache: false
-				, async: false
-				, dataType : 'json'
-				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						location.reload();
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
+			if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
+				$.ajax({
+					type: 'get'
+					, url: '/Mission/quizList/AllOffMission'
+					, success: function(data) {
+							alert("모든 미션이 종료/비노출 되었습니다.");
+							location.reload(true);
+						}
+					,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
 					}
-				}
-			});
+				});
+			}
 		}
 
-		function setIsHidden(missionIdx) {
-
-			$.ajax({
-				type: 'post'
-				, url: '/api/Mission/setMissionIsHidden'
-				, data : {
-					missionType: 'Q',
-					missionIdx: missionIdx,
-					isHidden: '1'
-				}
-				, cache: false
-				, async: false
-				, dataType : 'json'
-				, success: function(data) {
-					if(data.isResult == true) {
-						console.log(data.message);
-						alert(data.data.message);
-						location.reload();
-
-						return true;
-
-					} else {
-						console.log(data.message);
-						alert(data.data.message);
-						return false;
+		function hiddenMission(idx) {
+			if(confirm("미션을 삭제합니다.")){
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/hidden/${idx}`
+					, cache: false
+					, async: false
+					, success: function(data) {
+						alert("미션이 삭제되었습니다.");
+						location.reload(true);
 					}
-				}
-			});
-
+					,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+				});
+			}
 		}
-
 
 
 	</script>
@@ -784,15 +750,15 @@
 													<div class="k-section">
 														<div class="k-section__content k-section__content--border">
 															<button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>
-															<button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Mission/quizWrite'">등록</button>
+															<button type="button" class="btn btn-secondary btn-main" th:onclick="commGoDetail();">등록</button>
 															<button type="button" class="btn btn-outline--main" onclick="commGoAllReg();">일괄 등록</button>
 														</div>
 													</div>
 													&nbsp;
 													<div class="k-section">
 														<div class="k-section__content k-section__content--border">
-															<button type="button" class="btn btn-outline-focus" onclick="commSetAllIsUsed();">화면 비활성</button>
-															<button type="button" class="btn btn-outline-success" onclick="commSetAllIsView();">화면 비노출</button>
+															<button type="button" class="btn btn-outline-focus" th:onclick="'commSetAllIsUsed(' + ${currentPage} + ');'">화면 비활성</button>
+															<button type="button" class="btn btn-outline-success" th:onclick="'commSetAllIsView(' + ${currentPage} + ');'">화면 비노출</button>
 															<button type="button" class="btn btn-outline-danger" onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
 														</div>
 													</div>
@@ -806,16 +772,12 @@
 															<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn form-control k_">
 																	<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																		<option value="">= 광고주 =</option>
-																		<option value="1">시크릿 K</option>
-																		<option value="2">올앤올</option>
-																		<option value="3">애드닷</option>
-																		<option value="4">탑플랜</option>
-																		<option value="5">네이버스</option>
-																		<option value="6">키봅</option>
-																		<option value="7">셀렉티드</option>
-																		<option value="8">골든커머스</option>
-																		<option value="9">원픽</option>
+																		<th:block th:each="advertiser : ${advertisers}">
+																			<option
+																					th:value="${advertiser.advertiser}"
+																					th:text="${advertiser.advertiser}"
+																					th:selected="${answerMsn != null && answerMsn.advertiser.advertiser == advertiser.advertiser}"></option>
+																		</th:block>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
 																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -959,7 +921,11 @@
 													</tr>
 												</thead>
 												<tbody id = "quizList">
-													<tr th:each="quiz, iterStat : ${answerMsns}">
+												<tr th:if="${#lists.isEmpty(answerMsns)}">
+													<td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+												</tr>
+
+												<tr th:each="quiz, iterStat : ${answerMsns}">
 														<td class="text-center align-middle" th:text="${quiz.idx}"></td>
 														<td class="text-center align-middle">
 															<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${quiz.idx} + ');">리포트</button>
@@ -970,34 +936,48 @@
 														<td class="text-center align-middle" th:text="${quiz.advertiserDetails}"></td>
 														<td class="text-center align-middle" th:text="${quiz.missionTitle}"></td>
 														<td class="text-center align-middle">
-															<a class="btn btn-outline-info btn-xs" th:href="quiz.msnUrl1" target="_blank">랜딩 URL</a></td>
+															<a class="btn btn-outline-info btn-xs"
+															   th:href="${quiz.msnUrl1 != null and #strings.startsWith(quiz.msnUrl1, 'http') ? quiz.msnUrl1 : 'http://' + quiz.msnUrl1}"
+															   target="_blank">랜딩 URL</a>
 														<td class="text-center align-middle" th:text="${quiz.missionAnswer}"></td>
 														<td class="text-center align-middle" th:text="${quiz.bothAtMsnLocalDateTime}"></td>
 														<td class="text-center align-middle" th:text="${quiz.bothAtCap}"></td>
 														<td class="text-center align-middle">
-															<div class="btn-group"><button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button>
-																<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
-																	<a class="dropdown-item" onclick="setIsUsed(' + ${quiz.idx} + ');">활성</a>
-																	<a class="dropdown-item" onclick="setIsUsedFalse(' + ${quiz.idx} + ');">비활성</a></div>
+															<div class="btn-group">
+																<button type="button" id="isActive"
+																		th:class="'btn btn-outline-focus btn-sm dropdown-toggle ' + (${!quiz.missionActive} ? 'text-danger' : '')"
+																		data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																	<span th:text="${quiz.missionActive ? '활성' : '비활성'}"></span>
+																</button>
+																	<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
+																		<a class="dropdown-item" th:onclick="'setIsUsed(' + ${quiz.idx} + ');'">활성</a>
+																		<a class="dropdown-item" th:onclick="'setIsUsedFalse(' + ${quiz.idx} + ');'">비활성</a>
+																	</div>
 															</div>
 														</td>
 														<td class="text-center align-middle">
-															<div class="btn-group"><button type="button" id="isViewBtn_38006" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button>
+															<div class="btn-group">
+																<button type="button"
+																		th:class="${quiz.missionExposure} ? 'btn btn-outline-success btn-sm dropdown-toggle' : 'btn btn-outline-success btn-sm dropdown-toggle text-danger'"
+																		data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																	<span th:text="${quiz.missionExposure ? '노출' : '비노출'}"></span>
+																</button>
 																<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
-																	<a class="dropdown-item" onclick="setExpose(' + ${quiz.idx} + ');">노출</a>
-																	<a class="dropdown-item" onclick="setExposeFalse(' + ${quiz.idx} + ');">비노출</a>
+																	<a class="dropdown-item" th:onclick="'setIsView(' + ${quiz.idx} + ');'">노출</a>
+																	<a class="dropdown-item" th:onclick="'setIsViewFalse(' + ${quiz.idx} + ');'">비노출</a>
 																</div>
 															</div>
 														</td>
-														<td class="text-center align-middle" id="isOverlap_38006"></td>
-														<td class="text-center align-middle" id="overlapDay_38006">1</td>
+														<td class="text-center align-middle" id="isOverlap_38006" th:text="${quiz.dupParticipation ? '중복 허용' : '중복 비허용'}"></td>
+														<td class="text-center align-middle" id="overlapDay_38006" th:text="${quiz.reEngagementDay}"></td>
 														<td class="text-center align-middle" id="overlapBtn_38006">
-															<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + ${quiz.idx} + ');">가능일 변경하기</button>
-														</td>
-														<td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + ${quiz.idx} + '38006);">수정</button>
+															<button class="btn btn-outline-primary btn-xs" th:onclick="'openSetOverlapModal(' + ${quiz.idx} + ');'">가능일 변경하기</button>
 														</td>
 														<td class="text-center align-middle">
-															<button class="btn btn-outline-danger btn-xs" onclick="setIsHidden(' + ${quiz.idx} + ');">삭제</button>
+															<button class="btn btn-secondary btn-outline--main btn-xs" th:onclick="'commGoDetail(' +${quiz.idx} + ');'">수정</button>
+														</td>
+														<td class="text-center align-middle">
+															<button class="btn btn-outline-danger btn-xs" th:onclick="'hiddenMission(' + ${quiz.idx} + ');'">삭제</button>
 														</td>
 													</tr>
 												</tbody>
@@ -1018,7 +998,7 @@
 												</div>
 
 												<!-- 페이지 링크 생성 -->
-												<div class="intra-pagination" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+												<div class="intra-pagination" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:if="${i > 0}">
 													<a th:href="@{/Mission/quizList/{page}(page=${i})}"
 													   th:classappend="${currentPage == i} ? 'on' : ''">
 														<span th:text="${i}"></span>
@@ -1047,18 +1027,17 @@
 									</div>
 									<div class="modal-body">
 										<form class="k-form" method="get" name="overlapFrm">
-											<input type="hidden" id="missionIdx" name="missionIdx" value="">
-											<input type="hidden" id="missionTitle" name="missionTitle" value="">
+											<input type="hidden" name="idx" value="">
 											<div class="row">
 												<div class="col-6">
 													<div class="form-group">
 														<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 														<div class="k-radio-inline mx-2">
 															<div class="d-inline-block mr-3">
-																<input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
+																<input type="radio" name="dupParticipation" value="true" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
 															</div>
 															<div class="d-inline-block mr-3">
-																<input type="radio" name="isOverlap" value="2" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
+																<input type="radio" name="dupParticipation" value="false" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
 															</div>
 														</div>
 													</div>
@@ -1066,7 +1045,7 @@
 												<div class="col-6">
 													<div class="form-group">
 														<label class="label__icon">참여후 재참여 가능일(1,2...,10) </label>
-														<input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" autocomplete="off">
+														<input type="text" class="form-control" name="reEngagementDay" id="overlapDay" value="" autocomplete="off">
 													</div>
 												</div>
 											</div>
