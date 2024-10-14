@@ -482,11 +482,11 @@
             success: function(response) {
             	const statQuizContainer = $('#statQuiz'); // 회원 목록을 표시할 컨테이너 선택
             	statQuizContainer.empty();
-            	if (response.affiliates.length === 0) {
+            	if (response.statQuizs.length === 0) {
 				//statQuiz가 빈 리스트인 경우 메시지 추가
 					$('#statQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 				} else {
-					response.affiliates.forEach(function(statQuiz,index) {
+					response.statQuizs.forEach(function(statQuiz,index) {
 					$('#statQuiz').append(
 						'<tr>' +
 						'<td class="text-center align-middle">' + (index + 1) + '</td>' +

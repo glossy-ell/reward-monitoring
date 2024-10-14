@@ -505,12 +505,14 @@
 						'<tr>' +
 						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
 						'<td class="text-center align-middle">' + statSight.idx + '</td>' +
-						'<td class="text-center align-middle">' + statSight.companyName + '</td>' +
 						'<td class="text-center align-middle">' + statSight.companyID + '</td>' +
-  						'<td class="text-center align-middle">' + (statSight.companyManager || '미정') + '</td>' +
-    					'<td class="text-center align-middle">' + (statSight.companyManagePhoneNum || '미정') + '</td>' +
-						'<td class="text-center align-middle">' + statSight.apikey + '</td>' +
-						'<td class="text-center align-middle">' + (statSight.active ? '<span class="color-blue">사용함</span>' : '<span class="color-red">사용안함</span>') + '</td>' +
+						'<td class="text-center align-middle">' + statSight.missionIdx + '</td>' +
+						'<td class="text-center align-middle">' + statSight.myPlace + '</td>' +
+						'<td class="text-center align-middle">' + statSight.point + '</td>' +
+						'<td class="text-center align-middle">' + statSight.checkPassive + '</td>' +
+						'<td class="text-center align-middle">' + statSight.abuseState + '</td>' +
+						'<td class="text-center align-middle">' + statSight.checkResponse + '</td>' +
+						'<td class="text-center align-middle">' + statSight.ip + '</td>' +
 						'<td class="text-center align-middle">' +  formatDateTime(statSight.createdAtLocalDateTime) + '</td>' +
 						'</tr>'
 					);
@@ -576,96 +578,96 @@
 
        memberCheck = prompt("마지막 참여 상태값을 입력하세요.(1.정상,2:확인필요)","2");
        if(memberCheck == "1") {
-           chkTxt = "정상";  
+           chkTxt = "정상";
        } else if(memberCheck == "2") {
            chkTxt = "확인필요";
 
        } else {
             alert("잘못된 접근입니다.");
             return false;
-       }           
-       
+       }
+
        $.ajax({
             type: 'post'
             , url: '/api/Tx/setMemberCheck'
-            , data : { 
+            , data : {
                 txId : txId,
-                memberId : memberId,       
-                memberCheck : memberCheck       
+                memberId : memberId,
+                memberCheck : memberCheck
             }
             , cache: false
             , async: false
             , dataType : 'json'
             , success: function(data) {
                 if(data.isResult == true) {
-                    console.log(data.message);        
+                    console.log(data.message);
                     $("#lastMemberCheck_"+txId).html(chkTxt);
                     return true;
-                    
-                } else {        
+
+                } else {
                     console.log(data.message);
                     return false;
                 }
-            }            
+            }
         });
-       
+
     }
 
-    function setAbuse(txId) {              
-       
+    function setAbuse(txId) {
+
        $.ajax({
             type: 'post'
             , url: '/api/Tx/setAbuseSightseeing'
-            , data : { 
-                txId : txId 
+            , data : {
+                txId : txId
             }
             , cache: false
             , async: false
             , dataType : 'json'
             , success: function(data) {
                 if(data.isResult == true) {
-                    console.log(data.message);        
+                    console.log(data.message);
                     $("#abuse_"+txId).html("어뷰");
                     return true;
-                    
-                } else {        
+
+                } else {
                     console.log(data.message);
                     return false;
                 }
-            }            
+            }
         });
-       
+
     }
 
 
-    function setBlockPlace(txId, memberId, url) { 
+    function setBlockPlace(txId, memberId, url) {
 
         if(confirm(url+"를 차단하시겠습니까?")) {
 
             $.ajax({
                     type: 'post'
                     , url: '/api/Tx/setBlockPlace'
-                    , data : { 
-                        memberId : memberId, 
-                        memberPlaceUrl : url 
+                    , data : {
+                        memberId : memberId,
+                        memberPlaceUrl : url
                     }
                     , cache: false
                     , async: false
                     , dataType : 'json'
                     , success: function(data) {
                         if(data.isResult == true) {
-                            console.log(data.message);   
+                            console.log(data.message);
                             $("#place_"+txId).html(url + " (참여 차단됨)");
                             alert("차단되었습니다.");
                             return true;
-                            
-                        } else {        
+
+                        } else {
                             console.log(data.message);
                             return false;
                         }
-                    }            
+                    }
                 });
-               
+
             }
 
         } */
