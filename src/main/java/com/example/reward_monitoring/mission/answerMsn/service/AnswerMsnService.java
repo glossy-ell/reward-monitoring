@@ -169,20 +169,20 @@ public class AnswerMsnService {
 
     public List<AnswerMsn> searchAnswerMsn(AnswerMsnSearchDto dto) {
 
-        List<AnswerMsn> target_date;
-        List<AnswerMsn> target_dailyCap;
+        List<AnswerMsn> target_date = null;
+        List<AnswerMsn> target_dailyCap = null;
 
-        List<AnswerMsn> target_dup_Participation;
-        List<AnswerMsn> target_mission_active;
-        List<AnswerMsn> target_mission_exposure;
-        List<AnswerMsn> target_data_Type;
+        List<AnswerMsn> target_dup_Participation = null;
+        List<AnswerMsn> target_mission_active = null;
+        List<AnswerMsn> target_mission_exposure = null;
+        List<AnswerMsn> target_data_Type = null;
 
-        List<AnswerMsn> target_advertiser;
-        List<AnswerMsn> target_advertiser_details; // 선택 1
-        List<AnswerMsn> target_mission_title; // 선택 2
+        List<AnswerMsn> target_advertiser = null;
+        List<AnswerMsn> target_advertiser_details = null; // 선택 1
+        List<AnswerMsn> target_mission_title = null; // 선택 2
 
 
-        List<AnswerMsn> result = new ArrayList<>();
+        List<AnswerMsn> result = null;
 
 
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
@@ -191,11 +191,9 @@ public class AnswerMsnService {
                 ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                 if(dto.getEndAtMsn() == null){
                     target_date = answerMsnRepository.findByStartDate(start_time);
-                    result.addAll(target_date);
                 }else{
                     ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
                     target_date = answerMsnRepository.findByBothDate(start_time,end_time);
-                    result.addAll(target_date);
                 }
 
             }
@@ -204,67 +202,70 @@ public class AnswerMsnService {
                 ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
 
                 target_date = answerMsnRepository.findByEndDate(end_time);
-                result.addAll(target_date);
             }
 
         }
 
-        if(dto.getStartAtCap() != null || dto.getEndAtCap() != null){
-            if(dto.getStartAtCap() != null){
-                if(dto.getEndAtCap() == null){
+        if(dto.getStartAtCap() != null || dto.getEndAtCap() != null) {
+            if (dto.getStartAtCap() != null) {
+                if (dto.getEndAtCap() == null) {
                     target_dailyCap = answerMsnRepository.findByStartAtCap(dto.getStartAtCap());
-                    result.addAll(target_dailyCap);
-                }else{
-                    target_dailyCap = answerMsnRepository.findByBothCap(dto.getStartAtCap(),dto.getEndAtCap());
-                    result.addAll(target_dailyCap);
+                } else {
+                    target_dailyCap = answerMsnRepository.findByBothCap(dto.getStartAtCap(), dto.getEndAtCap());
                 }
 
-            }
-            else {
+            } else {
                 target_dailyCap = answerMsnRepository.findByEndAtCap(dto.getEndAtCap());
-                result.addAll(target_dailyCap);
             }
-
         }
 
-        // 검색
-
-        if(dto.getMissionActive() != null){
-            target_mission_active = answerMsnRepository.findByMissionActive(dto.getMissionActive());
-            result.addAll(target_mission_active);
-        }
-
-        if(dto.getDupParticipation() != null){
+        if(dto.getDupParticipation()!=null){
             target_dup_Participation = answerMsnRepository.findByDupParticipation(dto.getDupParticipation());
-            result.addAll(target_dup_Participation);
         }
-        if(dto.getMissionExposure() != null){
+
+        if(dto.getMissionActive()!=null){
+            target_mission_active = answerMsnRepository.findByDupParticipation(dto.getMissionActive());
+        }
+
+        if(dto.getMissionExposure() !=null ){
             target_mission_exposure = answerMsnRepository.findByMissionExposure(dto.getMissionExposure());
-            result.addAll(target_mission_exposure);
         }
 
-        if(dto.getDataType() != null){
-            target_data_Type= answerMsnRepository.findByDataType(dto.getDataType());
-            result.addAll(target_data_Type);
-        }
+        if(dto.getDataType() != null)
+            target_data_Type = answerMsnRepository.findByDataType(dto.getDataType());
 
-        if(dto.getAdvertiser()!=null){
+        if(dto.getAdvertiser() != null)
             target_advertiser = answerMsnRepository.findByAdvertiser(dto.getAdvertiser());
-            result.addAll(target_advertiser);
+
+
+//
+//            List<AnswerMsn> target_date;
+//            List<AnswerMsn> target_dailyCap;
+//
+//            List<AnswerMsn> target_dup_Participation;
+//            List<AnswerMsn> target_mission_active;
+//            List<AnswerMsn> target_mission_exposure;
+//            List<AnswerMsn> target_data_Type;
+//
+//            List<AnswerMsn> target_advertiser;
+//            List<AnswerMsn> target_advertiser_details; // 선택 1
+//            List<AnswerMsn> target_mission_title; // 선택 2
+//
+        if(target_date != null){
+            result = new ArrayList<>(target_date);
+            if(target_dailyCap !=null)
+                result.retainAll(target_dailyCap);
+            if(target_dup_Participation!=null)
+                result.retainAll(target_dup_Participation);
+            if(target_mission_active != null)
+                result.retainAll(target_mission_active);
         }
 
-        if(dto.getAdvertiserDetails()!=null){
-            target_advertiser_details = answerMsnRepository.findByAdvertiserDetails(dto.getAdvertiserDetails());
-            result.addAll(target_advertiser_details);
-        }
 
-        if(dto.getMissionTitle()!= null) {
-            target_mission_title = answerMsnRepository.findByMissionTitle(dto.getMissionTitle());
-            result.addAll(target_mission_title);
-        }
 
-        return result.stream().distinct().collect(Collectors.toList());
-
+        if(result == null )
+            result = new ArrayList<>();
+        return result;
     }
 
     public Sheet excelDownload( List<AnswerMsn> list,Workbook wb){

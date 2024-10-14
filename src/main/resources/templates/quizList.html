@@ -469,10 +469,125 @@
 
 		//검색
 		function commSearch() {
-			var frm = document.searchFrm;
-			frm.action = "/Mission/quizList";
-			frm.submit();
+        	var frm = document.searchFrm;
+        	var formData = new FormData(frm);
+       		var jsonData = {};
+       		formData.forEach((value, key) => {
+            	jsonData[key] = value; // FormData를 JSON 객체로 변환
+        	});
+		$.ajax({
+        	url: `/Mission/quizList/search`,
+        	type: "POST",
+        	contentType: "application/json",
+        	data: JSON.stringify(jsonData),
+
+            success: function(response) {
+            	const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
+            	quizListContainer.empty();
+            	if (response.answerMsns.length === 0) {
+				// members가 빈 리스트인 경우 메시지 추가
+						$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+				} else {
+					response.answerMsns.forEach(function(answerMsn,index) {
+					$('#quizList').append(
+						  '<tr>' +
+								'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+								'<td class="text-center align-middle">' +
+									'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
+								'</td>' +
+								'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
+								'<td class="text-center align-middle">' +
+									'<a class="btn btn-outline-info btn-xs" ' +
+										'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
+										'target="_blank">랜딩 URL</a>' +
+								'</td>' +
+								'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
+								'<td class="text-center align-middle">' +
+									'<div class="btn-group">' +
+										'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (answerMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+											'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
+										'</button>' +
+										'<div class="dropdown-menu dropdown-menu-right">' +
+											'<a class="dropdown-item" onclick="setIsUsed(' + answerMsn.idx + ');">활성</a>' +
+											'<a class="dropdown-item" onclick="setIsUsedFalse(' + answerMsn.idx + ');">비활성</a>' +
+										'</div>' +
+									'</div>' +
+								'</td>' +
+								'<td class="text-center align-middle">' +
+									'<div class="btn-group">' +
+										'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (answerMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+											'<span>' + (answerMsn.missionExposure ? '노출' : '비노출') + '</span>' +
+										'</button>' +
+										'<div class="dropdown-menu dropdown-menu-right">' +
+											'<a class="dropdown-item" onclick="setIsView(' + answerMsn.idx + ');">노출</a>' +
+											'<a class="dropdown-item" onclick="setIsViewFalse(' + answerMsn.idx + ');">비노출</a>' +
+										'</div>' +
+									'</div>' +
+								'</td>' +
+								'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
+								'<td class="text-center align-middle">' +
+									'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
+								'</td>' +
+								'<td class="text-center align-middle">' +
+									'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
+								'</td>' +
+								'<td class="text-center align-middle">' +
+									'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
+								'</td>' +
+							'</tr>'
+						);
+					});
+				 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+				}
+            },
+            error: function(xhr) {
+              if (xhr.status === 429) { // 429 Too Many Requests
+           			 alert(xhr.responseText); //
+        		} else {
+            	alert("검색중 오류가 발생하였습니다.");
+            	}
+            }
+        });
+
+    }
+	// 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		// First 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/1">First</a></div>');
 		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + (currentPage - 1) + '" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + i + '" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + (currentPage + 1) + '" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + totalPages + '">End</a></div>');
+		}
+	}
+
 
 		//검색 초기화
 		function commSearchReset() {
@@ -721,6 +836,22 @@
 			}
 		}
 
+		function updateInputName() {
+			const selectElement = document.getElementById("searchSelect");
+			const selectedValue = selectElement.value;
+
+			// input 요소를 가져옴
+			const inputElement = document.getElementById("searchInput");
+
+			if (selectedValue === "sTitle") {
+				inputElement.name = "missionTitle";
+				inputElement.placeholder = "정답 미션 제목을 입력하세요";
+			} else if (selectedValue === "sAdvertiserDetail") {
+				inputElement.name = "advertiserDetails";
+				inputElement.placeholder = "광고주 상세를 입력하세요";
+			}
+		}
+
 
 	</script>
 
@@ -771,12 +902,14 @@
 														<div class="row">
 															<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn form-control k_">
-																	<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																	<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																		<option value="" disabled selected>광고주를 선택하세요</option>
 																		<th:block th:each="advertiser : ${advertisers}">
 																			<option
 																					th:value="${advertiser.advertiser}"
-																					th:text="${advertiser.advertiser}"
-																					th:selected="${answerMsn != null && answerMsn.advertiser.advertiser == advertiser.advertiser}"></option>
+																					th:text="${advertiser.advertiser}">
+
+																			</option>
 																		</th:block>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
@@ -790,10 +923,10 @@
 															</div>
 															<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																	<select name="sIsOverlap" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<select name="dupParticipation" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																		<option value="">= 중복 참여 여부 =</option>
-																		<option value="1">중복 참여 허용</option>
-																		<option value="2">중복 참여 불가</option>
+																		<option value="true">중복 참여 허용</option>
+																		<option value="false">중복 참여 불가</option>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
 																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -807,20 +940,20 @@
 															</div>
 															<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 																<div class="input-daterange input-group">
-																	<input type="text" class="form-control btn-datepicker" name="sOverOpenStartDate" placeholder="미션 시작일" value="" autocomplete="off">
+																	<input type="text" class="form-control btn-datepicker" name="startAtMsn" placeholder="미션 시작일" value="" autocomplete="off">
 																	<div class="input-group-append">
 																		<span class="input-group-text">~</span>
 																	</div>
-																	<input type="text" class="form-control btn-datepicker" name="sUnderOpenEndDate" placeholder="미션 종료일" value="" autocomplete="off">
+																	<input type="text" class="form-control btn-datepicker" name="endAtMsn" placeholder="미션 종료일" value="" autocomplete="off">
 																</div>
 															</div>
 															<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 																<div class="input-daterange input-group">
-																	<input type="text" class="form-control btn-datepicker" name="sOverDCapSDate" placeholder="데캡 시작일" value="" autocomplete="off">
+																	<input type="text" class="form-control btn-datepicker" name="startAtCap" placeholder="데캡 시작일" value="" autocomplete="off">
 																	<div class="input-group-append">
 																		<span class="input-group-text">~</span>
 																	</div>
-																	<input type="text" class="form-control btn-datepicker" name="sUnderDCapEDate" placeholder="데캡 종료일" value="" autocomplete="off">
+																	<input type="text" class="form-control btn-datepicker" name=" endAtCap" placeholder="데캡 종료일" value="" autocomplete="off">
 																</div>
 															</div>
 														</div>
@@ -829,10 +962,10 @@
 														<div class="row">
 															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																	<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<select name="missionActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																		<option value="">= 미션 상태 =</option>
-																		<option value="1">활성</option>
-																		<option value="2">비활성</option>
+																		<option value="true">활성</option>
+																		<option value="false">비활성</option>
 																	</select>
 																	<div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
 																		<ul class="dropdown-menu inner show">
@@ -844,10 +977,10 @@
 															</div>
 															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																	<select name="sIsView" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<select name="missionExposure" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																		<option value="">= 미션 노출여부 =</option>
-																		<option value="1">노출</option>
-																		<option value="2">비노출</option>
+																		<option value="true">노출</option>
+																		<option value="false">비노출</option>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
 																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -860,9 +993,9 @@
 															</div>
 															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																	<select name="sIsHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																		<option value="1">삭제 데이터</option>
-																		<option value="2" selected="selected">정상 데이터</option>
+																	<select name="isHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="true">삭제 데이터</option>
+																		<option value="false" selected="selected">정상 데이터</option>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
 																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -876,12 +1009,13 @@
 															</div>
 															<div class="input-group col-xl-6 col-lg-6 col-sm-12">
 																<div class="input-group-prepend">
-																	<select name="sOpt" class="custom-select form-control">
+																	<select name="sOpt"  id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
+																		<option value="" selected hidden>= 검색옵션 =</option>
 																		<option value="sTitle">정답 미션 제목</option>
 																		<option value="sAdvertiserDetail">광고주 상세</option>
 																	</select>
 																</div>
-																<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+																<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 																<div class="input-group-append">
 																	<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																	<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>

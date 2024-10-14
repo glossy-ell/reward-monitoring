@@ -14,8 +14,8 @@ public class BucketConfiguration {
 
     public Bucket getBucket(String userId) {
         return buckets.computeIfAbsent(userId, id -> {
-            Refill refill = Refill.intervally(1, Duration.ofSeconds(100));
-            Bandwidth limit = Bandwidth.classic(2, refill);
+            Refill refill = Refill.intervally(10, Duration.ofSeconds(10));
+            Bandwidth limit = Bandwidth.classic(10000, refill);
             return Bucket.builder()
                     .addLimit(limit)
                     .build();

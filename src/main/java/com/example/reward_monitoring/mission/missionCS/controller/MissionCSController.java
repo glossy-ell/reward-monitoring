@@ -3,6 +3,7 @@ package com.example.reward_monitoring.mission.missionCS.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.missionCS.dto.MissionCSSearchDto;
 import com.example.reward_monitoring.mission.missionCS.entity.MissionCS;
 import com.example.reward_monitoring.mission.missionCS.repository.MissionCSRepository;
@@ -18,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -82,8 +85,8 @@ public class MissionCSController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @RequestMapping({"missionCsList","/",""})
-    public String missionCSList(HttpSession session){
+    @GetMapping({"/missionCsList/{pageNumber}","/missionCsList","/missionCsList"})
+    public String missionCSList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -92,6 +95,35 @@ public class MissionCSController {
         if (member == null) {
             return "error/404";
         }
+        List<MissionCS> MissionCSList = missionCSService.getMissionCSs();
+
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<MissionCS> limitedMissionCSList;
+        if (startIndex < MissionCSList.size()) {
+            int endIndex = Math.min(startIndex + limit, MissionCSList.size());
+            limitedMissionCSList = MissionCSList.subList(startIndex, endIndex);
+        } else {
+            limitedMissionCSList = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) MissionCSList.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+
+        model.addAttribute("missionCSList", limitedMissionCSList);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "missionCsList";
     }
 }

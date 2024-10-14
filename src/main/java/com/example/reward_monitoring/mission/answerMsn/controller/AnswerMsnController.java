@@ -281,32 +281,64 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
-    @PostMapping("/Mission/quizList/search")
+    @PostMapping({"/Mission/quizList/search","/Mission/quizList/search/{pageNumber}"})
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public ResponseEntity<List<AnswerMsn>> searchAnswerMsn(HttpSession session, @RequestBody AnswerMsnSearchDto dto){
+    public Map<String, Object> searchAnswerMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody AnswerMsnSearchDto dto){
         Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
         } // 세션만료
 
         Member member =memberRepository.findById( sessionMember.getId());
         if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
 
 
         List<AnswerMsn> result = answerMsnService.searchAnswerMsn(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAnswerMsns = result.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("answerMsns", limitedAnswerMsns);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
     }
 
 
