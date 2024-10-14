@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -87,7 +88,6 @@ public class AnswerMsnDailyStatController {
 
 
     @GetMapping({"/{pageNumber}","/",""})
-    @RequestMapping({"/",""})
     public String statDailyQuiz(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
@@ -99,6 +99,7 @@ public class AnswerMsnDailyStatController {
         }
 
         List<AnswerMsnDailyStat> answerMsnDailyStats = answerMsnDailyService.getAnswerMsnsDailys();
+        Collections.reverse(answerMsnDailyStats);
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
         }
@@ -118,7 +119,7 @@ public class AnswerMsnDailyStatController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        model.addAttribute("missionCSList", limitedAnswerMsnDailyStats);
+        model.addAttribute("answerMsnDailyStats", limitedAnswerMsnDailyStats);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);

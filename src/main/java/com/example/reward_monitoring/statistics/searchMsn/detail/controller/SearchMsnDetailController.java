@@ -5,6 +5,7 @@ package com.example.reward_monitoring.statistics.searchMsn.detail.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.dto.SearchMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.detail.entity.SearchMsnDetailsStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.service.SearchMsnDetailService;
@@ -16,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -45,8 +46,8 @@ public class SearchMsnDetailController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @RequestMapping({"/",""})
-    public String statSearch(HttpSession session){
+    @GetMapping({"/{pageNumber}","/",""})
+    public String statSearch(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -55,6 +56,33 @@ public class SearchMsnDetailController {
         if (member == null) {
             return "error/404";
         }
+
+        List<SearchMsnDetailsStat> searchMsnDetailsStats = searchMsnDetailService.getSearchMsnsDetails();
+
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        List<SearchMsnDetailsStat> limitedSearchMsnDetailsStats;
+        if (startIndex < searchMsnDetailsStats.size()) {
+            int endIndex = Math.min(startIndex + limit, searchMsnDetailsStats.size());
+            limitedSearchMsnDetailsStats = searchMsnDetailsStats.subList(startIndex, endIndex);
+        } else {
+            limitedSearchMsnDetailsStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) searchMsnDetailsStats.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("searchMsnDetailsStats",  limitedSearchMsnDetailsStats);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "statSearch";
     }
 }

@@ -721,7 +721,36 @@
 										</table>
                                         
                                         <hr class="my-4">
-                                        <div class="intra-pagination-wrap"><div class="intra-pagination on">1</div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/100?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="100" rel="start">2</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/200?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="200">3</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/300?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="300">4</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/400?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="400">5</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/500?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="500">6</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/600?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="600">7</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/700?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="700">8</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/800?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="800">9</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/900?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="900">10</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/100?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="100" rel="next">Next</a></div><div class="intra-pagination"><a href="https://ocb-gm.srk.co.kr/Statistics/statSearch/4926200?sUserServerIdx=1&amp;page_view=100&amp;" data-ci-pagination-page="4926200">End</a></div></div>										
+										<div class="intra-pagination-wrap">
+											<div class="intra-pagination">
+												<!-- 현재 페이지 표시 -->
+												<span th:text="${currentPage}"></span>
+											</div>
+											<!-- First 버튼 -->
+											<div class="intra-pagination" th:if="${currentPage > 1}">
+												<a th:href="@{/Mission/missionCsList/{page}(page=1)}">First</a>
+											</div>
+											<!-- Previous 버튼 -->
+											<div class="intra-pagination" th:if="${currentPage > 1}">
+												<a th:href="@{/Mission/missionCsList/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
+											</div>
+
+											<!-- 페이지 링크 생성 -->
+											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
+												<a th:href="@{/Mission/missionCsList/{page}(page=${i})}"
+												   th:classappend="${currentPage == i} ? 'on' : ''">
+													<span th:text="${i}"></span>
+												</a>
+											</div>
+											<!-- Next 링크 -->
+											<div class="intra-pagination" th:if="${currentPage < totalPages}">
+												<a th:href="@{/Mission/missionCsList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
+											</div>
+											<!-- End 링크 -->
+											<div class="intra-pagination" th:if="${currentPage < totalPages}">
+												<a th:href="@{/Mission/missionCsList/{page}(page=${totalPages})}">End</a>
+											</div>
+										</div>
 									</div>
 								</div>	
 							</div>

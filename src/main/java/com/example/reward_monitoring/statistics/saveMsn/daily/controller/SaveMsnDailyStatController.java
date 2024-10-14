@@ -3,6 +3,7 @@ package com.example.reward_monitoring.statistics.saveMsn.daily.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.dto.SaveMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.service.SaveMsnDailyService;
@@ -18,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -53,7 +54,7 @@ public class SaveMsnDailyStatController {
 
     @GetMapping("/SaveMsnDailyStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<SaveMsnDailyStat>> getAnswerMsnDailyStats(){
-        return ResponseEntity.status(HttpStatus.OK).body(saveMsnDailyService.getAnswerMsnsDailys());
+        return ResponseEntity.status(HttpStatus.OK).body(saveMsnDailyService.getSaveMsnsDailys());
     }
 
 
@@ -65,7 +66,7 @@ public class SaveMsnDailyStatController {
     })
     public ResponseEntity<Void> excelDownload(HttpServletResponse response)throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
-            List<SaveMsnDailyStat> list = saveMsnDailyService.getAnswerMsnsDailys();
+            List<SaveMsnDailyStat> list = saveMsnDailyService.getSaveMsnsDailys();
             Sheet sheet = saveMsnDailyService.excelDownload(list,wb);
 
             if(sheet !=null) {
@@ -84,8 +85,8 @@ public class SaveMsnDailyStatController {
         }
 
     }
-    @RequestMapping({"/",""})
-    public String statDailySightseeing(HttpSession session){
+    @GetMapping({"/{pageNumber}","/",""})
+    public String statDailySightseeing(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -94,6 +95,35 @@ public class SaveMsnDailyStatController {
         if (member == null) {
             return "error/404";
         }
+        List<SaveMsnDailyStat> saveMsnDailyStats = saveMsnDailyService.getSaveMsnsDailys();
+        Collections.reverse(saveMsnDailyStats);
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<SaveMsnDailyStat> limitedSaveMsnDailyStats;
+        if (startIndex < saveMsnDailyStats.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsnDailyStats.size());
+            limitedSaveMsnDailyStats = saveMsnDailyStats.subList(startIndex, endIndex);
+        } else {
+            limitedSaveMsnDailyStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) saveMsnDailyStats.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("saveMsnDailyStats", limitedSaveMsnDailyStats);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
         return "statDailySightseeing";
     }
 }

@@ -3,6 +3,7 @@ package com.example.reward_monitoring.statistics.saveMsn.sum.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.dto.SaveMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.service.SaveMsnSumStatService;
@@ -14,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -50,7 +53,7 @@ public class SaveMsnSumStatController {
     }
 
     @RequestMapping({"/",""})
-    public String statSumSightseeing(HttpSession session){
+    public String statSumSightseeing(HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -59,6 +62,12 @@ public class SaveMsnSumStatController {
         if (member == null) {
             return "error/404";
         }
+        List<SaveMsnSumStat> saveMsnSumStats = saveMsnSumStatService.getSaveMsnSumStats();
+        Collections.reverse(saveMsnSumStats);
+        if (saveMsnSumStats.size() > 30) {
+            saveMsnSumStats = saveMsnSumStats.subList(0, 30);
+        }
+        model.addAttribute("saveMsnSumStats", saveMsnSumStats);
         return "statSumSightseeing";
     }
 }

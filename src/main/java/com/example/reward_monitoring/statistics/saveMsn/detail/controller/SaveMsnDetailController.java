@@ -4,6 +4,7 @@ package com.example.reward_monitoring.statistics.saveMsn.detail.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.dto.SaveMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.service.SaveMsnDetailService;
@@ -15,10 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -45,8 +47,8 @@ public class SaveMsnDetailController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @RequestMapping({"/",""})
-    public String statSightseeing(HttpSession session){
+    @GetMapping({"/{pageNumber}","/",""})
+    public String statSightseeing(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -55,6 +57,34 @@ public class SaveMsnDetailController {
         if (member == null) {
             return "error/404";
         }
+
+        List<SaveMsnDetailsStat> saveMsnDetailsStats = saveMsnDetailService.getSaveMsnsDetails();
+        Collections.reverse(saveMsnDetailsStats);
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        List<SaveMsnDetailsStat> limitedSaveMsnDetailsStats;
+        if (startIndex < saveMsnDetailsStats.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsnDetailsStats.size());
+            limitedSaveMsnDetailsStats = saveMsnDetailsStats.subList(startIndex, endIndex);
+        } else {
+            limitedSaveMsnDetailsStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) saveMsnDetailsStats.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("saveMsnDetailsStats", limitedSaveMsnDetailsStats);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "statSightseeing";
+
     }
 }

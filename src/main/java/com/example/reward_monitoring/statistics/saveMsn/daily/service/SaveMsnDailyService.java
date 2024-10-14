@@ -111,7 +111,7 @@ public class SaveMsnDailyService {
         cellStyle.setBorderBottom(BorderStyle.THIN);
     }
 
-    public List<SaveMsnDailyStat> getAnswerMsnsDailys() {
+    public List<SaveMsnDailyStat> getSaveMsnsDailys() {
         return saveMsnDailyStatRepository.findAll();
     }
 

@@ -3,6 +3,7 @@ package com.example.reward_monitoring.statistics.searchMsn.sum.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.dto.SearchMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.sum.entity.SearchMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.service.SearchMsnSumStatService;
@@ -14,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -50,7 +53,7 @@ public class SearchMsnSumStatController {
     }
 
     @RequestMapping({"/",""})
-    public String statSumSearch(HttpSession session){
+    public String statSumSearch(HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -59,6 +62,14 @@ public class SearchMsnSumStatController {
         if (member == null) {
             return "error/404";
         }
+
+        List<SearchMsnSumStat> searchMsnSumStats = searchMsnSumStatService.getSearchMsnSumStats();
+        Collections.reverse(searchMsnSumStats);
+        if (searchMsnSumStats.size() > 30) {
+            searchMsnSumStats = searchMsnSumStats.subList(0, 30);
+        }
+
+        model.addAttribute("searchMsnSumStats", searchMsnSumStats);
         return "statSumSearch";
     }
 }

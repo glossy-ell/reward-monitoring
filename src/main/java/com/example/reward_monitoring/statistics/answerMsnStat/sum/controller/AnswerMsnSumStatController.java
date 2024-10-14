@@ -3,9 +3,11 @@ package com.example.reward_monitoring.statistics.answerMsnStat.sum.controller;
 
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.Service.AnswerMsnSumStatService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
+import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -14,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -50,15 +54,23 @@ public class AnswerMsnSumStatController {
     }
 
     @RequestMapping({"/",""})
-    public String statSumQuiz(HttpSession session){
+    public String statSumQuiz(HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
         Member member = memberRepository.findById(sessionMember.getId());
+        List<AnswerMsnSumStat> answerMsnSumStats = answerMsnSumStatService.getAnswerMsnSumStats();
+        Collections.reverse(answerMsnSumStats);
+        if (answerMsnSumStats.size() > 30) {
+            answerMsnSumStats = answerMsnSumStats.subList(0, 30);
+        }
+
         if (member == null) {
             return "error/404";
         }
+
+        model.addAttribute("answerMsnSumStats", answerMsnSumStats);
         return "statSumQuiz";
     }
 }
