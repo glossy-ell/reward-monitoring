@@ -460,6 +460,12 @@
 
 			<!-- end aside -->
 	<script type="application/javascript">
+		let answerMsns = [];
+
+		function clearResults() {
+   			answerMsns = []; // 리스트 초기화
+
+		}
 
 		function enterkey() {
 			if (window.event.keyCode == 13) {
@@ -468,93 +474,181 @@
 		}
 
 		//검색
-		function commSearch() {
+		function commSearch(page) {
         	var frm = document.searchFrm;
         	var formData = new FormData(frm);
        		var jsonData = {};
        		formData.forEach((value, key) => {
             	jsonData[key] = value; // FormData를 JSON 객체로 변환
         	});
-		$.ajax({
-        	url: `/Mission/quizList/search`,
-        	type: "POST",
-        	contentType: "application/json",
-        	data: JSON.stringify(jsonData),
 
-            success: function(response) {
-            	const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
-            	quizListContainer.empty();
-            	if (response.answerMsns.length === 0) {
-				// members가 빈 리스트인 경우 메시지 추가
-						$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-				} else {
-					response.answerMsns.forEach(function(answerMsn,index) {
-					$('#quizList').append(
-						  '<tr>' +
-								'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-								'<td class="text-center align-middle">' +
-									'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
-								'</td>' +
-								'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
-								'<td class="text-center align-middle">' +
-									'<a class="btn btn-outline-info btn-xs" ' +
-										'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
-										'target="_blank">랜딩 URL</a>' +
-								'</td>' +
-								'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
-								'<td class="text-center align-middle">' +
-									'<div class="btn-group">' +
-										'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (answerMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-											'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
-										'</button>' +
-										'<div class="dropdown-menu dropdown-menu-right">' +
-											'<a class="dropdown-item" onclick="setIsUsed(' + answerMsn.idx + ');">활성</a>' +
-											'<a class="dropdown-item" onclick="setIsUsedFalse(' + answerMsn.idx + ');">비활성</a>' +
+        	if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+			$.ajax({
+				url: `/Mission/quizList/search`,
+				type: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(jsonData),
+
+				success: function(response) {
+					const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
+					quizListContainer.empty();
+
+					if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
+					// members가 빈 리스트인 경우 메시지 추가
+							$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+					} else {
+					 	answerMsns = response.fullAnswerMsns;
+						response.answerMsns.forEach(function(answerMsn,index) {
+						$('#quizList').append(
+							  '<tr>' +
+									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+									'<td class="text-center align-middle">' +
+										'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
+									'</td>' +
+									'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
+									'<td class="text-center align-middle">' +
+										'<a class="btn btn-outline-info btn-xs" ' +
+											'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
+											'target="_blank">랜딩 URL</a>' +
+									'</td>' +
+									'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
+									'<td class="text-center align-middle">' +
+										'<div class="btn-group">' +
+											'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (answerMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+												'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
+											'</button>' +
+											'<div class="dropdown-menu dropdown-menu-right">' +
+												'<a class="dropdown-item" onclick="setIsUsed(' + answerMsn.idx + ');">활성</a>' +
+												'<a class="dropdown-item" onclick="setIsUsedFalse(' + answerMsn.idx + ');">비활성</a>' +
+											'</div>' +
 										'</div>' +
-									'</div>' +
-								'</td>' +
-								'<td class="text-center align-middle">' +
-									'<div class="btn-group">' +
-										'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (answerMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-											'<span>' + (answerMsn.missionExposure ? '노출' : '비노출') + '</span>' +
-										'</button>' +
-										'<div class="dropdown-menu dropdown-menu-right">' +
-											'<a class="dropdown-item" onclick="setIsView(' + answerMsn.idx + ');">노출</a>' +
-											'<a class="dropdown-item" onclick="setIsViewFalse(' + answerMsn.idx + ');">비노출</a>' +
+									'</td>' +
+									'<td class="text-center align-middle">' +
+										'<div class="btn-group">' +
+											'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (answerMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+												'<span>' + (answerMsn.missionExposure ? '노출' : '비노출') + '</span>' +
+											'</button>' +
+											'<div class="dropdown-menu dropdown-menu-right">' +
+												'<a class="dropdown-item" onclick="setIsView(' + answerMsn.idx + ');">노출</a>' +
+												'<a class="dropdown-item" onclick="setIsViewFalse(' + answerMsn.idx + ');">비노출</a>' +
+											'</div>' +
 										'</div>' +
-									'</div>' +
-								'</td>' +
-								'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-								'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
-								'<td class="text-center align-middle">' +
-									'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
-								'</td>' +
-								'<td class="text-center align-middle">' +
-									'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
-								'</td>' +
-								'<td class="text-center align-middle">' +
-									'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
-								'</td>' +
-							'</tr>'
-						);
-					});
-				 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+									'</td>' +
+									'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
+									'<td class="text-center align-middle">' +
+										'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
+									'</td>' +
+									'<td class="text-center align-middle">' +
+										'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
+									'</td>' +
+									'<td class="text-center align-middle">' +
+										'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
+									'</td>' +
+								'</tr>'
+							);
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						});
+					}
+				},
+				error: function(xhr) {
+				  if (xhr.status === 429) { // 429 Too Many Requests
+						 alert(xhr.responseText); //
+					} else {
+					alert("검색중 오류가 발생하였습니다.");
+					}
 				}
-            },
-            error: function(xhr) {
-              if (xhr.status === 429) { // 429 Too Many Requests
-           			 alert(xhr.responseText); //
-        		} else {
-            	alert("검색중 오류가 발생하였습니다.");
-            	}
-            }
-        });
+			});
+		} //if 끝
+		else{ //이미 보유한 데이터가 있을경우
+			$.ajax({
+   					url: `/Mission/quizList/search/${page}`,
+    				type: 'POST',
+    				contentType: 'application/json',
+    				data: JSON.stringify({answerMsns}),
+    				success: function(response) {
+							const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
+							quizListContainer.empty();
+
+							if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
+							// members가 빈 리스트인 경우 메시지 추가
+								$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							}else {
+								response.answerMsns.forEach(function(answerMsn,index) {
+								$('#quizList').append(
+									  '<tr>' +
+											'<td class="text-center align-middle">' + (answerMsn.idx) + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<a class="btn btn-outline-info btn-xs" ' +
+													'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
+													'target="_blank">랜딩 URL</a>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<div class="btn-group">' +
+													'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (answerMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+														'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
+													'</button>' +
+													'<div class="dropdown-menu dropdown-menu-right">' +
+														'<a class="dropdown-item" onclick="setIsUsed(' + answerMsn.idx + ');">활성</a>' +
+														'<a class="dropdown-item" onclick="setIsUsedFalse(' + answerMsn.idx + ');">비활성</a>' +
+													'</div>' +
+												'</div>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<div class="btn-group">' +
+													'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (answerMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+														'<span>' + (answerMsn.missionExposure ? '노출' : '비노출') + '</span>' +
+													'</button>' +
+													'<div class="dropdown-menu dropdown-menu-right">' +
+														'<a class="dropdown-item" onclick="setIsView(' + answerMsn.idx + ');">노출</a>' +
+														'<a class="dropdown-item" onclick="setIsViewFalse(' + answerMsn.idx + ');">비노출</a>' +
+													'</div>' +
+												'</div>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+											'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
+											'</td>' +
+										'</tr>'
+									);
+									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+								});
+							}
+						},
+    		error: function(xhr, status, error) {
+        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+   	 			}
+			});
+
+
+		}
+
 
     }
 	// 페이지네이션 업데이트 함수
@@ -562,31 +656,32 @@
 		const paginationContainer = $('.intra-pagination-wrap');
 		paginationContainer.empty(); // 기존 페이지네이션 비우기
 
-		// First 버튼
 		if (currentPage > 1) {
-			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/1">First</a></div>');
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
 		}
 
 		// Previous 버튼
 		if (currentPage > 1) {
-			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + (currentPage - 1) + '" rel="prev">Previous</a></div>');
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
 		}
 
 		// 페이지 링크 생성
 		for (let i = startPage; i <= endPage; i++) {
-			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + i + '" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
 		}
 
 		// Next 버튼
 		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + (currentPage + 1) + '" rel="next">Next</a></div>');
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
 		}
 
 		// End 버튼
 		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="/Mission/quizList/' + totalPages + '">End</a></div>');
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
 		}
 	}
+
+
 
 
 		//검색 초기화
@@ -762,22 +857,41 @@
 
 		function commSetAllIsUsed(idx) {
 			if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
-				$.ajax({
-					type: 'get'
-					, url: `/Mission/quizList/setOffMissionIsUsed/${idx}`
-					, success: function(data) {
-							alert("비활성화 되었습니다");
-							location.reload(true);
+				if (response.answerMsns){
+					$.ajax({
+							type: 'POST',
+							url: '/Mission/quizList/setOffMissionIsUsed', // 적절한 엔드포인트 URL
+							contentType: 'application/json',
+							data: JSON.stringify(response), // response 객체를 JSON 형식으로 변환하여 전송
+							success: function(data) {
+								alert("서버로 전송 성공");
+								// 페이지 새로고침
+								location.reload(true);
+							},
+							error: function() {
+								alert("서버로 전송 중 오류가 발생했습니다.");
+							}
+						});
+				}
+				else{
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/quizList/setOffMissionIsUsed/${idx}`
+						, success: function(data) {
+								alert("비활성화 되었습니다");
+								location.reload(true);
 
 
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
 						}
-					,error: function(){
-							alert("오류가 발생했습니다.");
-							return false;
-					}
-				});
+					});
+				}
 			}
 		}
+
 
 		function commSetAllIsView(idx) {
 
@@ -992,9 +1106,9 @@
 															</div>
 															<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 																<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																	<select name="isHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																		<option value="true">삭제 데이터</option>
-																		<option value="false" selected="selected">정상 데이터</option>
+																	<select name="dataType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																		<option value="false">삭제 데이터</option>
+																		<option value="true" selected="selected">정상 데이터</option>
 																	</select>
 																	<div class="dropdown-menu " role="combobox">
 																		<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">

@@ -33,14 +33,14 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.missionActive = :missionActive")
     public List<AnswerMsn> findByMissionActive(boolean missionActive);
 
+    @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = :dataType")
+    public List<AnswerMsn> findByDataType(boolean dataType);
+
     @Query("SELECT a FROM AnswerMsn a WHERE a.dupParticipation = :dupParticipation")
     public List<AnswerMsn> findByDupParticipation(boolean dupParticipation);
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.missionActive = :missionExposure")
     public List<AnswerMsn> findByMissionExposure(boolean missionExposure);
-
-    @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = : dataType")
-    public List<AnswerMsn> findByDataType(boolean dataType);
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.advertiser.advertiser LIKE %:keyword%")
     public List<AnswerMsn> findByAdvertiser(@Param("keyword") String keyword);
@@ -51,12 +51,10 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a  WHERE a.missionTitle LIKE %:keyword% ")
     public List<AnswerMsn> findByMissionTitle(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.dataType= : dataType")
-    public List<AnswerMsn> findByServerUrl(String url);
-
     @Query("SELECT a FROM AnswerMsn a WHERE a.endAtMsn > :currentTime AND  a.totalPartCnt>0")
     public List<AnswerMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.isHidden = false")
+    @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = true")
     public List<AnswerMsn> findAllMission();
+
 }

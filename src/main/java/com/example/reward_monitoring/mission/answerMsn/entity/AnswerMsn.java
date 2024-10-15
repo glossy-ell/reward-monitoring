@@ -3,8 +3,6 @@ package com.example.reward_monitoring.mission.answerMsn.entity;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.userServer.entity.Server;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -128,12 +126,12 @@ public class AnswerMsn {
     @Schema(description = "미션 사용여부", example = "true")
     private boolean missionActive =false;
 
-
     @Builder.Default
-    @Comment("미션 삭제여부")
-    @Column(name = "is_hidden", nullable = false)
-    @Schema(description = "미션 삭제여부", example = "true")
-    private boolean isHidden =false;
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    @Schema(description = "미션 데이터 타입")
+    private boolean dataType = true;
+
 
     @Builder.Default
     @Comment("미션 노출여부")
@@ -260,11 +258,6 @@ public class AnswerMsn {
     @Schema(description = "전체 참여수")
     private int totalPartCnt=0;
 
-    @Builder.Default
-    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
-    @Column(name = "data_type")
-    @Schema(description = "미션 데이터 타입")
-    private boolean dataType = true;
 
     @Comment("이미지 파일")
     @Lob

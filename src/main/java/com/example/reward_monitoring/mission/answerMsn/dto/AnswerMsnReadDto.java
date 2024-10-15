@@ -65,8 +65,8 @@ public class AnswerMsnReadDto {
     @Schema(description = "미션 사용여부", example = "true")
     private Boolean missionActive=true;
 
-    @Schema(description = "미션 사용여부", example = "false")
-    private Boolean isHidden=false;
+    @Schema(description = "미션 데이터 타입", example = "true")
+    private Boolean dataType=true;
 
     @Schema(description = "미션 노출여부", example = "true")
     private Boolean missionExposure=true;
@@ -112,9 +112,6 @@ public class AnswerMsnReadDto {
     @Schema(description = "미션 URL10", example = "www.abc.com",nullable = true)
     private String msnUrl10;
 
-    @Schema(description = "미션 데이터 타입", example = "true")
-    private Boolean dataType=true;
-
     @Hidden
     private byte[] imageData;
 
@@ -157,7 +154,6 @@ public class AnswerMsnReadDto {
                 .msnUrl7(msnUrl7)
                 .msnUrl8(msnUrl8)
                 .msnUrl9(msnUrl9)
-                .dataType(dataType)
                 .imageData(imageData)
                 .imageName(imageName)
                 .build();

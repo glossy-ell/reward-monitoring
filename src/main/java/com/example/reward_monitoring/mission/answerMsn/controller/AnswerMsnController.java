@@ -281,7 +281,7 @@ public class AnswerMsnController {
     }
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
-    @PostMapping({"/Mission/quizList/search","/Mission/quizList/search/{pageNumber}"})
+    @PostMapping({"/Mission/quizList/search","/Mission/quizList/search/"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -333,6 +333,7 @@ public class AnswerMsnController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
+        response.put("fullAnswerMsns",result);
         response.put("answerMsns", limitedAnswerMsns);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
@@ -340,6 +341,71 @@ public class AnswerMsnController {
         response.put("endPage",endPage);
         return response; // JSON 형태로 반환
     }
+
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @PostMapping("/Mission/quizList/search/{pageNumber}")
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+
+    public Map<String, Object> searchAnswerMsn_page(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody ResponseDto responseDto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+        List<AnswerMsn> result = responseDto.getAnswerMsns();
+        //Collections.reverse(result); 이미 reverse된 데이터임
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAnswerMsns = result.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("fullAnswerMsns",result);
+        response.put("answerMsns", limitedAnswerMsns);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
+    }
+
+
+
 
 
     @Operation(summary = "정답미션 현재 리스트 소진량 검색", description = "현재 리스트 소진량 페이지에서 조건에 맞는 정답미션을 검색합니다")
@@ -506,6 +572,8 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+
+
     @Operation(summary = "미션 노출여부 변경", description = "미션 노출여부를 변경합니다.")
     @PostMapping("/Mission/quizList/expose/{idx}")
     @ApiResponses(value = {
@@ -537,6 +605,8 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+
 
     @Operation(summary = "가능일 변경", description = "가능일을 변경합니다")
     @PostMapping("/Mission/quizList/{idx}/changeDay")
@@ -571,6 +641,8 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+
 
     @GetMapping({"/Mission/quizList/{pageNumber}","/Mission/quizList","/Mission/quizList/"})
     public String quizList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model) {
@@ -673,8 +745,8 @@ public class AnswerMsnController {
 
         if(answerMsn==null)
             return "error/404";
-        if(answerMsn.getImageData()!=null)
-            image =  Base64.getEncoder().encodeToString(answerMsn.getImageData());
+//        if(answerMsn.getImageData()!=null)
+//            image =  Base64.getEncoder().encodeToString(answerMsn.getImageData());
         model.addAttribute("answerMsn", answerMsn);
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());
@@ -718,6 +790,39 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @GetMapping("/Mission/quizList/setOffMissionIsUsed")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsUsed_search(HttpSession session,@RequestBody ResponseDto response)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        // 페이지 번호가 없으면 기본값 1 사용
+//        List<AnswerMsn>
+//        for()
+        return null;
+    }
+
+
 
     @GetMapping("/Mission/quizList/setOffMissionIsView/{pageNumber}")
     @ApiResponses(value = {

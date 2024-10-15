@@ -288,6 +288,7 @@ public class MemberService {
                 result.retainAll(target_name);
             if(target_id!=null)
                 result.retainAll(target_id);
+            return result;
         }
         else if(target_is_active !=null){
             result = new ArrayList<>(target_is_active);
@@ -295,15 +296,18 @@ public class MemberService {
                 result.retainAll(target_name);
             if(target_id != null)
                 result.retainAll(target_id);
+            return result;
             
         } else if (target_name != null) {
             result = new ArrayList<>(target_name);
+            return result;
         }
         else if(target_id != null){
             result = new ArrayList<>(target_id);
+            return result;
         }
-        if(result ==null)
-            result = new ArrayList<>();
+
+        result = new ArrayList<>();
         return result;
     }
 }

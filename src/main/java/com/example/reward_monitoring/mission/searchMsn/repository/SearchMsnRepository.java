@@ -39,11 +39,11 @@ public interface SearchMsnRepository extends JpaRepository<SearchMsn,Integer> {
     @Query("SELECT s FROM SearchMsn s WHERE s.dupParticipation = : dupParticipation")
     public List<SearchMsn> findByDupParticipation(boolean dupParticipation);
 
-    @Query("SELECT s FROM SearchMsn s WHERE s.missionActive = : mmissionExposure")
+    @Query("SELECT s FROM SearchMsn s WHERE s.missionActive = : missionExposure")
     public List<SearchMsn> findByMissionExposure(boolean missionExposure);
 
-    @Query("SELECT s FROM SearchMsn s WHERE s.dataType = : dataType")
-    public List<SearchMsn> findByDataType(boolean dataType);
+    @Query("SELECT s FROM SearchMsn s WHERE s.dataType = :dataType")
+    public List<SearchMsn> findByDataType(@Param("dataType") boolean dataType);
 
     @Query("SELECT s FROM SearchMsn s WHERE s.advertiser.advertiser LIKE %:keyword% ")
     public List<SearchMsn> findByAdvertiser(String keyword);
