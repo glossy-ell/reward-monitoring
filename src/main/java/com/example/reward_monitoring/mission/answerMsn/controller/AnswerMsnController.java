@@ -6,6 +6,8 @@ import com.example.reward_monitoring.general.advertiser.service.AdvertiserServic
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
@@ -52,6 +54,9 @@ public class AnswerMsnController {
 
     @Autowired
     private AdvertiserService advertiserService;
+
+    @Autowired
+    private ServerService serverService;
 
     @Operation(summary = "정답미션 정보 수정", description = "정답미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 정답미션의 IDX")
@@ -246,7 +251,7 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @Operation(summary = "미션 삭제", description = "미션을 삭제(숨김처리합닏)")
+    @Operation(summary = "미션 삭제", description = "미션을 삭제(숨김처리합니다)")
     @Parameter(name = "idx", description = "미션 IDX")
     @GetMapping("/Mission/quizList/hidden/{idx}")
     @ApiResponses(value = {
@@ -316,8 +321,8 @@ public class AnswerMsnController {
             pageNumber = 1;
         }
 
-        // 한 페이지당 최대 15개 데이터
-        int limit = 15;
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
         int startIndex = (pageNumber - 1) * limit;
 
         // 전체 리스트의 크기 체크
@@ -371,8 +376,7 @@ public class AnswerMsnController {
             return response;
         }
 
-        List<AnswerMsn> result = responseDto.getAnswerMsns();
-        //Collections.reverse(result); 이미 reverse된 데이터임
+        List<AnswerMsn> result = responseDto.getInnerAnswerMsns();
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
@@ -791,14 +795,14 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @GetMapping("/Mission/quizList/setOffMissionIsUsed")
+    @PostMapping("/Mission/quizList/setOffMissionIsUsedSearch/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "서버 에러 발생")
     })
-    public ResponseEntity<Void> setOffMissionIsUsed_search(HttpSession session,@RequestBody ResponseDto response)throws IOException {
+    public ResponseEntity<Void> setOffMissionIsUsed_search(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session,@RequestBody ResponseDto responseDto)throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
 
@@ -816,10 +820,13 @@ public class AnswerMsnController {
 
         if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        // 페이지 번호가 없으면 기본값 1 사용
-//        List<AnswerMsn>
-//        for()
-        return null;
+
+        List<AnswerMsn> dto = responseDto.getInnerAnswerMsns();
+        boolean result = answerMsnService.setOffMissionIsUsed(pageNumber,dto);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 
@@ -859,6 +866,42 @@ public class AnswerMsnController {
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @PostMapping("/Mission/quizList/setOffMissionIsViewSearch/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsView_search(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session,@RequestBody ResponseDto responseDto)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        List<AnswerMsn> dto = responseDto.getInnerAnswerMsns();
+        boolean result = answerMsnService.setOffMissionIsView(pageNumber,dto);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
 
     @GetMapping("/Mission/quizList/AllOffMission")
     @ApiResponses(value = {
@@ -1024,9 +1067,12 @@ public class AnswerMsnController {
     }
 
 
+
     @GetMapping({"/Mission/quizCurrentList/{pageNumber}","/Mission/quizCurrentList","/Mission/quizCurrentList/"})
     public String quizCurrentList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -1056,14 +1102,354 @@ public class AnswerMsnController {
             limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
         }
 
+        int totalPages = (int) Math.ceil((double) answerMsns.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        model.addAttribute("answerMsns",answerMsns);
+        model.addAttribute("answerMsns",limitedAnswerMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("servers", servers);
         model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", (int) Math.ceil((double)answerMsns.size() / limit));
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "quizCurrentList";
 
 
     }
+
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @PostMapping({"/Mission/quizCurrentList/search","/Mission/quizList/search/"})
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public Map<String, Object> searchAnswerMsnCurrent(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody AnswerMsnSearchByConsumedDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+
+        List<AnswerMsn> result = answerMsnService.searchAnswerMsnCurrent(dto);
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAnswerMsns = result.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("fullAnswerMsns",result);
+        response.put("answerMsns", limitedAnswerMsns);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
+    }
+
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @PostMapping("/Mission/quizCurrentList/search/{pageNumber}")
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+
+    public Map<String, Object> searchAnswerMsnCurrent_page(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody ResponseDto responseDto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+        List<AnswerMsn> result = responseDto.getInnerAnswerMsns();
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAnswerMsns = result.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("fullAnswerMsns",result);
+        response.put("answerMsns", limitedAnswerMsns);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
+    }
+
+
+    @Operation(summary = "현재 리스트 소진량(정답) 엑셀 다운로드", description = "현재 리스트 소진량(정답) 엑셀파일을 다운로드합니다")
+    @GetMapping("/Mission/quizCurrentList/excel/download")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
+    public ResponseEntity<Void> excelDownloadCurrent(HttpServletResponse response)throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            ZonedDateTime now = ZonedDateTime.now();
+            List<AnswerMsn> list = answerMsnRepository.findByCurrentList(now);
+
+            Sheet sheet = answerMsnService.excelDownloadCurrent(list,wb);
+            if(sheet !=null) {
+                String fileName = URLEncoder.encode("현재 리스트 소진량(정답).xlsx", StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping("/Mission/quizCurrentList/setOffMissionIsUsed/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsUsedCurrent(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        boolean result = answerMsnService.setOffMissionIsUsed(pageNumber);
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @PostMapping("/Mission/quizCurrentList/setOffMissionIsUsedSearch/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsUsedCurrent_search(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session,@RequestBody ResponseDto responseDto)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        List<AnswerMsn> dto = responseDto.getInnerAnswerMsns();
+        boolean result = answerMsnService.setOffMissionIsUsed(pageNumber,dto);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
+
+    @GetMapping("/Mission/quizCurrentList/setOffMissionIsView/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsViewCurrent(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        boolean result = answerMsnService.setOffMissionIsView(pageNumber);
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
+    @PostMapping("/Mission/quizCurrentList/setOffMissionIsViewSearch/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void> setOffMissionIsViewCurrent_search(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session,@RequestBody ResponseDto responseDto)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        List<AnswerMsn> dto = responseDto.getInnerAnswerMsns();
+        boolean result = answerMsnService.setOffMissionIsView(pageNumber,dto);
+
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @GetMapping("/Mission/quizCurrentList/AllOffMission")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생")
+    })
+    public ResponseEntity<Void>AllOffMissionCurrent(HttpSession session)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        boolean result = answerMsnService.AllOffMissionCurrent();
+        return (result) ?
+                ResponseEntity.status(HttpStatus.OK).build():
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
+
+
     @GetMapping("/Mission/quizMultiTempList")
     public String quizMultiTempList(HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");

@@ -2,9 +2,11 @@ package com.example.reward_monitoring.mission.searchMsn.controller;
 
 
 
+import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
@@ -43,9 +45,17 @@ public class SearchMsnController{
     @Autowired
     private MemberRepository memberRepository;
 
+
+    @Autowired
+    private AdvertiserService advertiserService;
+
+    @Autowired
+    private ServerService serverService;
+
+
     @Operation(summary = "저장미션 정보 수정", description = "저장미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 저장미션의 IDX")
-    @PostMapping("/Mission/searchList/edit/{idx}")
+    @PostMapping("/Mission/searchWrite/edit/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -94,7 +104,7 @@ public class SearchMsnController{
     }
 
     @Operation(summary = "검색미션 생성", description = "검색미션 정보를 생성합니다")
-    @PostMapping("/Mission/searchList/add")
+    @PostMapping("/Mission/searchWrite/add")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -221,6 +231,41 @@ public class SearchMsnController{
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
+
+    @Operation(summary = "미션 삭제", description = "미션을 삭제(숨김처리합니다)")
+    @Parameter(name = "idx", description = "미션 IDX")
+    @GetMapping("/Mission/searchList/hidden/{idx}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "삭제 완료 "),
+            @ApiResponse(responseCode = "400", description = "일치하는 미션이 없음"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음")
+    })
+    public ResponseEntity<Void>  hidden(HttpSession session, @PathVariable int idx)throws IOException {
+
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+
+        boolean result = searchMsnService.hidden(idx);
+        return (result) ?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).build():
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
 
     @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션을 검색합니다")
     @PostMapping("/Mission/searchList/search")

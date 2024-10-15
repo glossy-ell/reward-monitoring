@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -119,30 +120,61 @@ public class AnswerMsnDailyService {
 
     public List<AnswerMsnDailyStat> searchAnswerMsnDaily(AnswerMsnDailyStatSearchDto dto) {
 
-        List<AnswerMsnDailyStat> result = new ArrayList<>();
+        List<AnswerMsnDailyStat> target_date = null;
+        List<AnswerMsnDailyStat> target_serverUrl = null;
+        List<AnswerMsnDailyStat> target_advertiser = null;
+        List<AnswerMsnDailyStat> target_companyName = null;
 
+        List<AnswerMsnDailyStat> result;
+        boolean changed = false;
+
+        result = new ArrayList<>(answerMsnDailyStatRepository.findAll());
 
         if(dto.getUrl() != null)
-            result.addAll(answerMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl()));
+            target_serverUrl = answerMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl());
 
         if(dto.getAdvertiser()!=null)
-            result.addAll(answerMsnDailyStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser()));
+            target_advertiser = answerMsnDailyStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser());
 
         if(dto.getMediacompany()!=null)
-            result.addAll(answerMsnDailyStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany()));
+            target_companyName = answerMsnDailyStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany());
 
         if(dto.getStartAt() != null || dto.getEndAt() != null){
             if(dto.getStartAt() != null){
                 if(dto.getEndAt() == null)
-                    result.addAll(answerMsnDailyStatRepository.findByStartAt(dto.getStartAt()));
+                    target_date = answerMsnDailyStatRepository.findByStartAt(dto.getStartAt());
                 else
-                    result.addAll(answerMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt()));
+                    target_date = answerMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
 
             }
             else
-                result.addAll(answerMsnDailyStatRepository.findByEndAt(dto.getEndAt()));
+                target_date = answerMsnDailyStatRepository.findByEndAt(dto.getEndAt());
         }
 
-        return result.stream().distinct().collect(Collectors.toList());
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_serverUrl != null){
+            Set<Integer> idxSet = target_serverUrl.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser != null){
+            Set<Integer> idxSet = target_advertiser.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_companyName != null){
+            Set<Integer> idxSet = target_companyName.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
     }
 }

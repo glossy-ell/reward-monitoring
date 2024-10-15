@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.statistics.searchMsn.daily.service;
 
 
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.dto.SearchMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.repository.SearchMsnDailyStatRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -117,30 +119,61 @@ public class SearchMsnDailyService {
 
     public List<SearchMsnDailyStat> searchSearchMsnDaily(SearchMsnDailyStatSearchDto dto) {
 
-        List<SearchMsnDailyStat> result = new ArrayList<>();
+        List<SearchMsnDailyStat> target_date = null;
+        List<SearchMsnDailyStat>  target_serverUrl = null;
+        List<SearchMsnDailyStat>  target_advertiser = null;
+        List<SearchMsnDailyStat>  target_companyName = null;
 
+        List<SearchMsnDailyStat>  result;
+        boolean changed = false;
+
+        result = new ArrayList<>(searchMsnDailyStatRepository.findAll());
 
         if(dto.getUrl() != null)
-            result.addAll(searchMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl()));
+            target_serverUrl = searchMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl());
 
         if(dto.getAdvertiser()!=null)
-            result.addAll(searchMsnDailyStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser()));
+            target_advertiser = searchMsnDailyStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser());
 
         if(dto.getMediacompany()!=null)
-            result.addAll(searchMsnDailyStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany()));
+            target_companyName = searchMsnDailyStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany());
 
         if(dto.getStartAt() != null || dto.getEndAt() != null){
             if(dto.getStartAt() != null){
                 if(dto.getEndAt() == null)
-                    result.addAll(searchMsnDailyStatRepository.findByStartAt(dto.getStartAt()));
+                    target_date = searchMsnDailyStatRepository.findByStartAt(dto.getStartAt());
                 else
-                    result.addAll(searchMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt()));
+                    target_date = searchMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
 
             }
             else
-                result.addAll(searchMsnDailyStatRepository.findByEndAt(dto.getEndAt()));
+                target_date = searchMsnDailyStatRepository.findByEndAt(dto.getEndAt());
         }
 
-        return result.stream().distinct().collect(Collectors.toList());
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_serverUrl != null){
+            Set<Integer> idxSet = target_serverUrl.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser != null){
+            Set<Integer> idxSet = target_advertiser.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_companyName != null){
+            Set<Integer> idxSet = target_companyName.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
     }
 }

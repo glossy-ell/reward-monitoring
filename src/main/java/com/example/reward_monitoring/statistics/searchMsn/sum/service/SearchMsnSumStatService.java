@@ -2,6 +2,7 @@ package com.example.reward_monitoring.statistics.searchMsn.sum.service;
 
 
 
+import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.dto.SearchMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.sum.entity.SearchMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.repository.SearchMsnSumStatRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,31 +25,58 @@ public class SearchMsnSumStatService {
     }
 
     public List<SearchMsnSumStat> searchSearchMsnSum(SearchMsnSumStatSearchDto dto) {
+        List<SearchMsnSumStat> target_serverUrl = null;
+        List<SearchMsnSumStat> target_advertiser = null;
+        List<SearchMsnSumStat> target_mediaCompany= null;
+        List<SearchMsnSumStat> target_date = null;
 
 
+        List<SearchMsnSumStat> result;
+        boolean changed = false;
 
-        List<SearchMsnSumStat> result = new ArrayList<>();
         if(dto.getUrl() != null)
-            result.addAll(searchMsnSumStatRepository.findByServer_ServerUrl(dto.getUrl()));
+            target_serverUrl = searchMsnSumStatRepository.findByServer_ServerUrl(dto.getUrl());
 
         if(dto.getAdvertiser()!=null)
-            result.addAll(searchMsnSumStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser()));
+            target_advertiser = searchMsnSumStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser());
 
         if(dto.getMediacompany()!=null)
-            result.addAll(searchMsnSumStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany()));
+            target_mediaCompany = searchMsnSumStatRepository.findByMediaCompany_CompanyName(dto.getMediacompany());
 
         if(dto.getStartAt() != null || dto.getEndAt() != null){
             if(dto.getStartAt() != null){
                 if(dto.getEndAt() == null)
-                    result.addAll(searchMsnSumStatRepository.findByStartAt(dto.getStartAt()));
+                    target_date = searchMsnSumStatRepository.findByStartAt(dto.getStartAt());
                 else
-                    result.addAll(searchMsnSumStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt()));
-
+                    target_date = searchMsnSumStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
             }
             else
-                result.addAll(searchMsnSumStatRepository.findByEndAt(dto.getEndAt()));
+                target_date = searchMsnSumStatRepository.findByEndAt(dto.getEndAt());
         }
+        result = new ArrayList<>(searchMsnSumStatRepository.findAll());
 
-        return result.stream().distinct().collect(Collectors.toList());
+        if(target_serverUrl!= null) {
+            Set<Integer> idxSet = target_serverUrl.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser!= null) {
+            Set<Integer> idxSet = target_advertiser.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_mediaCompany!= null) {
+            Set<Integer> idxSet = target_mediaCompany.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_date!= null) {
+            Set<Integer> idxSet = target_date.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
     }
 }

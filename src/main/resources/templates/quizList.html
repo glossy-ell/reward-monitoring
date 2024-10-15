@@ -460,10 +460,11 @@
 
 			<!-- end aside -->
 	<script type="application/javascript">
-		let answerMsns = [];
+		let innerAnswerMsns = [];
+		let innerAnswerMsnsPage;
 
 		function clearResults() {
-   			answerMsns = []; // 리스트 초기화
+   			innerAnswerMsns = []; // 리스트 초기화
 
 		}
 
@@ -498,11 +499,12 @@
 							$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 					} else {
-					 	answerMsns = response.fullAnswerMsns;
+					 	innerAnswerMsns = response.fullAnswerMsns;
+					 	innerAnswerMsnsPage = 1;
 						response.answerMsns.forEach(function(answerMsn,index) {
 						$('#quizList').append(
 							  '<tr>' +
-									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+									'<td class="text-center align-middle">' + answerMsn.idx + '</td>' +
 									'<td class="text-center align-middle">' +
 										'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
 									'</td>' +
@@ -572,10 +574,11 @@
    					url: `/Mission/quizList/search/${page}`,
     				type: 'POST',
     				contentType: 'application/json',
-    				data: JSON.stringify({answerMsns}),
+    				data: JSON.stringify({innerAnswerMsns}),
     				success: function(response) {
 							const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
 							quizListContainer.empty();
+							innerAnswerMsnsPage = page;
 
 							if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
 							// members가 빈 리스트인 경우 메시지 추가
@@ -651,6 +654,7 @@
 
 
     }
+
 	// 페이지네이션 업데이트 함수
 	function updatePagination(currentPage, totalPages, startPage, endPage) {
 		const paginationContainer = $('.intra-pagination-wrap');
@@ -856,24 +860,8 @@
 
 
 		function commSetAllIsUsed(idx) {
-			if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
-				if (response.answerMsns){
-					$.ajax({
-							type: 'POST',
-							url: '/Mission/quizList/setOffMissionIsUsed', // 적절한 엔드포인트 URL
-							contentType: 'application/json',
-							data: JSON.stringify(response), // response 객체를 JSON 형식으로 변환하여 전송
-							success: function(data) {
-								alert("서버로 전송 성공");
-								// 페이지 새로고침
-								location.reload(true);
-							},
-							error: function() {
-								alert("서버로 전송 중 오류가 발생했습니다.");
-							}
-						});
-				}
-				else{
+			if (typeof innerAnswerMsnsPage === 'undefined'){
+				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
 					$.ajax({
 						type: 'get'
 						, url: `/Mission/quizList/setOffMissionIsUsed/${idx}`
@@ -890,26 +878,63 @@
 					});
 				}
 			}
+			else{
+				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+					$.ajax({
+						type: 'post'
+						, url: `/Mission/quizList/setOffMissionIsUsedSearch/${innerAnswerMsnsPage}`
+						,contentType: "application/json"
+						,data: JSON.stringify({innerAnswerMsns})
+						, success: function(data) {
+								alert("비활성화 되었습니다");
+								window.location.href = "/Mission/quizList";
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
+			}
 		}
 
 
 		function commSetAllIsView(idx) {
+			if (typeof innerAnswerMsnsPage === 'undefined'){
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/quizList/setOffMissionIsView/${idx}`
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								location.reload(true);
 
-			if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
-				$.ajax({
-					type: 'get'
-					, url: `/Mission/quizList/setOffMissionIsView/${idx}`
-					, success: function(data) {
-							alert("현재 페이지의 미션이 비노출로 되었습니다");
-							location.reload(true);
 
-
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
 						}
-					,error: function(){
-							alert("오류가 발생했습니다.");
-							return false;
-					}
-				});
+					});
+				}
+			}
+			else{
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'post'
+						, url: `/Mission/quizList/setOffMissionIsViewSearch/${innerAnswerMsnsPage}`
+						,contentType: "application/json"
+						,data: JSON.stringify({innerAnswerMsns})
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								window.location.href = "/Mission/quizList";
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
 			}
 		}
 

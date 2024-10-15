@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.statistics.searchMsn.detail.service;
 
 
+import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.dto.SaveMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.repository.SaveMsnDetailStatRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,33 +28,94 @@ public class SearchMsnDetailService {
 
     public List<SearchMsnDetailsStat> searchSearchMsnDetail(SearchMsnDetailSearchDto dto) {
 
-        List<SearchMsnDetailsStat> target_idx;
-        List<SearchMsnDetailsStat> result = new ArrayList<>();
+        List<SearchMsnDetailsStat> target_date = null;
+        List<SearchMsnDetailsStat> target_serverUrl = null;
+        List<SearchMsnDetailsStat> target_mediaCompany = null;
+
+
+        List<SearchMsnDetailsStat> target_isAbuse = null;
+        List<SearchMsnDetailsStat> target_response = null;
+        List<SearchMsnDetailsStat> target_advertiser = null;
+        List<SearchMsnDetailsStat> target_idx = null;
+        List<SearchMsnDetailsStat>result;
+        boolean changed = false;
 
         if(dto.getUrl()!=null){
-            result.addAll(searchMsnDetailStatRepository.findByServer_ServerUrl(dto.getUrl()));
+            target_serverUrl = searchMsnDetailStatRepository.findByServer_ServerUrl(dto.getUrl());
         }
         if(dto.getStartAt() != null || dto.getEndAt() != null)
             if(dto.getStartAt() != null) {
                 if (dto.getEndAt() == null)
-                    result.addAll(searchMsnDetailStatRepository.findByStartAt(dto.getStartAt()));
+                    target_date = searchMsnDetailStatRepository.findByStartAt(dto.getStartAt());
                 else
-                    result.addAll(searchMsnDetailStatRepository.findByBothAt(dto.getStartAt(), dto.getEndAt()));
+                    target_date = searchMsnDetailStatRepository.findByBothAt(dto.getStartAt(), dto.getEndAt());
             }
             else
-                result.addAll(searchMsnDetailStatRepository.findByEndAt(dto.getEndAt()));
+                target_date = searchMsnDetailStatRepository.findByEndAt(dto.getEndAt());
+
         if(dto.getMediacompany()!=null)
-            result.addAll(searchMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany()));
+            target_mediaCompany = searchMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany());
         if(dto.getIsAbuse()!=null)
-            result.addAll(searchMsnDetailStatRepository.findByIsAbuse(dto.getIsAbuse()));
+            target_isAbuse = searchMsnDetailStatRepository.findByIsAbuse(dto.getIsAbuse());
         if(dto.getResponse()!=null)
-            result.addAll(searchMsnDetailStatRepository.findByResponse(dto.getResponse()));
+            target_response = searchMsnDetailStatRepository.findByResponse(dto.getResponse());
+
         if(dto.getAdvertiser()!=null)
-            result.addAll(searchMsnDetailStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser()));
+            target_advertiser = searchMsnDetailStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser());
         if(dto.getIdx()!=null)
-            result.addAll(searchMsnDetailStatRepository.findBySearchMsn_Idx(dto.getIdx()));
+            target_idx = searchMsnDetailStatRepository.findBySearchMsn_Idx(dto.getIdx());
 
 
-        return result.stream().distinct().collect(Collectors.toList());
+        result = new ArrayList<>(searchMsnDetailStatRepository.findAll());
+
+        if(target_date!= null) {
+            Set<Integer> idxSet = target_date.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchDetailsStat -> idxSet.contains(searchDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_serverUrl!= null) {
+            Set<Integer> idxSet = target_serverUrl.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_mediaCompany!= null) {
+            Set<Integer> idxSet = target_mediaCompany.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat-> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_mediaCompany!= null) {
+            Set<Integer> idxSet = target_mediaCompany.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat-> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(target_isAbuse!= null) {
+            Set<Integer> idxSet = target_isAbuse.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_response!= null) {
+            Set<Integer> idxSet = target_response.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_advertiser != null) {
+            Set<Integer> idxSet = target_advertiser.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_idx != null) {
+            Set<Integer> idxSet = target_idx.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
     }
 }

@@ -53,7 +53,7 @@ public class AnswerMsn {
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" , nullable = false )
     @Schema(description = "광고주", example = "원픽")
     Advertiser advertiser;
-    
+
     @Comment("광고주 상세")
     @Column(name = "advertiser_details")
     @Schema(description = "광고주 상세", example = "82652333318")
@@ -126,11 +126,6 @@ public class AnswerMsn {
     @Schema(description = "미션 사용여부", example = "true")
     private boolean missionActive =false;
 
-    @Builder.Default
-    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
-    @Column(name = "data_type")
-    @Schema(description = "미션 데이터 타입")
-    private boolean dataType = true;
 
 
     @Builder.Default
@@ -254,10 +249,15 @@ public class AnswerMsn {
 
     @Builder.Default
     @Comment("전체 참여수")
-    @Column(name = "전체 참여수")
+    @Column(name = "total_Part_Cnt")
     @Schema(description = "전체 참여수")
     private int totalPartCnt=0;
 
+    @Builder.Default
+    @Comment("미션 데이터 타입")  // false = 삭제 데이터 , true = 정상 데이터
+    @Column(name = "data_type")
+    @Schema(description = "미션 데이터 타입")
+    private boolean dataType = true;
 
     @Comment("이미지 파일")
     @Lob

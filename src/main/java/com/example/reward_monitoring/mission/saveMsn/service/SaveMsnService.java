@@ -6,6 +6,7 @@ import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
@@ -28,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,44 +101,41 @@ public class SaveMsnService {
         return target;
     }
 
+    //검색 조건에 맞는 저장 미션을 검색
     public List<SaveMsn> searchSaveMsn(SaveMsnSearchDto dto) {
 
-        List<SaveMsn> target_date;
-        List<SaveMsn> target_dailyCap;
+        List<SaveMsn> target_date = null;
+        List<SaveMsn> target_dailyCap = null;
 
-        List<SaveMsn> target_dup_Participation;
-        List<SaveMsn> target_mission_active;
-        List<SaveMsn> target_mission_exposure;
-        List<SaveMsn> target_data_Type;
+        List<SaveMsn> target_dup_Participation = null;
+        List<SaveMsn> target_mission_active = null;
+        List<SaveMsn> target_mission_exposure = null;
+        List<SaveMsn> target_data_Type = null;
 
-        List<SaveMsn> target_advertiser;
-        List<SaveMsn> target_advertiser_details; // 선택 1
-        List<SaveMsn> target_mission_title; // 선택 2
+        List<SaveMsn> target_advertiser = null;
+        List<SaveMsn> target_advertiser_details = null; // 선택 1
+        List<SaveMsn> target_mission_title = null; // 선택 2
 
 
-        List<SaveMsn> result = new ArrayList<>();
-
+        List<SaveMsn> result;
+        boolean changed = false;  //false = 검색결과 없음 , true = 검색결과 있음
 
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId).minusHours(9);
                 if(dto.getEndAtMsn() == null){
                     target_date = saveMsnRepository.findByStartDate(start_time);
-                    result.addAll(target_date);
                 }else{
-                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
+                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
                     target_date = saveMsnRepository.findByBothDate(start_time,end_time);
-                    result.addAll(target_date);
                 }
-
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId);
+                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
 
                 target_date = saveMsnRepository.findByEndDate(end_time);
-                result.addAll(target_date);
             }
 
         }
@@ -145,55 +144,87 @@ public class SaveMsnService {
             if(dto.getStartAtCap() != null){
                 if(dto.getEndAtCap() == null){
                     target_dailyCap = saveMsnRepository.findByStartAtCap(dto.getStartAtCap());
-                    result.addAll(target_dailyCap);
                 }else{
                     target_dailyCap = saveMsnRepository.findByBothCap(dto.getStartAtCap(),dto.getEndAtCap());
-                    result.addAll(target_dailyCap);
                 }
-
             }
             else {
                 target_dailyCap = saveMsnRepository.findByEndAtCap(dto.getEndAtCap());
-                result.addAll(target_dailyCap);
             }
-
         }
 
-        if(dto.getMissionActive() != null){
+        if(dto.getMissionActive() != null)
             target_mission_active = saveMsnRepository.findByMissionActive(dto.getMissionActive());
-            result.addAll(target_mission_active);
-        }
 
-        if(dto.getDupParticipation() != null){
+        if(dto.getDupParticipation() != null)
             target_dup_Participation = saveMsnRepository.findByDupParticipation(dto.getDupParticipation());
-            result.addAll(target_dup_Participation);
-        }
-        if(dto.getMissionExposure() != null){
+
+        if(dto.getMissionExposure() != null)
             target_mission_exposure = saveMsnRepository.findByMissionExposure(dto.getMissionExposure());
-            result.addAll(target_mission_exposure);
-        }
 
-        if(dto.getDataType() != null){
+        if(dto.getDataType() != null)
             target_data_Type= saveMsnRepository.findByDataType(dto.getDataType());
-            result.addAll(target_data_Type);
-        }
 
-        if(dto.getAdvertiser()!=null){
+        if(dto.getAdvertiser()!=null)
             target_advertiser = saveMsnRepository.findByAdvertiser(dto.getAdvertiser());
-            result.addAll(target_advertiser);
-        }
 
-        if(dto.getAdvertiserDetails()!=null){
+        if(dto.getAdvertiserDetails()!=null)
             target_advertiser_details = saveMsnRepository.findByAdvertiserDetails(dto.getAdvertiserDetails());
-            result.addAll(target_advertiser_details);
-        }
 
-        if(dto.getMissionTitle()!= null) {
+        if(dto.getMissionTitle()!= null)
             target_mission_title = saveMsnRepository.findByMissionTitle(dto.getMissionTitle());
-            result.addAll(target_mission_title);
-        }
-        return result.stream().distinct().collect(Collectors.toList());
 
+        result = new ArrayList<>(saveMsnRepository.findAll());
+
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_dailyCap !=null) {
+            Set<Integer> idxSet = target_dailyCap.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_dup_Participation!=null){
+            Set<Integer> idxSet = target_dup_Participation.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_mission_active != null) {
+            Set<Integer> idxSet = target_mission_active.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn-> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_mission_exposure != null) {
+            Set<Integer> idxSet = target_mission_exposure.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_data_Type != null) {
+            Set<Integer> idxSet = target_data_Type.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser != null) {
+            Set<Integer> idxSet = target_advertiser.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser_details != null) {
+            Set<Integer> idxSet = target_advertiser_details.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        else if(target_mission_title !=null) {
+            Set<Integer> idxSet = target_mission_title.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
     }
 
     public Sheet excelDownload(List<SaveMsn> list, Workbook wb){

@@ -46,20 +46,19 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.advertiser.advertiser LIKE %:keyword%")
     public List<AnswerMsn> findByAdvertiser(@Param("keyword") String keyword);
 
+    @Query("SELECT a FROM AnswerMsn a WHERE a.server.serverUrl LIKE %:keyword%")
+    public List<AnswerMsn> findByServer(@Param("keyword") String keyword);
+
     @Query("SELECT a FROM AnswerMsn a  WHERE a.advertiserDetails LIKE %:keyword% ")
     public List<AnswerMsn> findByAdvertiserDetails(String keyword);
 
     @Query("SELECT a FROM AnswerMsn a  WHERE a.missionTitle LIKE %:keyword% ")
     public List<AnswerMsn> findByMissionTitle(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.endAtMsn > :currentTime AND  a.totalPartCnt>0")
+    @Query("SELECT a FROM AnswerMsn a WHERE a.endAtMsn > :currentTime AND (a.totalLandingCnt > 0 OR a.totalPartCnt > 0)")
     public List<AnswerMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = true")
     public List<AnswerMsn> findAllMission();
 
-
-    @NotNull
-    @Query("SELECT a FROM AnswerMsn a")
-    public List<AnswerMsn> findAll();
 }
