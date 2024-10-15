@@ -11,6 +11,7 @@ import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.RandomKeyGenerator;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,73 +126,79 @@ public class MediaCompanyService {
     }
 
     public List<MediaCompany> searchMediaCompany(MediaCompanySearchDto dto) {
-        List<MediaCompany>  target_date;
-        List<MediaCompany>  target_is_active;
-        List<MediaCompany> target_operation_type;
-        List<MediaCompany> target_name;
-        List<MediaCompany> target_api;
-        List<MediaCompany> result = new ArrayList<>();
-        int inserted = 0;
+        List<MediaCompany>  target_date = null;
+        List<MediaCompany>  target_is_active = null;
+        List<MediaCompany> target_operation_type = null;
+        List<MediaCompany> target_name = null;
+        List<MediaCompany> target_api = null;
 
-        log.info(dto.getCompanyName());
+
+        List<MediaCompany> result = null;
+        boolean changed = false;
+
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
+                ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId).minusHours(9);;
                 if(dto.getEndDate() == null){
                     target_date = mediaCompanyRepository.findByStartDate(start_time);
-                    result.addAll(target_date);
                 }else{
-                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId).minusHours(9);;
                     target_date = mediaCompanyRepository.findByBothDate(start_time,end_time);
-                    result.addAll(target_date);
                 }
 
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId).minusHours(9);;
 
                 target_date = mediaCompanyRepository.findByEndDate(end_time);
-                result.addAll(target_date);
             }
 
         }
-        if(dto.getIsActive() != null){
+        if(dto.getIsActive() != null)
             target_is_active = mediaCompanyRepository.findByIsActive(dto.getIsActive());
-            if(result.isEmpty())
-                result.addAll(target_is_active);
-            else{
-                result.retainAll(target_is_active);
-            }
-        }
-        if(dto.getOperationType()!=null && dto.getOperationType() != Type.none){
+
+        if(dto.getOperationType()!=null && dto.getOperationType() != Type.none)
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());
-            if(result.isEmpty())
-                result.addAll(target_operation_type);
-            else{
-                result.retainAll(target_operation_type);
-            }
-        }
 
-        if(dto.getCompanyName()!=null && !dto.getCompanyName().isEmpty()){
+        if(dto.getCompanyName()!=null && !dto.getCompanyName().isEmpty())
             target_name = mediaCompanyRepository.findByName(dto.getCompanyName());
-            if(result.isEmpty())
-                result.addAll(target_name);
-            else{
-                result.retainAll(target_name);
-            }
+
+        if(dto.getAPIKey()!=null && !dto.getAPIKey().isEmpty())
+            target_api = mediaCompanyRepository.findByApi(dto.getAPIKey());
+
+        result = new ArrayList<>(mediaCompanyRepository.findAll());
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(MediaCompany::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(MediaCompany -> idxSet.contains(MediaCompany.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_is_active != null){
+            Set<Integer> idxSet = target_is_active.stream().map(MediaCompany::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(MediaCompany -> idxSet.contains(MediaCompany.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_operation_type != null){
+            Set<Integer> idxSet = target_operation_type.stream().map(MediaCompany::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(MediaCompany -> idxSet.contains(MediaCompany.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_name != null){
+            Set<Integer> idxSet = target_name.stream().map(MediaCompany::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(MediaCompany-> idxSet.contains(MediaCompany.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_api != null){
+            Set<Integer> idxSet = target_api.stream().map(MediaCompany::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(MediaCompany-> idxSet.contains(MediaCompany.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
         }
 
-        if(dto.getAPIKey()!=null && !dto.getAPIKey().isEmpty()){
-            target_api = mediaCompanyRepository.findByApi(dto.getAPIKey());
-            if(result.isEmpty())
-                result.addAll(target_api);
-            else{
-                result.retainAll(target_api);
-            }
-        }
-        return result.stream().distinct().collect(Collectors.toList());
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
 
     }
 }

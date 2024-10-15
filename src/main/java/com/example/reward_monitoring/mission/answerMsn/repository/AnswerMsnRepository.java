@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.mission.answerMsn.repository;
 
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,7 +40,7 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.dupParticipation = :dupParticipation")
     public List<AnswerMsn> findByDupParticipation(boolean dupParticipation);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.missionActive = :missionExposure")
+    @Query("SELECT a FROM AnswerMsn a WHERE a.missionExposure = :missionExposure")
     public List<AnswerMsn> findByMissionExposure(boolean missionExposure);
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.advertiser.advertiser LIKE %:keyword%")
@@ -57,4 +58,8 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = true")
     public List<AnswerMsn> findAllMission();
 
+
+    @NotNull
+    @Query("SELECT a FROM AnswerMsn a")
+    public List<AnswerMsn> findAll();
 }

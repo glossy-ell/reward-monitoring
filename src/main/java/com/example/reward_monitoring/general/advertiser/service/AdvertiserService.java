@@ -6,6 +6,7 @@ import com.example.reward_monitoring.general.advertiser.dto.AdvertiserReadDto;
 import com.example.reward_monitoring.general.advertiser.dto.AdvertiserSearchDto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,48 +70,62 @@ public class AdvertiserService {
 
 
     public List<Advertiser> searchAdvertiser(AdvertiserSearchDto dto) {
-        List<Advertiser> target_date;
-        List<Advertiser> target_is_active;
-        List<Advertiser> target_advertiser;
-        List<Advertiser> result= new ArrayList<>();
+        List<Advertiser> target_date = null;
+        List<Advertiser> target_is_active = null;
+        List<Advertiser> target_advertiser =null;
+
+        List<Advertiser> result;
+        boolean changed = false;
 
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
                 ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
                 if(dto.getEndDate() == null){
-                    result.addAll(advertiserRepository.findByStartDate(start_time));
+                    target_date = advertiserRepository.findByStartDate(start_time);
                 }else{
                     ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
-                    result.addAll(advertiserRepository.findByBothDate(start_time,end_time));
+                    target_date = advertiserRepository.findByBothDate(start_time,end_time);
                 }
 
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
                 ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
-                result.addAll(advertiserRepository.findByEndDate(end_time));
+                target_date = advertiserRepository.findByEndDate(end_time);
             }
-
         }
 
         if(dto.getIsActive() != null) {
             target_is_active = advertiserRepository.findByIsActive(dto.getIsActive());
-            if(result.isEmpty())
-                result.addAll(target_is_active);
-            else{
-                result.retainAll(target_is_active);
-            }
         }
 
         if(dto.getAdvertiser()!=null && !dto.getAdvertiser().isEmpty()){
             target_advertiser=advertiserRepository.findByAdvertiser(dto.getAdvertiser());
-            if(result.isEmpty())
-                result.addAll(target_advertiser);
-            else{
-                result.retainAll(target_advertiser);
-            }
         }
-        return result.stream().distinct().collect(Collectors.toList());
+        result = new ArrayList<>(advertiserRepository.findAll());
+
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(Advertiser::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Advertiser -> idxSet.contains(Advertiser.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_is_active != null){
+            Set<Integer> idxSet = target_is_active.stream().map(Advertiser::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Advertiser -> idxSet.contains(Advertiser.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_advertiser != null){
+            Set<Integer> idxSet = target_advertiser.stream().map(Advertiser::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Advertiser -> idxSet.contains(Advertiser.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
     }
 }

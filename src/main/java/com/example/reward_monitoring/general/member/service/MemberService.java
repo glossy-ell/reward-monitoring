@@ -6,6 +6,7 @@ import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -242,19 +245,20 @@ public class MemberService {
         List<Member> target_is_active=null;
         List<Member> target_name=null;
         List<Member> target_id=null;
-        List<Member> result=null;
 
+        List<Member> result=null;
+        boolean changed = false;
 
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
 
                 if(dto.getEndDate() == null){
                     ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
+                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId).minusHours(9);;
                     target_date = memberRepository.findByStartDate(start_time);
                 }else{
                     ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
+                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId).minusHours(9);;
                     ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
 
                     target_date = memberRepository.findByBothDate(start_time,end_time);
@@ -263,7 +267,7 @@ public class MemberService {
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId).minusHours(9);;
 
                 target_date = memberRepository.findByEndDate(end_time);
             }
@@ -280,34 +284,34 @@ public class MemberService {
             target_name = memberRepository.findByName_search(dto.getName());
         }
 
-        if(target_date!=null) {
-            result = new ArrayList<>(target_date);
-            if(target_is_active!=null)
-                result.retainAll(target_is_active);
-            if(target_name!=null)
-                result.retainAll(target_name);
-            if(target_id!=null)
-                result.retainAll(target_id);
-            return result;
-        }
-        else if(target_is_active !=null){
-            result = new ArrayList<>(target_is_active);
-            if(target_name !=null)
-                result.retainAll(target_name);
-            if(target_id != null)
-                result.retainAll(target_id);
-            return result;
-            
-        } else if (target_name != null) {
-            result = new ArrayList<>(target_name);
-            return result;
-        }
-        else if(target_id != null){
-            result = new ArrayList<>(target_id);
-            return result;
+        result = new ArrayList<>(memberRepository.findAll());
+
+        if(target_date !=null){
+            Set<Integer> idxSet = target_date.stream().map(Member::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Member -> idxSet.contains(Member.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
         }
 
-        result = new ArrayList<>();
+        if(target_is_active !=null){
+            Set<Integer> idxSet = target_is_active.stream().map(Member::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Member -> idxSet.contains(Member.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_name !=null){
+            Set<Integer> idxSet = target_name.stream().map(Member::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Member-> idxSet.contains(Member.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_id !=null){
+            Set<Integer> idxSet = target_id.stream().map(Member::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(Member -> idxSet.contains(Member.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(!changed)
+            result = new ArrayList<>();
         return result;
     }
 }
