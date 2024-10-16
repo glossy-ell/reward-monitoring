@@ -1,5 +1,6 @@
 package com.example.reward_monitoring.mission.saveMsn.repository;
 
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,15 +41,18 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
     @Query("SELECT s FROM SaveMsn s WHERE s.missionExposure = : missionExposure")
     public List<SaveMsn> findByMissionExposure(boolean missionExposure);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = : dataType")
+    @Query("SELECT s FROM SaveMsn s WHERE s.dataType = : dataType")
     public List<SaveMsn> findByDataType(boolean dataType);
 
-    @Query("SELECT a FROM AnswerMsn a  WHERE a.advertiser.advertiser LIKE %:keyword% ")
+    @Query("SELECT s FROM SaveMsn s  WHERE s.advertiser.advertiser LIKE %:keyword% ")
     public List<SaveMsn> findByAdvertiser(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a  WHERE a.advertiserDetails LIKE %:keyword% ")
+    @Query("SELECT s FROM SaveMsn s  WHERE s.advertiserDetails LIKE %:keyword% ")
     public List<SaveMsn> findByAdvertiserDetails(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a  WHERE a.missionTitle LIKE %:keyword% ")
+    @Query("SELECT s FROM SaveMsn s  WHERE s.missionTitle LIKE %:keyword% ")
     public List<SaveMsn> findByMissionTitle(String keyword);
+
+    @Query("SELECT s FROM SaveMsn s WHERE s.server.serverUrl LIKE %:keyword%")
+    public List<AnswerMsn> findByServer(@Param("keyword") String keyword);
 }

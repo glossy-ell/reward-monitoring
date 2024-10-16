@@ -169,7 +169,7 @@ public class AnswerMsnService {
         return target;
     }
 
-    //검색 조건에 맞는 정답 미션을 검색 
+    //검색 조건에 맞는 정답 미션을 검색
     public List<AnswerMsn> searchAnswerMsn(AnswerMsnSearchDto dto) {
 
         List<AnswerMsn> target_date = null;
@@ -464,7 +464,7 @@ public class AnswerMsnService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter formatter_date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
+        for(int i = worksheet.getPhysicalNumberOfRows() - 1; i >= 1; i--) {
 
             Row row = worksheet.getRow(i);
 

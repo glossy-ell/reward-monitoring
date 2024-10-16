@@ -3,6 +3,7 @@ package com.example.reward_monitoring.mission.searchMsn.repository;
 
 
 
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -48,9 +49,15 @@ public interface SearchMsnRepository extends JpaRepository<SearchMsn,Integer> {
     @Query("SELECT s FROM SearchMsn s WHERE s.advertiser.advertiser LIKE %:keyword% ")
     public List<SearchMsn> findByAdvertiser(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a  WHERE a.advertiserDetails LIKE %:keyword% ")
+    @Query("SELECT s FROM SearchMsn s  WHERE s.advertiserDetails LIKE %:keyword% ")
     public List<SearchMsn> findByAdvertiserDetails(String keyword);
 
-    @Query("SELECT a FROM AnswerMsn a  WHERE a.missionTitle LIKE %:keyword% ")
+    @Query("SELECT s FROM SearchMsn s  WHERE s.missionTitle LIKE %:keyword% ")
     public List<SearchMsn> findByMissionTitle(String keyword);
+
+    @Query("SELECT s FROM SearchMsn s WHERE s.server.serverUrl LIKE %:keyword%")
+    public List<SearchMsn> findByServer(@Param("keyword") String keyword);
+
+    @Query("SELECT s FROM SearchMsn s WHERE s.endAtMsn > :currentTime AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0)")
+    public List<SearchMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
 }

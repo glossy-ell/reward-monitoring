@@ -17,21 +17,21 @@ import java.time.ZonedDateTime;
 public class SearchMsnReadDto {
 
     @Schema(description = "미션 기본 수량", example = "50")
-    private Integer missionDefaultQty;
+    private Integer missionDefaultQty = 50;
     @Schema(description = "미션 데일리 캡", example = "50")
-    private Integer missionDailyCap;
+    private Integer missionDailyCap = 50;
     @Schema(description = "미션 노출 순서", example = "100")
-    private Integer missionExpOrder;
+    private Integer missionExpOrder = 100;
     @Schema(description = "광고주", example = "원픽")
     private String advertiser;
     @Column(name = "advertiser_details" )
-    private String advertiserDetails;
+    private String advertiserDetails="";
     @Column(name = "mission_title",nullable = false)
-    private String missionTitle;
+    private String missionTitle="";
     @Schema(description = "미션 상세 제목", example = "아주 단단한 무쇠웍")
-    private String missionDetailTitle;
+    private String missionDetailTitle = "";
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
-    private String missionContent;
+    private String missionContent = "";
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
@@ -59,7 +59,7 @@ public class SearchMsnReadDto {
     @Schema(description = "미션 정답2", example = "정답2")
     private String msnAnswer2;
     @Schema(description = "미션 데이터 타입")
-    private Boolean dataType;
+    private Boolean dataType=true;
     @Schema(description = "이미지 파일")
     private byte[] imageData;
     @Schema(description = "이미지 파일명")
@@ -74,6 +74,7 @@ public class SearchMsnReadDto {
                 .advertiser(advertiserEntity)
                 .server(serverEntity)
                 .missionTitle(missionTitle)
+                .missionDetailTitle(missionDetailTitle)
                 .searchKeyword(searchKeyword)
                 .startAtMsn(startAtMsn)
                 .endAtMsn(endAtMsn)

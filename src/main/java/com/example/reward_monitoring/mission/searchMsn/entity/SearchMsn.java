@@ -172,7 +172,7 @@ public class SearchMsn {
 
     @Comment("검색 키워드")
     @Column(name = "search_keyword",nullable = false)
-    @Schema(description = "미션 URL", example = "www.abc.com",nullable = true)
+    @Schema(description = "검색 키워드", example = "www.abc.com",nullable = true)
     private String searchKeyword;
 
     @Comment("미션 정답")
@@ -193,7 +193,7 @@ public class SearchMsn {
 
     @Builder.Default
     @Comment("전체 참여수")
-    @Column(name = "전체 참여수")
+    @Column(name = "totalPartCnt")
     @Schema(description = "전체 참여수")
     private int totalPartCnt=0;
 

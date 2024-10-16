@@ -67,7 +67,11 @@ public class SaveMsnSumStatController {
         if (saveMsnSumStats.size() > 30) {
             saveMsnSumStats = saveMsnSumStats.subList(0, 30);
         }
+        int totalLandingCount = saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
+        int totalPartCount =  saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getPartCount).sum();  // 참여카운트 합
         model.addAttribute("saveMsnSumStats", saveMsnSumStats);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
         return "statSumSightseeing";
     }
 }

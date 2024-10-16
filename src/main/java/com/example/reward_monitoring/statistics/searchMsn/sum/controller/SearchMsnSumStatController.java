@@ -4,6 +4,7 @@ package com.example.reward_monitoring.statistics.searchMsn.sum.controller;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
+import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.dto.SearchMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.sum.entity.SearchMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.service.SearchMsnSumStatService;
@@ -69,7 +70,11 @@ public class SearchMsnSumStatController {
             searchMsnSumStats = searchMsnSumStats.subList(0, 30);
         }
 
+        int totalLandingCount = searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
+        int totalPartCount =  searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getPartCount).sum();  // 참여카운트 합
         model.addAttribute("searchMsnSumStats", searchMsnSumStats);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
         return "statSumSearch";
     }
 }

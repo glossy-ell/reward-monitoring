@@ -8,6 +8,7 @@ import com.example.reward_monitoring.statistics.answerMsnStat.sum.Service.Answer
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
+import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -69,8 +70,12 @@ public class AnswerMsnSumStatController {
         if (member == null) {
             return "error/404";
         }
+        int totalLandingCount = answerMsnSumStats.stream().mapToInt(AnswerMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
+        int totalPartCount =  answerMsnSumStats.stream().mapToInt(AnswerMsnSumStat::getPartCount).sum();  // 참여카운트 합
 
         model.addAttribute("answerMsnSumStats", answerMsnSumStats);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
         return "statSumQuiz";
     }
 }

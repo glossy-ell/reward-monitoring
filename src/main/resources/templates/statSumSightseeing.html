@@ -656,24 +656,24 @@
 											<thead class="thead-light">
 											<tr>
 												<th class="text-center font-weight-bold">일시</th>
-												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${SumSightseeingTable.totalLandingCount}">0</span>)</th>
-												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${SumSightseeingTable.totalAttendCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${totalLandingCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${totalPartCount}">0</span>)</th>
 											</tr>
 											</thead>
 											<tbody  id = "statSumSightseeing">
-											<tr th:if="${#lists.isEmpty(answerMsns)}">
-												<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
-											</tr>
-											<tr th:each="SumSightseeingTable,iterStat : ${mediaCompanyList}">
-												<td th:text="${#temporals.format(SumSightseeingTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
-												<td th:text="${SumSightseeingTable.landingCount}" class="text-center align-middle"></td>
-												<td th:text="${SumSightseeingTable.attendCount}" class="text-center align-middle"></td>
-											</tr>
+												<tr th:if="${#lists.isEmpty(saveMsnSumStats)}">
+													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+												</tr>
+												<tr th:each="SumSightseeingTable,iterStat : ${saveMsnSumStats}">
+													<td th:text="${#temporals.format(SumSightseeingTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
+													<td th:text="${totalLandingCount}" class="text-center align-middle"></td>
+													<td th:text="${totalPartCount}" class="text-center align-middle"></td>
+												</tr>
 											</tbody>
 											<tfoot>
 											<tr><th class="text-center font-weight-bold">합산</th>
-												<th class="text-center font-weight-bold" th:text="${SumSightseeingTable.totalLandingCount}">0</th>
-												<th class="text-center font-weight-bold" th:text="${SumSightseeingTable.totalLandingCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>
