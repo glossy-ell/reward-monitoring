@@ -489,7 +489,7 @@
 					response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
 					$('#statSumSightseeing').append(
 						'<tr>' +
-						'<td class="text-center align-middle">' +  formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
 						'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
 						'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
 						'</tr>'
@@ -566,8 +566,13 @@
 													<div class="row">
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="1" selected="selected">https://ocb.srk.co.kr</option>
+																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<th:block th:each="server : ${servers}">
+																		<option
+																				th:value="${server.serverUrl}"
+																				th:text="${server.serverUrl}">
+																		</option>
+																	</th:block>
 																</select>
 
 																<div class="dropdown-menu " role="combobox">
@@ -581,17 +586,14 @@
 														</div>
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn form-control k_">
-																<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 광고주 =</option>
-																	<option value="1">시크릿 K</option>
-																	<option value="2">올앤올</option>
-																	<option value="3">애드닷</option>
-																	<option value="4">탑플랜</option>
-																	<option value="5">네이버스</option>
-																	<option value="6">키봅</option>
-																	<option value="7">셀렉티드</option>
-																	<option value="8">골든커머스</option>
-																	<option value="9">원픽</option>
+																<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=광고주=</option>
+																	<th:block th:each="advertiser : ${advertisers}">
+																		<option
+																				th:value="${advertiser.advertiser}"
+																				th:text="${advertiser.advertiser}">
+																		</option>
+																	</th:block>
 																</select>
 
 																<div class="dropdown-menu " role="combobox">
@@ -605,11 +607,14 @@
 														</div>
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sAffiliateIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 매체사 =</option>
-																	<option value="1">개발 서버 (1)</option>
-																	<option value="2">오케이캐시백(QA) (2)</option>
-																	<option value="3">오케이캐시백(운영) (3)</option>
+																<select name="mediacompany" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=매체사=</option>
+																	<th:block th:each="mediacompany : ${mediacompanys}">
+																		<option
+																				th:value="${mediacompany.mediacompany}"
+																				th:text="${mediacompany.mediacompany}">
+																		</option>
+																	</th:block>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">

@@ -70,6 +70,6 @@ public class SearchMsnSumStat {
     public SearchMsnSumStat(LocalDate date, int landingCount, int partCount) {
         this.date = date;
         this.landingCount = landingCount;
-        this. partCount = partCount;
+        this.partCount = partCount;
     }
 }
