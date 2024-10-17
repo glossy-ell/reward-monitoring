@@ -622,25 +622,29 @@
                     }
 
                     const inputField = document.getElementById('overlapDay');
+                    const value = parseInt(inputField.value);
                     if (!isNaN(value) && value > 10) {
                         alert("입력값은 10을 초과할 수 없습니다.");
                         return false;
                     }
 
+			        var fileNameElement = document.getElementById("fileName");
+			        var fileName = fileNameElement.textContent.trim();
                     var frm = document.dto;
                     var formData = new FormData(frm);
                     var jsonData = {};
                     var fileInput = document.getElementById('quizMainImg');
                         if (fileInput.files.length > 0) {
                             formData.append('file', fileInput.files[0]); // 첫 번째 파일 추가
-
                     } else {
-                        const defaultImageURL = '/images/mission_default.png';
-                        await fetch(defaultImageURL);
-                        const response = await fetch(defaultImageURL);
-                        const blob = await response.blob();
-                        const defaultFile = new File([blob], 'default-image.png', { type: 'image/png' });
-                        formData.append('file', defaultFile);
+                            if(fileName == 'mission_default.png'){
+                            const defaultImageURL = '/images/mission_default.png';
+                            await fetch(defaultImageURL);
+                            const response = await fetch(defaultImageURL);
+                            const blob = await response.blob();
+                            const defaultFile = new File([blob], 'default-image.png', { type: 'image/png' });
+                            formData.append('file', defaultFile);
+                        }
                     }
 
                     formData.forEach((value, key) => {
@@ -650,7 +654,7 @@
                     });
 
                     formData.append("dto",new Blob([JSON.stringify(jsonData)], {type: "application/json",}));
-                    console.log(formData);
+
                     if (confirm("저장하시겠습니까?")) {
 
                            if (idx === -1) {
@@ -697,7 +701,27 @@
                      window.location.href = "/Mission/quizList";
                 }
 
-</script>
+                function toggleOverlapDay() {
+                    var isOverlap1 = document.getElementById("isOverlap1"); // 참여 불가 라디오 버튼
+                    var isOverlap2 = document.getElementById("isOverlap2"); // 참여 불가 라디오 버튼
+                    var overlapDay = document.getElementById("overlapDay"); // 재참여 가능일 입력 필드
+
+
+                    if (isOverlap2.checked) {
+                        overlapDay.value = ''; // 값 비우기
+                        overlapDay.disabled = true; // 비활성화
+                    } else if(isOverlap1.checked) {
+                        overlapDay.value = 5;
+                        overlapDay.disabled = false; // 활성화
+                    }
+    	        }
+
+                document.addEventListener("DOMContentLoaded", function() {
+				    toggleOverlapDay();
+			    });
+
+
+        </script>
 <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
     <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
@@ -777,7 +801,7 @@
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주 추가정보</label>
-                                                <input type="text" class="form-control" name="advertiserDetail" id="advertiserDetail" th:value="${answerMsn?.advertiserDetails}" placeholder="광고주 추가 정보를 입력해주세요" autocomplete="off">
+                                                <input type="text" class="form-control" name="advertiserDetails" id="advertiserDetail" th:value="${answerMsn?.advertiserDetails}" placeholder="광고주 추가 정보를 입력해주세요" autocomplete="off">
 											</div>
 										</div>
 
@@ -844,11 +868,11 @@
 												<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 												<div class="k-radio-inline mx-2">
 													 <div class="d-inline-block mr-3">
-                                                         <input type="radio" name="dupParticipation" value="true" th:checked="${answerMsn?.dupParticipation}" class="custom-control-input" id="isOverlap1">
+                                                         <input type="radio" name="dupParticipation" value="true" th:checked="${answerMsn?.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
                                                          <label for="isOverlap1">참여 가능</label>
                                                      </div>
                                                     <div class="d-inline-block mr-3">
-                                                        <input type="radio" name="dupParticipation" value="false"  th:checked="${answerMsn != null && !answerMsn.dupParticipation}" class="custom-control-input" id="isOverlap2">
+                                                        <input type="radio" name="dupParticipation" value="false"  th:checked="${answerMsn != null && !answerMsn.dupParticipation}" class="custom-control-input" id="isOverlap2" onclick="toggleOverlapDay()">
                                                         <label for="isOverlap2">참여 불가</label>
                                                     </div>
                                                 </div>
@@ -960,7 +984,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="input-group date">
-                                                                    <input type="text" name="startTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'hh:mm a') : currentTime}">
+                                                                    <input type="text" name="startTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'HH:mm a') : currentTime}">
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
@@ -983,7 +1007,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="input-group date">
-                                                                    <input type="text" name="endTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'hh:mm a') : '23:59 PM' }" >
+                                                                    <input type="text" name="endTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'HH:mm') : '23:59 PM' }" >
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>

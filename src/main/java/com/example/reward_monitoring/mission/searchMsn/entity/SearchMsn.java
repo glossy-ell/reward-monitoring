@@ -57,7 +57,7 @@ public class SearchMsn {
     @Comment("광고주 상세")
     @Column(name = "advertiser_details" )
     @Schema(description = "광고주 상세", example = "-")
-    private String advertiserDetails;
+    private String advertiserDetails="";
 
     @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
@@ -76,22 +76,22 @@ public class SearchMsn {
 
 
     @Comment("미션 시작일시")
-    @Column(name = "start_at_msn", nullable = false, updatable = false)
+    @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
 
     @Comment("미션 종료일시")
-    @Column(name = "end_at_msn", nullable = false, updatable = false)
+    @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
     private ZonedDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
-    @Column(name = "start_at", nullable = false, updatable = false)
+    @Column(name = "start_at", nullable = false)
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;
 
     @Comment("데일리캡 종료일시")
-    @Column(name = "end_at", nullable = false, updatable = false)
+    @Column(name = "end_at", nullable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
@@ -135,7 +135,7 @@ public class SearchMsn {
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
     @Schema(description = "재참여 가능일", example = "1")
-    private int reEngagementDay;
+    private Integer reEngagementDay;
 
     @Comment("참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함")
     @Column(name = "except_Media" ,columnDefinition = "TEXT")
@@ -156,13 +156,19 @@ public class SearchMsn {
         return jsonArray;
     }
 
-    public String convertJsonToString(JSONArray json){
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+    public String convertJsonToString(JSONArray jsonArray) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            result.append(jsonArray.getInt(i));
+
+            // 마지막 요소가 아닐 경우에만 '|' 추가
+            if (i < jsonArray.length() - 1) {
+                result.append("|");
+            }
         }
+
+        return result.toString();
     }
 
     @Comment("미션 URL")
@@ -251,12 +257,14 @@ public class SearchMsn {
     }
     @PostLoad
     public void changeDTypeDateTime() {
-        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime().plusHours(9);
-        this.startAtMsnLocalDate = this.startAtMsn.plusHours(9).toLocalDate();
-        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime().plusHours(9);
-        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime().minusHours(9);
-        this.endAtMsnLocalDate = this.endAtMsn.plusHours(9).toLocalDate();
-        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime().plusHours(9);
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
+        this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
+        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
+
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
+        this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
+        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
 

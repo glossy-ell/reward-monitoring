@@ -1,6 +1,10 @@
 package com.example.reward_monitoring.statistics.answerMsnStat.sum.controller;
 
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
+import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
@@ -35,6 +39,10 @@ public class AnswerMsnSumStatController {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    AdvertiserService advertiserService;
+    @Autowired
+    MediaCompanyService mediaCompanyService;
 
     @GetMapping("/AnswerMsnSumStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<AnswerMsnSumStat>> getAnswerMsnSumStats(){
@@ -57,6 +65,8 @@ public class AnswerMsnSumStatController {
     @RequestMapping({"/",""})
     public String statSumQuiz(HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료

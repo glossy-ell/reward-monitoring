@@ -54,5 +54,5 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
     public List<SaveMsn> findByMissionTitle(String keyword);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.server.serverUrl LIKE %:keyword%")
-    public List<AnswerMsn> findByServer(@Param("keyword") String keyword);
+    public List<SaveMsn> findByServer_(@Param("keyword") String keyword);
 }

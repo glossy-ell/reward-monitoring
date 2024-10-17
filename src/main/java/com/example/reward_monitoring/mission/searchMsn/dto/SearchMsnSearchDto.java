@@ -30,9 +30,6 @@ public class SearchMsnSearchDto {
     @Schema(description = "미션 노출여부")
     private Boolean missionExposure;
 
-    @Schema(description = "미션 노출여부")
-    private Boolean dataType;
-
     @Schema(description = "광고주")
     private String advertiser;
 
@@ -41,4 +38,7 @@ public class SearchMsnSearchDto {
 
     @Schema(description = "미션 제목")
     private String missionTitle;
+
+    @Schema(description = "데이터 타입(정상/삭제)")
+    private Boolean dataType;
 }

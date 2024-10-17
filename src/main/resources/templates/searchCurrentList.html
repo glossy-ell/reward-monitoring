@@ -458,270 +458,495 @@
 		<!-- end aside -->
 		<script type="application/javascript">
 
-			function enterkey() {
-                if (window.event.keyCode == 13) {
-                    commSearch();
-                }
+
+		let innerSearchMsns = [];
+		let innerSearchMsnsPage;
+
+        function enterkey() {
+            if (window.event.keyCode == 13) {
+                commSearch();
             }
+        }
 
-            //검색
-            function commSearch() {
-                var frm = document.searchFrm;
-                frm.action = "/Mission/searchCurrentList";
-                frm.submit();
-            }
+			 //검색
+		function commSearch(page) {
+				var frm = document.searchFrm;
+				var formData = new FormData(frm);
+				var jsonData = {};
+				formData.forEach((value, key) => {
+					jsonData[key] = value; // FormData를 JSON 객체로 변환
+				});
+				if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+				$.ajax({
+					url: `/Mission/searchCurrentList/search`,
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(jsonData),
 
-            function commGoReport(missionIdx) {
-                var frm = document.searchFrm;
-                var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx+"&sUserServerIdx="+frm.sUserServerIdx.value;
+					success: function(response) {
+						const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
+						searchListContainer.empty();
 
-                var width = 1200;
-                var height = 900;
+						if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
+						// members가 빈 리스트인 경우 메시지 추가
+								$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						} else {
+							innerSearchMsns = response.fullSearchMsns;
+							innerSearchMsnsPage = 1;
+							response.answerMsns.forEach(function(searchMsn,index) {
+							$('#searchList').append(
+								  '<tr>' +
+										'<td class="text-center align-middle">' + searchMsn.idx + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + searchMsn.idx + ');">리포트</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionExpOrder + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiser.advertiser + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiserDetail + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionTitle + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDefaultQty + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.totalLandingCnt + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.totalPartCnt + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtMsnLocalDateTime + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtCap + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (searchMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsUsed(' + searchMsn.idx + ');">활성</a>' +
+													'<a class="dropdown-item" onclick="setIsUsedFalse(' + searchMsn.idx + ');">비활성</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (searchMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (searchMsn.missionExposure ? '노출' : '비노출') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsView(' + searchMsn.idx + ');">노출</a>' +
+													'<a class="dropdown-item" onclick="setIsViewFalse(' + searchMsn.idx + ');">비노출</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + (searchMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.reEngagementDay + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + searchMsn.idx + ');">가능일 변경하기</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + searchMsn.idx + ');">수정</button>' +
+										'</td>' +
+									'</tr>'
+								);
+								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							});
+						}
+					},
+					error: function(xhr) {
+					  if (xhr.status === 429) { // 429 Too Many Requests
+							 alert(xhr.responseText); //
+						} else {
+						alert("검색중 오류가 발생하였습니다.");
+						}
+					}
+				});
+			} //if 끝
+			else{ //이미 보유한 데이터가 있을경우
+				$.ajax({
+						url: `/Mission/quizCurrentList/search/${page}`,
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({innerSearchMsns}),
+						success: function(response) {
+								const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
+								searchListContainer.empty();
+								innerSearchMsnsPage = page;
 
-                winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
-            }
+								if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
+								// members가 빈 리스트인 경우 메시지 추가
+									$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+								}else {
+									response.searchMsns.forEach(function(searchMsn,index) {
+									$('#searchList').append(
+																	  '<tr>' +
+										'<td class="text-center align-middle">' + searchMsn.idx + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + searchMsn.idx + ');">리포트</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionExpOrder + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiser.advertiser + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiserDetail + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionTitle + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDefaultQty + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.totalLandingCnt + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.totalPartCnt + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtMsnLocalDateTime + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtCap + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (searchMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (searchMsn.missionActive ? '활성' : '비활성') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsUsed(' + searchMsn.idx + ');">활성</a>' +
+													'<a class="dropdown-item" onclick="setIsUsedFalse(' + searchMsn.idx + ');">비활성</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (searchMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (searchMsn.missionExposure ? '노출' : '비노출') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsView(' + searchMsn.idx + ');">노출</a>' +
+													'<a class="dropdown-item" onclick="setIsViewFalse(' + asearchMsn.idx + ');">비노출</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + (searchMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.reEngagementDay + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + searchMsn.idx + ');">가능일 변경하기</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + searchMsn.idx + ');">수정</button>' +
+										'</td>' +
+									'</tr>'
+										);
+										updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+									});
+								}
+							},
+				error: function(xhr, status, error) {
+					console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+					}
+				});
 
-            //검색 초기화
-            function commSearchReset() {
-                location.href = "/Mission/searchCurrentList";
-            }
+			}
 
-            function commGoAllReg() {
-                location.href = "/Mission/searchMultiTempList";
-            }
+		}
+		// 페이지네이션 업데이트 함수
+		function updatePagination(currentPage, totalPages, startPage, endPage) {
+			const paginationContainer = $('.intra-pagination-wrap');
+			paginationContainer.empty(); // 기존 페이지네이션 비우기
 
-            // 등록, 수정 버튼
-            function commGoDetail(idx) {
-                var frm = document.searchFrm;
+			if (currentPage > 1) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+			}
 
-                frm.searchIdx.value = "";
+			// Previous 버튼
+			if (currentPage > 1) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+			}
 
-                if(idx){
-                    frm.searchIdx.value = idx;
-                }
-                frm.action ='/Mission/searchWrite';
-                frm.submit();
-            }
+			// 페이지 링크 생성
+			for (let i = startPage; i <= endPage; i++) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+			}
 
+			// Next 버튼
+			if (currentPage < totalPages) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+			}
 
-            //Excel 다운로드
-            function commDownExcel() {
-                var frm = document.searchFrm;
+			// End 버튼
+			if (currentPage < totalPages) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+			}
+		}
 
-                frm.action ='/Mission/excelSearchCurrentList';
-                frm.submit();
-            }
+        function commGoReport(missionIdx) {
+            var frm = document.searchFrm;
+            var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx+"&sUserServerIdx="+frm.sUserServerIdx.value;
 
+            var width = 1200;
+            var height = 900;
 
-            function openSetOverlapModal(missionIdx,isOverlap,overlapDay,missionTitle) {
+            winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
+        }
 
-                var overlapFrm = document.overlapFrm;
+        //검색 초기화
+        function commSearchReset() {
+            location.href = "/Mission/searchCurrentList";
+        }
 
-                $('#modalTitle').html(missionTitle);
-                $("input:radio[name='isOverlap']").prop('checked',false);
-                $("input:radio[name='isOverlap'][value='"+isOverlap+"']").prop('checked',true);
+        function commGoAllReg() {
+            location.href = "/Mission/searchMultiTempList";
+        }
 
-                overlapFrm.overlapDay.value = overlapDay;
-                overlapFrm.missionIdx.value = missionIdx;
-                overlapFrm.missionTitle.value = missionTitle;
-
-                $("#setOverlap").modal();
-            }
-
-            function setOverlap() {
-
-                var overlapFrm = document.overlapFrm;
-
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setOverlap'
-                    , data : {
-                        missionType: 'R',
-                        missionIdx: overlapFrm.missionIdx.value,
-                        isOverlap: overlapFrm.isOverlap.value,
-                        overlapDay: overlapFrm.overlapDay.value
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            $('#isOverlap_'+overlapFrm.missionIdx.value).html(data.data.isOverlapTxt);
-                            $('#overlapDay_'+overlapFrm.missionIdx.value).html(data.data.overlapDay);
-                            $('#overlapBtn_'+overlapFrm.missionIdx.value).html("<button class='btn btn-outline-primary btn-xs' onClick='openSetOverlapModal(\""+overlapFrm.missionIdx.value+"\",\""+overlapFrm.isOverlap.value+"\",\""+data.data.overlapDay+"\",\""+overlapFrm.missionTitle.value+"\");'>가능일 변경하기</button>");
-
-                            return true;
-
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-
-                $("#setOverlap").modal('hide');
-
-            }
-
-
-            function setIsUsed(missionIdx, isUsed) {
-
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setMissionIsUsed'
-                    , data : {
-                        missionType: 'R',
-                        missionIdx: missionIdx,
-                        isUsed: isUsed
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            $('#isUsedBtn_'+missionIdx).html(data.data.isUsedTxt);
-
-                            return true;
-
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-
-            }
-
-            function setIsView(missionIdx, isView) {
-
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setMissionIsView'
-                    , data : {
-                        missionType: 'R',
-                        missionIdx: missionIdx,
-                        isView: isView
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            $('#isViewBtn_'+missionIdx).html(data.data.isViewTxt);
-
-                            return true;
-
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-
-            }
-
-            function commSetAllIsUsed() {
-
-                var frm = document.searchFrm;
-                var i;
-
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setOffMissionIsUsed'
-                    , data : {
-                        missionType: 'R',
-                        missionIdxArr: frm.currentSearchIdxArr.value
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            for(i=0;i<data.data.missionIdxCount;i++) {
-                                $('#isUsedBtn_'+data.data.missionIdxArr[i]).html("비활성");
-                            }
-                            return true;
-
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-            }
-
-            function commSetAllIsView() {
-
-                var frm = document.searchFrm;
-                var i;
-
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setOffMissionIsView'
-                    , data : {
-                        missionType: 'R',
-                        missionIdxArr: frm.currentSearchIdxArr.value
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            for(i=0;i<data.data.missionIdxCount;i++) {
-                                $('#isViewBtn_'+data.data.missionIdxArr[i]).html("비노출");
-                            }
-                            return true;
-
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-            }
+       // 등록, 수정 버튼
+    function commGoDetail(idx) {
+        	if(idx){
+           		window.location.href ='/Mission/searchWrite/'+ idx;
+            	return true;
+        	} else {
+				window.location.href ='/Mission/searchWrite';
+            	return true;
+       		}
+    }
 
 
-            function commAllOffMission() {
 
-                $.ajax({
-                    type: 'post'
-                    , url: '/api/Mission/setOffMission'
-                    , data : {
-                        missionType: 'R'
-                    }
-                    , cache: false
-                    , async: false
-                    , dataType : 'json'
-                    , success: function(data) {
-                        if(data.isResult == true) {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            location.reload();
-                            return true;
+		//Excel 다운로드
+		function commDownExcel() {
+			window.location.href = '/Mission/searchCurrentList/excel/download';
+		}
 
-                        } else {
-                            console.log(data.message);
-                            alert(data.data.message);
-                            return false;
-                        }
-                    }
-                });
-            }
+		 function openSetOverlapModal(idx){
+					$.ajax({
+						type: 'GET',  // GET 방식으로 요청
+						url: `/Mission/searchList/get/${idx}`,  // quiz 데이터 API
+						dataType: 'json',
+						success: function(data) {
+						if (data) {
+							overlapFrm.idx.value = data.idx; // quiz의 idx
+							if (data.dupParticipation === true) {
+								$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+							} else {
+								$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+							}
+							overlapFrm.reEngagementDay.value = data.reEngagementDay
+						}
+					},
+					error: function(error) {
+						console.error('데이터를 가져오는 데 실패했습니다:', error);
+					}
+				});
+					$("#setOverlap").modal();
+			}
+
+		function setOverlap() {
+
+				var idx = document.getElementsByName('idx')[0].value;
+				var overlapFrm = document.overlapFrm;
+				var formData = new FormData(overlapFrm);
+				var jsonData = {};
+				formData.forEach((value, key) => {
+
+				   jsonData[key] = value; // FormData를 JSON 객체로 변환
+			   });
+
+				if (jsonData.reEngagementDay > 10) {
+					alert("재참여 가능일은 10을 넘길 수 없습니다.");
+					return false; // 함수를 종료
+				}
+
+				$.ajax({
+					type: 'post'
+					,url: `/Mission/searchList/reEngagement/${idx}`
+					,contentType: "application/json"
+					,data: JSON.stringify(jsonData)
+					, cache: false
+					, async: false
+					, success: function(response) {
+						alert("성공적으로 변경되었습니다.");
+						window.location.href = "/Mission/searchCurrentList";
+					},
+					error: function(xhr) {
+						alert("변경중 오류가 발생했습니다.");
+
+					}
+
+				});
+
+			$("#setOverlap").modal('hide');
+
+		}
+
+		function setIsUsed(idx) {
+
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/searchList/setMissionIsUsed/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+		}
+
+		function setIsUsedFalse(idx) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/searchList/setMissionIsUsedFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+
+		}
+
+		function setIsView(idx) {
+
+			$.ajax({
+				type: 'get'
+				, url: `/Mission/searchList/setMissionIsView/${idx}`
+				, cache: false
+				, async: false
+
+				, success: function(data) {
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
+				}
+			});
+
+		}
+
+		function setIsViewFalse(idx) {
+
+			$.ajax({
+				type: 'get'
+				, url: `/Mission/searchList/setMissionIsViewFalse/${idx}`
+				, cache: false
+				, async: false
+				, success: function(data) {
+					alert("변경되었습니다.");
+					location.reload(true);
+				}
+				,error: function(){
+					alert("오류가 발생했습니다.");
+					return false;
+				}
+			});
+
+		}
+
+	   function commSetAllIsUsed(idx) {
+				if (typeof innerSearchMsnsPage === 'undefined'){
+					if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+						$.ajax({
+							type: 'get'
+							, url: `/Mission/searchCurrentList/setOffMissionIsUsed/${idx}`
+							, success: function(data) {
+									alert("비활성화 되었습니다");
+									location.reload(true);
+
+
+								}
+							,error: function(){
+									alert("오류가 발생했습니다.");
+									return false;
+							}
+						});
+					}
+				}
+				else{
+					if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+						$.ajax({
+							type: 'post'
+							, url: `/Mission/searchCurrentList/setOffMissionIsUsedSearch/${innerAnswerMsnsPage}`
+							,contentType: "application/json"
+							,data: JSON.stringify({innerSearchMsns})
+							, success: function(data) {
+									alert("비활성화 되었습니다");
+									window.location.href = "/Mission/searchCurrentList";
+								}
+							,error: function(){
+									alert("오류가 발생했습니다.");
+									return false;
+							}
+						});
+					}
+				}
+
+		}
+
+       function commSetAllIsView() {
+			if (typeof innerSearchMsnsPage === 'undefined'){
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchCurrentList/setOffMissionIsView/${idx}`
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								location.reload(true);
+
+
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
+			}
+			else{
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'post'
+						, url: `/Mission/searchCurrentList/setOffMissionIsViewSearch/${innerAnswerMsnsPage}`
+						,contentType: "application/json"
+						,data: JSON.stringify({innerSearchMsns})
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								window.location.href = "/Mission/searchList";
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
+			}
+
+    }
+
+	function commAllOffMission() {
+		if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
+			$.ajax({
+				type: 'get'
+				, url: '/Mission/searchCurrentList/AllOffMission'
+				, success: function(data) {
+						alert("모든 미션이 종료/비노출 되었습니다.");
+						location.reload(true);
+					}
+				,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+				}
+			});
+		}
+
+	}
+
+	function updateInputName() {
+		const selectElement = document.getElementById("searchSelect");
+		const selectedValue = selectElement.value;
+
+		// input 요소를 가져옴
+		const inputElement = document.getElementById("searchInput");
+
+		if (selectedValue === "sTitle") {
+			inputElement.name = "missionTitle";
+			inputElement.placeholder = "정답 미션 제목을 입력하세요";
+		} else if (selectedValue === "sAdvertiserDetail") {
+			inputElement.name = "advertiserDetails";
+			inputElement.placeholder = "광고주 상세를 입력하세요";
+		}
+	}
 
 
 
@@ -856,10 +1081,95 @@
 									</tr>
 									</thead>
 									<tbody>
-									<tr><td class="text-center align-middle">27739</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(27739);">리포트</button></td><td class="text-center align-middle">100</td><td class="text-center align-middle">네이버스</td><td class="text-center align-middle"></td><td class="text-center align-middle">오노고로 동래본점</td><td class="text-center align-middle">동래맛집 오노고로 동래본점</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,239</td><td class="text-center align-middle">643</td><td class="text-center align-middle">2024-08-11 00:01:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_27739" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;27739&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;27739&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_27739" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;27739&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;27739&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_27739">중복 허용</td><td class="text-center align-middle" id="overlapDay_27739">1</td><td class="text-center align-middle" id="overlapBtn_27739"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;27739&quot;,&quot;1&quot;,&quot;1&quot;,&quot;오노고로 동래본점&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(27739);">수정</button></td></tr><tr><td class="text-center align-middle">27740</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(27740);">리포트</button></td><td class="text-center align-middle">100</td><td class="text-center align-middle">네이버스</td><td class="text-center align-middle"></td><td class="text-center align-middle">조개1번지</td><td class="text-center align-middle">포항 영일대 맛집 조개1번지</td><td class="text-center align-middle">1,500</td><td class="text-center align-middle">1,500</td><td class="text-center align-middle">1,110</td><td class="text-center align-middle">585</td><td class="text-center align-middle">2024-08-11 00:01:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_27740" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;27740&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;27740&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_27740" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;27740&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;27740&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_27740">중복 허용</td><td class="text-center align-middle" id="overlapDay_27740">1</td><td class="text-center align-middle" id="overlapBtn_27740"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;27740&quot;,&quot;1&quot;,&quot;1&quot;,&quot;조개1번지&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(27740);">수정</button></td></tr><tr><td class="text-center align-middle">27741</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(27741);">리포트</button></td><td class="text-center align-middle">100</td><td class="text-center align-middle">네이버스</td><td class="text-center align-middle"></td><td class="text-center align-middle">37.5 인천구월로데오점</td><td class="text-center align-middle">구월동 맛집 37.5 인천구월로데오점</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,157</td><td class="text-center align-middle">618</td><td class="text-center align-middle">2024-08-11 00:01:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_27741" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;27741&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;27741&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_27741" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;27741&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;27741&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_27741">중복 허용</td><td class="text-center align-middle" id="overlapDay_27741">1</td><td class="text-center align-middle" id="overlapBtn_27741"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;27741&quot;,&quot;1&quot;,&quot;1&quot;,&quot;37.5 인천구월로데오점&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(27741);">수정</button></td></tr><tr><td class="text-center align-middle">27742</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(27742);">리포트</button></td><td class="text-center align-middle">100</td><td class="text-center align-middle">네이버스</td><td class="text-center align-middle"></td><td class="text-center align-middle">한마음정육식당 김포장기점</td><td class="text-center align-middle">김포 장기동 맛집 한마음정육식당 김포장기점</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,217</td><td class="text-center align-middle">629</td><td class="text-center align-middle">2024-08-11 00:01:00 ~ 2024-08-15 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-15</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_27742" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;27742&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;27742&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_27742" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;27742&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;27742&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_27742">중복 허용</td><td class="text-center align-middle" id="overlapDay_27742">1</td><td class="text-center align-middle" id="overlapBtn_27742"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;27742&quot;,&quot;1&quot;,&quot;1&quot;,&quot;한마음정육식당 김포장기점&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(27742);">수정</button></td></tr><tr><td class="text-center align-middle">27743</td><td class="text-center align-middle"><button class="btn btn-outline-accent btn-xs" onclick="commGoReport(27743);">리포트</button></td><td class="text-center align-middle">100</td><td class="text-center align-middle">네이버스</td><td class="text-center align-middle"></td><td class="text-center align-middle">리움의원</td><td class="text-center align-middle">청주 피부과</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,000</td><td class="text-center align-middle">1,162</td><td class="text-center align-middle">520</td><td class="text-center align-middle">2024-08-11 00:01:00 ~ 2024-08-20 23:40:00</td><td class="text-center align-middle">2024-08-12 ~ 2024-08-20</td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isUsedBtn_27743" class="btn btn-outline-focus btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">활성</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsUsed(&quot;27743&quot;,&quot;1&quot;);">활성</a><a class="dropdown-item" href="javascript:setIsUsed(&quot;27743&quot;,&quot;2&quot;);">비활성</a></div></div></td><td class="text-center align-middle"><div class="btn-group"><button type="button" id="isViewBtn_27743" class="btn btn-outline-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">노출</button><div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);"><a class="dropdown-item" href="javascript:setIsView(&quot;27743&quot;,&quot;1&quot;);">노출</a><a class="dropdown-item" href="javascript:setIsView(&quot;27743&quot;,&quot;2&quot;);">비노출</a></div></div></td><td class="text-center align-middle" id="isOverlap_27743">중복 허용</td><td class="text-center align-middle" id="overlapDay_27743">1</td><td class="text-center align-middle" id="overlapBtn_27743"><button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(&quot;27743&quot;,&quot;1&quot;,&quot;1&quot;,&quot;리움의원&quot;);">가능일 변경하기</button></td><td class="text-center align-middle"><button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(27743);">수정</button></td></tr>											</tbody>
+									<tbody id = "searchList">
+									<tr th:if="${#lists.isEmpty(answerMsns)}">
+										<td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+									</tr>
+
+									<tr th:each="search, iterStat : ${searchMsns}">
+										<td class="text-center align-middle" th:text="${quiz.idx}"></td>
+										<td class="text-center align-middle">
+											<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${search.idx} + ');">리포트</button>
+										</td>
+										<td class="text-center align-middle" th:text="${search.missionExpOrder}"></td>
+										<td class="text-center align-middle" th:text="${search.advertiser.advertiser}"></td>
+										<td class="text-center align-middle" th:text="${search.advertiserDetails}"></td>
+										<td class="text-center align-middle" th:text="${search.missionTitle}"></td>
+										<td class="text-center align-middle" th:text="${search.missionDefaultQty}"></td>
+										<td class="text-center align-middle" th:text="${search.missionDailyCap}"></td>
+										<td class="text-center align-middle" th:text="${search.totalLandingCnt}"></td>
+										<td class="text-center align-middle" th:text="${search.totalPartCnt}"></td>
+										<td class="text-center align-middle" th:text="${search.bothAtMsnLocalDateTime}"></td>
+										<td class="text-center align-middle" th:text="${search.bothAtCap}"></td>
+										<td class="text-center align-middle">
+											<div class="btn-group">
+												<button type="button" id="isActive"
+														th:class="'btn btn-outline-focus btn-sm dropdown-toggle ' + (${!search.missionActive} ? 'text-danger' : '')"
+														data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span th:text="${search.missionActive ? '활성' : '비활성'}"></span>
+												</button>
+												<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
+													<a class="dropdown-item" th:onclick="'setIsUsed(' + ${search.idx} + ');'">활성</a>
+													<a class="dropdown-item" th:onclick="'setIsUsedFalse(' + ${search.idx} + ');'">비활성</a>
+												</div>
+											</div>
+										</td>
+										<td class="text-center align-middle">
+											<div class="btn-group">
+												<button type="button"
+														th:class="${search.missionExposure} ? 'btn btn-outline-success btn-sm dropdown-toggle' : 'btn btn-outline-success btn-sm dropdown-toggle text-danger'"
+														data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span th:text="${search.missionExposure ? '노출' : '비노출'}"></span>
+												</button>
+												<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-92px, 28px, 0px);">
+													<a class="dropdown-item" th:onclick="'setIsView(' + ${search.idx} + ');'">노출</a>
+													<a class="dropdown-item" th:onclick="'setIsViewFalse(' + ${search.idx} + ');'">비노출</a>
+												</div>
+											</div>
+										</td>
+										<td class="text-center align-middle" id="isOverlap_38006" th:text="${search.dupParticipation ? '중복 허용' : '중복 비허용'}"></td>
+										<td class="text-center align-middle" id="overlapDay_38006" th:text="${search.reEngagementDay}"></td>
+										<td class="text-center align-middle" id="overlapBtn_38006">
+											<button class="btn btn-outline-primary btn-xs" th:onclick="'openSetOverlapModal(' + ${search.idx} + ');'">가능일 변경하기</button>
+										</td>
+										<td class="text-center align-middle">
+											<button class="btn btn-secondary btn-outline--main btn-xs" th:onclick="'commGoDetail(' +${search.idx} + ');'">수정</button>
+										</td>
+									</tr>
+									</tbody>
 								</table>
 							</div>
 							<hr class="my-4">
+							<div class="intra-pagination-wrap">
+								<div class="intra-pagination">
+									<!-- 현재 페이지 표시 -->
+									<span th:text="${currentPage}"></span>
+								</div>
+								<!-- First 버튼 -->
+								<div class="intra-pagination" th:if="${currentPage > 1}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=1)}">First</a>
+								</div>
+								<!-- Previous 버튼 -->
+								<div class="intra-pagination" th:if="${currentPage > 1}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
+								</div>
+
+								<!-- 페이지 링크 생성 -->
+								<div class="intra-pagination" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:if="${i > 0}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=${i})}"
+									   th:classappend="${currentPage == i} ? 'on' : ''">
+										<span th:text="${i}"></span>
+									</a>
+								</div>
+								<!-- Next 링크 -->
+								<div class="intra-pagination" th:if="${currentPage < totalPages}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
+								</div>
+								<!-- End 링크 -->
+								<div class="intra-pagination" th:if="${currentPage < totalPages}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=${totalPages})}">End</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -876,18 +1186,17 @@
 							</div>
 							<div class="modal-body">
 								<form class="k-form" method="get" name="overlapFrm">
-									<input type="hidden" id="missionIdx" name="missionIdx" value="">
-									<input type="hidden" id="missionTitle" name="missionTitle" value="">
+									<input type="hidden" name="idx" value="">
 									<div class="row">
 										<div class="col-6">
 											<div class="form-group">
 												<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 												<div class="k-radio-inline mx-2">
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
+														<input type="radio" name="dupParticipation" value="true" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
 													</div>
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isOverlap" value="2" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
+														<input type="radio" name="dupParticipation" value="false" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
 													</div>
 												</div>
 											</div>
@@ -895,7 +1204,7 @@
 										<div class="col-6">
 											<div class="form-group">
 												<label class="label__icon">참여후 재참여 가능일(1,2...,10) </label>
-												<input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" autocomplete="off">
+												<input type="text" class="form-control" name="reEngagementDay" id="overlapDay" value="" autocomplete="off">
 											</div>
 										</div>
 									</div>

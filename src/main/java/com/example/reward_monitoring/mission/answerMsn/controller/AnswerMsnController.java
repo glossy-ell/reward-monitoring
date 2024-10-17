@@ -347,7 +347,7 @@ public class AnswerMsnController {
         return response; // JSON 형태로 반환
     }
 
-    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @Operation(summary = "정답미션 페이지검색", description = "이미 검색한 미션의 페이지 이동시 처리하는 컨트롤러입니다")
     @PostMapping("/Mission/quizList/search/{pageNumber}")
     @ResponseBody
     @ApiResponses(value = {
@@ -408,38 +408,6 @@ public class AnswerMsnController {
         return response; // JSON 형태로 반환
     }
 
-
-
-
-
-    @Operation(summary = "정답미션 현재 리스트 소진량 검색", description = "현재 리스트 소진량 페이지에서 조건에 맞는 정답미션을 검색합니다")
-    @PostMapping("/searchMsnByConsumed")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "403", description = "권한없음"),
-            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
-    })
-    public ResponseEntity<List<AnswerMsn>> searchAnswerMsnByConsumed(HttpSession session,@RequestBody AnswerMsnSearchDto dto){
-        Member sessionMember= (Member) session.getAttribute("member");
-        if(sessionMember == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } // 세션만료
-
-        Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }//데이터 없음
-
-        if(member.isNauthCurAnswer()) // 비권한 활성화시
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-
-        List<AnswerMsn> result = answerMsnService.searchAnswerMsnByConsumed(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
 
     @Operation(summary = "모든 미션 종료", description = "!!DB의 모든 미션을 종료하고 비노출처리합니다!!")
     @GetMapping("/Mission/quizList/endAll")
@@ -749,8 +717,8 @@ public class AnswerMsnController {
 
         if(answerMsn==null)
             return "error/404";
-//        if(answerMsn.getImageData()!=null)
-//            image =  Base64.getEncoder().encodeToString(answerMsn.getImageData());
+        image = answerMsn.getImageName();
+
         model.addAttribute("answerMsn", answerMsn);
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());

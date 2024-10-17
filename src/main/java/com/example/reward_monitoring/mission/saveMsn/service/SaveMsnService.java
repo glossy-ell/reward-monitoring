@@ -26,10 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -466,6 +463,98 @@ public class SaveMsnService {
         if(target ==null)
             return false;
         target.setMissionExposure(dto.isExpose());
+        return true;
+    }
+
+    public boolean hidden(int idx) {
+        return true;
+    }
+
+    public boolean setOffMissionIsUsed(int idx) {
+        List<SaveMsn> saveMsns = getSaveMsns();
+        Collections.reverse(saveMsns);
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<SaveMsn> limitedSaveMsns;
+        if (startIndex < saveMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsns.size());
+            limitedSaveMsns = saveMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SaveMsn saveMsn : limitedSaveMsns) {
+            saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            saveMsnRepository.save(saveMsn);
+        }
+        return true;
+    }
+
+    public boolean setOffMissionIsUsed(int idx,List<SaveMsn> target) {
+
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SaveMsn> limitedSaveMsns;
+        if (startIndex < target.size()) {
+            int endIndex = Math.min(startIndex + limit, target.size());
+            limitedSaveMsns = target.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SaveMsn saveMsn : limitedSaveMsns) {
+            saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            saveMsnRepository.save(saveMsn);
+        }
+        return true;
+    }
+
+    public boolean setOffMissionIsView(int idx) {
+        List<SaveMsn> saveMsns = getSaveMsns();
+        Collections.reverse(saveMsns);
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SaveMsn> limitedSaveMsns;
+        if (startIndex < saveMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsns.size());
+            limitedSaveMsns = saveMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SaveMsn saveMsn : limitedSaveMsns) {
+            saveMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
+            saveMsnRepository.save(saveMsn);
+        }
+        return true;
+    }
+    public boolean setOffMissionIsView(int idx,List<SaveMsn> target) {
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SaveMsn> limitedSaveMsns;
+        if (startIndex < target.size()) {
+            int endIndex = Math.min(startIndex + limit, target.size());
+            limitedSaveMsns = target.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SaveMsn saveMsn : limitedSaveMsns) {
+            saveMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
+            saveMsnRepository.save(saveMsn);
+        }
         return true;
     }
 }

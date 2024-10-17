@@ -50,6 +50,8 @@ public class AnswerMsnService {
             answerMsn.setMissionExpOrder(dto.getMissionExpOrder());
         if(dto.getAdvertiser()!=null)
             answerMsn.setAdvertiser(advertiserRepository.findByAdvertiser_(dto.getAdvertiser()));
+        if(dto.getAdvertiserDetails()!=null)
+            answerMsn.setAdvertiserDetails(dto.getAdvertiserDetails());
         if(dto.getMissionTitle()!=null)
             answerMsn.setMissionTitle(dto.getMissionTitle());
         if(dto.getMissionContent()!=null && !(dto.getMissionContent().isEmpty()))
@@ -71,6 +73,8 @@ public class AnswerMsnService {
             dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setEndAtMsn(dto.getEndAtMsn());
         }
+
+
         if (dto.getStartAtCap() != null)
             answerMsn.setStartAtCap(dto.getStartAtCap());
         if (dto.getEndAtCap() != null)
@@ -86,6 +90,8 @@ public class AnswerMsnService {
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             answerMsn.setDupParticipation(bool);
+            if(answerMsn.getReEngagementDay() !=null)
+                answerMsn.setReEngagementDay(null);
         }
         if (dto.getReEngagementDay() != null)
             answerMsn.setReEngagementDay(dto.getReEngagementDay());
@@ -115,7 +121,7 @@ public class AnswerMsnService {
             answerMsn.setMsnUrl10(dto.getMsnUrl10());
         if(dto.getDataType()!=null) {
             boolean bool = dto.getDataType();
-            answerMsn.setDupParticipation(bool);
+            answerMsn.setDataType(bool);
         }
         if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
             answerMsn.setImageName(dto.getImageName());
@@ -159,6 +165,7 @@ public class AnswerMsnService {
 
     public List<AnswerMsn> getAnswerMsns() {
         return answerMsnRepository.findAllMission();
+
     }
 
     public AnswerMsn delete(int idx) {
@@ -191,18 +198,18 @@ public class AnswerMsnService {
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId).minusHours(9);
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                 if(dto.getEndAtMsn() == null){
                     target_date = answerMsnRepository.findByStartDate(start_time);
                 }else{
-                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
+                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
                     target_date = answerMsnRepository.findByBothDate(start_time,end_time);
                 }
 
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9);
+                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
 
                 target_date = answerMsnRepository.findByEndDate(end_time);
             }
@@ -534,9 +541,7 @@ public class AnswerMsnService {
         return true;
     }
 
-    public List<AnswerMsn> searchAnswerMsnByConsumed(AnswerMsnSearchDto dto) {
-        return null;
-    }
+
 
     public boolean changeAbleDay(AnswerMsnAbleDayDto dto, int idx) {
         AnswerMsn answerMsn = answerMsnRepository.findByIdx(idx);
@@ -555,8 +560,12 @@ public class AnswerMsnService {
         AnswerMsn target = answerMsnRepository.findByIdx(idx);
         if(target ==null)
             return false;
-       target.setReEngagementDay(dto.getReEngagementDay());
        target.setDupParticipation(dto.isDupParticipation());
+       if(!dto.isDupParticipation())
+           target.setReEngagementDay(null);
+       else
+        target.setReEngagementDay(dto.getReEngagementDay());
+
        answerMsnRepository.save(target);
         return true;
     }

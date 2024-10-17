@@ -457,288 +457,558 @@
 		</div>
 		<!-- end aside -->
 
+	<script type="application/javascript">
 
-		<script type="application/javascript">
+		let innerSearchMsns = [];
+        let innerSearchMsnsPage;
 
-    function enterkey() {
-        if (window.event.keyCode == 13) {
-            commSearch();
-        }
-    }
-
-    //검색
-    function commSearch() {
-        var frm = document.searchFrm;
-        frm.action = "/Mission/searchList";
-        frm.submit();
-    }
-
-    //검색 초기화
-    function commSearchReset() {
-        location.href = "/Mission/searchList";   
-    }
-
-    function commGoAllReg() {
-        location.href = "/Mission/searchMultiTempList";   
-    }
-
-    // 등록, 수정 버튼
-    function commGoDetail(idx) {
-        var frm = document.searchFrm;
-
-        frm.searchIdx.value = "";
-
-        if(idx){
-            frm.searchIdx.value = idx;
-        }
-        frm.action ='/Mission/searchWrite';
-        frm.submit();
-    }
-
-    //Excel 다운로드
-    function commDownExcel() {
-        var frm = document.searchFrm;        
-
-        frm.action ='/Mission/excelSearchList';
-        frm.submit();
-    }
-
-    function commGoReport(missionIdx) {
-        var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx;
-
-        var width = 1200;
-        var height = 900;
-
-        winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
-    }
-
-    function openSetOverlapModal(missionIdx,isOverlap,overlapDay,missionTitle) {
-
-        var overlapFrm = document.overlapFrm;
-
-        $('#modalTitle').html(missionTitle);    
-        $("input:radio[name='isOverlap']").prop('checked',false);
-        $("input:radio[name='isOverlap'][value='"+isOverlap+"']").prop('checked',true);
-
-        overlapFrm.overlapDay.value = overlapDay;
-        overlapFrm.missionIdx.value = missionIdx;
-        overlapFrm.missionTitle.value = missionTitle;
-        
-        $("#setOverlap").modal();
-    }
-
-    function setOverlap() {
-
-        var overlapFrm = document.overlapFrm;
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOverlap'
-            , data : {  
-                missionType: 'R',
-                missionIdx: overlapFrm.missionIdx.value,
-                isOverlap: overlapFrm.isOverlap.value,
-                overlapDay: overlapFrm.overlapDay.value
+        function enterkey() {
+            if (window.event.keyCode == 13) {
+                commSearch();
             }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    $('#isOverlap_'+overlapFrm.missionIdx.value).html(data.data.isOverlapTxt);      
-                    $('#overlapDay_'+overlapFrm.missionIdx.value).html(data.data.overlapDay);                     
-                    $('#overlapBtn_'+overlapFrm.missionIdx.value).html("<button class='btn btn-outline-primary btn-xs' onClick='openSetOverlapModal(\""+overlapFrm.missionIdx.value+"\",\""+overlapFrm.isOverlap.value+"\",\""+data.data.overlapDay+"\",\""+overlapFrm.missionTitle.value+"\");'>가능일 변경하기</button>");
+        }
 
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
+        //검색
+        function commSearch(page) {
+            var frm = document.searchFrm;
+        	var formData = new FormData(frm);
+       		var jsonData = {};
+       		formData.forEach((value, key) => {
+            	jsonData[key] = value; // FormData를 JSON 객체로 변환
+        	});
+			if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+				$.ajax({
+					url: `/Mission/searchList/search`,
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(jsonData),
 
-        $("#setOverlap").modal('hide');
+					success: function(response) {
+						const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
+						searchListContainer.empty();
 
-    }
- 
+						if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
 
-    function setIsUsed(missionIdx, isUsed) {
+								$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						} else {
+							innerSearchMsns = response.fullSearchMsns;
+							innerSearchMsnsPage = 1;
+							response.searchMsns.forEach(function(search,index) {
+							$('#searchList').append(
+									 '<tr>' +
+										'<td class="text-center align-middle">' + search.idx + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + search.idx + ');">리포트</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + search.missionDefaultQty + '</td>' +
+										'<td class="text-center align-middle">' + search.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + search.advertiser.advertiser + '</td>' +
+										'<td class="text-center align-middle">' + search.advertiserDetails + '</td>' +
+										'<td class="text-center align-middle">' + search.missionTitle + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<a class="btn btn-outline-info btn-xs" ' +
+											   'href="' + (search.msnUrl != null && search.msnUrl.startsWith("http") ? search.msnUrl : "http://" + search.msnUrl) + '" ' +
+											   'target="_blank">랜딩 URL</a>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + search.searchKeyword + '</td>' +
+										'<td class="text-center align-middle">' + search.bothAtMsnLocalDateTime + '</td>' +
+										'<td class="text-center align-middle">' + search.bothAtCap + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (!search.missionActive ? 'text-danger' : '') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (search.missionActive ? '활성' : '비활성') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsUsed(' + search.idx + ');">활성</a>' +
+													'<a class="dropdown-item" onclick="setIsUsedFalse(' + search.idx + ');">비활성</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<div class="btn-group">' +
+												'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (search.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (search.missionExposure ? '노출' : '비노출') + '</span>' +
+												'</button>' +
+												'<div class="dropdown-menu dropdown-menu-right">' +
+													'<a class="dropdown-item" onclick="setIsView(' + search.idx + ');">노출</a>' +
+													'<a class="dropdown-item" onclick="setIsViewFalse(' + search.idx + ');">비노출</a>' +
+												'</div>' +
+											'</div>' +
+										'</td>' +
+										'<td class="text-center align-middle">' + (search.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+										'<td class="text-center align-middle">' + search.reEngagementDay + '</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + search.idx + ');">가능일 변경하기</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + search.idx + ');">수정</button>' +
+										'</td>' +
+										'<td class="text-center align-middle">' +
+											'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + search.idx + ');">삭제</button>' +
+										'</td>' +
+									'</tr>'
+								);
+								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							});
+						}
+					},
+					error: function(xhr) {
+					  if (xhr.status === 429) { // 429 Too Many Requests
+							 alert(xhr.responseText); //
+						} else {
+						alert("검색중 오류가 발생하였습니다.");
+						}
+					}
+				});
+			} //if 끝
+			else{ //이미 보유한 데이터가 있을경우
+				$.ajax({
+						url: `/Mission/searchList/search/${page}`,
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({innerSearchMsns}),
+						success: function(response) {
+								const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
+								searchListContainer.empty();
+								innerSearchMsnsPage = page;
 
-       		$.ajax({
-				type: 'get'
-				, url: `/Mission/quizList/setMissionIsUsed/${idx}`
-				, cache: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
+								if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
+								// members가 빈 리스트인 경우 메시지 추가
+									$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+								}else {
+									response.searchMsns.forEach(function(search,index) {
+									$('#searchList').append(
+										 '<tr>' +
+											'<td class="text-center align-middle">' + search.idx + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + search.idx + ');">리포트</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + search.missionDefaultQty + '</td>' +
+											'<td class="text-center align-middle">' + search.missionDailyCap + '</td>' +
+											'<td class="text-center align-middle">' + search.advertiser.advertiser + '</td>' +
+											'<td class="text-center align-middle">' + search.advertiserDetails + '</td>' +
+											'<td class="text-center align-middle">' + search.missionTitle + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<a class="btn btn-outline-info btn-xs" ' +
+												   'href="' + (search.msnUrl != null && search.msnUrl.startsWith("http") ? search.msnUrl : "http://" + search.msnUrl) + '" ' +
+												   'target="_blank">랜딩 URL</a>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + search.searchKeyword + '</td>' +
+											'<td class="text-center align-middle">' + search.bothAtMsnLocalDateTime + '</td>' +
+											'<td class="text-center align-middle">' + search.bothAtCap + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<div class="btn-group">' +
+													'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (!search.missionActive ? 'text-danger' : '') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+														'<span>' + (search.missionActive ? '활성' : '비활성') + '</span>' +
+													'</button>' +
+													'<div class="dropdown-menu dropdown-menu-right">' +
+														'<a class="dropdown-item" onclick="setIsUsed(' + search.idx + ');">활성</a>' +
+														'<a class="dropdown-item" onclick="setIsUsedFalse(' + search.idx + ');">비활성</a>' +
+													'</div>' +
+												'</div>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<div class="btn-group">' +
+													'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (search.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+														'<span>' + (search.missionExposure ? '노출' : '비노출') + '</span>' +
+													'</button>' +
+													'<div class="dropdown-menu dropdown-menu-right">' +
+														'<a class="dropdown-item" onclick="setIsView(' + search.idx + ');">노출</a>' +
+														'<a class="dropdown-item" onclick="setIsViewFalse(' + search.idx + ');">비노출</a>' +
+													'</div>' +
+												'</div>' +
+											'</td>' +
+											'<td class="text-center align-middle">' + (search.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+											'<td class="text-center align-middle">' + search.reEngagementDay + '</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + search.idx + ');">가능일 변경하기</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + search.idx + ');">수정</button>' +
+											'</td>' +
+											'<td class="text-center align-middle">' +
+												'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + search.idx + ');">삭제</button>' +
+											'</td>' +
+										'</tr>'
+										);
+										updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+									});
+								}
+							},
+				error: function(xhr, status, error) {
+					console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+					}
+				});
+
+
+			}
+
+        }
+// 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		if (currentPage > 1) {
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+		}
+	}
+
+
+        //검색 초기화
+        function commSearchReset() {
+            location.href = "/Mission/searchList";
+        }
+
+        function commGoAllReg() {
+            location.href = "/Mission/searchMultiTempList";
+        }
+
+        // 등록, 수정 버튼
+        function commGoDetail(idx) {
+        	if(idx){
+           		window.location.href ='/Mission/searchWrite/'+ idx;
+            	return true;
+        	} else {
+				window.location.href ='/Mission/searchWrite';
+            	return true;
+       		}
+        }
+
+        //Excel 다운로드
+        function commDownExcel() {
+			window.location.href = '/Mission/searchList/excel/download';
+        }
+
+        function commGoReport(missionIdx) {
+            var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx;
+
+            var width = 1200;
+            var height = 900;
+
+            winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
+        }
+
+        function openSetOverlapModal(idx) {
+				$.ajax({
+					type: 'GET',
+					url: `/Mission/searchList/get/${idx}`,
+					dataType: 'json',
+					success: function(data) {
+					if (data) {
+						overlapFrm.idx.value = data.idx; // quiz의 idx
+						if (data.dupParticipation === true) {
+							$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+							$("#overlapDay").prop('disabled', false);  // 활성화
+						} else {
+							$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+							$("#overlapDay").prop('disabled', true);  // 비활성화
+						}
+
+						overlapFrm.reEngagementDay.value = data.reEngagementDay
+					}
+				},
+				error: function(error) {
+					console.error('데이터를 가져오는 데 실패했습니다:', error);
 				}
 			});
 
-    }
 
-    function setIsView(missionIdx, isView) {
+            $("#setOverlap").modal();
+        }
 
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setMissionIsView'
-            , data : {  
-                missionType: 'R',
-                missionIdx: missionIdx,
-                isView: isView
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    $('#isViewBtn_'+missionIdx).html(data.data.isViewTxt);                    
+        function setOverlap() {
 
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
+			var idx = document.getElementsByName('idx')[0].value;
+			var overlapFrm = document.overlapFrm;
+            var formData = new FormData(overlapFrm);
+            var jsonData = {};
+            formData.forEach((value, key) => {
+
+               jsonData[key] = value; // FormData를 JSON 객체로 변환
+           });
+
+    		if (jsonData.reEngagementDay > 10) {
+       		 	alert("재참여 가능일은 10을 넘길 수 없습니다.");
+        		return false; // 함수를 종료
+   			}
+
+   			if (jsonData.reEngagementDay < 1) {
+       		 	alert("유효한 데이터를 입력해주세요.");
+        		return false; // 함수를 종료
+   			}
+
+			if(jsonData.dupParticipation === true) {
+				if (jsonData.reEngagementDay === null || jsonData.reEngagementDay ==="") {
+					alert("재참여 가능일을 입력해주세요!");
+					return false; // 함수를 종료
+				}
+			}
+
+
+			$.ajax({
+				type: 'post'
+				,url: `/Mission/searchList/reEngagement/${idx}`
+				,contentType: "application/json"
+				,data: JSON.stringify(jsonData)
+				, cache: false
+				, async: false
+				, success: function(response) {
+					alert("성공적으로 변경되었습니다.");
+					window.location.href = "/Mission/searchList";
+				},
+                error: function(xhr) {
+                	alert("변경중 오류가 발생했습니다.");
+
                 }
-            }            
-        });
 
-    }
+			});
 
-    function commSetAllIsUsed() {
 
-        var frm = document.searchFrm;      
-        var i;
 
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMissionIsUsed'
-            , data : {  
-                missionType: 'R',
-                missionIdxArr: frm.currentSearchIdxArr.value
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);                    
-                    for(i=0;i<data.data.missionIdxCount;i++) {                        
-                        $('#isUsedBtn_'+data.data.missionIdxArr[i]).html("비활성");
+            $("#setOverlap").modal('hide');
+
+        }
+
+
+        function setIsUsed(idx) {
+
+                   $.ajax({
+                    type: 'get'
+                    , url: `/Mission/searchList/setMissionIsUsed/${idx}`
+                    , cache: false
+                    , success: function(data) {
+                        alert("변경되었습니다.");
+                        location.reload(true);
                     }
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
-
-    function commSetAllIsView() {
-
-        var frm = document.searchFrm;      
-        var i;
-
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMissionIsView'
-            , data : {  
-                missionType: 'R',
-                missionIdxArr: frm.currentSearchIdxArr.value
-            }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);                    
-                    for(i=0;i<data.data.missionIdxCount;i++) {                        
-                        $('#isViewBtn_'+data.data.missionIdxArr[i]).html("비노출");
+                    ,error: function(){
+                        alert("오류가 발생했습니다.");
+                        return false;
                     }
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
+                });
 
+        }
 
-    function commAllOffMission() {
+            function setIsUsedFalse(idx) {
 
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setOffMission'
-            , data : {  
-                missionType: 'R'
+                $.ajax({
+                    type: 'get'
+                    , url: `/Mission/searchList/setMissionIsUsedFalse/${idx}`
+                    , cache: false
+                    , success: function(data) {
+                        alert("변경되었습니다.");
+                        location.reload(true);
+                    }
+                    ,error: function(){
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                });
+
             }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);      
-                    location.reload();                    
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
-    }
 
-    function setIsHidden(missionIdx) {
+        function setIsView(idx) {
 
-        $.ajax({
-            type: 'post'
-            , url: '/api/Mission/setMissionIsHidden'
-            , data : {  
-                missionType: 'R',
-                missionIdx: missionIdx,
-                isHidden: '1'
+                  $.ajax({
+                    type: 'get'
+                    , url: `/Mission/searchList/setMissionIsView/${idx}`
+                    , cache: false
+                    , async: false
+
+                    , success: function(data) {
+                        alert("변경되었습니다.");
+                        location.reload(true);
+                    }
+                    ,error: function(){
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                });
+
+        }
+
+
+        function setIsViewFalse(idx) {
+
+                $.ajax({
+                    type: 'get'
+                    , url: `/Mission/searchList/setMissionIsViewFalse/${idx}`
+                    , cache: false
+                    , async: false
+                    , success: function(data) {
+                        alert("변경되었습니다.");
+                        location.reload(true);
+                    }
+                    ,error: function(){
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                });
+
+        }
+
+        function commSetAllIsUsed(idx) {
+			if (typeof innerSearchMsnsPage === 'undefined'){
+							if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+								$.ajax({
+									type: 'get'
+									, url: `/Mission/searchList/setOffMissionIsUsed/${idx}`
+									, success: function(data) {
+											alert("비활성화 되었습니다");
+											location.reload(true);
+
+
+										}
+									,error: function(){
+											alert("오류가 발생했습니다.");
+											return false;
+									}
+								});
+							}
+						}
+						else{
+							if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+								$.ajax({
+									type: 'post'
+									, url: `/Mission/searchList/setOffMissionIsUsedSearch/${innerSearchMsnsPage}`
+									,contentType: "application/json"
+									,data: JSON.stringify({innerSearchMsns})
+									, success: function(data) {
+											alert("비활성화 되었습니다");
+											window.location.href = "/Mission/searchList";
+										}
+									,error: function(){
+											alert("오류가 발생했습니다.");
+											return false;
+									}
+								});
+							}
+						}
+
+        }
+
+        function commSetAllIsView(idx) {
+			if (typeof innerSearchMsnsPage === 'undefined'){
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setOffMissionIsView/${idx}`
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								location.reload(true);
+
+
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
+			}
+			else{
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					$.ajax({
+						type: 'post'
+						, url: `/Mission/searchList/setOffMissionIsViewSearch/${innerSearchMsnsPage}`
+						,contentType: "application/json"
+						,data: JSON.stringify({innerSearchMsns})
+						, success: function(data) {
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
+								window.location.href = "/Mission/searchList";
+							}
+						,error: function(){
+								alert("오류가 발생했습니다.");
+								return false;
+						}
+					});
+				}
+			}
+
+        }
+        function commAllOffMission() {
+            if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
+                $.ajax({
+                    type: 'get'
+                    , url: '/Mission/searchList/AllOffMission'
+                    , success: function(data) {
+                            alert("모든 미션이 종료/비노출 되었습니다.");
+                            location.reload(true);
+                        }
+                    ,error: function(){
+                            alert("오류가 발생했습니다.");
+                            return false;
+                    }
+                });
             }
-            , cache: false
-            , async: false
-            , dataType : 'json'
-            , success: function(data) {
-                if(data.isResult == true) {
-                    console.log(data.message);      
-                    alert(data.data.message);
-                    location.reload();                
+        }
 
-                    return true;
-                    
-                } else {                    
-                    console.log(data.message);    
-                    alert(data.data.message);
-                    return false;
-                }
-            }            
-        });
+        function hiddenMission(idx) {
+            if(confirm("미션을 삭제합니다.")){
+                $.ajax({
+                    type: 'get'
+                    , url: `/Mission/searchList/hidden/${idx}`
+                    , cache: false
+                    , async: false
+                    , success: function(data) {
+                        alert("미션이 삭제되었습니다.");
+                        location.reload(true);
+                    }
+                    ,error: function(){
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                });
+            }
+        }
 
-    }
+		function updateInputName() {
+			const selectElement = document.getElementById("searchSelect");
+			const selectedValue = selectElement.value;
+
+			// input 요소를 가져옴
+			const inputElement = document.getElementById("searchInput");
+
+			if (selectedValue === "sTitle") {
+				inputElement.name = "missionTitle";
+				inputElement.placeholder = "검색 미션 제목을 입력하세요";
+			} else if (selectedValue === "sAdvertiserDetail") {
+				inputElement.name = "advertiserDetails";
+				inputElement.placeholder = "광고주 상세를 입력하세요";
+			}
+		}
+
+		function toggleOverlapDay() {
+			$("#overlapDay").prop('disabled', false);  // 활성화
+			document.getElementById("overlapDay").value = 5;
+		}
+
+		function toggleOverlapDayFalse() {
+			$("#overlapDay").prop('disabled', true);  // 비활성화
+			document.getElementById("overlapDay").value = "";
+		}
 </script>
 <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
@@ -768,15 +1038,15 @@
                                                 <div class="k-section">
                                                     <div class="k-section__content k-section__content--border">
                                                         <button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>
-                                                        <button type="button" class="btn btn-secondary btn-main" onclick="location.href='/Mission/searchWrite'">등록</button>
+                                                        <button type="button" class="btn btn-secondary btn-main" th:onclick="commGoDetail();">등록</button>
                                                         <button type="button" class="btn btn-outline--main" onclick="commGoAllReg();">일괄 등록</button>
                                                     </div>
                                                 </div>
                                                 &nbsp;
                                                 <div class="k-section">                                                    
                                                     <div class="k-section__content k-section__content--border">  
-                                                        <button type="button" class="btn btn-outline-focus" onclick="commSetAllIsUsed();">화면 비활성</button>
-                                                        <button type="button" class="btn btn-outline-success" onclick="commSetAllIsView();">화면 비노출</button>
+                                                        <button type="button" class="btn btn-outline-focus" th:onclick="'commSetAllIsUsed(' + ${currentPage} + ');'">화면 비활성</button>
+                                                        <button type="button" class="btn btn-outline-success" th:onclick="'commSetAllIsView(' + ${currentPage} + ');'">화면 비노출</button>
                                                         <button type="button" class="btn btn-outline-danger" onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
                                                     </div>
                                                 </div>
@@ -789,17 +1059,14 @@
 													<div class="row">
 														<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn form-control k_">
-																<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																	<option value="">= 광고주 =</option>
-																	<option value="1">시크릿 K</option>
-																	<option value="2">올앤올</option>
-																	<option value="3">애드닷</option>
-																	<option value="4">탑플랜</option>
-																	<option value="5">네이버스</option>
-																	<option value="6">키봅</option>
-																	<option value="7">셀렉티드</option>
-																	<option value="8">골든커머스</option>
-																	<option value="9">원픽</option>
+																<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>광고주를 선택하세요</option>
+																	<th:block th:each="advertiser : ${advertisers}">
+																		<option
+																				th:value="${advertiser.advertiser}"
+																				th:text="${advertiser.advertiser}">
+																		</option>
+																	</th:block>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -812,10 +1079,10 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsOverlap" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="dupParticipation" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 중복 참여 여부 =</option>
-																	<option value="1">중복 참여 허용</option>
-																	<option value="2">중복 참여 불가</option>
+																	<option value="true">중복 참여 허용</option>
+																	<option value="false">중복 참여 불가</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -829,20 +1096,20 @@
 														</div>
 														<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sOverOpenStartDate" placeholder="미션 시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAtMsn" placeholder="미션 시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sUnderOpenEndDate" placeholder="미션 종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAtMsn" placeholder="미션 종료일" value="" autocomplete="off">
 															</div>
 														</div>
 														<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sOverDCapSDate" placeholder="데캡 시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAtCap" placeholder="데캡 시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sUnderDCapEDate" placeholder="데캡 종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name=" endAtCap" placeholder="데캡 종료일" value="" autocomplete="off">
 															</div>
 														</div>
 													</div>
@@ -851,10 +1118,10 @@
 													<div class="row">
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="missionActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 미션 상태 =</option>
-																	<option value="1">활성</option>
-																	<option value="2">비활성</option>
+																	<option value="true">활성</option>
+																	<option value="false">비활성</option>
 																</select>
 																<div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
 																	<ul class="dropdown-menu inner show">
@@ -866,10 +1133,10 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsView" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="missionExposure" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 미션 노출여부 =</option>
-																	<option value="1">노출</option>
-																	<option value="2">비노출</option>
+																	<option value="true">노출</option>
+																	<option value="false">비노출</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -882,9 +1149,9 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="1">삭제 데이터</option>
-																	<option value="2" selected="selected">정상 데이터</option>
+																<select name="dataType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="false">삭제 데이터</option>
+																	<option value="true" selected="selected">정상 데이터</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -898,12 +1165,13 @@
 														</div>
 														<div class="input-group col-xl-6 col-lg-6 col-sm-12">
 															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
-																	<option value="sTitle">정답 미션 제목</option>
+																<select name="sOpt"  id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
+																	<option value="" selected hidden>= 검색옵션 =</option>
+																	<option value="sTitle">검색 미션 제목</option>
 																	<option value="sAdvertiserDetail">광고주 상세</option>
 																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -1049,26 +1317,25 @@
                                 </div>
                                 <div class="modal-body">
                                     <form class="k-form" method="get" name="overlapFrm">  
-                                        <input type="hidden" id="missionIdx" name="missionIdx" value="">
-                                        <input type="hidden" id="missionTitle" name="missionTitle" value="">
+                                        <input type="hidden" name="idx" value="">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label class="label__icon">미션 중복 참여 허용(+1day)</label>
                                                     <div class="k-radio-inline mx-2">
-                                                        <div class="d-inline-block mr-3">
-                                                            <input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>                                                        
-                                                        </div> 
-                                                        <div class="d-inline-block mr-3">
-                                                            <input type="radio" name="isOverlap" value="2" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
-                                                        </div>
+														<div class="d-inline-block mr-3">
+															<input type="radio" name="dupParticipation" value="true" class="custom-control-input" id="isOverlap1" onchange="toggleOverlapDay()"><label for="isOverlap1">중복 허용</label>
+														</div>
+														<div class="d-inline-block mr-3">
+															<input type="radio" name="dupParticipation" value="false" class="custom-control-input" id="isOverlap2" onchange="toggleOverlapDayFalse()"><label for="isOverlap2">중복 불가</label>
+														</div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label class="label__icon">참여후 재참여 가능일(1,2...,10) </label>
-                                                    <input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" autocomplete="off">
+                                                    <input type="text" class="form-control" name="reEngagementDay" id="overlapDay" value="" autocomplete="off">
                                                 </div>
                                             </div>                                            
                                         </div>
@@ -1087,7 +1354,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="searchList.html" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/Mission/searchList" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

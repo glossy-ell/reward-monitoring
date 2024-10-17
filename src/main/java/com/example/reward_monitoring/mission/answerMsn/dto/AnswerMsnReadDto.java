@@ -47,6 +47,7 @@ public class AnswerMsnReadDto {
 
     private String startAtMsnDate; // 날짜 필드
     private String startTime;  // 시간 필드
+
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
 

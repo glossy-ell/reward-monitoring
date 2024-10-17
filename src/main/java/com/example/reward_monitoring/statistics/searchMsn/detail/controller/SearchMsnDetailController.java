@@ -3,6 +3,10 @@ package com.example.reward_monitoring.statistics.searchMsn.detail.controller;
 
 
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
+import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
@@ -32,7 +36,10 @@ public class SearchMsnDetailController {
 
     @Autowired
     MemberRepository memberRepository;
-
+    @Autowired
+    AdvertiserService advertiserService;
+    @Autowired
+    MediaCompanyService mediaCompanyService;
     @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션 디테일 통계을 검색합니다")
     @PostMapping("/search")
     @ApiResponses(value = {
@@ -49,6 +56,8 @@ public class SearchMsnDetailController {
     @GetMapping({"/{pageNumber}","/",""})
     public String statSearch(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -79,6 +88,8 @@ public class SearchMsnDetailController {
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
         model.addAttribute("searchMsnDetailsStats",  limitedSearchMsnDetailsStats);
+        model.addAttribute("advertisers ", advertisers);
+        model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);

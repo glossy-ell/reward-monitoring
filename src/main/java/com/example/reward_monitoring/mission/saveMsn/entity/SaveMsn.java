@@ -12,7 +12,10 @@ import org.hibernate.annotations.Comment;
 import org.json.JSONArray;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -94,6 +97,25 @@ public class SaveMsn {
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
+    @Transient
+    private LocalDateTime startAtMsnLocalDateTime;
+    @Transient
+    private LocalDate startAtMsnLocalDate;
+    @Transient
+    private LocalTime startAtMsnLocalTime;
+
+    @Transient
+    private LocalDateTime endAtMsnLocalDateTime;
+    @Transient
+    private LocalDate endAtMsnLocalDate;
+    @Transient
+    private LocalTime endAtMsnLocalTime;
+
+
+    @Transient
+    private String bothAtMsnLocalDateTime;
+    @Transient
+    private String bothAtCap;
     @Comment("중복 참여 가능 여부(+1 Day)")
     @Column(name = "dup_participation", nullable = false)
     @Schema(description = "중복 참여 가능여부", example = "true")
@@ -114,7 +136,7 @@ public class SaveMsn {
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
     @Schema(description = "재참여 가능일", example = "1")
-    private int reEngagementDay;
+    private Integer reEngagementDay;
 
     @Comment("참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함")
     @Column(name = "except_Media" ,columnDefinition = "TEXT")
@@ -135,14 +157,21 @@ public class SaveMsn {
         return jsonArray;
     }
 
-    public String convertJsonToString(JSONArray json){
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+    public String convertJsonToString(JSONArray jsonArray) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            result.append(jsonArray.getInt(i));
+
+            // 마지막 요소가 아닐 경우에만 '|' 추가
+            if (i < jsonArray.length() - 1) {
+                result.append("|");
+            }
         }
+
+        return result.toString();
     }
+
 
     @Comment("미션 URL")
     @Column(name = "msn_url" )
@@ -223,4 +252,21 @@ public class SaveMsn {
         this.server = server;
     }
 
+    @PostLoad
+    public void changeDTypeDateTime() {
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
+        this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
+        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
+
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
+        this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
+        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        bothAtCap= startAtCap.format(formatter) + " ~ " + endAtCap.format(formatter);
+
+    }
 }

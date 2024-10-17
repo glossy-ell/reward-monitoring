@@ -57,7 +57,7 @@ public class AnswerMsn {
     @Comment("광고주 상세")
     @Column(name = "advertiser_details")
     @Schema(description = "광고주 상세", example = "82652333318")
-    private String advertiserDetails;
+    private String advertiserDetails="";
     
     @Comment("미션 제목")
     @Column(name = "mission_title",nullable = false)
@@ -143,7 +143,7 @@ public class AnswerMsn {
     @Comment("재참여 가능일")
     @Column(name = "re_engagementDay" )
     @Schema(description = "재참여 가능일", example = "1")
-    private int reEngagementDay;
+    private Integer reEngagementDay;
 
 
 
@@ -319,12 +319,14 @@ public class AnswerMsn {
     }
     @PostLoad
     public void changeDTypeDateTime() {
-        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime().plusHours(9);
-        this.startAtMsnLocalDate = this.startAtMsn.plusHours(9).toLocalDate();
-        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime().plusHours(9);
-        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime().minusHours(9);
-        this.endAtMsnLocalDate = this.endAtMsn.plusHours(9).toLocalDate();
-        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime().plusHours(9);
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
+        this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
+        this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
+
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
+        this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
+        this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
 

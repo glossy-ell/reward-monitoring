@@ -648,11 +648,7 @@
         		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
    	 			}
 			});
-
-
 		}
-
-
     }
 
 	// 페이지네이션 업데이트 함수
@@ -723,25 +719,27 @@
 		}
 
 		function openSetOverlapModal(idx) {
-			$.ajax({
-        		type: 'GET',  // GET 방식으로 요청
-        		url: `/Mission/quizList/get/${idx}`,  // quiz 데이터 API
-        		dataType: 'json',
-        		success: function(data) {
-            	if (data) {
-                	overlapFrm.idx.value = data.idx; // quiz의 idx
-               		if (data.dupParticipation === true) {
-                    	$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
-                	} else {
-                    	$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
-                	}
-                	overlapFrm.reEngagementDay.value = data.reEngagementDay
-           		}
-        	},
-        	error: function(error) {
-            	console.error('데이터를 가져오는 데 실패했습니다:', error);
-        	}
-    	});
+				$.ajax({
+					type: 'GET',
+					url: `/Mission/quizList/get/${idx}`,
+					dataType: 'json',
+					success: function(data) {
+					if (data) {
+						overlapFrm.idx.value = data.idx; // quiz의 idx
+						if (data.dupParticipation === true) {
+							$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+							$("#overlapDay").prop('disabled', false);  // 활성화
+						} else {
+							$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+							$("#overlapDay").prop('disabled', true);  // 비활성화
+						}
+						overlapFrm.reEngagementDay.value = data.reEngagementDay
+					}
+				},
+				error: function(error) {
+					console.error('데이터를 가져오는 데 실패했습니다:', error);
+				}
+			});
 			$("#setOverlap").modal();
 		}
 
@@ -763,6 +761,17 @@
         		return false; // 함수를 종료
    			}
 
+			if (jsonData.reEngagementDay < 1) {
+       		 	alert("유효한 데이터를 입력해주세요.");
+        		return false; // 함수를 종료
+   			}
+
+			if(jsonData.dupParticipation === true) {
+				if (jsonData.reEngagementDay === null || jsonData.reEngagementDay ==="") {
+					alert("재참여 가능일을 입력해주세요!");
+					return false; // 함수를 종료
+				}
+			}
 			$.ajax({
 				type: 'post'
 				,url: `/Mission/quizList/reEngagement/${idx}`
@@ -839,7 +848,8 @@
 			});
 
 		}
-			function setIsViewFalse(idx) {
+
+		function setIsViewFalse(idx) {
 
 			$.ajax({
 				type: 'get'
@@ -990,7 +1000,15 @@
 				inputElement.placeholder = "광고주 상세를 입력하세요";
 			}
 		}
+		function toggleOverlapDay() {
+			$("#overlapDay").prop('disabled', false);  // 활성화
+			document.getElementById("overlapDay").value = 5;
+		}
 
+		function toggleOverlapDayFalse() {
+			$("#overlapDay").prop('disabled', true);  // 비활성화
+			document.getElementById("overlapDay").value = "";
+		}
 
 	</script>
 		<script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
@@ -1306,10 +1324,10 @@
 														<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 														<div class="k-radio-inline mx-2">
 															<div class="d-inline-block mr-3">
-																<input type="radio" name="dupParticipation" value="true" class="custom-control-input" id="isOverlap1"><label for="isOverlap1">중복 허용</label>
+																<input type="radio" name="dupParticipation" value="true" class="custom-control-input" id="isOverlap1" onchange="toggleOverlapDay()"><label for="isOverlap1">중복 허용</label>
 															</div>
 															<div class="d-inline-block mr-3">
-																<input type="radio" name="dupParticipation" value="false" class="custom-control-input" id="isOverlap2"><label for="isOverlap2">중복 불가</label>
+																<input type="radio" name="dupParticipation" value="false" class="custom-control-input" id="isOverlap2" onchange="toggleOverlapDayFalse()"><label for="isOverlap2">중복 불가</label>
 															</div>
 														</div>
 													</div>

@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @Getter
 public class ResponseDto {
-    private List<AnswerMsn> innerAnswerMsns; // AnswerMsn은 실제 데이터 구조에 맞게 조정
+    private List<AnswerMsn> innerAnswerMsns;
 
 
 }

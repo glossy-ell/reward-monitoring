@@ -6,9 +6,7 @@ import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
-import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnReadDto;
-import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchByConsumedDto;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
+
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
@@ -16,8 +14,6 @@ import jakarta.transaction.Transactional;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,16 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 public class SearchMsnService {
@@ -49,24 +40,48 @@ public class SearchMsnService {
 
     public SearchMsn edit(int idx, SearchMsnEditDto dto) {
         SearchMsn searchMsn =searchMsnRepository.findByIdx(idx);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
         if(searchMsn==null)
             return null;
         if(dto.getMissionDefaultQty() != null)
             searchMsn.setMissionDefaultQty(dto.getMissionDefaultQty());
+
         if(dto.getMissionDailyCap() !=null)
             searchMsn.setMissionDailyCap(dto.getMissionDailyCap());
+        if(dto.getAdvertiser() != null)
+            searchMsn.setAdvertiser(advertiserRepository.findByAdvertiser_(dto.getAdvertiser()));
+        if(dto.getAdvertiserDetails()!=null)
+            searchMsn.setAdvertiserDetails(dto.getAdvertiserDetails());
         if(dto.getMissionTitle()!=null)
             searchMsn.setMissionTitle(dto.getMissionTitle());
+        if(dto.getMissionExpOrder()!=null)
+            searchMsn.setMissionExpOrder(dto.getMissionExpOrder());
+
         if(dto.getSearchKeyword()!=null)
             searchMsn.setSearchKeyword(dto.getSearchKeyword());
-        if (dto.getStartAtMsn() != null)
+
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             searchMsn.setStartAtMsn(dto.getStartAtMsn());
-        if (dto.getEndAtMsn() != null)
+        }
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             searchMsn.setEndAtMsn(dto.getEndAtMsn());
+        }
+
         if (dto.getStartAtCap() != null)
             searchMsn.setStartAtCap(dto.getStartAtCap());
+
         if (dto.getEndAtCap() != null)
             searchMsn.setEndAtCap(dto.getEndAtCap());
+
         if (dto.getMissionActive() != null) {
             boolean bool = dto.getMissionActive();
             searchMsn.setMissionActive(bool);
@@ -75,13 +90,38 @@ public class SearchMsnService {
             boolean bool = dto.getMissionExposure();
             searchMsn.setMissionExposure(bool);
         }
+
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             searchMsn.setDupParticipation(bool);
+            if(searchMsn.getReEngagementDay() !=null)
+                searchMsn.setReEngagementDay(null);
         }
+
         if (dto.getReEngagementDay() != null) {
             searchMsn.setReEngagementDay(dto.getReEngagementDay());
         }
+
+        if(dto.getExceptMedia() !=null && !(dto.getExceptMedia().isEmpty())) {
+            searchMsn.setExceptMedia(searchMsn.convertJsonToString(searchMsn.convertDataToJson(dto.getExceptMedia())));
+        }
+
+        if(dto.getMsnUrl()!=null)
+            searchMsn.setMsnUrl(dto.getMsnUrl());
+
+        if(dto.getMsnAnswer()!=null)
+            searchMsn.setMsnAnswer(dto.getMsnAnswer());
+
+        if(dto.getMsnAnswer2()!=null)
+            searchMsn.setMsnAnswer2(dto.getMsnAnswer2());
+
+        if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
+            searchMsn.setImageName(dto.getImageName());
+            searchMsn.setImageData(dto.getImageData());
+        }
+
+
+
         return searchMsn;
     }
 
@@ -96,7 +136,7 @@ public class SearchMsnService {
     }
 
     public List<SearchMsn> getSearchMsns() {
-        return searchMsnRepository.findAll();
+        return searchMsnRepository.findAllMission();
     }
 
     public SearchMsn delete(int idx) {
@@ -140,19 +180,18 @@ public class SearchMsnService {
             if(dto.getStartAtMsn() != null){
 
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId).minusHours(9);
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                 if(dto.getEndAtMsn() == null){
-                    target_date = searchMsnRepository.findByStartDate(start_time);
+                    target_date = searchMsnRepository.findByStartDate(start_time);;
                 }else{
-                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
+                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
                     target_date = searchMsnRepository.findByBothDate(start_time,end_time);
                 }
 
             }
             else {
                 ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
-
+                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
                 target_date = searchMsnRepository.findByEndDate(end_time);
             }
 
@@ -298,11 +337,11 @@ public class SearchMsnService {
 
         cell = row.createCell(6);
         cell.setCellValue("미션 정답");
-        sheet.setColumnWidth(6, 20 * 256);
+        sheet.setColumnWidth(6, 30 * 256);
 
         cell = row.createCell(7);
         cell.setCellValue("검색 키워드");
-        sheet.setColumnWidth(7, 20 * 256);
+        sheet.setColumnWidth(7, 40 * 256);
         cell.setCellStyle(cellStyle);
 
         cell = row.createCell(8);
@@ -417,7 +456,7 @@ public class SearchMsnService {
             else
                 cell.setCellValue("중복 불가");
 
-            cell = row.createCell(5);
+            cell = row.createCell(15);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(searchMsn.getReEngagementDay());
 
@@ -532,9 +571,7 @@ public class SearchMsnService {
         }
         return true;
     }
-    public List<SearchMsn> searchSearchMsnByConsumed(SearchMsnSearchDto dto) {//현재리스트 소진량(검색)에서 검색
-        return null;
-    }
+
 
     public boolean changeAbleDay(SearchMsnAbleDayDto dto, int idx) {
         SearchMsn searchMsn = searchMsnRepository.findByIdx(idx);
@@ -601,7 +638,7 @@ public class SearchMsnService {
         return true;
     }
 
-    public List<SearchMsn> searchAnswerMsnCurrent(AnswerMsnSearchByConsumedDto dto) {
+    public List<SearchMsn> searchAnswerMsnCurrent(SearchMsnSearchByConsumedDto dto) {
         List<SearchMsn> target_advertiser = null;
         List<SearchMsn> target_serverUrl = null;
         List<SearchMsn> target_advertiser_details = null; // 선택 1
@@ -617,7 +654,7 @@ public class SearchMsnService {
         }
 
         if(dto.getServerUrl()!=null){
-            target_serverUrl = searchMsnRepository.findByServer(dto.getServerUrl());
+            target_serverUrl = searchMsnRepository.findByServer_(dto.getServerUrl());
         }
 
         if(dto.getAdvertiserDetails() != null  && !dto.getAdvertiserDetails().isEmpty())
@@ -632,23 +669,23 @@ public class SearchMsnService {
 
         if(target_serverUrl !=null) {
             Set<Integer> idxSet = target_serverUrl.stream().map(SearchMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(searchMsn -> idxSet.contains(searchMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
 
         if(target_advertiser != null) {
             Set<Integer> idxSet = target_advertiser.stream().map(SearchMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(searchMsn -> idxSet.contains(searchMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_advertiser_details != null) {
             Set<Integer> idxSet = target_advertiser_details.stream().map(SearchMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(searchMsn -> idxSet.contains(searchMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         else if(target_mission_title !=null) {
             Set<Integer> idxSet = target_mission_title.stream().map(SearchMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(searchMsn -> idxSet.contains(searchMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
 
@@ -658,24 +695,10 @@ public class SearchMsnService {
     }
 
 
-
-    public boolean AllOffMissionCurrent() {
-        ZonedDateTime now = ZonedDateTime.now();
-        List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
-        for (SearchMsn searchMsn : searchMsns) {
-            searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
-            searchMsn.setMissionExposure(false);
-            searchMsnRepository.save(searchMsn);
-        }
-        return true;
-    }
-
-
-
-    public Sheet excelDownloadCurrent( List<AnswerMsn> list,Workbook wb){
+    public Sheet excelDownloadCurrent( List<SearchMsn> list,Workbook wb){
 
         int size = list.size();
-        Sheet sheet = wb.createSheet("정답 미션 목록");
+        Sheet sheet = wb.createSheet("검색 미션 목록");
         Row row = null;
         Cell cell = null;
         CellStyle cellStyle = wb.createCellStyle();
@@ -751,81 +774,207 @@ public class SearchMsnService {
         cell.setCellStyle(cellStyle);
         sheet.setColumnWidth(14, 20 * 256);
 
-        for (AnswerMsn answerMsn : list) {
+        for (SearchMsn searchMsn : list) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue(answerMsn.getIdx());
+            cell.setCellValue(searchMsn.getIdx());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(1);
-            cell.setCellValue(answerMsn.getAdvertiserDetails());
+            cell.setCellValue(searchMsn.getAdvertiserDetails());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(2);
-            cell.setCellValue(answerMsn.getMissionTitle());
+            cell.setCellValue(searchMsn.getMissionTitle());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(3);
-            cell.setCellValue(answerMsn.getMissionDefaultQty());
+            cell.setCellValue(searchMsn.getMissionDefaultQty());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(4);
-            cell.setCellValue(answerMsn.getMissionDailyCap());
+            cell.setCellValue(searchMsn.getMissionDailyCap());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(5);
-            cell.setCellValue(answerMsn.getTotalLandingCnt());
+            cell.setCellValue(searchMsn.getTotalLandingCnt());
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(6);
-            cell.setCellValue(answerMsn.getTotalPartCnt());
+            cell.setCellValue(searchMsn.getTotalPartCnt());
             cell.setCellStyle(cellStyle);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             cell = row.createCell(7);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getStartAtMsn().format(formatter));
+            cell.setCellValue(searchMsn.getStartAtMsn().format(formatter));
 
             cell = row.createCell(8);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getEndAtMsn().format(formatter));
+            cell.setCellValue(searchMsn.getEndAtMsn().format(formatter));
 
             cell = row.createCell(9);
             cell.setCellStyle(cellStyle);
             DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            cell.setCellValue(answerMsn.getStartAtCap().format(formatter_));
+            cell.setCellValue(searchMsn.getStartAtCap().format(formatter_));
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(10);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getEndAtCap().format(formatter_));
+            cell.setCellValue(searchMsn.getEndAtCap().format(formatter_));
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(11);
             cell.setCellStyle(cellStyle);
-            if(answerMsn.isMissionActive())
+            if(searchMsn.isMissionActive())
                 cell.setCellValue("활성");
             else
                 cell.setCellValue("비활성");
 
             cell = row.createCell(12);
             cell.setCellStyle(cellStyle);
-            if(answerMsn.isMissionExposure())
+            if(searchMsn.isMissionExposure())
                 cell.setCellValue("노출");
             else
                 cell.setCellValue("비노출");
 
             cell = row.createCell(13);
             cell.setCellStyle(cellStyle);
-            if(answerMsn.isDupParticipation())
+            if(searchMsn.isDupParticipation())
                 cell.setCellValue("중복 허용");
             else
                 cell.setCellValue("중복 불가");
 
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getReEngagementDay());
+            cell.setCellValue(searchMsn.getReEngagementDay());
         }
         return sheet;
+    }
+    public boolean setOffMissionIsUsed(int idx) {
+
+        List<SearchMsn> searchMsns = getSearchMsns();
+        Collections.reverse(searchMsns);
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < searchMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, searchMsns.size());
+            limitedSearchMsns = searchMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SearchMsn searchMsn : limitedSearchMsns) {
+            searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+    public boolean setOffMissionIsUsed(int idx,List<SearchMsn> target) {
+
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < target.size()) {
+            int endIndex = Math.min(startIndex + limit, target.size());
+            limitedSearchMsns = target.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SearchMsn searchMsn : limitedSearchMsns) {
+            searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+
+    public boolean setOffMissionIsView(int idx) {
+        List<SearchMsn> searchMsns = getSearchMsns();
+        Collections.reverse(searchMsns);
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < searchMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, searchMsns.size());
+            limitedSearchMsns = searchMsns.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SearchMsn searchMsn : limitedSearchMsns) {
+            searchMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+    public boolean setOffMissionIsView(int idx,List<SearchMsn> target) {
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (idx - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < target.size()) {
+            int endIndex = Math.min(startIndex + limit, target.size());
+            limitedSearchMsns = target.subList(startIndex, endIndex);
+        } else {
+            return false;
+        }
+        for (SearchMsn searchMsn : limitedSearchMsns) {
+            searchMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+
+    public boolean AllOffMission() {
+        List<SearchMsn> searchMsns = getSearchMsns();
+        for (SearchMsn searchMsn : searchMsns) {
+            searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            searchMsn.setMissionExposure(false);
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+    public boolean AllOffMissionCurrent() {
+        ZonedDateTime now = ZonedDateTime.now();
+        List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
+        for (SearchMsn searchMsn : searchMsns) {
+            searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            searchMsn.setMissionExposure(false);
+            searchMsnRepository.save(searchMsn);
+        }
+        return true;
+    }
+
+    public boolean changeMissionReEngagementDay(int idx, SearchMsnAbleDayDto dto) {
+        SearchMsn target = searchMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setDupParticipation(dto.isDupParticipation());
+        if(!dto.isDupParticipation())
+            target.setReEngagementDay(null);
+        else
+            target.setReEngagementDay(dto.getReEngagementDay());
+        searchMsnRepository.save(target);
+        return true;
     }
 }
