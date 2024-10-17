@@ -6,31 +6,33 @@ import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnAbleDayDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 public class SaveMsnService {
+    private static final LocalDate TEMP_DATE = LocalDate.of(1111, 1, 1); // 예: 2000-01-01
+    private static final ZonedDateTime TEMP_ZONED_DATE_TIME = ZonedDateTime.of(TEMP_DATE.atStartOfDay(), ZoneId.systemDefault());
     @Autowired
     private SaveMsnRepository saveMsnRepository;
     @Autowired
@@ -87,7 +89,8 @@ public class SaveMsnService {
     }
 
     public List<SaveMsn> getSaveMsns() {
-        return saveMsnRepository.findAll();
+
+        return saveMsnRepository.findAllMission();
     }
 
     public SaveMsn delete(int idx) {
@@ -368,15 +371,30 @@ public class SaveMsnService {
     @Transactional
     public boolean readExcel(MultipartFile file)throws IOException {
 
-        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-        XSSFSheet worksheet = workbook.getSheetAt(0);
+        Workbook workbook;
+
+        DecimalFormat df = new DecimalFormat("0");
+        String fileName = file.getOriginalFilename();
+
+        // 확장자에 따라 Workbook 결정
+        try (InputStream is = file.getInputStream()) {
+            if (fileName.endsWith(".xlsx")) {
+                workbook = new XSSFWorkbook(is); // For OOXML (.xlsx)
+            } else if (fileName.endsWith(".xls")) {
+                workbook = new HSSFWorkbook(is); // For OLE2 (.xls)
+            } else {
+                throw new IllegalArgumentException("지원되지 않는 파일 형식입니다: " + fileName);
+            }
+        }
+        Sheet worksheet = workbook.getSheetAt(0);
         SaveMsnReadDto dto = new SaveMsnReadDto();
-        Advertiser advertiserEntity=null;
+        Advertiser advertiserEntity = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter formatter_date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
 
-            XSSFRow row = worksheet.getRow(i);
+        for(int i = worksheet.getPhysicalNumberOfRows() - 1; i >= 1; i--) {
+
+            Row row = worksheet.getRow(i);
 
             if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC) {
                 dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
@@ -392,14 +410,40 @@ public class SaveMsnService {
                 dto.setMissionTitle(row.getCell(5).getStringCellValue());
             if(row.getCell(6)!=null)
                 dto.setSearchKeyword(row.getCell(6).getStringCellValue());
-            if(row.getCell(7)!=null)
-                dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
-            if(row.getCell(8)!=null)
-                dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
-            if(row.getCell(9)!=null)
-            dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
-            if(row.getCell(10)!=null)
-                dto.setEndAtCap(LocalDate.parse(row.getCell(10).getStringCellValue(),formatter_date));
+
+            if (row.getCell(7) != null) {
+
+                String startAtMsnValue = row.getCell(7).getStringCellValue();
+                try {
+                        dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(startAtMsnValue, formatter), ZoneId.systemDefault()));
+                } catch (DateTimeException e) {
+                    dto.setStartAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
+            if (row.getCell(8) != null) {
+                String endAtMsnValue = row.getCell(8).getStringCellValue();
+                try {
+                    dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(endAtMsnValue, formatter), ZoneId.systemDefault()));
+                } catch (DateTimeException e) {
+                    dto.setEndAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
+            if (row.getCell(9) != null) {
+                String startAtCapValue = row.getCell(9).getStringCellValue();
+                try {
+                        dto.setStartAtCap(LocalDate.parse(startAtCapValue, formatter_date));
+                } catch (DateTimeException e) {
+                    dto.setStartAtCap(TEMP_DATE); // 임시 날짜 설정
+                }
+            }
+            if (row.getCell(10) != null) {
+                String endAtCapValue = row.getCell(10).getStringCellValue();
+                try {
+                        dto.setEndAtCap(LocalDate.parse(endAtCapValue, formatter_date));
+                } catch (DateTimeException e) {
+                    dto.setEndAtCap(TEMP_DATE); // 임시 날짜 설정
+                }
+            }
             if(Objects.equals(row.getCell(11).getStringCellValue(), "활성"))
                 dto.setMissionActive(true);
             else
@@ -557,4 +601,221 @@ public class SaveMsnService {
         }
         return true;
     }
+
+    public boolean AllOffMission() {
+        List<SaveMsn> saveMsns = getSaveMsns();
+        for (SaveMsn saveMsn : saveMsns) {
+            saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            saveMsn.setMissionExposure(false);
+            saveMsnRepository.save(saveMsn);
+        }
+        return true;
+    }
+
+    public Sheet excelDownloadCurrent(List<SaveMsn> list, Workbook wb) {
+        int size = list.size();
+        Sheet sheet = wb.createSheet("저장 미션 목록");
+        Row row = null;
+        Cell cell = null;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("quizIdx");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("광고주");
+        sheet.setColumnWidth(1, 16 * 256); //8자
+        cell.setCellStyle(cellStyle);
+
+
+        cell = row.createCell(2);
+        cell.setCellValue("미션 제목");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(2, 16 * 256);
+
+        cell = row.createCell(3);
+        cell.setCellValue("기본 수량");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue("데일리캡");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(5);
+        cell.setCellValue("전체 랜딩수");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(6);
+        cell.setCellValue("전체 참여수");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(7);
+        cell.setCellValue("미션 시작일시");
+        sheet.setColumnWidth(6, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(8);
+        cell.setCellValue("미션 종료일시");
+        sheet.setColumnWidth(7, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(9);
+        cell.setCellValue("데일리캡 시작일");
+        sheet.setColumnWidth(8, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(10);
+        cell.setCellValue("데일리캡 종료일");
+        sheet.setColumnWidth(9, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(11);
+        cell.setCellValue("미션 상태");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(12);
+        cell.setCellValue("미션 노출여부");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(13);
+        cell.setCellValue("중복참여");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(14);
+        cell.setCellValue("재참여 가능일");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(14, 20 * 256);
+
+        for (SaveMsn saveMsn : list) {
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellValue(saveMsn.getIdx());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue(saveMsn.getAdvertiserDetails());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue(saveMsn.getMissionTitle());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(3);
+            cell.setCellValue(saveMsn.getMissionDefaultQty());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(4);
+            cell.setCellValue(saveMsn.getMissionDailyCap());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(5);
+            cell.setCellValue(saveMsn.getTotalLandingCnt());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(6);
+            cell.setCellValue(saveMsn.getTotalPartCnt());
+            cell.setCellStyle(cellStyle);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            cell = row.createCell(7);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(saveMsn.getStartAtMsn().format(formatter));
+
+            cell = row.createCell(8);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(saveMsn.getEndAtMsn().format(formatter));
+
+            cell = row.createCell(9);
+            cell.setCellStyle(cellStyle);
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(saveMsn.getStartAtCap().format(formatter_));
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(10);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(saveMsn.getEndAtCap().format(formatter_));
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(11);
+            cell.setCellStyle(cellStyle);
+            if(saveMsn.isMissionActive())
+                cell.setCellValue("활성");
+            else
+                cell.setCellValue("비활성");
+
+            cell = row.createCell(12);
+            cell.setCellStyle(cellStyle);
+            if(saveMsn.isMissionExposure())
+                cell.setCellValue("노출");
+            else
+                cell.setCellValue("비노출");
+
+            cell = row.createCell(13);
+            cell.setCellStyle(cellStyle);
+            if(saveMsn.isDupParticipation())
+                cell.setCellValue("중복 허용");
+            else
+                cell.setCellValue("중복 불가");
+
+            cell = row.createCell(14);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(saveMsn.getReEngagementDay());
+        }
+        return sheet;
+    }
+
+    public boolean setMissionIsViewFalse(int idx) {
+        SaveMsn target= saveMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionExposure(false);
+        saveMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setMissionIsView(int idx) {
+        SaveMsn target= saveMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionExposure(true);
+        saveMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setMissionIsUsedFalse(int idx) {
+        SaveMsn target= saveMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionActive(false);
+        saveMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean setMissionIsUsed(int idx) {
+        SaveMsn target= saveMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setMissionActive(true);
+        saveMsnRepository.save(target);
+        return true;
+    }
+
+    public boolean changeMissionReEngagementDay(int idx, SaveMsnAbleDayDto dto) {
+        SaveMsn target = saveMsnRepository.findByIdx(idx);
+        if(target ==null)
+            return false;
+        target.setDupParticipation(dto.isDupParticipation());
+        if(!dto.isDupParticipation())
+            target.setReEngagementDay(null);
+        else
+            target.setReEngagementDay(dto.getReEngagementDay());
+
+        saveMsnRepository.save(target);
+        return true;
+    }
+
 }

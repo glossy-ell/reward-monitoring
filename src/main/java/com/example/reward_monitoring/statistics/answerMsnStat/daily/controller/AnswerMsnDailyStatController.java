@@ -7,7 +7,8 @@ import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
-import com.example.reward_monitoring.mission.missionCS.entity.MissionCS;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.dto.AnswerMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.service.AnswerMsnDailyService;
@@ -46,6 +47,8 @@ public class AnswerMsnDailyStatController {
     AdvertiserService advertiserService;
     @Autowired
     MediaCompanyService mediaCompanyService;
+    @Autowired
+    ServerService serverService;
 
     @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
     @PostMapping("/search")
@@ -100,6 +103,7 @@ public class AnswerMsnDailyStatController {
         Member sessionMember = (Member) session.getAttribute("member");
         List<Advertiser> advertisers = advertiserService.getAdvertisers();
         List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
+        List<Server> servers = serverService.getServers();
 
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
@@ -131,7 +135,8 @@ public class AnswerMsnDailyStatController {
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
         model.addAttribute("answerMsnDailyStats", limitedAnswerMsnDailyStats);
-        model.addAttribute("advertisers ", advertisers);
+        model.addAttribute("servers", servers);
+        model.addAttribute("advertisers", advertisers);
         model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);

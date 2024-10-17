@@ -78,22 +78,22 @@ public class SaveMsn {
 
 
     @Comment("미션 시작일시")
-    @Column(name = "start_at_msn", nullable = false, updatable = false)
+    @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
 
     @Comment("미션 종료일시")
-    @Column(name = "end_at_msn", nullable = false, updatable = false)
+    @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
     private ZonedDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
-    @Column(name = "start_at", nullable = false, updatable = false)
+    @Column(name = "start_at", nullable = false)
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;
 
     @Comment("데일리캡 종료일시")
-    @Column(name = "end_at", nullable = false, updatable = false)
+    @Column(name = "end_at", nullable = false)
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
@@ -195,7 +195,7 @@ public class SaveMsn {
 
     @Builder.Default
     @Comment("전체 참여수")
-    @Column(name = "전체 참여수")
+    @Column(name = "total_part_cnt")
     @Schema(description = "전체 참여수")
     private int totalPartCnt=0;
 

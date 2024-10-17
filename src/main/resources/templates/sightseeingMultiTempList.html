@@ -456,20 +456,18 @@
 			</div>
 		</div>
 		<!-- end aside -->
-<script type="application/javascript">  
+<script type="application/javascript">
 
-    function commGoTmpReg() {
-        var frm         = document.writeFrm;
-        var hiddenFrm   = document.hiddenFrm;
+
+
+	function commGoTmpReg() {
+        var fileInput = document.getElementById('excelFile');
+        var file = fileInput.files[0];
 
         $('#saveBtn').attr('disabled',true);
 
-        if(hiddenFrm.writeAuth.value != true) {
-            $('#saveBtn').attr('disabled',false);
-            alert("쓰기 권한이 없습니다.");
-            return false;
-        }    
-        
+
+
         if(!document.getElementById("excelFile").value) {
             $('#saveBtn').attr('disabled',false);
             alert("엑셀 파일을 첨부해주세요.");
@@ -477,13 +475,38 @@
         }
 
         if(confirm("일괄 저장하시겠습니까?")){
-            frm.action = "/Mission/actSightseeingMultiTemp";
-            frm.submit();
+                var formData = new FormData();
+            formData.append("file", file);
+              $.ajax({
+                    url: '/Mission/sightseeingList/excel/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,  // 파일을 전송할 때 필요
+                    contentType: false,  // 파일을 전송할 때 필요
+                    beforeSend: function() {
+                        $('#saveBtn').attr('disabled', true);  // 버튼 비활성화
+                    },
+                    success: function(response) {
+                        alert('엑셀 파일이 성공적으로 업로드되었습니다.');
+                    },
+                    error: function(jqXHR) {
+                        if (jqXHR.status === 400) {
+                            alert('지원되지 않는 파일 형식입니다.');
+                           }
+                           else{
+                            alert('파일 업로드에 실패했습니다.');
+                        }
+                    },
+                    complete: function() {
+                        $('#saveBtn').attr('disabled', false);  // 버튼 재활성화
+                    }
+                });
         } else {
             $('#saveBtn').attr('disabled',false);
             return false;
         }
     }
+
 
     function commGoAllReg() {
         location.href = "/Mission/actTmpSightseeingAll";  

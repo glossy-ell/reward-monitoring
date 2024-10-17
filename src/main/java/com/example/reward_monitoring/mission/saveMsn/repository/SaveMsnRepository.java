@@ -55,4 +55,10 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
 
     @Query("SELECT s FROM SaveMsn s WHERE s.server.serverUrl LIKE %:keyword%")
     public List<SaveMsn> findByServer_(@Param("keyword") String keyword);
+
+    @Query("SELECT s FROM SaveMsn s WHERE s.endAtMsn > :currentTime AND s.dataType = true  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0)")
+    public List<SaveMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
+
+    @Query("SELECT s FROM SaveMsn s WHERE s.dataType = true")
+    public List<SaveMsn> findAllMission();
 }

@@ -409,37 +409,6 @@ public class AnswerMsnController {
     }
 
 
-    @Operation(summary = "모든 미션 종료", description = "!!DB의 모든 미션을 종료하고 비노출처리합니다!!")
-    @GetMapping("/Mission/quizList/endAll")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "모든 미션 종료 처리"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "403", description = "권한없음"),
-            @ApiResponse(responseCode = "500", description = "작업 중 예기치않은 오류발생")
-    })
-    public ResponseEntity<Void> allMissionEnd(HttpSession session){
-        Member sessionMember= (Member) session.getAttribute("member");
-        if(sessionMember == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } // 세션만료
-
-        Member member =memberRepository.findById( sessionMember.getId());
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }//데이터 없음
-
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-
-        boolean result = answerMsnService.allMissionEnd();
-
-        return (result) ?
-                ResponseEntity.status(HttpStatus.OK).build():
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
 
 
     @Operation(summary = "엑셀 다운로드", description = "정답미션 리스트 엑셀파일을 다운로드합니다")

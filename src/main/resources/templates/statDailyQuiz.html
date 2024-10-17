@@ -571,6 +571,7 @@
 														<div class="input-group col-lg-2 col-sm-12"> 
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option
 																				th:value="${server.serverUrl}"
@@ -607,10 +608,10 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="mediacompany" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=매체사=</option>
-																	<th:block th:each="mediacompany : ${mediacompanys}">
+																	<th:block th:each="mediacompany : ${mediaCompanys}">
 																		<option
-																				th:value="${mediacompany.mediacompany}"
-																				th:text="${mediacompany.mediacompany}">
+																				th:value="${mediacompany.companyName}"
+																				th:text="${mediacompany.companyName}">
 																		</option>
 																	</th:block>
 																</select>

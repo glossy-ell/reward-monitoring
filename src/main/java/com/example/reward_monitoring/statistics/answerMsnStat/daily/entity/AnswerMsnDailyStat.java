@@ -64,12 +64,12 @@ public class AnswerMsnDailyStat {
     @Comment("랜딩 카운트")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
-    private int landingCnt;
+    private int landingCnt=0;
 
     @Comment("참여 카운트")
     @Column(name = "total_part_cnt")
     @Schema(description = "참여 카운트")
-    private int partCnt;
+    private int partCnt=0;
 
     @Comment("참여일")
     @Column(name = "part_date", nullable = false, updatable = false)

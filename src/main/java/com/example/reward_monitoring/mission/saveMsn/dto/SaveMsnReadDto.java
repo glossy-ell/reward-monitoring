@@ -30,9 +30,9 @@ public class SaveMsnReadDto {
     @Column(name = "mission_title",nullable = false)
     private String missionTitle;
     @Schema(description = "미션 상세 제목", example = "아주 단단한 무쇠웍")
-    private String missionDetailTitle;
+    private String missionDetailTitle = "";
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
-    private String missionContent;
+    private String missionContent = "";
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
@@ -58,7 +58,7 @@ public class SaveMsnReadDto {
     @Schema(description = "검색 키워드", example="검색 키워드")
     private String searchKeyword;
     @Schema(description = "미션 데이터 타입" , example = "true")
-    private Boolean dataType;
+    private Boolean dataType = true;
     @Hidden
     private byte[] imageData;
     @Hidden
