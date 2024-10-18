@@ -1,8 +1,14 @@
 package com.example.reward_monitoring.statistics.searchMsn.sum.controller;
 
 
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.advertiser.service.AdvertiserService;
+import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
+import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.dto.SearchMsnSumStatSearchDto;
@@ -34,6 +40,12 @@ public class SearchMsnSumStatController {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    AdvertiserService advertiserService;
+    @Autowired
+    MediaCompanyService mediaCompanyService;
+    @Autowired
+    ServerService serverService;
 
     @GetMapping("/SaveMsnSumStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<SearchMsnSumStat>> getSaveMsnSumStats(){
@@ -56,6 +68,9 @@ public class SearchMsnSumStatController {
     @RequestMapping({"/",""})
     public String statSumSearch(HttpSession session, Model model){
         Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
+        List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -73,6 +88,9 @@ public class SearchMsnSumStatController {
         int totalLandingCount = searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
         int totalPartCount =  searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getPartCount).sum();  // 참여카운트 합
         model.addAttribute("searchMsnSumStats", searchMsnSumStats);
+        model.addAttribute("servers", servers);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("totalLandingCount",totalLandingCount);
         model.addAttribute("totalPartCount",totalPartCount);
         return "statSumSearch";

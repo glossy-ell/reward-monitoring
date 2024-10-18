@@ -8,6 +8,8 @@ import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.dto.SearchMsnDailyStatSearchDto;
@@ -47,6 +49,9 @@ public class SearchMsnDailyStatController {
     AdvertiserService advertiserService;
     @Autowired
     MediaCompanyService mediaCompanyService;
+    @Autowired
+    ServerService serverService;
+
     @Operation(summary = "검색미션데일리 통계 검색", description = "조건에 맞는 검색미션 데일리 통계를 검색합니다")
     @PostMapping("/search")
     @ApiResponses(value = {
@@ -99,6 +104,7 @@ public class SearchMsnDailyStatController {
         Member sessionMember = (Member) session.getAttribute("member");
         List<Advertiser> advertisers = advertiserService.getAdvertisers();
         List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
+        List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -128,6 +134,7 @@ public class SearchMsnDailyStatController {
 
 
         model.addAttribute("searchMsnDailyStats", limitedSearchMsnDailyStats);
+        model.addAttribute("servers", servers);
         model.addAttribute("advertisers ", advertisers);
         model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("currentPage", pageNumber);
