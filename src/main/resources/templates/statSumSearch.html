@@ -457,6 +457,13 @@
 		</div>
 		<!-- end aside -->
 <script type="text/javascript">
+	let innerAnswerMsns = [];
+	let innerAnswerMsnsPage;
+
+	function clearResults() {
+		innerAnswerMsns = []; // 리스트 초기화
+
+	}
     
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -472,6 +479,8 @@
 		formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+
+         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
          $.ajax({
         	url: `/Statistics/search`,
             type: "POST",
@@ -482,27 +491,63 @@
             success: function(response) {
             	const statSumSearchContainer = $('#statSumSearch'); // 회원 목록을 표시할 컨테이너 선택
             	statSumSearchContainer.empty();
-            	if (response.SumSearchTables.length === 0) {
+
+            	if (response.SumSearchTables.length === 0) { //검색결과가 빈 리스트일경우
 				//statSumSearch가 빈 리스트인 경우 메시지 추가
 					$('#staSumtSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				} else {
 					response.SumSearchTables.forEach(function(SumSearchTable,index) {
 					$('#statSumSearch').append(
 						'<tr>' +
-						'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.createdAtLocalDateTime) + '</td>' +
-						'<td class="text-center align-middle">' + SumSearchTable.landingCount + '</td>' +
-						'<td class="text-center align-middle">' + SumSearchTable.attendCount + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.createdAtLocalDateTime) + '</td>' +
+							'<td class="text-center align-middle">' + SumSearchTable.landingCount + '</td>' +
+							'<td class="text-center align-middle">' + SumSearchTable.attendCount + '</td>' +
 						'</tr>'
 					);
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				 });
-				$('#currentPage').text(response.currentPage);
-				$('#totalPages').text(response.totalPages);
 				}
-                       },
+             },
             error: function(xhr) {
             	alert("검색중 오류가 발생하였습니다.");
         	}
+        }
     	});
+    } //if 끝
+    else{ //이미 보유한 데이터가 있을경우
+			$.ajax({
+   					url: `/Statistics/search/${page}`,
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(jsonData),
+					success: function(response) {
+						const statSumSearchContainer = $('#statSumSearch'); // 회원 목록을 표시할 컨테이너 선택
+						statSumSearchContainer.empty();
+						innerAnswerMsnsPage = page;
+
+						if (response.SumSearchTables.length === 0) { //검색결과가 빈 리스트일경우
+						//statSumSearch가 빈 리스트인 경우 메시지 추가
+							$('#staSumtSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						} else {
+							response.SumSearchTables.forEach(function(SumSearchTable,index) {
+							$('#statSumSearch').append(
+								'<tr>' +
+									'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + SumSearchTable.landingCount + '</td>' +
+									'<td class="text-center align-middle">' + SumSearchTable.attendCount + '</td>' +
+								'</tr>'
+							);
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							});
+						}
+					},
+    		error: function(xhr, status, error) {
+        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+   	 			}
+			});
+		}
     }
     // 날짜 포맷 함수
 	function formatDateTime(dateTimeStr) {
@@ -566,6 +611,7 @@
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option
 																				th:value="${server.serverUrl}"
@@ -586,7 +632,7 @@
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn form-control k_">
 																<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																	<option value="" disabled selected>광고주를 선택하세요</option>
+																	<option value="" disabled selected>=광고주=</option>
 																	<th:block th:each="advertiser : ${advertisers}">
 																		<option
 																				th:value="${advertiser.advertiser}"
@@ -608,10 +654,10 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="mediacompany" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=매체사=</option>
-																	<th:block th:each="mediacompany : ${mediacompanys}">
+																	<th:block th:each="mediacompany : ${mediaCompanys}">
 																		<option
-																				th:value="${mediacompany.mediacompany}"
-																				th:text="${mediacompany.mediacompany}">
+																				th:value="${mediacompany.companyName}"
+																				th:text="${mediacompany.companyName}">
 																		</option>
 																	</th:block>
 																</select>
@@ -629,7 +675,7 @@
 															<div class="input-daterange input-group">
 
 																<!-- 검색 시작일 -->
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="검색 시작일" value="2024-07-12" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
 
 																<!-- ~ -->
 																<div class="input-group-append">
@@ -637,7 +683,7 @@
 																</div>
 
 																<!-- 검색 종료일 -->
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="검색 종료일" value="2024-08-11" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<button type="button" class="btn btn-secondary" aria-expanded="false" onclick="commSearch();">검색</button>
 																	<button type="button" class="btn btn-secondary" onclick="commSearchReset();">초기화</button>

@@ -457,7 +457,14 @@
 		</div>
 		<!-- end aside -->
 <script type="text/javascript">
-    
+	let innerAnswerMsns = [];
+    let innerAnswerMsnsPage;
+
+    function clearResults() {
+		innerAnswerMsns = []; // 리스트 초기화
+
+	}
+
     function enterkey() {
         if (window.event.keyCode == 13) {
             commSearch();
@@ -467,55 +474,95 @@
     //검색
     function commSearch() {
         var frm = document.searchFrm;
-		var formData = new FormData(frm);
-		var jsonData = {};
-		formData.forEach((value, key) => {
+        var formData = new FormData(frm);
+        var jsonData = {};
+        formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+
+         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
          $.ajax({
-        	url: `/Statistics/search`,
+            url: `/Statistics/search`,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(jsonData),
 
-
             success: function(response) {
-            	const statSumSightseeingContainer = $('#statSumSightseeing'); // 회원 목록을 표시할 컨테이너 선택
-            	statSumSightseeingContainer.empty();
-            	if (response.SumSightseeingTables.length === 0) {
-				//statSumSightseeing가 빈 리스트인 경우 메시지 추가
-					$('#statSumSightseeing').append('<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>');
-				} else {
-					response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
-					$('#statSumSightseeing').append(
-						'<tr>' +
-						'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
-						'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
-						'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
-						'</tr>'
-					);
-				 });
-				$('#currentPage').text(response.currentPage);
-				$('#totalPages').text(response.totalPages);
-				}
-                       },
-            error: function(xhr) {
-            	alert("검색중 오류가 발생하였습니다.");
-        	}
-    	});
-    }
-	// 날짜 포맷 함수
-	function formatDateTime(dateTimeStr) {
-		if (!dateTimeStr) {
-			return ''; // null 또는 undefined일 때 빈 문자열 반환
-		}
-		const date = new Date(dateTimeStr);
-		const year = date.getFullYear();
-		const month = ('0' + (date.getMonth() + 1)).slice(-2);
-		const day = ('0' + date.getDate()).slice(-2);
+                const statSumSightseeingContainer = $('#statSumSightseeing'); // 회원 목록을 표시할 컨테이너 선택
+                statSumSightseeingContainer.empty();
 
-		return `${year}-${month}-${day}`;
-	}
+                if (response.SumSightseeingTables.length === 0) { //검색결과가 빈 리스트일경우
+                //statSumSightseeing가 빈 리스트인 경우 메시지 추가
+                    $('#statSumSightseeing').append('<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>');
+                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                } else {
+                	innerAnswerMsns = response.fullAnswerMsns;
+					innerAnswerMsnsPage = 1;
+                    response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
+                    $('#statSumSightseeing').append(
+                        '<tr>' +
+							'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
+							'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
+							'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
+                        '</tr>'
+                    );
+                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                 });
+                }
+               },
+            error: function(xhr) {
+                alert("검색중 오류가 발생하였습니다.");
+                }
+            }
+        });
+    } //if 끝
+    else{ //이미 보유한 데이터가 있을경우
+			$.ajax({
+   					url: `/Statistics/search/${page}`,
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(jsonData),
+					success: function(response) {
+						const statSumSightseeingContainer = $('#statSumSightseeing'); // 회원 목록을 표시할 컨테이너 선택
+						statSumSightseeingContainer.empty();
+						innerAnswerMsnsPage = page;
+
+						if (response.SumSightseeingTables.length === 0) { //검색결과가 빈 리스트일경우
+						//statSumSightseeing가 빈 리스트인 경우 메시지 추가
+							$('#statSumSightseeing').append('<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>');
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						} else {
+							response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
+							$('#statSumSightseeing').append(
+								'<tr>' +
+									'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
+									'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
+								'</tr>'
+							);
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							});
+						}
+					},
+    		error: function(xhr, status, error) {
+        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+   	 			}
+			});
+		}
+    }
+
+    // 날짜 포맷 함수
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) {
+            return ''; // null 또는 undefined일 때 빈 문자열 반환
+        }
+        const date = new Date(dateTimeStr);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+
+        return `${year}-${month}-${day}`;
+    }
 
     //검색 초기화
     function commSearchReset() {
@@ -524,10 +571,8 @@
 
     //Excel 다운로드
     function commDownExcel() {
+    	window.location.href = '/Statistics/StatSumSightseeing/excel/download';
         var frm = document.searchFrm;
-        
-        frm.action ='/Statistics/excelStatSumSightseeing';
-        frm.submit();
     }
 
 </script>
@@ -567,6 +612,7 @@
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option
 																				th:value="${server.serverUrl}"
@@ -609,10 +655,10 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="mediacompany" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=매체사=</option>
-																	<th:block th:each="mediacompany : ${mediacompanys}">
+																	<th:block th:each="mediacompany : ${mediaCompanys}">
 																		<option
-																				th:value="${mediacompany.mediacompany}"
-																				th:text="${mediacompany.mediacompany}">
+																				th:value="${mediacompany.companyName}"
+																				th:text="${mediacompany.companyName}">
 																		</option>
 																	</th:block>
 																</select>
@@ -630,7 +676,7 @@
 															<div class="input-daterange input-group">
 
 																<!-- 검색 시작일 -->
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="검색 시작일" value="2024-07-12" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
 
 																<!-- ~ -->
 																<div class="input-group-append">
@@ -638,7 +684,7 @@
 																</div>
 
 																<!-- 검색 종료일 -->
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="검색 종료일" value="2024-08-11" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<button type="button" class="btn btn-secondary" aria-expanded="false" onclick="commSearch();">검색</button>
 																	<button type="button" class="btn btn-secondary" onclick="commSearchReset();">초기화</button>

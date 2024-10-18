@@ -7,6 +7,8 @@ import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
+import com.example.reward_monitoring.general.userServer.entity.Server;
+import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.Service.AnswerMsnSumStatService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
@@ -43,6 +45,8 @@ public class AnswerMsnSumStatController {
     AdvertiserService advertiserService;
     @Autowired
     MediaCompanyService mediaCompanyService;
+    @Autowired
+    ServerService serverService;
 
     @GetMapping("/AnswerMsnSumStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<AnswerMsnSumStat>> getAnswerMsnSumStats(){
@@ -67,6 +71,7 @@ public class AnswerMsnSumStatController {
         Member sessionMember = (Member) session.getAttribute("member");
         List<Advertiser> advertisers = advertiserService.getAdvertisers();
         List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
+        List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -84,6 +89,9 @@ public class AnswerMsnSumStatController {
         int totalPartCount =  answerMsnSumStats.stream().mapToInt(AnswerMsnSumStat::getPartCount).sum();  // 참여카운트 합
 
         model.addAttribute("answerMsnSumStats", answerMsnSumStats);
+        model.addAttribute("servers", servers);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("totalLandingCount",totalLandingCount);
         model.addAttribute("totalPartCount",totalPartCount);
         return "statSumQuiz";

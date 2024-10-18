@@ -457,7 +457,14 @@
 		</div>
 		<!-- end aside -->
 <script type="text/javascript">
-    
+	let innerAnswerMsns = [];
+	let innerAnswerMsnsPage;
+
+	function clearResults() {
+		innerAnswerMsns = []; // 리스트 초기화
+
+	}
+
     function enterkey() {
         if (window.event.keyCode == 13) {
             commSearch();
@@ -467,64 +474,142 @@
     //검색
     function commSearch() {
         var frm = document.searchFrm;
-		var formData = new FormData(frm);
-		var jsonData = {};
-		formData.forEach((value, key) => {
+        var formData = new FormData(frm);
+        var jsonData = {};
+        formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+
+         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
          $.ajax({
-        	url: `/Statistics/search`,
+            url: `/Statistics/search`,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(jsonData),
 
-
             success: function(response) {
-            	const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
-            	statSearchContainer.empty();
-            	if (response.SearchTables.length === 0) {
-				//statSearch가 빈 리스트인 경우 메시지 추가
-					$('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-				} else {
-					response.SearchTables.forEach(function(SearchTable,index) {
-					$('#statSearch').append(
-						'<tr>' +
-						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.idx + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.memberID + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.searchIdx + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.abuseState + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.checkResponse + '</td>' +
-						'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
-						'<td class="text-center align-middle">' + formatDateTime(SearchTable.createdAtLocalDateTime) + '</td>' +
-						'</tr>'
-					);
-				 });
-				$('#currentPage').text(response.currentPage);
-				$('#totalPages').text(response.totalPages);
-				}
-                       },
-            error: function(xhr) {
-            	alert("검색중 오류가 발생하였습니다.");
-        	}
-    	});
-    }
-	// 날짜 포맷 함수
-	function formatDateTime(dateTimeStr) {
-		if (!dateTimeStr) {
-			return ''; // null 또는 undefined일 때 빈 문자열 반환
-		}
-		const date = new Date(dateTimeStr);
-		const year = date.getFullYear();
-		const month = ('0' + (date.getMonth() + 1)).slice(-2);
-		const day = ('0' + date.getDate()).slice(-2);
-		const hours = ('0' + date.getHours()).slice(-2);
-		const minutes = ('0' + date.getMinutes()).slice(-2);
-		const seconds = ('0' + date.getSeconds()).slice(-2);
+                const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
+                statSearchContainer.empty();
 
-		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                if (response.SearchTables.length === 0) {
+                //statSearch가 빈 리스트인 경우 메시지 추가
+                    $('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                } else {
+                	innerAnswerMsns = response.fullAnswerMsns;
+					innerAnswerMsnsPage = 1;
+                    response.SearchTables.forEach(function(SearchTable,index) {
+                    $('#statSearch').append(
+                        '<tr>' +
+							'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.idx + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.memberID + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.searchIdx + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.abuseState + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.checkResponse + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SearchTable.createdAtLocalDateTime) + '</td>' +
+                        '</tr>'
+                    );
+                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                 });
+               }
+            },
+            error: function(xhr) {
+                alert("검색중 오류가 발생하였습니다.");
+            }
+         }
+        });
+    } //if 끝
+    else{ //이미 보유한 데이터가 있을경우
+			$.ajax({
+   					url: `/Statistics/search/${page}`,
+    				type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(jsonData),
+					success: function(response) {
+						const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
+						statSearchContainer.empty();
+						innerAnswerMsnsPage = page;
+
+						if (response.SearchTables.length === 0) {
+						//statSearch가 빈 리스트인 경우 메시지 추가
+							$('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						} else {
+							innerAnswerMsns = response.fullAnswerMsns;
+							innerAnswerMsnsPage = 1;
+							response.SearchTables.forEach(function(SearchTable,index) {
+							$('#statSearch').append(
+								'<tr>' +
+									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.idx + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.memberID + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.searchIdx + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.abuseState + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.checkResponse + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SearchTable.createdAtLocalDateTime) + '</td>' +
+								'</tr>'
+							);
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							});
+						}
+					},
+    		error: function(xhr, status, error) {
+        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+   	 			}
+			});
+		}
+    }
+
+    // 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		if (currentPage > 1) {
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+		}
 	}
+
+    // 날짜 포맷 함수
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) {
+            return ''; // null 또는 undefined일 때 빈 문자열 반환
+        }
+        const date = new Date(dateTimeStr);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+        const seconds = ('0' + date.getSeconds()).slice(-2);
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
 
 
     //검색 초기화
@@ -567,6 +652,7 @@
 														<div class="input-group col-lg-3 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option
 																				th:value="${server.serverUrl}"
@@ -588,7 +674,7 @@
 															<div class="input-daterange input-group">
 
 																<!-- 검색 시작일 -->
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="검색 시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
 
 																<!-- ~ -->
 																<div class="input-group-append">
@@ -596,7 +682,7 @@
 																</div>
 
 																<!-- 검색 종료일 -->
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="검색 종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
 															</div>
 															<!-- //datepicker 검색 기간 지정 -->
 														</div>
@@ -609,10 +695,10 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="mediacompany" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=매체사=</option>
-																	<th:block th:each="mediacompany : ${mediacompanys}">
+																	<th:block th:each="mediacompany : ${mediaCompanys}">
 																		<option
-																				th:value="${mediacompany.mediacompany}"
-																				th:text="${mediacompany.mediacompany}">
+																				th:value="${mediacompany.companyName}"
+																				th:text="${mediacompany.companyName}">
 																		</option>
 																	</th:block>
 																</select>
@@ -648,7 +734,7 @@
 														<div class="input-group col-lg-3 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn form-control k_">
 																<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-																	<option value="" disabled selected>광고주를 선택하세요</option>
+																	<option value="" disabled selected>=광고주=</option>
 																	<th:block th:each="advertiser : ${advertisers}">
 																		<option
 																				th:value="${advertiser.advertiser}"
