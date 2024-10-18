@@ -65,15 +65,17 @@ public class SearchMsnService {
         if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
+            dto.setStartAtMsn(date.atTime(time).atZone(ZoneId.of("Asia/Seoul")));
             searchMsn.setStartAtMsn(dto.getStartAtMsn());
+            searchMsn.setStartAtMsn(searchMsn.getStartAtMsn().plusHours(9));
         }
         if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
 
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
+            dto.setEndAtMsn(date.atTime(time).atZone(ZoneId.of("Asia/Seoul")));
             searchMsn.setEndAtMsn(dto.getEndAtMsn());
+            searchMsn.setEndAtMsn(searchMsn.getEndAtMsn().plusHours(9));
         }
 
         if (dto.getStartAtCap() != null)
@@ -94,7 +96,7 @@ public class SearchMsnService {
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             searchMsn.setDupParticipation(bool);
-            if(searchMsn.getReEngagementDay() !=null)
+            if(!searchMsn.isDupParticipation())
                 searchMsn.setReEngagementDay(null);
         }
 
@@ -126,8 +128,31 @@ public class SearchMsnService {
     }
 
     public SearchMsn add(SearchMsnReadDto dto) {
-        Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
+        Server serverEntity = null;
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+        if(dto.getUrl()!= null)
+            serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
+        else
+            serverEntity = serverRepository.findByServerUrl_("https://ocb.srk.co.kr");//default 서버 주소
+
+        dto.setDataType(true);
+        if(!dto.getDupParticipation())
+            dto.setReEngagementDay(null);
         return dto.toEntity(advertiserEntity,serverEntity);
     }
 

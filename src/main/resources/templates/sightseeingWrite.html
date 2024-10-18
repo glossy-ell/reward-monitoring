@@ -456,96 +456,198 @@
 			</div>
 		</div>
 		<!-- end aside -->
-<script type="application/javascript">  
+<script type="application/javascript">
 
-    //첨부파일 열기
-    function openFiles(url) {
-        newPage = window.open(url,"","top=100,left=400,width=1200,height=1000");
-        return true;
-    }
 
-    function commGoAct() {
-        var frm         = document.writeFrm;
-        var hiddenFrm   = document.hiddenFrm;
+	window.onload = function() {
+		toggleOverlapDay();
+	}
 
-        $('#saveBtn').attr('disabled',true);
+	function updateFileName() {
+		const fileInput = document.getElementById('searchMainImg');
+		const previewButton = document.getElementById('previewButton');
+		const fileNameDisplay = document.getElementById('fileName');
 
-        if(hiddenFrm.writeAuth.value != true) {
-            $('#saveBtn').attr('disabled',false);
-            alert("쓰기 권한이 없습니다.");
-            return false;
-        } 
-        
-        if(comInputCheck('text','sightseeingBasicCap') === true) {
-            $('#saveBtn').attr('disabled',false);
+		// 사용자가 선택한 파일이 있는지 확인
+		if (fileInput.files.length > 0) {
+			const fileName = fileInput.files[0].name; // 선택한 파일의 이름 가져오기
+			previewButton.textContent = fileName; // 버튼의 텍스트 변경
+			fileNameDisplay.textContent = fileName;
+
+			const file = fileInput.files[0];
+			const reader = new FileReader();
+
+			reader.onload = function(event) {
+				const base64String = event.target.result.split(',')[1]; // Base64 문자열만 가져오기
+				// 미리보기 버튼의 onclick 핸들러를 업데이트
+				previewButton.setAttribute('onclick', `openFiles('${base64String}')`);
+			};
+
+			reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+		} else {
+			previewButton.textContent = '미리보기'; // 파일이 선택되지 않은 경우 기본 텍스트로 설정
+		}
+	}
+
+  function openFiles(image) {
+	if (image === -1) {
+		const newPage = window.open("/images/mission_default.png", "", "top=100,left=400,width=1200,height=1000");
+		return true;
+	} else {
+		const newPage = window.open("", "", "top=100,left=400,width=1200,height=1000");
+		newPage.document.write(`
+			<html>
+				<head>
+					<title>이미지</title>
+				</head>
+				<body>
+					<img src="data:image/png;base64,${image}" alt="Image"/>
+				</body>
+			</html>
+			`);
+			newPage.document.close();
+		}
+	}
+
+    async function commGoAct(idx=-1) {
+
+        if(comInputCheck('text','saveBasicCap') === true) {
             alert("미션 수량을 확인해주세요.");
             $('#sightseeingBasicCap').focus();
             return false;
         }
 
-        if(!$.isNumeric($("#sightseeingBasicCap").val())) {
-            $('#saveBtn').attr('disabled',false);
-            alert("미션 수량을 확인해주세요.");    
+        if(!$.isNumeric($("#saveBasicCap").val())) {
+            alert("미션 수량을 확인해주세요.");
             $('#sightseeingBasicCap').focus();
             return false;
         }
 
-        if(comInputCheck('text','sightseeingDailyCap') === true) {
-            $('#saveBtn').attr('disabled',false);
-            alert("미션 수량을 확인해주세요.");
+        if(comInputCheck('text','saveDailyCap') === true) {
+            alert("데일리캡 수량을 확인해주세요.");
             $('#sightseeingDailyCap').focus();
             return false;
         }
 
-        if(!$.isNumeric($("#sightseeingDailyCap").val())) {
-            $('#saveBtn').attr('disabled',false);
-            alert("미션 수량을 확인해주세요.");    
+        if(!$.isNumeric($("#saveDailyCap").val())) {
+            alert("데일리캡 수량을 확인해주세요.");
             $('#sightseeingDailyCap').focus();
             return false;
-        }    
-        
+        }
+
         if(comInputCheck('text','missionOrder') === true) {
-            $('#saveBtn').attr('disabled',false);
+
             alert("미션 노출 순서를 확인해주세요.");
             $('#missionOrder').focus();
             return false;
         }
 
         if(!$.isNumeric($("#missionOrder").val())) {
-            $('#saveBtn').attr('disabled',false);
             alert("미션 노출 순서를 확인해주세요.");
             $('#missionOrder').focus();
             return false;
         }
 
-        if(comInputCheck('text','sightseeingTitle') === true) {
-            $('#saveBtn').attr('disabled',false);
+        if(comInputCheck('text','sightseeingTitle') === true) {;
             alert("미션 제목을 확인해주세요.");
             $('#sightseeingTitle').focus();
             return false;
-        }     
+        }
 
         if(comInputCheck('text','sightseeingDetailTitle') === true) {
-            $('#saveBtn').attr('disabled',false);
             alert("미션 상세 제목을 확인해주세요.");
             $('#sightseeingDetailTitle').focus();
             return false;
-        }  
-
-        if(confirm("저장하시겠습니까?")){
-            frm.action = "/Mission/actSightseeingWrite";
-            frm.submit();
-        } else {
-            $('#saveBtn').attr('disabled',false);
-            return false;
         }
+		var frm = document.dto;
+		var formData = new FormData(frm);
+		var jsonData = {};
+		var fileNameElement = document.getElementById("fileName");
+		var fileName = fileNameElement.textContent.trim();
+
+		var fileInput = document.getElementById('searchMainImg');
+			if (fileInput.files.length > 0) {
+				formData.append('file', fileInput.files[0]); // 첫 번째 파일 추가
+		} else {
+			if(fileName == 'mission_default.png'){
+				const defaultImageURL = '/images/mission_default.png';
+				await fetch(defaultImageURL);
+				const response = await fetch(defaultImageURL);
+				const blob = await response.blob();
+				const defaultFile = new File([blob], 'default-image.png', { type: 'image/png' });
+				formData.append('file', defaultFile);
+			}
+		}
+
+		formData.forEach((value, key) => {
+			if (key !== 'imageData') { // 'imageData' 키를 제외합니다.
+				jsonData[key] = value; // 나머지 키-값 쌍을 JSON 객체에 추가합니다.
+			}
+		});
+
+		formData.append("dto",new Blob([JSON.stringify(jsonData)], {type: "application/json",}));
+
+		 if(confirm("저장하시겠습니까?")){
+
+			if (idx === -1) {
+			   // 신규 생성 요청
+			   await $.ajax({
+				   url: "/Mission/sightseeingWrite/add",
+				   type: "POST",
+				   processData: false,
+				   contentType: false,
+				   data: formData,
+				   success: function(response) {
+					   alert("등록하였습니다.");
+					   window.location.href = "/Mission/sightseeingList";
+				   },
+				   error: function(xhr) {
+					   alert("미션 등록 실패.");
+				   }
+			   });
+		   } else {
+			   // 정보 수정 요청
+			   $.ajax({
+				   url: `/Mission/sightseeingWrite/edit/${idx}`,
+				   type: "POST",
+				   processData: false,
+				   contentType: false,
+				   data: formData,
+				   success: function(response) {
+					   // 성공적으로 수정 시
+					   alert("정보가 수정되었습니다.");
+					   window.location.href = "/Mission/sightseeingList";
+				   },
+				   error: function(xhr) {
+					   alert("미션 수정 실패.");
+				   }
+			   });
+		   }
+		} else {
+			return false;
+		}
     }
 
-    function commGoList(str) {
-        var frm = document.searchFrm;
-        frm.action = str;
-        frm.submit();
-    }
+	function commGoList(str) {
+		 window.location.href = "/Mission/sightseeingList";
+	}
+
+	function toggleOverlapDay() {
+		var isOverlap1 = document.getElementById("isOverlap1"); // 참여 불가 라디오 버튼
+		var isOverlap2 = document.getElementById("isOverlap2"); // 참여 불가 라디오 버튼
+		var overlapDay = document.getElementById("overlapDay"); // 재참여 가능일 입력 필드
+
+		if (isOverlap2.checked) {
+			overlapDay.value = ''; // 값 비우기
+			overlapDay.disabled = true; // 비활성화
+		} else if(isOverlap1.checked) {
+			overlapDay.value = 5;
+			overlapDay.disabled = false; // 활성화
+		}
+	}
+	document.addEventListener("DOMContentLoaded", function() {
+		toggleOverlapDay();
+	});
 
 </script>
 <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
@@ -566,74 +668,46 @@
                                 </div>
                             </div>
 
-                            <form name="hiddenFrm">
-                                <input type="hidden" name="writeAuth" value="1">
-                            </form>
-
-                            <form method="get" name="searchFrm">
-                                <!--검색조건-->
-                                <input type="hidden" name="sOverOpenStartDate" value="">
-                                <input type="hidden" name="sUnderOpenEndDate" value="">
-                                <input type="hidden" name="sOverDCapSDate" value="">
-                                <input type="hidden" name="sUnderDCapEDate" value="">                               
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sIsView" value="">
-                                <input type="hidden" name="sIsOverlap" value="">
-                                <input type="hidden" name="sOpt" value="sTitle">
-                                <input type="hidden" name="sVal" value="">
-                            </form>
 
                             <!--begin::Form-->
-                            <form class="k-form" name="writeFrm" method="post" enctype="multipart/form-data">
-                                <!--검색조건-->
-                                <input type="hidden" name="sOverOpenStartDate" value="">
-                                <input type="hidden" name="sUnderOpenEndDate" value="">
-                                <input type="hidden" name="sOverDCapSDate" value="">
-                                <input type="hidden" name="sUnderDCapEDate" value="">                               
-                                <input type="hidden" name="sIsUsed" value="">
-                                <input type="hidden" name="sIsView" value="">
-                                <input type="hidden" name="sIsOverlap" value="">
-                                <input type="hidden" name="sOpt" value="sTitle">
-                                <input type="hidden" name="sVal" value="">
-                                <input type="hidden" name="sightseeingIdx" id="sightseeingIdx" value="">
-                                <input type="hidden" name="mode" id="mode" value="ins">                                
-
-                                <div class="k-portlet__body">
-									<div class="row">   
-                                        <div class="col-md-4">
+                            <form class="k-form" name="dto" method="post" enctype="multipart/form-data">
+								<div class="k-portlet__body">
+									<div class="row">
+										<div class="col-md-4">
 											<div class="form-group">
 												<label class="label__icon">미션 기본 수량 <small class="text-danger"> (수량이 없는 경우 0을 넣어주세요.)</small></label>
-												<input type="number" class="form-control" name="sightseeingBasicCap" id="sightseeingBasicCap" value="100" placeholder="미션 기본 수량을 숫자형태로 입력해주세요" min="0" autocomplete="off">
+												<input type="number" class="form-control" name="missionDefaultQty" id="saveBasicCap" th:value="${saveMsn?.missionDefaultQty}" placeholder="미션 기본 수량 숫자형태로 입력해주세요" min="0" autocomplete="off">
 											</div>
 										</div>
 										<div class="col-md-4">
 											<div class="form-group">
 												<label class="label__icon">미션 데일리캡 <small class="text-danger"> (수량이 없는 경우 0을 넣어주세요.)</small></label>
-												<input type="number" class="form-control" name="sightseeingDailyCap" id="sightseeingDailyCap" value="50" placeholder="미션 데일리캡을 숫자형태로 입력해주세요" min="0" autocomplete="off">
-											</div>
-										</div>       
-                                        <div class="col-md-4">
-											<div class="form-group">
-												<label class="label__icon">미션 노출 순서</label>
-												<input type="number" class="form-control" name="missionOrder" id="missionOrder" value="100" placeholder="미션 노출 순서를 숫자형태로 입력해주세요" min="0" autocomplete="off">
+												<input type="number" class="form-control" name="missionDailyCap" id="saveDailyCap" th:value="${saveMsn?.missionDailyCap}" placeholder="미션 데일리캡 숫자형태로 입력해주세요" min="0" autocomplete="off">
 											</div>
 										</div>
+
+										<div class="col-md-4">
+											<div class="form-group">
+												<label class="label__icon">미션 노출 순서</label>
+												<input type="number" class="form-control" name="missionExpOrder" id="missionOrder" th:value="${saveMsn?.missionExpOrder}"  placeholder="미션 노출 순서를 숫자형태로 입력해주세요" min="0" autocomplete="off">
+											</div>
+										</div>
+
                                         <div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주</label>
                                                 <div class="input-group">
                                                     <div class="dropdown bootstrap-select input-group-btn form-control k_">
-														<select name="advertiserIdx" class="form-control k_selectpicker" data-live-search="true" id="advertiserIdx" tabindex="-98">
-															<option value="1">시크릿 K</option>
-															<option value="2">올앤올</option>
-															<option value="3">애드닷</option>
-															<option value="4">탑플랜</option>
-															<option value="5">네이버스</option>
-															<option value="6">키봅</option>
-															<option value="7">셀렉티드</option>
-															<option value="8">골든커머스</option>
-															<option value="9">원픽</option>
-															<option value="10">올스</option>
+														<select name="advertiser" class="form-control k_selectpicker" data-live-search="true" id="advertiserIdx" tabindex="-98">
+															<option th:value="${null}" th:text="'광고주를 선택해주세요'"
+																	th:if="${saveMsn == null}"
+																	disabled="disabled" th:selected="${saveMsn == null}"></option>
+															<th:block th:each="advertiser : ${advertisers}">
+																<option
+																		th:value="${advertiser.advertiser}"
+																		th:text="${advertiser.advertiser}"
+																		th:selected="${saveMsn != null && saveMsn.advertiser.advertiser == advertiser.advertiser}"></option>
+															</th:block>
 														</select>
 														<div class="dropdown-menu " role="combobox">
 															<div class="bs-searchbox">
@@ -650,40 +724,47 @@
 											</div>
 										</div>
 
-                                        <div class="col-md-6">
+										<div class="col-md-6">
 											<div class="form-group">
 												<label class="label__icon">광고주 추가정보</label>
-                                                <input type="text" class="form-control" name="advertiserDetail" id="advertiserDetail" value="" placeholder="광고주 추가 정보를 입력해주세요" autocomplete="off">											
+												<input type="text" class="form-control" name="advertiserDetails" id="advertiserDetail" th:value="${saveMsn?.advertiserDetails}" placeholder="광고주 추가 정보를 입력해주세요" autocomplete="off">
 											</div>
 										</div>
+
+
 										<div class="col-12">
 											<div class="form-group">
 												<label class="label__icon">미션 제목</label>
-												<input type="text" class="form-control" name="sightseeingTitle" id="sightseeingTitle" value="" placeholder="미션 제목을 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="missionTitle" id="searchTitle" th:value="${saveMsn?.missionTitle}" placeholder="미션 제목을 입력해주세요" autocomplete="off">
 											</div>
-										</div>        
-                                        <div class="col-12">
+										</div>
+
+
+										<div class="col-12">
 											<div class="form-group">
 												<label class="label__icon">미션 상세 제목</label>
-												<input type="text" class="form-control" name="sightseeingDetailTitle" id="sightseeingDetailTitle" value="" placeholder="미션 상세 제목을 입력해주세요" autocomplete="off">
+												<input type="text" class="form-control" name="missionDetailTitle" id="searchDetailTitle" th:value="${saveMsn?.missionDetailTitle}" placeholder="미션 상세 제목을 입력해주세요" autocomplete="off">
 											</div>
-										</div>   
+										</div>
+
 										<div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="label__icon">미션 내용</label>
-												<textarea id="sightseeingContents" name="sightseeingContents" class="form-control" rows="20" placeholder="내용을 입력해주세요." style="display: none;"></textarea>
-                                            </div>
+											<div class="form-group">
+												<label class="label__icon">미션 내용</label>
+												<textarea id="searchContents" name="missionContent" class="form-control" rows="10" placeholder="내용을 입력해주세요."
+														  th:text="${saveMsn != null ? saveMsn.missionContent : '내용을 입력해주세요.'}">
+											</textarea>
+											</div>
                                         </div>
                                         <div class="col-md-3">
 											<div class="form-group">
 												<label class="label__icon">미션 사용여부</label>
 												<div class="k-radio-inline mx-2">
-													 <div class="d-inline-block mr-3">
-														 <input type="radio" name="isUsed" value="1" class="custom-control-input" id="isUsed1">
-														 <label for="isUsed1">사용함</label>
-													 </div>
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isUsed" value="2" checked="checked" class="custom-control-input" id="isUsed2">
+														<input type="radio" name="missionActive" value="true"  th:checked="${saveMsn == null ? true : saveMsn.missionActive}" class="custom-control-input" id="isUsed1">
+														<label for="isUsed1">사용함</label>
+													</div>
+													<div class="d-inline-block mr-3">
+														<input type="radio" name="missionActive" value="false" th:checked="${saveMsn != null && !saveMsn.missionActive}" class="custom-control-input" id="isUsed2">
 														<label for="isUsed2">사용안함</label>
 													</div>
 												</div>
@@ -693,12 +774,12 @@
 											<div class="form-group">
 												<label class="label__icon">미션 노출여부</label>
 												<div class="k-radio-inline mx-2">
-													 <div class="d-inline-block mr-3">
-														 <input type="radio" name="isView" value="1" class="custom-control-input" id="isView1">
-														 <label for="isView1">노출함</label>
-													 </div>
 													<div class="d-inline-block mr-3">
-														<input type="radio" name="isView" value="2" checked="checked" class="custom-control-input" id="isView2">
+														<input type="radio" name="missionExposure" value="true" th:checked="${saveMsn == null ? true : saveMsn.missionExposure}" class="custom-control-input" id="isView1">
+														<label for="isView1">노출함</label>
+													</div>
+													<div class="d-inline-block mr-3">
+														<input type="radio" name="missionExposure" value="false" th:checked="${saveMsn != null && !saveMsn.missionExposure}"   class="custom-control-input" id="isView2">
 														<label for="isView2">노출안함</label>
 													</div>
 												</div>
@@ -708,27 +789,27 @@
 											<div class="form-group">
 												<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 												<div class="k-radio-inline mx-2">
-													 <div class="d-inline-block mr-3">
-														 <input type="radio" name="isOverlap" value="1" class="custom-control-input" id="isOverlap1">
-														 <label for="isOverlap1">참여 가능</label>
-													 </div>
-													 <div class="d-inline-block mr-3">
-														<input type="radio" name="isOverlap" value="2" checked="checked" class="custom-control-input" id="isOverlap2">
+													<div class="d-inline-block mr-3">
+														<input type="radio" name="dupParticipation" value="true" th:checked="${saveMsn ==null? true : saveMsn.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
+														<label for="isOverlap1">참여 가능</label>
+													</div>
+													<div class="d-inline-block mr-3">
+														<input type="radio" name="dupParticipation" value="false"  th:checked="${saveMsn != null && !saveMsn.dupParticipation}" class="custom-control-input" id="isOverlap2" onclick="toggleOverlapDay()">
 														<label for="isOverlap2">참여 불가</label>
-													 </div>
+													</div>
 												</div>
 											</div>
 										</div>
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="label__icon">참여후 재참여 가능일(1,2,3...) </label>
-												<input type="text" class="form-control" name="overlapDay" id="overlapDay" value="" placeholder="미션 참여후 가능일이 지나야 재참여 가능합니다." autocomplete="off">
-                                            </div>
+											<div class="form-group">
+												<label class="label__icon">참여후 재참여 가능일(1,2,3...) </label>
+												<input type="text" class="form-control" name="reEngagementDay" id="overlapDay" th:value="${saveMsn?.reEngagementDay}" placeholder="미션 참여후 가능일이 지나야 재참여 가능합니다." autocomplete="off">
+											</div>
                                         </div>
                                         <div class="col-12">
 											<div class="form-group">
 												<label class="label__icon">참여 제외할 매체 IDX <small class="text-danger"> **공백없이 ex) 1|4|8|12 or 4 </small></label>
-												<input type="text" class="form-control" name="rejectAff" id="rejectAff" value="" placeholder="미션 참여를 제외할 매체사 IDX를 공백없이 넣어주세요. (구분자 | ) " autocomplete="off">
+												<input type="text" class="form-control" name="exceptMedia" id="mediaIdx" th:value="${saveMsn?.exceptMedia}" placeholder="미션 참여를 제외할 매체사 IDX를 공백없이 넣어주세요. (구분자 | ) " autocomplete="off">
 											</div>
 										</div>
                                         
@@ -743,19 +824,19 @@
                                                         <div class="col-4">
                                                             <div class="form-group">
                                                                 <label class="label__icon">미션 접속 URL</label>
-                                                                <input type="text" class="form-control" name="sightseeingUrl" id="sightseeingUrl" value="https://m.naver.com" placeholder="미션 URL을 입력해주세요" autocomplete="off">
+                                                                <input type="text" class="form-control" name="msnUrl" id="sightseeingUrl" th:value="${saveMsn?.msnUrl}" placeholder="미션 URL을 입력해주세요" autocomplete="off">
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="form-group">
                                                                 <label class="label__icon">미션 최종 URL</label>
-                                                                <input type="text" class="form-control" name="sightseeingLdUrl" id="sightseeingLdUrl" value="" placeholder="미션 최종 URL을 입력해주세요" autocomplete="off">
+                                                                <input type="text" class="form-control" name="msnFinalUrl" id="sightseeingLdUrl" th:value="${saveMsn?.msnFinalUrl}" placeholder="미션 최종 URL을 입력해주세요" autocomplete="off">
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="form-group">
                                                                 <label class="label__icon">미션 검색 키워드</label>
-                                                                <input type="text" class="form-control" name="sightseeingKeyword" id="sightseeingKeyword" value="" placeholder="미션 검색 키워드를 입력해주세요" autocomplete="off">
+                                                                <input type="text" class="form-control" name="searchKeyword" id="sightseeingKeyword" th:value="${saveMsn?.searchKeyword}"  placeholder="미션 검색 키워드를 입력해주세요" autocomplete="off">
                                                             </div>
                                                         </div>
 													</div>                                                           
@@ -773,47 +854,47 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label class="label__icon">미션 시작일 <small class="text-danger"> ( 00시00분 이 12:00 AM입니다. ) (배치파일이 10분마다 동작합니다. 10분단위로 저장해주세요)</small></label>
-                                                                <div>
-                                                                    <div class="input-group date">
-                                                                        <input type="text" name="openStartDate" class="form-control btn-datepicker" value="2024-09-20" autocomplete="off">
-                                                                        <div class="input-group-append">
+																<div>
+																	<div class="input-group date">
+																		<input type="text" name="startAtMsnDate" class="form-control btn-datepicker"  th:value="${ saveMsn != null ? #temporals.format(saveMsn.startAtMsnLocalDate, 'yyyy-MM-dd') : #temporals.format(currentDateTime, 'yyyy-MM-dd') }"   autocomplete="off">
+																		<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
                                                                             </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="input-group date">
-                                                                    <input type="text" name="openStartTime" class="form-control btn-timepicker" value="12:00 AM">
-                                                                    <div class="input-group-append">
+																		</div>
+																	</div>
+																</div>
+																<div class="input-group date">
+																	<input type="text" name="startTime" class="form-control btn-timepicker" th:value="${saveMsn != null ? #temporals.format(saveMsn.startAtMsnLocalTime, 'HH:mm') : currentTime}">
+																	<div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
                                                                         </span>
-                                                                    </div>
-                                                                </div>
+																	</div>
+																</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label class="label__icon">미션 종료일 <small class="text-danger"> ( 00시00분 이 오전 12:00 AM입니다. )</small></label>
-                                                                <div>
-                                                                    <div class="input-group date">
-                                                                        <input type="text" name="openEndDate" class="form-control btn-datepicker" value="2024-09-20" autocomplete="off">
-                                                                        <div class="input-group-append">
+																<div>
+																	<div class="input-group date">
+																		<input type="text" name="endAtMsnDate" class="form-control btn-datepicker" th:value="${ saveMsn != null ? #temporals.format(saveMsn.endAtMsnLocalDate, 'yyyy-MM-dd') : #temporals.format(currentEndDate, 'yyyy-MM-dd') }" autocomplete="off">
+																		<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
                                                                             </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="input-group date">
-                                                                    <input type="text" name="openEndTime" class="form-control btn-timepicker" value="23:59 PM">
-                                                                    <div class="input-group-append">
+																		</div>
+																	</div>
+																</div>
+																<div class="input-group date">
+																	<input type="text" name="endTime" class="form-control btn-timepicker" th:value="${saveMsn != null ? #temporals.format(saveMsn.endAtMsnLocalTime, 'HH:mm') : '23:59 PM' }" >
+																	<div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
                                                                         </span>
-                                                                    </div>
-                                                                </div>
+																	</div>
+																</div>
                                                             </div>
                                                         </div>		
 
@@ -821,14 +902,14 @@
                                                             <div class="form-group">
                                                                 <label class="label__icon">데일리캡 시작일 </label>
                                                                 <div>
-                                                                    <div class="input-group date">
-                                                                        <input type="text" name="dailyCapSDate" class="form-control btn-datepicker" value="" autocomplete="off">
-                                                                        <div class="input-group-append">
+																	<div class="input-group date">
+																		<input type="text" name="startAtCap" class="form-control btn-datepicker"  th:value="${saveMsn != null ? saveMsn.startAtCap : #temporals.format(currentDateTime, 'yyyy-MM-dd')}" autocomplete="off">
+																		<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
                                                                             </span>
-                                                                        </div>
-                                                                    </div>
+																		</div>
+																	</div>
                                                                 </div>                                                                
                                                             </div>
                                                         </div>
@@ -836,14 +917,14 @@
                                                             <div class="form-group">
                                                                 <label class="label__icon">데일리캡 종료일 </label>
                                                                 <div>
-                                                                    <div class="input-group date">
-                                                                        <input type="text" name="dailyCapEDate" class="form-control btn-datepicker" value="" autocomplete="off">
-                                                                        <div class="input-group-append">
+																	<div class="input-group date">
+																		<input type="text" name="endAtCap" class="form-control btn-datepicker" th:value="${saveMsn != null ? saveMsn.endAtCap : #temporals.format(currentEndDate, 'yyyy-MM-dd') }" autocomplete="off">
+																		<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
                                                                             </span>
-                                                                        </div>
-                                                                    </div>
+																		</div>
+																	</div>
                                                                 </div>                                                                
                                                             </div>
                                                         </div>
@@ -860,13 +941,19 @@
 												</div>
 												<div class="card-body">
 													<div class="row">
-                                                        <div class="col-12">                                                            
-                                                            <div class="form-group">
-                                                                <label class="label__icon">메인 이미지</label>
-                                                                <input type="file" id="sightseeingMainImg" name="sightseeingMainImg" class="form-control h-100">
-                                                                <div class="my-2" id="sightseeingMainImgArea">
-                                                                    <p class="my-2">mission_default.png</p><button type="button" class="btn btn-xxs btn-sub" onclick="openFiles(&quot;https://ocb-img.srk.co.kr/mission/sightseeing/mission_default.png&quot;);">미리보기</button>                                                                </div>
-                                                            </div>
+                                                        <div class="col-12">
+															<div class="form-group">
+																<label class="label__icon">메인 이미지</label>
+																<input type="file" id="searchMainImg" name="imageData" accept="image/*" class="form-control h-100" onchange="updateFileName()">
+																<div class="my-2" id="searchMainImgArea">
+																	<p class="my-2" id="fileName" th:text="${image != null ? saveMsn.imageName : 'mission_default.png'}"></p>
+																	<button type="button" id="previewButton" class="btn btn-xxs btn-sub"
+																			th:data-image="${image}"
+																			th:data-save-msn="${image != null}"
+																			onclick="openFiles(this.dataset.image ? this.dataset.image : -1)">미리보기
+																	</button>
+																</div>
+																</div>
                                                         </div>														
 													</div>                                                    
 												</div>
@@ -879,8 +966,8 @@
 
                                 <div class="k-portlet__foot">
                                     <div class="k-form__actions">
-                                        <button type="button" id="saveBtn" class="btn btn-primary btn-main" onclick="commGoAct();">저장</button>
-                                        <button type="button" class="btn btn-secondary btn-outline--sub" onclick="commGoList(&#39;/Mission/sightseeingList&#39;);">목록</button>
+										<button type="button" id="saveBtn" class="btn btn-primary btn-main" th:onclick="${saveMsn != null} ? 'commGoAct(' + ${saveMsn.idx} + ');' : 'commGoAct(-1)'">저장</button>
+                                        <button type="button" class="btn btn-secondary btn-outline--sub" onclick="commGoList()">목록</button>
                                     </div>
                                 </div>
                             </form>
@@ -1001,7 +1088,7 @@
 
                 <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
 					<div class="k-footer__copyright">
-						2023&nbsp;©&nbsp;<a href="https://ocb-gm.srk.co.kr/Mission/sightseeingWrite?sightseeingIdx=&amp;currentSightseeingIdxArr=4773%7C4772%7C4771%7C4770%7C4769%7C4768%7C4767%7C4766%7C4765%7C4764%7C4763%7C4762%7C4761%7C4760%7C4759%7C4758%7C4757%7C4756%7C4755%7C4754%7C4753%7C4752%7C4751%7C4750%7C4749%7C4748%7C4747%7C4746%7C4745%7C4744&amp;sAdvertiserIdx=&amp;sIsOverlap=&amp;sOverOpenStartDate=&amp;sUnderOpenEndDate=&amp;sOverDCapSDate=&amp;sUnderDCapEDate=&amp;sIsUsed=&amp;sIsView=&amp;sIsHidden=2&amp;sOpt=sTitle&amp;sVal=#" target="_blank" class="k-link">Conan</a>
+						2023&nbsp;©&nbsp;<a href="/Mission/sightseeingList" target="_blank" class="k-link">Conan</a>
 					</div>
 				</div>
 			</div>

@@ -838,7 +838,7 @@
 												<label class="label__icon">미션 사용여부</label>
 												<div class="k-radio-inline mx-2">
 													 <div class="d-inline-block mr-3">
-                                                         <input type="radio" name="missionActive" value="true"  th:checked="${answerMsn?.missionActive}" class="custom-control-input" id="isUsed1">
+                                                         <input type="radio" name="missionActive" value="true"  th:checked="${answerMsn == null ? true : answerMsn.missionActive}" class="custom-control-input" id="isUsed1">
                                                          <label for="isUsed1">사용함</label>
                                                      </div>
                                                     <div class="d-inline-block mr-3">
@@ -853,7 +853,7 @@
 												<label class="label__icon">미션 노출여부</label>
 												<div class="k-radio-inline mx-2">
 													 <div class="d-inline-block mr-3">
-                                                         <input type="radio" name="missionExposure" value="true" th:checked="${answerMsn?.missionExposure}" class="custom-control-input" id="isView1">
+                                                         <input type="radio" name="missionExposure" value="true" th:checked="${answerMsn ==null? true : answerMsn.missionExposure}" class="custom-control-input" id="isView1">
                                                          <label for="isView1">노출함</label>
                                                      </div>
                                                     <div class="d-inline-block mr-3">
@@ -868,7 +868,7 @@
 												<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 												<div class="k-radio-inline mx-2">
 													 <div class="d-inline-block mr-3">
-                                                         <input type="radio" name="dupParticipation" value="true" th:checked="${answerMsn?.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
+                                                         <input type="radio" name="dupParticipation" value="true" th:checked="${answerMsn ==null? true : answerMsn.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
                                                          <label for="isOverlap1">참여 가능</label>
                                                      </div>
                                                     <div class="d-inline-block mr-3">
@@ -984,7 +984,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="input-group date">
-                                                                    <input type="text" name="startTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'HH:mm a') : currentTime}">
+                                                                    <input type="text" name="startTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'HH:mm') : currentTime}">
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
@@ -998,7 +998,7 @@
                                                                 <label class="label__icon">미션 종료일 <small class="text-danger"> ( 00시00분 이 오전 12:00 AM입니다. )</small></label>
                                                                 <div>
                                                                     <div class="input-group date">
-                                                                        <input type="text" name="endAtMsnDate" class="form-control btn-datepicker" th:value="${ answerMsn != null ? #temporals.format(answerMsn.endAtMsnLocalDate, 'yyyy-MM-dd') : '' }" autocomplete="off">
+                                                                        <input type="text" name="endAtMsnDate" class="form-control btn-datepicker" th:value="${ answerMsn != null ? #temporals.format(answerMsn.endAtMsnLocalDate, 'yyyy-MM-dd') :  #temporals.format(currentEndDate, 'yyyy-MM-dd') }" autocomplete="off">
                                                                         <div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
@@ -1007,7 +1007,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="input-group date">
-                                                                    <input type="text" name="endTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.startAtMsnLocalTime, 'HH:mm') : '23:59 PM' }" >
+                                                                    <input type="text" name="endTime" class="form-control btn-timepicker" th:value="${answerMsn != null ? #temporals.format(answerMsn.endAtMsnLocalTime, 'HH:mm') : '23:59 PM' }" >
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
@@ -1022,7 +1022,7 @@
                                                                 <label class="label__icon">데일리캡 시작일 </label>
                                                                 <div>
                                                                     <div class="input-group date">
-                                                                        <input type="text" name="startAtCap" class="form-control btn-datepicker"  th:value="${answerMsn?.startAtCap}" autocomplete="off">
+                                                                        <input type="text" name="startAtCap" class="form-control btn-datepicker" th:value="${answerMsn != null ?answerMsn.startAtCap : #temporals.format(currentDateTime, 'yyyy-MM-dd')}" autocomplete="off">
                                                                         <div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
@@ -1037,7 +1037,7 @@
                                                                 <label class="label__icon">데일리캡 종료일 </label>
                                                                 <div>
                                                                     <div class="input-group date">
-                                                                        <input type="text" name="endAtCap" class="form-control btn-datepicker" th:value="${answerMsn?.endAtCap}" autocomplete="off">
+                                                                        <input type="text" name="endAtCap" class="form-control btn-datepicker" th:value="${answerMsn != null ?answerMsn.endAtCap  : #temporals.format(currentEndDate, 'yyyy-MM-dd') }" autocomplete="off">
                                                                         <div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>

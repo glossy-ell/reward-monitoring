@@ -663,6 +663,8 @@ public class AnswerMsnController {
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());
         model.addAttribute("currentTime", formattedCurrentTime);
+        model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
+        model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
         return "quizWrite";
 
     }
@@ -692,6 +694,8 @@ public class AnswerMsnController {
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());
         model.addAttribute("currentTime", LocalTime.now());
+        model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
+        model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
         if(image !=null)
             model.addAttribute("image",image);
         return "quizWrite";

@@ -651,6 +651,8 @@ public class SearchMsnController{
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());
         model.addAttribute("currentTime", formattedCurrentTime);
+        model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
+        model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
 
         return "searchWrite";
 
@@ -984,6 +986,8 @@ public class SearchMsnController{
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentDateTime", LocalDate.now());
         model.addAttribute("currentTime", LocalTime.now());
+        model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
+        model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
         if(image !=null)
             model.addAttribute("image",image);
         return "searchWrite";
@@ -1092,10 +1096,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         List<SearchMsn> dto = responseDto.getInnerSearchMsns();
@@ -1128,10 +1132,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {

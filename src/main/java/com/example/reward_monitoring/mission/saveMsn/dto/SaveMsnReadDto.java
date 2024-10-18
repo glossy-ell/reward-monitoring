@@ -33,32 +33,51 @@ public class SaveMsnReadDto {
     private String missionDetailTitle = "";
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
     private String missionContent = "";
+
+    private String startAtMsnDate; // 날짜 필드
+    private String startTime;  // 시간 필드
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
     private ZonedDateTime startAtMsn;
+
+    private String endAtMsnDate; // 날짜 필드
+    private String endTime;  // 시간 필드
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
     private ZonedDateTime endAtMsn;
+
+
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;
+
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
+
     @Schema(description = "중복 참여 가능여부", example = "true")
     private Boolean dupParticipation;
+
     @Schema(description = "미션 사용여부", example = "true")
     private Boolean  missionActive;
+
     @Schema(description = "미션 노출여부", example = "true")
     private Boolean  missionExposure;
+
     @Schema(description = "재참여 가능일", example = "1")
     private Integer reEngagementDay;
+
     @Schema(description = "참여 제외할 매체 IDX,1|2|3|4|5형식으로 넣어야함", example = "1|2|3|4|5",nullable = true)
     private String exceptMedia;
+
     @Schema(description = "미션 URL", example = "www.abc.com",nullable = true)
     private String msnUrl;
+
     @Schema(description = "미션 최종 URL", example = "www.abc.com",nullable = true)
     private String msnFinalUrl;
+
     @Schema(description = "검색 키워드", example="검색 키워드")
     private String searchKeyword;
+
     @Schema(description = "미션 데이터 타입" , example = "true")
     private Boolean dataType = true;
+
     @Hidden
     private byte[] imageData;
     @Hidden

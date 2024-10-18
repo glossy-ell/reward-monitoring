@@ -7,6 +7,7 @@ import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRep
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnAbleDayDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchByConsumedDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
@@ -42,6 +43,8 @@ public class SaveMsnService {
 
     public SaveMsn edit(int idx, SaveMsnEditDto dto) {
         SaveMsn saveMsn =saveMsnRepository.findByIdx(idx);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
         if(saveMsn==null)
             return null;
         if(dto.getMissionDefaultQty() != null)
@@ -52,10 +55,20 @@ public class SaveMsnService {
             saveMsn.setMissionTitle(dto.getMissionTitle());
         if(dto.getSearchKeyword()!=null)
             saveMsn.setSearchKeyword(dto.getSearchKeyword());
-        if (dto.getStartAtMsn() != null)
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             saveMsn.setStartAtMsn(dto.getStartAtMsn());
-        if (dto.getEndAtMsn() != null)
+            saveMsn.setStartAtMsn(saveMsn.getStartAtMsn().plusHours(9));
+        }
+        if (dto.getEndAtMsn() != null) {
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             saveMsn.setEndAtMsn(dto.getEndAtMsn());
+            saveMsn.setEndAtMsn(saveMsn.getEndAtMsn().plusHours(9));
+        }
         if (dto.getStartAtCap() != null)
             saveMsn.setStartAtCap(dto.getStartAtCap());
         if (dto.getEndAtCap() != null)
@@ -71,16 +84,46 @@ public class SaveMsnService {
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             saveMsn.setDupParticipation(bool);
+            if(!saveMsn.isDupParticipation())
+                saveMsn.setReEngagementDay(null);
         }
         if (dto.getReEngagementDay() != null) {
             saveMsn.setReEngagementDay(dto.getReEngagementDay());
         }
+        if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
+            saveMsn.setImageName(dto.getImageName());
+            saveMsn.setImageData(dto.getImageData());
+        }
+
         return saveMsn;
     }
 
     public SaveMsn add(SaveMsnReadDto dto) {
-        Server serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
+        Server serverEntity = null;
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
+        if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
+
+            LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+        }
+        if(dto.getUrl()!= null)
+            serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
+        else
+            serverEntity = serverRepository.findByServerUrl_("https://ocb.srk.co.kr");  //default 서버 주소
+        dto.setDataType(true);
+        if(!dto.getDupParticipation())
+            dto.setReEngagementDay(null);
+
         return dto.toEntity(advertiserEntity,serverEntity);
     }
 
@@ -818,4 +861,67 @@ public class SaveMsnService {
         return true;
     }
 
+    public List<SaveMsn> searchSaveMsnCurrent(SaveMsnSearchByConsumedDto dto) {
+        List<SaveMsn> target_advertiser = null;
+        List<SaveMsn> target_serverUrl = null;
+        List<SaveMsn> target_advertiser_details = null; // 선택 1
+        List<SaveMsn> target_mission_title = null; // 선택 2
+
+        List<SaveMsn> result;
+        boolean changed = false;
+
+        if(dto.getAdvertiser()!=null){
+            target_advertiser = saveMsnRepository.findByAdvertiser(dto.getAdvertiser());
+        }
+
+        if(dto.getServerUrl()!=null){
+            target_serverUrl = saveMsnRepository.findByServer(dto.getServerUrl());
+        }
+
+        if(dto.getAdvertiserDetails() != null  && !dto.getAdvertiserDetails().isEmpty())
+            target_advertiser_details = saveMsnRepository.findByAdvertiserDetails(dto.getAdvertiserDetails());
+
+        if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
+            target_mission_title = saveMsnRepository.findByMissionTitle(dto.getMissionTitle());
+
+        ZonedDateTime now = ZonedDateTime.now();
+        result = new ArrayList<>(saveMsnRepository.findByCurrentList(now));
+
+
+        if(target_serverUrl !=null) {
+            Set<Integer> idxSet = target_serverUrl.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_advertiser != null) {
+            Set<Integer> idxSet = target_advertiser.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(target_advertiser_details != null) {
+            Set<Integer> idxSet = target_advertiser_details.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        else if(target_mission_title !=null) {
+            Set<Integer> idxSet = target_mission_title.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
+    }
+
+    public boolean AllOffMissionCurrent() {
+        ZonedDateTime now = ZonedDateTime.now();
+        List<SaveMsn> saveMsns = saveMsnRepository.findByCurrentList(now);
+        for (SaveMsn saveMsn : saveMsns) {
+            saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정
+            saveMsn.setMissionExposure(false);
+            saveMsnRepository.save(saveMsn);
+        }
+        return true;
+    }
 }

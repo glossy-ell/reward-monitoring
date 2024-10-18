@@ -468,7 +468,7 @@
             }
         }
 
-			 //검색
+		//검색
 		function commSearch(page) {
 				var frm = document.searchFrm;
 				var formData = new FormData(frm);
@@ -558,7 +558,7 @@
 			} //if 끝
 			else{ //이미 보유한 데이터가 있을경우
 				$.ajax({
-						url: `/Mission/quizCurrentList/search/${page}`,
+						url: `/Mission/searchCurrentList/search/${page}`,
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({innerSearchMsns}),
@@ -684,13 +684,13 @@
 
        // 등록, 수정 버튼
     function commGoDetail(idx) {
-        	if(idx){
-           		window.location.href ='/Mission/searchWrite/'+ idx;
-            	return true;
-        	} else {
-				window.location.href ='/Mission/searchWrite';
-            	return true;
-       		}
+		if(idx){
+			window.location.href ='/Mission/searchWrite/'+ idx;
+			return true;
+		} else {
+			window.location.href ='/Mission/searchWrite';
+			return true;
+		}
     }
 
 
@@ -701,27 +701,27 @@
 		}
 
 		 function openSetOverlapModal(idx){
-					$.ajax({
-						type: 'GET',  // GET 방식으로 요청
-						url: `/Mission/searchList/get/${idx}`,  // quiz 데이터 API
-						dataType: 'json',
-						success: function(data) {
-						if (data) {
-							overlapFrm.idx.value = data.idx; // quiz의 idx
-							if (data.dupParticipation === true) {
-								$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
-							} else {
-								$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
-							}
-							overlapFrm.reEngagementDay.value = data.reEngagementDay
+				$.ajax({
+					type: 'GET',  // GET 방식으로 요청
+					url: `/Mission/searchList/get/${idx}`,  // 데이터 API
+					dataType: 'json',
+					success: function(data) {
+					if (data) {
+						overlapFrm.idx.value = data.idx; //idx
+						if (data.dupParticipation === true) {
+							$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+						} else {
+							$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
 						}
-					},
-					error: function(error) {
-						console.error('데이터를 가져오는 데 실패했습니다:', error);
+						overlapFrm.reEngagementDay.value = data.reEngagementDay
 					}
-				});
-					$("#setOverlap").modal();
-			}
+				},
+				error: function(error) {
+					console.error('데이터를 가져오는 데 실패했습니다:', error);
+				}
+			});
+			$("#setOverlap").modal();
+		}
 
 		function setOverlap() {
 
@@ -941,11 +941,20 @@
 
 		if (selectedValue === "sTitle") {
 			inputElement.name = "missionTitle";
-			inputElement.placeholder = "정답 미션 제목을 입력하세요";
+			inputElement.placeholder = "검색 미션 제목을 입력하세요";
 		} else if (selectedValue === "sAdvertiserDetail") {
 			inputElement.name = "advertiserDetails";
 			inputElement.placeholder = "광고주 상세를 입력하세요";
 		}
+	}
+	function toggleOverlapDay() {
+		$("#overlapDay").prop('disabled', false);  // 활성화
+		document.getElementById("overlapDay").value = 5;
+	}
+
+	function toggleOverlapDayFalse() {
+		$("#overlapDay").prop('disabled', true);  // 비활성화
+		document.getElementById("overlapDay").value = "";
 	}
 
 
@@ -984,9 +993,9 @@
 										&nbsp;
 										<div class="k-section">
 											<div class="k-section__content k-section__content--border">
-												<button type="button" class="btn btn-outline-focus" onclick="commSetAllIsUsed();">화면 비활성</button>
-												<button type="button" class="btn btn-outline-success" onclick="commSetAllIsView();">화면 비노출</button>
-												<button type="button" class="btn btn-outline-danger" onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
+												<button type="button" class="btn btn-outline-focus" th:onclick="commSetAllIsUsed(' + ${currentPage} + ');">화면 비활성</button>
+												<button type="button" class="btn btn-outline-success" th:onclick="commSetAllIsView(' + ${currentPage} + ');">화면 비노출</button>
+												<button type="button" class="btn btn-outline-danger" th:onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
 											</div>
 										</div>
 									</div>
@@ -998,17 +1007,14 @@
 											<div class="row">
 												<div class="input-group col-xl-3 col-lg-3 col-sm-12">
 													<div class="dropdown bootstrap-select input-group-btn form-control k_">
-														<select name="sAdvertiserIdx" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
-															<option value="">= 광고주 =</option>
-															<option value="1">시크릿 K</option>
-															<option value="2">올앤올</option>
-															<option value="3">애드닷</option>
-															<option value="4">탑플랜</option>
-															<option value="5">네이버스</option>
-															<option value="6">키봅</option>
-															<option value="7">셀렉티드</option>
-															<option value="8">골든커머스</option>
-															<option value="9">원픽</option>
+														<select name="advertiser" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+															<option value="" disabled selected>=광고주=</option>
+															<th:block th:each="advertiser : ${advertisers}">
+																<option
+																		th:value="${advertiser.advertiser}"
+																		th:text="${advertiser.advertiser}">
+																</option>
+															</th:block>
 														</select>
 														<div class="dropdown-menu " role="combobox">
 															<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -1021,8 +1027,13 @@
 												</div>
 												<div class="input-group col-xl-3 col-lg-3 col-sm-12">
 													<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-														<select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-															<option value="1" selected="selected">https://ocb.srk.co.kr</option>
+														<select name="serverUrl" class="form-control k_selectpicker" onchange="commSearch();" tabindex="-98">
+															<th:block th:each="server : ${servers}">
+																<option
+																		th:value="${server.serverUrl}"
+																		th:text="${server.serverUrl}">
+																</option>
+															</th:block>
 														</select>
 														<div class="dropdown-menu " role="combobox">
 															<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -1040,7 +1051,7 @@
 															<option value="sAdvertiserDetail">광고주 상세</option>
 														</select>
 													</div>
-													<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+													<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 													<div class="input-group-append">
 														<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 														<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -1080,14 +1091,13 @@
 										<th class="text-center font-weight-bold">데이터 관리</th>
 									</tr>
 									</thead>
-									<tbody>
 									<tbody id = "searchList">
-									<tr th:if="${#lists.isEmpty(answerMsns)}">
+									<tr th:if="${#lists.isEmpty(searchMsns)}">
 										<td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 									</tr>
 
 									<tr th:each="search, iterStat : ${searchMsns}">
-										<td class="text-center align-middle" th:text="${quiz.idx}"></td>
+										<td class="text-center align-middle" th:text="${search.idx}"></td>
 										<td class="text-center align-middle">
 											<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${search.idx} + ');">리포트</button>
 										</td>

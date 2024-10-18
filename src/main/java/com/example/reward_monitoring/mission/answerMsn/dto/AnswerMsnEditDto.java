@@ -28,17 +28,17 @@ public class AnswerMsnEditDto {
     private String advertiser;
 
     @Schema(description = "광고주 상세", example = "82652333318")
-    private String advertiserDetails;
+    private String advertiserDetails = "";
 
 
     @Schema(description = "미션 제목", example = "무쇠웍")
     private String missionTitle;
 
     @Schema(description = "미션 상세 제목", example = "무쇠웍")
-    private String missionDetailTitle;
+    private String missionDetailTitle = "";
 
     @Schema(description = "미션 정답", example = "5107811272")
-    private String missionAnswer;
+    private String missionAnswer = "";
 
     @Schema(description = "미션 내용", example = "상세페이지 하단에 구매 추가정보 클릭후 상품번호 앞 5자리를 입력해주세요.")
     private String missionContent;

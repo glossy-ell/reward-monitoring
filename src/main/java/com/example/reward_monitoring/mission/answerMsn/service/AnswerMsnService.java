@@ -65,13 +65,14 @@ public class AnswerMsnService {
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
             dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setStartAtMsn(dto.getStartAtMsn());
+            answerMsn.setStartAtMsn(answerMsn.getStartAtMsn().plusHours(9));
         }
         if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
-
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
             dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setEndAtMsn(dto.getEndAtMsn());
+            answerMsn.setEndAtMsn(answerMsn.getEndAtMsn().plusHours(9));
         }
 
 
@@ -90,7 +91,7 @@ public class AnswerMsnService {
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             answerMsn.setDupParticipation(bool);
-            if(answerMsn.getReEngagementDay() !=null)
+            if(!answerMsn.isDupParticipation())
                 answerMsn.setReEngagementDay(null);
         }
         if (dto.getReEngagementDay() != null)
@@ -154,6 +155,9 @@ public class AnswerMsnService {
             serverEntity = serverRepository.findByServerUrl_("https://ocb.srk.co.kr");  //default 서버 주소
 
         Advertiser advertiserEntity = advertiserRepository.findByAdvertiser_(dto.getAdvertiser());
+        if(!dto.getDupParticipation())
+            dto.setReEngagementDay(null);
+
         dto.setDataType(true);
 
         return dto.toEntity(advertiserEntity,serverEntity);

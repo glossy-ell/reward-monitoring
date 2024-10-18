@@ -461,30 +461,30 @@
 				toggleOverlapDay();
 			}
             function updateFileName() {
-                    const fileInput = document.getElementById('searchMainImg');
-                    const previewButton = document.getElementById('previewButton');
-                    const fileNameDisplay = document.getElementById('fileName');
+				const fileInput = document.getElementById('searchMainImg');
+				const previewButton = document.getElementById('previewButton');
+				const fileNameDisplay = document.getElementById('fileName');
 
-                    // 사용자가 선택한 파일이 있는지 확인
-                    if (fileInput.files.length > 0) {
-                        const fileName = fileInput.files[0].name; // 선택한 파일의 이름 가져오기
-                        previewButton.textContent = fileName; // 버튼의 텍스트 변경
-                        fileNameDisplay.textContent = fileName;
+				// 사용자가 선택한 파일이 있는지 확인
+				if (fileInput.files.length > 0) {
+					const fileName = fileInput.files[0].name; // 선택한 파일의 이름 가져오기
+					previewButton.textContent = fileName; // 버튼의 텍스트 변경
+					fileNameDisplay.textContent = fileName;
 
-                        const file = fileInput.files[0];
-                        const reader = new FileReader();
+					const file = fileInput.files[0];
+					const reader = new FileReader();
 
-                        reader.onload = function(event) {
-                            const base64String = event.target.result.split(',')[1]; // Base64 문자열만 가져오기
-                            // 미리보기 버튼의 onclick 핸들러를 업데이트
-                            previewButton.setAttribute('onclick', `openFiles('${base64String}')`);
-                        };
+					reader.onload = function(event) {
+						const base64String = event.target.result.split(',')[1]; // Base64 문자열만 가져오기
+						// 미리보기 버튼의 onclick 핸들러를 업데이트
+						previewButton.setAttribute('onclick', `openFiles('${base64String}')`);
+					};
 
-                        reader.readAsDataURL(file); // 파일을 Data URL로 읽기
-                    } else {
-                        previewButton.textContent = '미리보기'; // 파일이 선택되지 않은 경우 기본 텍스트로 설정
-                    }
-                }
+					reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+				} else {
+					previewButton.textContent = '미리보기'; // 파일이 선택되지 않은 경우 기본 텍스트로 설정
+				}
+            }
 
             function openFiles(image) {
                 if (image === -1) {
@@ -635,6 +635,7 @@
                         formData.append('file', defaultFile);
                     }
                 }
+
                 formData.forEach((value, key) => {
                     if (key !== 'imageData') { // 'imageData' 키를 제외합니다.
                         jsonData[key] = value; // 나머지 키-값 쌍을 JSON 객체에 추가합니다.
@@ -820,11 +821,10 @@
 											<label class="label__icon">미션 사용여부</label>
 											<div class="k-radio-inline mx-2">
 												<div class="d-inline-block mr-3">
-													<input type="radio" name="missionActive" value="true"  th:checked="${searchMsn?.missionActive}" class="custom-control-input" id="isUsed1">
+													<input type="radio" name="missionActive" value="true"  th:checked="${searchMsn == null ? true : searchMsn.missionActive}" class="custom-control-input" id="isUsed1">
 													<label for="isUsed1">사용함</label>
 												</div>
 												<div class="d-inline-block mr-3">
-													<input type="radio" name="missionActive" value="false" th:checked="${searchMsn != null && !searchMsn.missionActive}" class="custom-control-input" id="isUsed2">
 													<input type="radio" name="missionActive" value="false" th:checked="${searchMsn != null && !searchMsn.missionActive}" class="custom-control-input" id="isUsed2">
 													<label for="isUsed2">사용안함</label>
 												</div>
@@ -836,7 +836,7 @@
 											<label class="label__icon">미션 노출여부</label>
 											<div class="k-radio-inline mx-2">
 												<div class="d-inline-block mr-3">
-													<input type="radio" name="missionExposure" value="true" th:checked="${searchMsn?.missionExposure}" class="custom-control-input" id="isView1">
+													<input type="radio" name="missionExposure" value="true" th:checked="${searchMsn == null ? true : searchMsn.missionExposure}" class="custom-control-input" id="isView1">
 													<label for="isView1">노출함</label>
 												</div>
 												<div class="d-inline-block mr-3">
@@ -851,7 +851,7 @@
 											<label class="label__icon">미션 중복 참여 허용(+1day)</label>
 											<div class="k-radio-inline mx-2">
 												<div class="d-inline-block mr-3">
-													<input type="radio" name="dupParticipation" value="true" th:checked="${searchMsn?.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
+													<input type="radio" name="dupParticipation" value="true" th:checked="${searchMsn == null ? true : searchMsn.dupParticipation}" class="custom-control-input" id="isOverlap1" onclick="toggleOverlapDay()">
 													<label for="isOverlap1">참여 가능</label>
 												</div>
 												<div class="d-inline-block mr-3">
@@ -932,7 +932,7 @@
 																</div>
 															</div>
 															<div class="input-group date">
-																<input type="text" name="startTime" class="form-control btn-timepicker" th:value="${searchMsn != null ? #temporals.format(searchMsn.startAtMsnLocalTime, HH:mm') : currentTime}">
+																<input type="text" name="startTime" class="form-control btn-timepicker" th:value="${searchMsn != null ? #temporals.format(searchMsn.startAtMsnLocalTime, 'HH:mm') : currentTime}">
 																<div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
@@ -946,7 +946,7 @@
 															<label class="label__icon">미션 종료일 <small class="text-danger"> ( 00시00분 이 오전 12:00 AM입니다. )</small></label>
 															<div>
 																<div class="input-group date">
-																	<input type="text" name="endAtMsnDate" class="form-control btn-datepicker" th:value="${ searchMsn != null ? #temporals.format(searchMsn.endAtMsnLocalDate, 'yyyy-MM-dd') : '' }" autocomplete="off">
+																	<input type="text" name="endAtMsnDate" class="form-control btn-datepicker" th:value="${ searchMsn != null ? #temporals.format(searchMsn.endAtMsnLocalDate, 'yyyy-MM-dd') :  #temporals.format(currentEndDate, 'yyyy-MM-dd') }" autocomplete="off">
 																	<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
@@ -955,7 +955,7 @@
 																</div>
 															</div>
 															<div class="input-group date">
-																<input type="text" name="endTime" class="form-control btn-timepicker" th:value="${searchMsn != null ? #temporals.format(searchMsn.startAtMsnLocalTime, 'HH:mm a') : '23:59 PM' }" >
+																<input type="text" name="endTime" class="form-control btn-timepicker" th:value="${searchMsn != null ? #temporals.format(searchMsn.endAtMsnLocalTime, 'HH:mm a') : '23:59 PM' }" >
 																<div class="input-group-append">
                                                                         <span class="input-group-text">
                                                                             <i class="la la-clock-o glyphicon-th"></i>
@@ -969,7 +969,7 @@
 															<label class="label__icon">데일리캡 시작일 </label>
 															<div>
 																<div class="input-group date">
-																	<input type="text" name="startAtCap" class="form-control btn-datepicker"  th:value="${searchMsn?.startAtCap}" autocomplete="off">
+																	<input type="text" name="startAtCap" class="form-control btn-datepicker"  th:value="${searchMsn != null ?searchMsn.startAtCap : #temporals.format(currentDateTime, 'yyyy-MM-dd')}" autocomplete="off">
 																	<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
@@ -984,7 +984,7 @@
 															<label class="label__icon">데일리캡 종료일 </label>
 															<div>
 																<div class="input-group date">
-																	<input type="text" name="endAtCap" class="form-control btn-datepicker" th:value="${searchMsn?.endAtCap}" autocomplete="off">
+																	<input type="text" name="endAtCap" class="form-control btn-datepicker" th:value="${searchMsn != null ? searchMsn.endAtCap : #temporals.format(currentEndDate, 'yyyy-MM-dd')}" autocomplete="off">
 																	<div class="input-group-append">
                                                                             <span class="input-group-text">
                                                                                 <i class="la la-calendar-check-o"></i>
