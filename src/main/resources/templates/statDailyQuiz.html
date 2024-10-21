@@ -505,13 +505,13 @@
                          '<tr>' +
 							 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
 							 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.advertiserIdx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.advertiserParticular + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.missionIdx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.missionTitle + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.landingCount + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.attendCount + '</td>' +
-							 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.createdAtLocalDateTime) + '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.advertiser.idx + '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.idx + '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.missionTitle + '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.landingCnt + '</td>' +
+							 '<td class="text-center align-middle">' + DailyQuizTable.partCnt + '</td>' +
+							 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.partDate) + '</td>' +
                          '</tr>'
                      );
                      updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -525,7 +525,7 @@
      } //if 끝
      else{ //이미 보유한 데이터가 있을경우
              $.ajax({
-                        url: `/Statistics/search/${page}`,
+                     url: `/Statistics/search/${page}`,
                      type: "POST",
                      contentType: "application/json",
                      data: JSON.stringify(jsonData),
@@ -534,23 +534,23 @@
                          const statDailyQuizContainer = $('#statDailyQuiz'); // 회원 목록을 표시할 컨테이너 선택
                          statDailyQuizContainer.empty();
 
-                         if (response.DailyQuizTables.length === 0) {
+                         if (response.answerMsnDailyStats.length === 0) {
                          //statDailyQuiz가 빈 리스트인 경우 메시지 추가
                              $('#statDailyQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
                          } else {
-                             response.DailyQuizTables.forEach(function(DailyQuizTable,index) {
+                             response.answerMsnDailyStats.forEach(function(DailyQuizTable,index) {
                              $('#statDailyQuiz').append(
-                                 '<tr>' +
-                                 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.advertiserIdx + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.advertiserParticular + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.missionIdx + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.missionTitle + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.landingCount + '</td>' +
-                                 '<td class="text-center align-middle">' + DailyQuizTable.attendCount + '</td>' +
-                                 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.createdAtLocalDateTime) + '</td>' +
-                                 '</tr>'
+                             	'<tr>' +
+									 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.advertiser.idx + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.idx + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.missionTitle + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.landingCnt + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.partCnt + '</td>' +
+									 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.partDate) + '</td>' +
+                         		'</tr>'
                              );
                              updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
                           });
@@ -751,7 +751,6 @@
 									</form>
 
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 0 Count (0/0)Page</div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
                                                 <tr>
@@ -767,19 +766,19 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statDailyQuiz">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(answerMsnDailyStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="DailyQuizTable,iterStat : ${mediaCompanyList}">
-													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-													<td th:text="${DailyQuizTable.idx}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.advertiserIdx}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.advertiserParticular}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.missionIdx}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.missionTitle}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.landingCount}" class="text-center align-middle"></td>
-													<td th:text="${DailyQuizTable.attendCount}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(DailyQuizTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
+												<tr th:each="DailyQuizTable,iterStat : ${answerMsnDailyStats}">
+													<td th:text="${DailyQuizTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable.advertiser?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable.answerMsn?.advertiserDetails}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable.answerMsn?.missionTitle}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable?.landingCnt}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable?.partCnt}" class="text-center align-middle"></td>
+													<td th:text="${DailyQuizTable?.partDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

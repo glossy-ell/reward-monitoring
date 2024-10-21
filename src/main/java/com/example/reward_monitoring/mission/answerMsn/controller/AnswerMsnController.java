@@ -12,6 +12,8 @@ import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
 import com.example.reward_monitoring.mission.answerMsn.service.AnswerMsnService;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.service.AnswerMsnDailyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,6 +59,10 @@ public class AnswerMsnController {
 
     @Autowired
     private ServerService serverService;
+
+
+    @Autowired
+    private AnswerMsnDailyService answerMsnDailyService;
 
     @Operation(summary = "정답미션 정보 수정", description = "정답미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 정답미션의 IDX")
@@ -1404,5 +1410,30 @@ public class AnswerMsnController {
 
         return "quizMultiTempList";
     }
+    @GetMapping("/Mission/quizStaticList/{idx}")
+    public String quizReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Server> servers = serverService.getServers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        AnswerMsn answerMsn = answerMsnService.getAnswerMsn(idx);
+        AnswerMsnDailyStat answerMsnDailyStat = answerMsnDailyService.getAnswerMsnsDaily(answerMsn.getIdx());
+        LocalDate currentTime = LocalDate.now();
+        LocalDate past = LocalDate.now().minusMonths(1);
+
+
+        model.addAttribute("answerMsn",answerMsn);
+        model.addAttribute("answerMsnDailyStat", answerMsnDailyStat);
+        model.addAttribute("currentTime",currentTime);
+        model.addAttribute("past",past);
+        return "quizStaticList";
+    }
+
 
 }

@@ -262,13 +262,19 @@ public class AnswerMsn {
     @Comment("이미지 파일")
     @Lob
     @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
-    @Schema(description = "이미피 파일")
+    @Schema(description = "이미지 파일")
     private byte[] imageData;
 
     @Comment("이미지 파일명")
     @Column(name = "image_name")
-    @Schema(description = "이미피 파일명")
+    @Schema(description = "이미지 파일명")
     private String imageName;
+
+    @Comment("이미지 경로")
+    @Column(name = "image_path")
+    @Schema(description = "이미지 경로")
+    private String imagePath;
+
 
     @Comment("서버URL(외래키)")
     @ManyToOne()

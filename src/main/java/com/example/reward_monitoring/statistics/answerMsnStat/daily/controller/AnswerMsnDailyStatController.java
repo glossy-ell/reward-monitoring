@@ -30,9 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/Statistics/statDailyQuiz")
@@ -51,17 +49,51 @@ public class AnswerMsnDailyStatController {
     ServerService serverService;
 
     @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
-    @PostMapping("/search")
+    @PostMapping({"/search","/search/{pageNumber}"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public ResponseEntity<List<AnswerMsnDailyStat>> searchAnswerMsn(@RequestBody AnswerMsnDailyStatSearchDto dto){
+    public  Map<String, Object> searchAnswerMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session,AnswerMsnDailyStatSearchDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
         List<AnswerMsnDailyStat> result = answerMsnDailyService.searchAnswerMsnDaily(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        }
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if(member.isNauthAnswerDaily()){
+            response.put("error", "403");
+            return response;
+        }
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsnDailyStat> limitedAnswerMsnDailyStats;
+
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedAnswerMsnDailyStats = result.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsnDailyStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        response.put("answerMsnDailyStats", limitedAnswerMsnDailyStats);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        return response; // JSON 형태로 반환
     }
+
 
     @GetMapping("/AnswerMsnDailyStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<AnswerMsnDailyStat>> getAnswerMsnDailyStats(){

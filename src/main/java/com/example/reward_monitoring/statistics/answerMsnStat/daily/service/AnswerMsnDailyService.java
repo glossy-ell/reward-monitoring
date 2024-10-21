@@ -118,6 +118,8 @@ public class AnswerMsnDailyService {
         return answerMsnDailyStatRepository.findAll();
     }
 
+    public AnswerMsnDailyStat getAnswerMsnsDaily(int idx) {return answerMsnDailyStatRepository.findByMsnIdx(idx);}
+
     public List<AnswerMsnDailyStat> searchAnswerMsnDaily(AnswerMsnDailyStatSearchDto dto) {
 
         List<AnswerMsnDailyStat> target_date = null;

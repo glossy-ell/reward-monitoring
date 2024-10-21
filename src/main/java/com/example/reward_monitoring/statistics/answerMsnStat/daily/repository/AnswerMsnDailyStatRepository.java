@@ -27,4 +27,7 @@ public interface AnswerMsnDailyStatRepository extends JpaRepository<AnswerMsnDai
     public List<AnswerMsnDailyStat> findByServer_ServerUrl(String url);
 
     public List<AnswerMsnDailyStat> findByMediaCompany_CompanyName(String companyName);
+
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.answerMsn.idx = :idx ")
+    AnswerMsnDailyStat findByMsnIdx(@Param("idx") int idx);
 }
