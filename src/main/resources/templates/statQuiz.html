@@ -503,14 +503,14 @@
                     $('#statQuiz').append(
                         '<tr>' +
                         '<td class="text-center align-middle">' + (index + 1) + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.idx + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.memberID + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.answerIdx + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.point + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.abuseState + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.checkResponse + '</td>' +
-                        '<td class="text-center align-middle">' + QuizTable.ip + '</td>' +
-                        '<td class="text-center align-middle">' + formatDateTime(QuizTable.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.mediaCompany + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.memberID + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.answerMsn + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.point + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.isAbuse + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.response + '</td>' +
+						'<td class="text-center align-middle">' + QuizTable.ip + '</td>' +
+						'<td class="text-center align-middle">' + formatDateTime(QuizTable.registrationDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -533,34 +533,32 @@
 					success: function(response) {
 						const statQuizContainer = $('#statQuiz'); // 회원 목록을 표시할 컨테이너 선택
 						statQuizContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.QuizTables.length === 0) {
+						if (response.answerMsnDetailStats.length === 0) {
 						//statQuiz가 빈 리스트인 경우 메시지 추가
 							$('#statQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							response.QuizTables.forEach(function(QuizTable,index) {
+							response.answerMsnDetailStats.forEach(function(QuizTable,index) {
 							$('#statQuiz').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-									'<td class="text-center align-middle">' + QuizTable.idx + '</td>' +
+									'<td class="text-center align-middle">' + QuizTable.mediaCompany + '</td>' +
 									'<td class="text-center align-middle">' + QuizTable.memberID + '</td>' +
-									'<td class="text-center align-middle">' + QuizTable.answerIdx + '</td>' +
+									'<td class="text-center align-middle">' + QuizTable.answerMsn + '</td>' +
 									'<td class="text-center align-middle">' + QuizTable.point + '</td>' +
-									'<td class="text-center align-middle">' + QuizTable.abuseState + '</td>' +
-									'<td class="text-center align-middle">' + QuizTable.checkResponse + '</td>' +
+									'<td class="text-center align-middle">' + QuizTable.isAbuse + '</td>' +
+									'<td class="text-center align-middle">' + QuizTable.response + '</td>' +
 									'<td class="text-center align-middle">' + QuizTable.ip + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(QuizTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(QuizTable.registrationDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+						 alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -710,14 +708,14 @@
 															</div>
 														</div>                                                        
                                                         <div class="input-group col-lg-4 col-sm-12">
-															<select name="sIsAbuse" class="form-control" onchange="commSearch();">
+															<select name="isAbuse" class="form-control" onchange="commSearch();">
 																<option value="">= 어뷰상태 =</option>
 																<option value="1">정상</option>
 																<option value="2">어뷰</option>
 															</select>
 														</div>
                                                         <div class="input-group col-lg-4 col-sm-12">
-															<select name="sResponseStatus" class="form-control" onchange="commSearch();">
+															<select name="response" class="form-control" onchange="commSearch();">
 																<option value="">= 응답 확인 =</option>
 																<option value="1">성공</option>
 																<option value="2">실패</option>
@@ -778,7 +776,6 @@
 									</form>
 
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 14014243 Count (1/140143)Page</div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
                                                 <tr>
@@ -794,19 +791,19 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statQuiz">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(answerMsnDetailStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="QuizTable,iterStat : ${mediaCompanyList}">
-													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-													<td th:text="${QuizTable.idx}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.memberID}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.answerIdx}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.point}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.abuseState}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.checkResponse}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable.ip}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(QuizTable.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="QuizTable,iterStat : ${answerMsnDetailStats}">
+													<td th:text="${QuizTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.memberID}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.point}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.isAbuse}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.response}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.ip}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.registrationDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

@@ -500,9 +500,9 @@
 					response.SumSearchTables.forEach(function(SumSearchTable,index) {
 					$('#statSumSearch').append(
 						'<tr>' +
-							'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.createdAtLocalDateTime) + '</td>' +
-							'<td class="text-center align-middle">' + SumSearchTable.landingCount + '</td>' +
-							'<td class="text-center align-middle">' + SumSearchTable.attendCount + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.date) + '</td>' +
+							'<td class="text-center align-middle">' + SumSearchTable.landingCnt + '</td>' +
+							'<td class="text-center align-middle">' + SumSearchTable.partCnt + '</td>' +
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -512,7 +512,6 @@
             error: function(xhr) {
             	alert("검색중 오류가 발생하였습니다.");
         	}
-        }
     	});
     } //if 끝
     else{ //이미 보유한 데이터가 있을경우
@@ -521,31 +520,32 @@
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
+
+
 					success: function(response) {
 						const statSumSearchContainer = $('#statSumSearch'); // 회원 목록을 표시할 컨테이너 선택
 						statSumSearchContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.SumSearchTables.length === 0) { //검색결과가 빈 리스트일경우
+						if (response.SearchMsnDetailsStats.length === 0) { //검색결과가 빈 리스트일경우
 						//statSumSearch가 빈 리스트인 경우 메시지 추가
 							$('#staSumtSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+
 						} else {
-							response.SumSearchTables.forEach(function(SumSearchTable,index) {
+							response.SearchMsnDetailsStats.forEach(function(SumSearchTable,index) {
 							$('#statSumSearch').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.createdAtLocalDateTime) + '</td>' +
-									'<td class="text-center align-middle">' + SumSearchTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + SumSearchTable.attendCount + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.date) + '</td>' +
+									'<td class="text-center align-middle">' + SumSearchTable.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + SumSearchTable.partCnt + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+						 alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -561,6 +561,7 @@
 
 		return `${year}-${month}-${day}`;
 	}
+
     //검색 초기화
     function commSearchReset() {
         location.href = "/Statistics/statSumSearch";   
@@ -568,10 +569,7 @@
 
     //Excel 다운로드
     function commDownExcel() {
-        var frm = document.searchFrm;
-        
-        frm.action ='/Statistics/excelStatSumSearch';
-        frm.submit();
+        window.location.href = '/Statistics/StatSumSearch/excel/download';
     }
 
 </script>
@@ -705,24 +703,24 @@
 											<thead class="thead-light">                                                
                                                 <tr>
 													<th class="text-center font-weight-bold">일시</th>													
-                                                    <th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${totalLandingCount}">0</span>)</th>
-													<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${totalPartCount}">0</span>)</th>
+                                                    <th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${LandingCount}">0</span>)</th>
+													<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${PartCount}">0</span>)</th>
                                                 </tr>
 											</thead>
 											<tbody  id = "statSumSearch">
-												<tr th:if="${#lists.isEmpty(saveMsnSumStats)}">
+												<tr th:if="${#lists.isEmpty(SearchMsnSumStats)}">
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SumSearchTable,iterStat : ${mediaCompanyList}">
-													<td th:text="${#temporals.format(SumSearchTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
-													<td th:text="${totallandingCount}" class="text-center align-middle"></td>
-													<td th:text="${totalPartCount}" class="text-center align-middle"></td>
+												<tr th:each="SumSearchTable,iterStat : ${SearchMsnSumStats}">
+													<td th:text="${SumSearchTable?.date}" class="text-center align-middle"></td>
+													<td th:text="${SumSearchTable?.landingCnt}" class="text-center align-middle"></td>
+													<td th:text="${SumSearchTable?.partCnt}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
                                             <tfoot>
 												<tr><th class="text-center font-weight-bold">합산</th>													
-                                                <th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
-                                                <th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
+                                                <th class="text-center font-weight-bold" th:text="${LandingCount}">0</th>
+                                                <th class="text-center font-weight-bold" th:text="${PartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>

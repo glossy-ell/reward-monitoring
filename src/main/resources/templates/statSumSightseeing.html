@@ -501,9 +501,9 @@
                     response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
                     $('#statSumSightseeing').append(
                         '<tr>' +
-							'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
-							'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
-							'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.date) + '</td>' +
+							'<td class="text-center align-middle">' + SumSightseeingTable.landingCnt + '</td>' +
+							'<td class="text-center align-middle">' + SumSightseeingTable.partCnt + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -512,7 +512,6 @@
                },
             error: function(xhr) {
                 alert("검색중 오류가 발생하였습니다.");
-                }
             }
         });
     } //if 끝
@@ -522,31 +521,32 @@
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
+
+
 					success: function(response) {
 						const statSumSightseeingContainer = $('#statSumSightseeing'); // 회원 목록을 표시할 컨테이너 선택
 						statSumSightseeingContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.SumSightseeingTables.length === 0) { //검색결과가 빈 리스트일경우
+						if (response.SaveMsnSumStats.length === 0) { //검색결과가 빈 리스트일경우
 						//statSumSightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statSumSightseeing').append('<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+
 						} else {
-							response.SumSightseeingTables.forEach(function(SumSightseeingTable,index) {
+							response.SaveMsnSumStats.forEach(function(SumSightseeingTable,index) {
 							$('#statSumSightseeing').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.createdAtLocalDateTime) + '</td>' +
-									'<td class="text-center align-middle">' + SumSightseeingTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + SumSightseeingTable.attendCount + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SumSightseeingTable.date) + '</td>' +
+									'<td class="text-center align-middle">' + SumSightseeingTable.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + SumSightseeingTable.partCnt + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+						 alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -707,8 +707,8 @@
 											<thead class="thead-light">
 											<tr>
 												<th class="text-center font-weight-bold">일시</th>
-												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${totalLandingCount}">0</span>)</th>
-												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${totalPartCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${LandingCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${PartCount}">0</span>)</th>
 											</tr>
 											</thead>
 											<tbody  id = "statSumSightseeing">
@@ -716,15 +716,15 @@
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
 												<tr th:each="SumSightseeingTable,iterStat : ${saveMsnSumStats}">
-													<td th:text="${#temporals.format(SumSightseeingTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
-													<td th:text="${totalLandingCount}" class="text-center align-middle"></td>
-													<td th:text="${totalPartCount}" class="text-center align-middle"></td>
+													<td th:text="${SumSightseeingTable?.date}" class="text-center align-middle"></td>
+													<td th:text="${SumSightseeingTable?.LandingCnt}" class="text-center align-middle"></td>
+													<td th:text="${SumSightseeingTable?.PartCnt}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 											<tfoot>
 											<tr><th class="text-center font-weight-bold">합산</th>
-												<th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
-												<th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${LandingCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${PartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>

@@ -55,6 +55,16 @@ public class AnswerMsnSumStat {
     @Schema(description = "일시", example = "2024-09-11")
     private LocalDate date = LocalDate.now();
 
+    @Comment("각 랜딩 카운트")
+    @Column(name = "landing_cnt")
+    @Schema(description = "랜딩수")
+    private int landingCnt;
+
+    @Comment("각 참여 카운트")
+    @Column(name = "part_cnt")
+    @Schema(description = "카운트")
+    private int partCnt;
+
     @Comment("랜딩 카운트")
     @Column(name = "total_landing_cnt")
     @Schema(description = "전체 랜딩수")
@@ -67,9 +77,12 @@ public class AnswerMsnSumStat {
     int partCount;
 
     @Builder
-    public AnswerMsnSumStat(LocalDate date, int landingCount, int partCount) {
+    public AnswerMsnSumStat(LocalDate date, int landingCnt, int partCnt, int landingCount, int partCount) {
         this.date = date;
+        this.landingCnt= landingCnt;
+        this.partCnt= partCnt;
         this.landingCount = landingCount;
-        this. partCount = partCount;
+        this.partCount = partCount;
+
     }
 }

@@ -502,14 +502,14 @@
                     $('#statSearch').append(
                         '<tr>' +
 							'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.idx + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.mediaCompany + '</td>' +
 							'<td class="text-center align-middle">' + SearchTable.memberID + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.searchIdx + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.answerMsn + '</td>' +
 							'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.abuseState + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.checkResponse + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.isAbuse + '</td>' +
+							'<td class="text-center align-middle">' + SearchTable.response + '</td>' +
 							'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
-							'<td class="text-center align-middle">' + formatDateTime(SearchTable.createdAtLocalDateTime) + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SearchTable.registrationDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -528,39 +528,37 @@
     				type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
+
+
 					success: function(response) {
 						const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
 						statSearchContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.SearchTables.length === 0) {
+						if (response.SearchMsnDetailsStats.length === 0) {
 						//statSearch가 빈 리스트인 경우 메시지 추가
 							$('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							innerAnswerMsns = response.fullAnswerMsns;
-							innerAnswerMsnsPage = 1;
-							response.SearchTables.forEach(function(SearchTable,index) {
+							response.SearchMsnDetailsStats.forEach(function(SearchTable,index) {
 							$('#statSearch').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-									'<td class="text-center align-middle">' + SearchTable.idx + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.mediaCompany + '</td>' +
 									'<td class="text-center align-middle">' + SearchTable.memberID + '</td>' +
-									'<td class="text-center align-middle">' + SearchTable.searchIdx + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.answerMsn + '</td>' +
 									'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
-									'<td class="text-center align-middle">' + SearchTable.abuseState + '</td>' +
-									'<td class="text-center align-middle">' + SearchTable.checkResponse + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.isAbuse + '</td>' +
+									'<td class="text-center align-middle">' + SearchTable.response + '</td>' +
 									'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(SearchTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SearchTable.registrationDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+					alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -712,14 +710,14 @@
 															</div>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
-															<select name="sIsAbuse" class="form-control" onchange="commSearch();">
+															<select name="isAbuse" class="form-control" onchange="commSearch();">
 																<option value="">= 어뷰상태 =</option>
 																<option value="1">정상</option>
 																<option value="2">어뷰</option>
 															</select>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
-															<select name="sResponseStatus" class="form-control" onchange="commSearch();">
+															<select name="response" class="form-control" onchange="commSearch();">
 																<option value="">= 응답 확인 =</option>
 																<option value="1">성공</option>
 																<option value="2">실패</option>
@@ -796,19 +794,19 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statSearch">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(SearchMsnDetailsStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SearchTable,iterStat : ${mediaCompanyList}">
-													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-													<td th:text="${SearchTable.idx}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.memberID}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.searchIdx}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.point}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.abuseState}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.checkResponse}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.ip}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(SearchTable.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="SearchTable,iterStat : ${SearchMsnDetailsStats}">
+													<td th:text="${SearchTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.memberID}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.point}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.isAbuse}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.response}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.ip}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.registrationDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

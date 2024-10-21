@@ -502,16 +502,16 @@
                     $('#statSightseeing').append(
                         '<tr>' +
 							'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.idx + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.companyID + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.missionIdx + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.myPlace + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.mediaCompany + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.memberID + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.answerMsn + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.url + '</td>' +
 							'<td class="text-center align-middle">' + SightseeingTable.point + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.checkPassive + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.abuseState + '</td>' +
-							'<td class="text-center align-middle">' + SightseeingTable.checkResponse + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.passivityCheck + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.isAbuse + '</td>' +
+							'<td class="text-center align-middle">' + SightseeingTable.response + '</td>' +
 							'<td class="text-center align-middle">' + SightseeingTable.ip + '</td>' +
-							'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.createdAtLocalDateTime) + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.registrationDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -530,28 +530,28 @@
     				type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
+
+
 					success: function(response) {
 						const statSightseeingContainer = $('#statSightseeing'); // 회원 목록을 표시할 컨테이너 선택
 						statSightseeingContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.SightseeingTables.length === 0) {
+						if (response.SaveMsnDetailsStats.length === 0) {
 						//statSightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statSightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							response.SightseeingTables.forEach(function(SightseeingTable,index) {
+							response.SaveMsnDetailsStats.forEach(function(SightseeingTable,index) {
 							$('#statSightseeing').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.idx + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.companyID + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.missionIdx + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.myPlace + '</td>' +
+									'<td class="text-center align-middle">' + SightseeingTable.url + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.point + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.checkPassive + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.abuseState + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.checkResponse + '</td>' +
+									'<td class="text-center align-middle">' + SightseeingTable.passivityCheck + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.ip + '</td>' +
 									'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.createdAtLocalDateTime) + '</td>' +
 								'</tr>'
@@ -560,9 +560,9 @@
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+							 alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -843,14 +843,14 @@
 															</div>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
-															<select name="sIsAbuse" class="form-control" onchange="commSearch();">
+															<select name="isAbuse" class="form-control" onchange="commSearch();">
 																<option value="">= 어뷰상태 =</option>
 																<option value="1">정상</option>
 																<option value="2">어뷰</option>
 															</select>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
-															<select name="sResponseStatus" class="form-control" onchange="commSearch();">
+															<select name="response" class="form-control" onchange="commSearch();">
 																<option value="">= 응답 확인 =</option>
 																<option value="1">성공</option>
 																<option value="2">실패</option>
@@ -911,7 +911,6 @@
 									</form>
 
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 1534404 Count (1/15345)Page</div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
                                                 <tr>
@@ -929,21 +928,21 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statSightseeing">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(SaveMsnDetailsStats)}">
 													<td colspan="12" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SightseeingTable,iterStat : ${mediaCompanyList}">
-													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-													<td th:text="${SightseeingTable.idx}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.companyID}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.missionIdx}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.myPlace}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.point}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.checkPassive}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.abuseState}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.checkResponse}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.ip}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(SightseeingTable.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="SightseeingTable,iterStat : ${SaveMsnDetailsStats}">
+													<td th:text="${SightseeingTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.memberID}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.url}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.point}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.passivityCheck}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.isAbuse}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.response}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.ip}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.registrationDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

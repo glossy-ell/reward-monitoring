@@ -502,9 +502,9 @@
 					response.SumSearchTables.forEach(function(SumSearchTable,index) {
 					$('#statSumQuiz').append(
 						'<tr>' +
-						'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.createdAtLocalDateTime) + '</td>' +
-						'<td class="text-center align-middle">' + SumQuizTable.landingCount + '</td>' +
-						'<td class="text-center align-middle">' + SumQuizTable.attendCount + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.date) + '</td>' +
+							'<td class="text-center align-middle">' + SumQuizTable.landingCount + '</td>' +
+							'<td class="text-center align-middle">' + SumQuizTable.partCount + '</td>' +
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -522,31 +522,32 @@
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
+
+
 					success: function(response) {
 						const statSumQuizContainer = $('#statSumQuiz'); // 회원 목록을 표시할 컨테이너 선택
 						statSumQuizContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.SumQuizTables.length === 0) {
+						if (response.AnswerMsnSumStats.length === 0) {
 						//statSumQuiz가 빈 리스트인 경우 메시지 추가
 							$('#staSumtQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+
 						} else {
-							response.SumSearchTables.forEach(function(SumSearchTable,index) {
+							response.AnswerMsnSumStats.forEach(function(SumSearchTable,index) {
 							$('#statSumQuiz').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.date) + '</td>' +
 									'<td class="text-center align-middle">' + SumQuizTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + SumQuizTable.attendCount + '</td>' +
+									'<td class="text-center align-middle">' + SumQuizTable.partCount + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+						 alert("검색중 오류가 발생하였습니다.");
+				}
 			});
 		}
     }
@@ -705,24 +706,24 @@
 											<thead class="thead-light">
 											<tr>
 												<th class="text-center font-weight-bold">일시</th>
-												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${totalLandingCount}">0</span>)</th>
-												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${totalPartCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${LandingCount}">0</span>)</th>
+												<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${PartCount}">0</span>)</th>
 											</tr>
 											</thead>
 											<tbody  id = "statSumQuiz">
-												<tr th:if="${#lists.isEmpty(saveMsnSumStats)}">
+												<tr th:if="${#lists.isEmpty(AnswerMsnSumStats)}">
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SumQuizTable,iterStat : ${mediaCompanyList}">
-													<td th:text="${#temporals.format(SumQuizTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
-													<td th:text="${totalLandingCount}" class="text-center align-middle"></td>
-													<td th:text="${totalPartCount}" class="text-center align-middle"></td>
+												<tr th:each="SumQuizTable,iterStat : ${AnswerMsnSumStats}">
+													<td th:text="${SumQuizTable?.date}" class="text-center align-middle"></td>
+													<td th:text="${SumQuizTable?.landingCnt}" class="text-center align-middle"></td>
+													<td th:text="${SumQuizTable?.partCnt}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 											<tfoot>
 											<tr><th class="text-center font-weight-bold">합산</th>
-												<th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
-												<th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${landingCount}">0</th>
+												<th class="text-center font-weight-bold" th:text="${partCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>

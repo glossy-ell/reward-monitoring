@@ -474,6 +474,8 @@
 		formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+
+         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
          $.ajax({
         	url: `/Mission/search`,
             type: "POST",
@@ -484,31 +486,101 @@
             success: function(response) {
             	const missionCsListContainer = $('#missionCsList'); // 회원 목록을 표시할 컨테이너 선택
             	missionCsListContainer.empty();
+
             	if (response.missionCss.length === 0) {
 				//missionCsList가 빈 리스트인 경우 메시지 추가
 					$('#missionCsList').append('<tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>');
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				} else {
+					innerAnswerMsns = response.fullAnswerMsns;
+					innerAnswerMsnsPage = 1;
 					response.missionCss.forEach(function(missionCs,index) {
 					$('#missionCsList').append(
 						'<tr>' +
 						'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-						'<td class="text-center align-middle">' + missionCs.missionType + '</td>' +
-						'<td class="text-center align-middle">' + missionCs.missionTitle + '</td>' +
-						'<td class="text-center align-middle">' + missionCs.inquiryCount + '</td>' +
-						'<td class="text-center align-middle">' + missionCs.csCategory + '</td>' +
-						'<td class="text-center align-middle">' + formatDateTime(missionCs.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' + missionCs.msnType + '</td>' +
+						'<td class="text-center align-middle">' + missionCs.msnTitle + '</td>' +
+						'<td class="text-center align-middle">' + missionCs.CSCount + '</td>' +
+						'<td class="text-center align-middle">' + missionCs.csType + '</td>' +
+						'<td class="text-center align-middle">' + formatDateTime(missionCs.firstRegDate) + '</td>' +
 						'</tr>'
 					);
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				 });
-				$('#currentPage').text(response.currentPage);
-				$('#totalPages').text(response.totalPages);
 				}
-                       },
+              },
             error: function(xhr) {
             	alert("검색중 오류가 발생하였습니다.");
         	}
     	});
+    } //if 끝
+    else{ //이미 보유한 데이터가 있을경우
+			$.ajax({
+   					url: `/Mission/search/${page}`,
+    				type: 'POST',
+    				contentType: 'application/json',
+    				data: JSON.stringify(jsonData),
+
+    				success: function(response) {
+					const missionCsListContainer = $('#missionCsList'); // 회원 목록을 표시할 컨테이너 선택
+					missionCsListContainer.empty();
+
+					if (response.missionCSs.length === 0) {
+					//missionCsList가 빈 리스트인 경우 메시지 추가
+						$('#missionCsList').append('<tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>');
+					} else {
+						response.missionCSs.forEach(function(missionCs,index) {
+						$('#missionCsList').append(
+							'<tr>' +
+							'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+							'<td class="text-center align-middle">' + missionCs.msnType + '</td>' +
+							'<td class="text-center align-middle">' + missionCs.msnTitle + '</td>' +
+							'<td class="text-center align-middle">' + missionCs.CSCount + '</td>' +
+							'<td class="text-center align-middle">' + missionCs.csType + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(missionCs.firstRegDate) + '</td>' +
+							'</tr>'
+						);
+						updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						});
+					}
+				},
+    		 error: function(xhr) {
+                 alert("검색중 오류가 발생하였습니다.");
+             }
+			});
+		}
     }
+
+    // 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		if (currentPage > 1) {
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+		}
+	}
+
 	// 날짜 포맷 함수
 	function formatDateTime(dateTimeStr) {
 		if (!dateTimeStr) {
@@ -666,15 +738,15 @@
 												</tr>
 											</thead>
 											<tbody  id = "missionCsList">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(MissionCSs)}">
 													<td colspan="5" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="missionCs,iterStat : ${mediaCompanyList}">
-													<td th:text="${missionCs.missionType}" class="text-center align-middle"></td>
-													<td th:text="${missionCs.missionTitle}" class="text-center align-middle"></td>
-													<td th:text="${missionCs.inquiryCount}" class="text-center align-middle"></td>
-													<td th:text="${missionCs.csCategory}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(missionCs.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="missionCs,iterStat : ${MissionCSs}">
+													<td th:text="${missionCs?.msnType}" class="text-center align-middle"></td>
+													<td th:text="${missionCs?.msnTitle}" class="text-center align-middle"></td>
+													<td th:text="${missionCs?.CSCount}" class="text-center align-middle"></td>
+													<td th:text="${missionCs?.csType}" class="text-center align-middle"></td>
+													<td th:text="${missionCs?.firstRegDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>										

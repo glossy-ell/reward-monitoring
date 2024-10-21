@@ -504,13 +504,13 @@
                         '<tr>' +
                         '<td class="text-center align-middle">' + (index + 1) + '</td>' +
                         '<td class="text-center align-middle">' + DailySightseeingTable.idx + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.advertiserIdx + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.advertiserParticular + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.missionIdx + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.missionTitle + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.landingCount + '</td>' +
-                        '<td class="text-center align-middle">' + DailySightseeingTable.attendCount + '</td>' +
-                        '<td class="text-center align-middle">' + formatDateTime(DailySightseeingTable.createdAtLocalDateTime) + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.advertiser.idx + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.advertiserDetails + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.idx + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.missionTitle + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.landingCnt + '</td>' +
+                        '<td class="text-center align-middle">' + DailySightseeingTable.partCnt + '</td>' +
+                        '<td class="text-center align-middle">' + formatDateTime(DailySightseeingTable.partDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -533,34 +533,33 @@
 					success: function(response) {
 						const statDailySightseeingContainer = $('#statDailySightseeing'); // 회원 목록을 표시할 컨테이너 선택
 						statDailySightseeingContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.DailySightseeingTables.length === 0) {
+						if (response.SaveMsnDailyStats.length === 0) {
 						//statDailySightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statDailySightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+
 						} else {
-							response.DailySightseeingTables.forEach(function(DailySightseeingTable,index) {
+							response.SaveMsnDailyStats.forEach(function(DailySightseeingTable,index) {
 							$('#statDailySightseeing').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.idx + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.advertiserIdx + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.advertiserParticular + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.missionIdx + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.missionTitle + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.attendCount + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(DailySightseeingTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.advertiser.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.advertiserDetails + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.answerMsn.missionTitle + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.partCnt + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(DailySightseeingTable.partDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+				error: function(xhr) {
+					 alert("검색중 오류가 발생하였습니다.");
+				 }
 			});
 		}
     }
@@ -770,19 +769,19 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statDailySightseeing">
-												<tr th:if="${#lists.isEmpty(answerMsns)}">
+												<tr th:if="${#lists.isEmpty(SaveMsnDailyStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="DailySightseeingTable,iterStat : ${mediaCompanyList}">
-													<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-													<td th:text="${DailySightseeingTable.idx}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.advertiserIdx}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.advertiserParticular}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.missionIdx}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.missionTitle}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.landingCount}" class="text-center align-middle"></td>
-													<td th:text="${DailySightseeingTable.attendCount}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(DailySightseeingTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
+												<tr th:each="DailySightseeingTable,iterStat : ${SaveMsnDailyStats}">
+													<td th:text="${DailySightseeingTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable.advertiser?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable.answerMsn?.advertiserDetails}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable.answerMsn?.missionTitle}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable?.landingCnt}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable?.partCnt}" class="text-center align-middle"></td>
+													<td th:text="${DailySightseeingTable?.partDate}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

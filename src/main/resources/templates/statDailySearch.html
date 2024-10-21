@@ -504,13 +504,13 @@
                         '<tr>' +
                         '<td class="text-center align-middle">' + (index + 1) + '</td>' +
                         '<td class="text-center align-middle">' + DailySearchTable.companyIdx + '</td>' +
-                        '<td class="text-center align-middle">' + DailySearchTable.advertiserIdx + '</td>' +
-                        '<td class="text-center align-middle">' + DailySearchTable.advertiserParticular + '</td>' +
-                        '<td class="text-center align-middle">' + DailySearchTable.missionIdx + '</td>' +
+                        '<td class="text-center align-middle">' + DailySearchTable.advertiser.idx + '</td>' +
+                        '<td class="text-center align-middle">' + DailySearchTable.answerMsn.advertiserParticular + '</td>' +
+                        '<td class="text-center align-middle">' + DailySearchTable.mission.idx + '</td>' +
                         '<td class="text-center align-middle">' + DailySearchTable.missionTitle + '</td>' +
-                        '<td class="text-center align-middle">' + DailySearchTable.landingCount + '</td>' +
-                        '<td class="text-center align-middle">' + DailySearchTable.attendCount + '</td>' +
-                        '<td class="text-center align-middle">' + formatDateTime(DailySearchTable.createdAtLocalDateTime) + '</td>' +
+                        '<td class="text-center align-middle">' + DailySearchTable.landingCnt + '</td>' +
+                        '<td class="text-center align-middle">' + DailySearchTable.attendCnt + '</td>' +
+                        '<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -528,38 +528,37 @@
    					url: `/Statistics/search/${page}`,
     				type: 'POST',
     				contentType: 'application/json',
-    				data: JSON.stringify({innerAnswerMsns}),
+    				data: JSON.stringify(jsonData),
+
     				success: function(response) {
 						const statDailySearchContainer = $('#statDailySearch'); // 회원 목록을 표시할 컨테이너 선택
 						statDailySearchContainer.empty();
-						innerAnswerMsnsPage = page;
 
-						if (response.DailySearchTables.length === 0) {
+						if (response.SearchMsnDailyStats.length === 0) {
 						//statDailySearch가 빈 리스트인 경우 메시지 추가
 							$('#statDailySearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							response.DailySearchTables.forEach(function(DailySearchTable,index) {
+							response.SearchMsnDailyStats.forEach(function(DailySearchTable,index) {
 							$('#statDailySearch').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.companyIdx + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.advertiserIdx + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.advertiserParticular + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.missionIdx + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.missionTitle + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.attendCount + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(DailySearchTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.company.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.advertiser.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.answerMsn.advertiserDetails + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.mission.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.answerMsn.missionTitle + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.attendCnt + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
 								'</tr>'
 								);
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
 						}
 					},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
+    		 error: function(xhr) {
+                 alert("검색중 오류가 발생하였습니다.");
+             }
 			});
 		}
     }
@@ -753,7 +752,6 @@
 									</form>
 
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 45695 Count (1/457)Page</div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
                                                 <tr>
@@ -769,19 +767,19 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statDailySearch">
-											<tr th:if="${#lists.isEmpty(answerMsns)}">
+											<tr th:if="${#lists.isEmpty(SearchMsnDailyStats)}">
 												<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 											</tr>
-											<tr th:each="DailySearchTable,iterStat : ${mediaCompanyList}">
-												<td class="text-center align-middle" th:text="${iterStat.index + 1}"></td>
-												<td th:text="${DailySearchTable.companyIdx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.advertiserIdx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.advertiserParticular}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.missionIdx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.missionTitle}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.landingCount}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.attendCount}" class="text-center align-middle"></td>
-												<td th:text="${#temporals.format(DailySearchTable.createdAtLocalDateTime, 'yyyy-MM-dd')}" class="text-center align-middle"></td>
+											<tr th:each="DailySearchTable,iterStat : ${SearchMsnDailyStats}">
+												<td th:text="${DailySearchTable?.idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.company?.idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.advertiser?.Idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.advertiserDetails}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.missionTitle}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable?.landingCnt}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable?.partCnt}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable?.partDate}" class="text-center align-middle"></td>
 											</tr>
 											</tbody>
 										</table>
