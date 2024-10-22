@@ -460,13 +460,9 @@
 
 			<!-- end aside -->
 	<script type="application/javascript">
-		let innerAnswerMsns = [];
-		let innerAnswerMsnsPage;
 
-		function clearResults() {
-   			innerAnswerMsns = []; // 리스트 초기화
+		let searched = false;
 
-		}
 
 		function enterkey() {
 			if (window.event.keyCode == 13) {
@@ -476,6 +472,7 @@
 
 		//검색
 		function commSearch(page) {
+
         	var frm = document.searchFrm;
         	var formData = new FormData(frm);
        		var jsonData = {};
@@ -483,26 +480,30 @@
             	jsonData[key] = value; // FormData를 JSON 객체로 변환
         	});
 
-        	if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+        	if(page ==null){
+        		page = 1;
+        	}
+
+
 			$.ajax({
-				url: `/Mission/quizList/search`,
-				type: "POST",
-				contentType: "application/json",
-				data: JSON.stringify(jsonData),
+			url: `/Mission/quizList/search/${page}`,
+			type: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(jsonData),
 
-				success: function(response) {
-					const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
-					quizListContainer.empty();
+			success: function(response) {
+				const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
+				quizListContainer.empty();
 
-					if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
-					// members가 빈 리스트인 경우 메시지 추가
-							$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-					} else {
-					 	innerAnswerMsns = response.fullAnswerMsns;
-					 	innerAnswerMsnsPage = 1;
-						response.answerMsns.forEach(function(answerMsn,index) {
-						$('#quizList').append(
+				if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
+				// members가 빈 리스트인 경우 메시지 추가
+						$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+						searched = true;
+						updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+				} else {
+					searched = true;
+					response.answerMsns.forEach(function(answerMsn,index) {
+					$('#quizList').append(
 							  '<tr>' +
 									'<td class="text-center align-middle">' + answerMsn.idx + '</td>' +
 									'<td class="text-center align-middle">' +
@@ -544,7 +545,7 @@
 										'</div>' +
 									'</td>' +
 									'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-									'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
+									'<td class="text-center align-middle">' + (answerMsn.reEngagementDay != null ? answerMsn.reEngagementDay : '') + '</td>' +
 									'<td class="text-center align-middle">' +
 										'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
 									'</td>' +
@@ -557,6 +558,8 @@
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							const newUrl = `/Mission/quizList/search/${response.currentPage}`;
+							history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 						});
 					}
 				},
@@ -568,88 +571,8 @@
 					}
 				}
 			});
-		} //if 끝
-		else{ //이미 보유한 데이터가 있을경우
-			$.ajax({
-   					url: `/Mission/quizList/search/${page}`,
-    				type: 'POST',
-    				contentType: 'application/json',
-    				data: JSON.stringify({innerAnswerMsns}),
-    				success: function(response) {
-							const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
-							quizListContainer.empty();
-							innerAnswerMsnsPage = page;
-
-							if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
-							// members가 빈 리스트인 경우 메시지 추가
-								$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-							}else {
-								response.answerMsns.forEach(function(answerMsn,index) {
-								$('#quizList').append(
-									  '<tr>' +
-											'<td class="text-center align-middle">' + (answerMsn.idx) + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<a class="btn btn-outline-info btn-xs" ' +
-													'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
-													'target="_blank">랜딩 URL</a>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (answerMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (answerMsn.missionActive ? '활성' : '비활성') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsUsed(' + answerMsn.idx + ');">활성</a>' +
-														'<a class="dropdown-item" onclick="setIsUsedFalse(' + answerMsn.idx + ');">비활성</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (answerMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (answerMsn.missionExposure ? '노출' : '비노출') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsView(' + answerMsn.idx + ');">노출</a>' +
-														'<a class="dropdown-item" onclick="setIsViewFalse(' + answerMsn.idx + ');">비노출</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + (answerMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-											'<td class="text-center align-middle">' + answerMsn.reEngagementDay + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + answerMsn.idx + ');">가능일 변경하기</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
-											'</td>' +
-										'</tr>'
-									);
-									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-								});
-							}
-						},
-    		error: function(xhr, status, error) {
-        		console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
-   	 			}
-			});
 		}
-    }
+
 
 	// 페이지네이션 업데이트 함수
 	function updatePagination(currentPage, totalPages, startPage, endPage) {
@@ -794,92 +717,236 @@
 
 
 		function setIsUsed(idx) {
-
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/quizList/setMissionIsUsed/${idx}`
-				, cache: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsUsed/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsUsed/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
 
 		}
 
 		function setIsUsedFalse(idx) {
-
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/quizList/setMissionIsUsedFalse/${idx}`
-				, cache: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsUsedFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsUsedFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
 
 		}
 
 		function setIsView(idx) {
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsView/${idx}`
+					, cache: false
+					, async: false
 
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/quizList/setMissionIsView/${idx}`
-				, cache: false
-				, async: false
-
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsView/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
 
 		}
 
 		function setIsViewFalse(idx) {
-
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/quizList/setMissionIsViewFalse/${idx}`
-				, cache: false
-				, async: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
-
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsViewFalse/${idx}`
+					, cache: false
+					, async: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/quizList/setMissionIsViewFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
 		}
 
 
-		function commSetAllIsUsed(idx) {
-			if (typeof innerAnswerMsnsPage === 'undefined'){
-				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+		function commSetAllIsUsed(page) {
+			if (searched == false) {
+				if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
+					$.ajax({
+						type: 'get',
+						url: `/Mission/quizList/setOffMissionIsUsed/${page}`,
+						success: function(data) {
+							alert("비활성화 되었습니다");
+							location.reload(true);
+						},
+						error: function() {
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+			} else {
+				if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
+
+					var frm = document.searchFrm;
+					var formData = new FormData(frm);
+					var jsonData = {};
+					formData.forEach((value, key) => {
+						jsonData[key] = value; // FormData를 JSON 객체로 변환
+					});
+
+					if (page == null) {
+						page = 1;
+					}
+
+					// 첫 번째 AJAX 요청
+					$.ajax({
+						url: `/Mission/quizList/search/${page}`,
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify(jsonData),
+						success: function(response) {
+							// 두 번째 AJAX 요청
+							$.ajax({
+								type: 'post',
+								url: `/Mission/quizList/setOffMissionIsUsedSearch/${page}`,
+								contentType: "application/json",
+								data: JSON.stringify({ innerAnswerMsns: response.answerMsns }), // innerAnswerMsns에 맞추어 전송
+								success: function(data) {
+									alert("비활성화 되었습니다");
+									const currentUrl = window.location.href;
+									const url = new URL(currentUrl);
+									const pathSegments = url.pathname.split('/');
+									const page = pathSegments[pathSegments.length - 1];
+									commSearch(page);
+								},
+								error: function() {
+									alert("오류가 발생했습니다.");
+									return false;
+								}
+							});
+						},
+						error: function() {
+							alert("검색 중 오류가 발생했습니다.");
+						}
+					});
+				}
+			}
+		}
+
+
+
+		function commSetAllIsView(page) {
+			if (searched == false) {
+				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
 					$.ajax({
 						type: 'get'
-						, url: `/Mission/quizList/setOffMissionIsUsed/${idx}`
+						, url: `/Mission/quizList/setOffMissionIsView/${page}`
 						, success: function(data) {
-								alert("비활성화 되었습니다");
+								alert("현재 페이지의 미션이 비노출로 되었습니다");
 								location.reload(true);
-
-
 							}
 						,error: function(){
 								alert("오류가 발생했습니다.");
@@ -889,59 +956,45 @@
 				}
 			}
 			else{
-				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
-					$.ajax({
-						type: 'post'
-						, url: `/Mission/quizList/setOffMissionIsUsedSearch/${innerAnswerMsnsPage}`
-						,contentType: "application/json"
-						,data: JSON.stringify({innerAnswerMsns})
-						, success: function(data) {
-								alert("비활성화 되었습니다");
-								window.location.href = "/Mission/quizList";
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
-						}
-					});
-				}
-			}
-		}
-
-
-		function commSetAllIsView(idx) {
-			if (typeof innerAnswerMsnsPage === 'undefined'){
 				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
-					$.ajax({
-						type: 'get'
-						, url: `/Mission/quizList/setOffMissionIsView/${idx}`
-						, success: function(data) {
-								alert("현재 페이지의 미션이 비노출로 되었습니다");
-								location.reload(true);
-
-
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
-						}
+					var frm = document.searchFrm;
+					var formData = new FormData(frm);
+					var jsonData = {};
+					formData.forEach((value, key) => {
+						jsonData[key] = value; // FormData를 JSON 객체로 변환
 					});
-				}
-			}
-			else{
-				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+
+					if (page == null) {
+						page = 1;
+					}
 					$.ajax({
-						type: 'post'
-						, url: `/Mission/quizList/setOffMissionIsViewSearch/${innerAnswerMsnsPage}`
-						,contentType: "application/json"
-						,data: JSON.stringify({innerAnswerMsns})
-						, success: function(data) {
-								alert("현재 페이지의 미션이 비노출로 되었습니다");
-								window.location.href = "/Mission/quizList";
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
+						url: `/Mission/quizList/search/${page}`,
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify(jsonData),
+						success: function(response) {
+							// 두 번째 AJAX 요청
+							$.ajax({
+								type: 'post',
+								url: `/Mission/quizList/setOffMissionIsViewSearch/${page}`,
+								contentType: "application/json",
+								data: JSON.stringify({ innerAnswerMsns: response.answerMsns }), // innerAnswerMsns에 맞추어 전송
+								success: function(data) {
+									alert("비활성화 되었습니다");
+									const currentUrl = window.location.href;
+									const url = new URL(currentUrl);
+									const pathSegments = url.pathname.split('/');
+									const page = pathSegments[pathSegments.length - 1];
+									commSearch(page);
+								},
+								error: function() {
+									alert("오류가 발생했습니다.");
+									return false;
+								}
+							});
+						},
+						error: function() {
+							alert("검색 중 오류가 발생했습니다.");
 						}
 					});
 				}
