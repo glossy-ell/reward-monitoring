@@ -5,7 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Admin</title>
-	<link rel="stylesheet" href="/css/conan_aside_color.css">
 	<!-- favicon -->
 	<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
 
@@ -472,7 +471,7 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
         var formData = new FormData(frm);
         var jsonData = {};
@@ -513,14 +512,13 @@
                         '<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
                         '</tr>'
                     );
-                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
                  });
+                 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
                 }
               },
             error: function(xhr) {
                 alert("검색중 오류가 발생하였습니다.");
-            }
-           }
+           	}
         });
     } //if 끝
     else{ //이미 보유한 데이터가 있을경우
@@ -552,13 +550,13 @@
 									'<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
 								'</tr>'
 								);
-								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 							});
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						}
 					},
-    		 error: function(xhr) {
-                 alert("검색중 오류가 발생하였습니다.");
-             }
+				 error: function(xhr) {
+					 alert("검색중 오류가 발생하였습니다.");
+				 }
 			});
 		}
     }
