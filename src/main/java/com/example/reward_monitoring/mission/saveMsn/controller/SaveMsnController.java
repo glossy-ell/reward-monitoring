@@ -7,10 +7,16 @@ import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
+import com.example.reward_monitoring.mission.answerMsn.dto.quizStaticListSearchDto;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
 import com.example.reward_monitoring.mission.saveMsn.service.SaveMsnService;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.service.AnswerMsnDailyService;
+import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
+import com.example.reward_monitoring.statistics.saveMsn.daily.service.SaveMsnDailyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,9 +35,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -53,6 +61,10 @@ public class SaveMsnController {
     @Autowired
     private ServerService serverService;
 
+    @Autowired
+    private SaveMsnDailyService saveMsnDailyService;
+
+
     @Operation(summary = "저장미션 정보 수정", description = "저장미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 저장미션의 IDX")
     @PostMapping("/Mission/sightseeingWrite/edit/{idx}")
@@ -66,9 +78,11 @@ public class SaveMsnController {
                                         @PathVariable int idx,
                                         @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                         @RequestPart(value="dto",required = true) SaveMsnEditDto dto,
-                                        HttpServletResponse response){
+                                        HttpServletResponse response) throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
+        boolean result =true;
+
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } // 세션만료
@@ -100,7 +114,18 @@ public class SaveMsnController {
         if(edited == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
+        String directoryPath = "C:/images/sightseeing/";
+        String subDirectoryPath = directoryPath + edited.getIdx() + "/";
+        File subDirectory = new File(subDirectoryPath);
+        if (!subDirectory.exists()) {
+            result =subDirectory.mkdirs(); //
+        }
+        if(!result)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        File destinationFile = new File(subDirectoryPath + edited.getImageName());
+        if(multipartFile != null)
+            multipartFile.transferTo(destinationFile);
+        edited.setImagePath(subDirectoryPath + edited.getImageName());
         saveMsnRepository.save(edited);
         return ResponseEntity.status(HttpStatus.OK).body(edited);
     }
@@ -731,9 +756,16 @@ public class SaveMsnController {
         model.addAttribute("currentTime", LocalTime.now());
         model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
         model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
-        if(image !=null)
-            model.addAttribute("image",image);
-
+        if(image !=null) {
+            try {
+                File imageFile = new File(saveMsn.getImagePath());
+                byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                model.addAttribute("image", base64Image ); //URL을 모델에 추가
+            } catch (IOException e) {
+                return "sightseeingWrite";
+            }
+        }
         return "sightseeingWrite";
     }
 
@@ -1370,5 +1402,115 @@ public class SaveMsnController {
         return (result) ?
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @GetMapping("/Mission/sightseeingStaticList/{idx}")
+    public String quizReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Server> servers = serverService.getServers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        SaveMsn answerMsn = saveMsnService.getSaveMsn(idx);
+
+        LocalDate currentTime = LocalDate.now();
+        LocalDate past = LocalDate.now().minusMonths(1);
+
+        List<SaveMsnDailyStat> saveMsnDailyStat = saveMsnDailyService.getSaveMsnsDaily(answerMsn.getIdx(),currentTime,past);
+        Collections.reverse(saveMsnDailyStat);
+
+
+
+        int totalLandingCount = saveMsnDailyStat.stream().mapToInt(SaveMsnDailyStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =  saveMsnDailyStat.stream().mapToInt(SaveMsnDailyStat::getPartCnt).sum();  // 참여카운트 합
+
+
+        model.addAttribute("saveMsn",answerMsn);
+        model.addAttribute("saveMsnDailyStat", saveMsnDailyStat);
+        model.addAttribute("currentTime",currentTime);
+        model.addAttribute("servers",servers);
+        model.addAttribute("past",past);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
+        return "quizStaticList";
+    }
+
+
+
+    @Operation(summary = "저장미션 리포트 검색", description = "검색합니다")
+    @PostMapping("/Mission/sightseeingStaticList/search/{idx}")
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public Map<String, Object> searchReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, @RequestBody sightseeingStaticListSearchDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+        List<SaveMsnDailyStat> result = saveMsnService.searchReport(dto,idx);
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+
+
+        response.put("saveMsns", result);
+        return response; // JSON 형태로 반환
+    }
+
+
+
+    @Operation(summary = "엑셀 다운로드", description = "정답미션 리스트 엑셀파일을 다운로드합니다")
+    @GetMapping("/Mission/sightseeingStaticList/excel/{idx}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
+    public ResponseEntity<Void> reportExcelDownload(@PathVariable(required = true,value = "idx")int idx,HttpServletResponse response)throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+
+            LocalDate currentTime = LocalDate.now();
+            LocalDate past = LocalDate.now().minusMonths(1);
+            List<SaveMsnDailyStat> list = saveMsnDailyService.getSaveMsnsDaily(idx,currentTime,past);
+            Sheet sheet = saveMsnService.reportExcelDownload(list,wb);
+            if(sheet !=null) {
+                String fileName = idx +"번 정답 리포트.xlsx";
+                fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 }

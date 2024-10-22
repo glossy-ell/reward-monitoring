@@ -155,7 +155,6 @@ public class AnswerMsnReadDto {
                 .msnUrl7(msnUrl7)
                 .msnUrl8(msnUrl8)
                 .msnUrl9(msnUrl9)
-                .imageData(imageData)
                 .imageName(imageName)
                 .build();
     }

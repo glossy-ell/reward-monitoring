@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -118,7 +119,7 @@ public class AnswerMsnDailyService {
         return answerMsnDailyStatRepository.findAll();
     }
 
-    public AnswerMsnDailyStat getAnswerMsnsDaily(int idx) {return answerMsnDailyStatRepository.findByMsnIdx(idx);}
+    public List<AnswerMsnDailyStat>  getAnswerMsnsDaily(int idx,LocalDate currentTime, LocalDate past) {return answerMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
 
     public List<AnswerMsnDailyStat> searchAnswerMsnDaily(AnswerMsnDailyStatSearchDto dto) {
 
@@ -179,4 +180,5 @@ public class AnswerMsnDailyService {
 
         return result;
     }
+
 }

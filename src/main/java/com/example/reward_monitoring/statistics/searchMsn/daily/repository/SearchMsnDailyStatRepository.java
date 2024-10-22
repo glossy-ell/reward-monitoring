@@ -2,6 +2,7 @@ package com.example.reward_monitoring.statistics.searchMsn.daily.repository;
 
 
 
+
 import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,11 @@ public interface SearchMsnDailyStatRepository extends JpaRepository<SearchMsnDai
     public List<SearchMsnDailyStat> findByServer_ServerUrl(String url);
 
     public List<SearchMsnDailyStat> findByMediaCompany_CompanyName(String companyName);
+
+    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.searchMsn.idx = :idx AND s.partDate BETWEEN :startAt AND :endAt")
+    public List<SearchMsnDailyStat> findByMsnIdx(@Param("idx") int idx,@Param("endAt") LocalDate endAt, @Param("startAt") LocalDate startAt);
+
+    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.searchMsn.idx = :idx")
+    public List<SearchMsnDailyStat> findByMsnIdx_(@Param("idx") int idx);
+
 }

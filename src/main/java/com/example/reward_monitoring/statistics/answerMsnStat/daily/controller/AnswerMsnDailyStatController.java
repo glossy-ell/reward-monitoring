@@ -176,4 +176,8 @@ public class AnswerMsnDailyStatController {
         model.addAttribute("endPage", endPage);
         return "statDailyQuiz";
     }
+
+
+
+
 }

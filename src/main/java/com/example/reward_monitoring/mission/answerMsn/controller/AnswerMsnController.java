@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,9 +33,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -64,6 +67,8 @@ public class AnswerMsnController {
     @Autowired
     private AnswerMsnDailyService answerMsnDailyService;
 
+
+
     @Operation(summary = "정답미션 정보 수정", description = "정답미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 정답미션의 IDX")
     @PostMapping("/Mission/quizWrite/edit/{idx}")
@@ -77,8 +82,10 @@ public class AnswerMsnController {
                                           @PathVariable int idx,
                                           @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                           @RequestPart(value="dto",required = true) AnswerMsnEditDto dto,
-                                          HttpServletResponse response){
+                                          HttpServletResponse response) throws IOException {
         Member sessionMember= (Member) session.getAttribute("member");
+        boolean result =true;
+
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } // 세션만료
@@ -107,11 +114,26 @@ public class AnswerMsnController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
-        AnswerMsn edited = answerMsnService.edit(idx,dto);
 
+
+
+        AnswerMsn edited = answerMsnService.edit(idx,dto);
         if(edited == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        String directoryPath = "C:/images/quiz/";
+        String subDirectoryPath = directoryPath + edited.getIdx() + "/";
+        File subDirectory = new File(subDirectoryPath);
+        if (!subDirectory.exists()) {
+            result =subDirectory.mkdirs(); //
+        }
+        if(!result)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        File destinationFile = new File(subDirectoryPath + edited.getImageName());
+        if(multipartFile != null)
+            multipartFile.transferTo(destinationFile);
+        edited.setImagePath(subDirectoryPath + edited.getImageName());
+
 
         answerMsnRepository.save(edited);
         return ResponseEntity.status(HttpStatus.OK).body(edited);
@@ -128,8 +150,9 @@ public class AnswerMsnController {
     })
     public ResponseEntity<Void> add(HttpSession session,
             @RequestPart(value ="file",required = false)MultipartFile multipartFile,
-            @RequestPart(value ="dto",required = true)AnswerMsnReadDto dto){
+            @RequestPart(value ="dto",required = true)AnswerMsnReadDto dto) throws IOException {
         Member sessionMember= (Member) session.getAttribute("member");
+        boolean result =true;
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } // 세션만료
@@ -159,6 +182,20 @@ public class AnswerMsnController {
         AnswerMsn created = answerMsnService.add(dto);
         if(created == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        String directoryPath = "C:/images/";
+        String subDirectoryPath = directoryPath + created.getIdx() + "/";
+        File subDirectory = new File(subDirectoryPath);
+        if (!subDirectory.exists()) {
+            result =subDirectory.mkdirs(); //
+        }
+        if(!result)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        File destinationFile = new File(subDirectoryPath + created.getImageName());
+        if(multipartFile != null)
+            multipartFile.transferTo(destinationFile);
+        created.setImagePath(subDirectoryPath + created.getImageName());
+
         answerMsnRepository.save(created);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -702,10 +739,23 @@ public class AnswerMsnController {
         model.addAttribute("currentTime", LocalTime.now());
         model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
         model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
-        if(image !=null)
-            model.addAttribute("image",image);
+        if(image !=null) {
+            try {
+                File imageFile = new File(answerMsn.getImagePath());
+                byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                model.addAttribute("image", base64Image ); // URL을 모델에 추가
+            } catch (IOException e) {
+                return "quizWrite";
+            }
+        }
+
         return "quizWrite";
     }
+
+
+
+
 
     @GetMapping("/Mission/quizList/setOffMissionIsUsed/{pageNumber}")
     @ApiResponses(value = {
@@ -1410,6 +1460,8 @@ public class AnswerMsnController {
 
         return "quizMultiTempList";
     }
+
+
     @GetMapping("/Mission/quizStaticList/{idx}")
     public String quizReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
@@ -1423,17 +1475,101 @@ public class AnswerMsnController {
         }
 
         AnswerMsn answerMsn = answerMsnService.getAnswerMsn(idx);
-        AnswerMsnDailyStat answerMsnDailyStat = answerMsnDailyService.getAnswerMsnsDaily(answerMsn.getIdx());
+
         LocalDate currentTime = LocalDate.now();
         LocalDate past = LocalDate.now().minusMonths(1);
+
+        List<AnswerMsnDailyStat> answerMsnDailyStat = answerMsnDailyService.getAnswerMsnsDaily(answerMsn.getIdx(),currentTime,past);
+        Collections.reverse(answerMsnDailyStat);
+
+
+
+        int totalLandingCount = answerMsnDailyStat.stream().mapToInt(AnswerMsnDailyStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =  answerMsnDailyStat.stream().mapToInt(AnswerMsnDailyStat::getPartCnt).sum();  // 참여카운트 합
 
 
         model.addAttribute("answerMsn",answerMsn);
         model.addAttribute("answerMsnDailyStat", answerMsnDailyStat);
         model.addAttribute("currentTime",currentTime);
+        model.addAttribute("servers",servers);
         model.addAttribute("past",past);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
         return "quizStaticList";
     }
 
+
+
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @PostMapping("/Mission/quizStaticList/search/{idx}")
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public Map<String, Object> searchReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, @RequestBody quizStaticListSearchDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+        List<AnswerMsnDailyStat> result = answerMsnService.searchReport(dto,idx);
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+
+
+        response.put("answerMsns", result);
+        return response; // JSON 형태로 반환
+    }
+
+
+
+    @Operation(summary = "엑셀 다운로드", description = "정답미션 리스트 엑셀파일을 다운로드합니다")
+    @GetMapping("/Mission/quizStaticList/excel/{idx}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
+    public ResponseEntity<Void> reportExcelDownload(@PathVariable(required = true,value = "idx")int idx,HttpServletResponse response)throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+
+            LocalDate currentTime = LocalDate.now();
+            LocalDate past = LocalDate.now().minusMonths(1);
+            List<AnswerMsnDailyStat> list = answerMsnDailyService.getAnswerMsnsDaily(idx,currentTime,past);
+            Sheet sheet = answerMsnService.reportExcelDownload(list,wb);
+            if(sheet !=null) {
+                String fileName = idx +"번 정답 리포트.xlsx";
+                fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
 
 }

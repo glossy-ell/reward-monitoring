@@ -459,6 +459,11 @@
 <script type="application/javascript">
 
 
+
+
+
+	  let base64Image = null;
+
 	window.onload = function() {
 		toggleOverlapDay();
 	}
@@ -478,9 +483,8 @@
 			const reader = new FileReader();
 
 			reader.onload = function(event) {
-				const base64String = event.target.result.split(',')[1]; // Base64 문자열만 가져오기
-				// 미리보기 버튼의 onclick 핸들러를 업데이트
-				previewButton.setAttribute('onclick', `openFiles('${base64String}')`);
+				base64Image = event.target.result.split(',')[1]; // Base64 문자열만 가져오기
+				previewButton.setAttribute('onclick', `openFiles(-2)`); // 미리보기 버튼의 onclick 핸들러를 업데이트
 			};
 
 			reader.readAsDataURL(file); // 파일을 Data URL로 읽기
@@ -489,25 +493,39 @@
 		}
 	}
 
-  function openFiles(image) {
-	if (image === -1) {
-		const newPage = window.open("/images/mission_default.png", "", "top=100,left=400,width=1200,height=1000");
-		return true;
-	} else {
-		const newPage = window.open("", "", "top=100,left=400,width=1200,height=1000");
-		newPage.document.write(`
-			<html>
-				<head>
-					<title>이미지</title>
-				</head>
-				<body>
-					<img src="data:image/png;base64,${image}" alt="Image"/>
-				</body>
-			</html>
+	function openFiles(image) {
+		if (image === -1) { // 선택한 이미지가 없을 경우
+			const newPage = window.open("/images/mission_default.png", "", "top=100,left=400,width=1200,height=1000");
+			return true;
+		}
+		else if (image === -2) { // 이미지를 선택했을경우 (업로드 하지않음)
+			const newPage = window.open("", "", "top=100,left=400,width=1200,height=1000");
+			newPage.document.write(`
+				<html>
+					<head>
+						<title>이미지 미리보기</title>
+					</head>
+					<body>
+						<img src="data:image/png;base64,${base64Image}" alt="Image"/>
+					</body>
+				</html>
+			`);
+		} else { // 이미 업로드 한 이미지가 있을경우
+			const newPage = window.open("", "", "top=100,left=400,width=1200,height=1000");
+			newPage.document.write(`
+				<html>
+					<head>
+						<title>이미지</title>
+					</head>
+					<body>
+						 <img src="data:image/jpeg;base64,${image}" alt="Image" style="max-width: 100%; height: auto;"/>
+					</body>
+				</html>
 			`);
 			newPage.document.close();
 		}
 	}
+
 
     async function commGoAct(idx=-1) {
 

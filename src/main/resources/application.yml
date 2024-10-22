@@ -16,7 +16,10 @@ spring:
       jdbc:
         time_zone: Asia/Seoul
 
+
+
   server:
+    max-http-header-size: 2000000
     servlet:
       session:
         timeout: 1800s

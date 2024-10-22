@@ -8,10 +8,15 @@ import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnAbleDayDto;
 import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchByConsumedDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.quizStaticListSearchDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.repository.AnswerMsnDailyStatRepository;
+import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
+import com.example.reward_monitoring.statistics.saveMsn.daily.repository.SaveMsnDailyStatRepository;
 import jakarta.transaction.Transactional;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -38,6 +43,8 @@ public class SaveMsnService {
     private SaveMsnRepository saveMsnRepository;
     @Autowired
     private AdvertiserRepository advertiserRepository;
+    @Autowired
+    private SaveMsnDailyStatRepository saveMsnDailyStatRepository;
     @Autowired
     private ServerRepository serverRepository;
 
@@ -924,4 +931,109 @@ public class SaveMsnService {
         }
         return true;
     }
+
+
+    public Sheet reportExcelDownload(List<SaveMsnDailyStat> list, Workbook wb) {
+        int size = list.size();
+        Sheet sheet = wb.createSheet("정답 미션 목록");
+        Row row = null;
+        Cell cell = null;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("일시");
+        sheet.setColumnWidth(1, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("랜딩 카운트");
+        sheet.setColumnWidth(1, 16 * 256); //8자
+        cell.setCellStyle(cellStyle);
+
+
+        cell = row.createCell(2);
+        cell.setCellValue("참여 카운트");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(2, 16 * 256);
+
+        for (SaveMsnDailyStat saveMsnDailyStat : list) {
+
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(saveMsnDailyStat.getPartDate().format(formatter_));
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue(saveMsnDailyStat.getLandingCnt());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue(saveMsnDailyStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
+
+        }
+        return sheet;
+    }
+
+    public List<SaveMsnDailyStat> searchReport(sightseeingStaticListSearchDto dto,int idx) {
+
+        List<SaveMsnDailyStat> target_url = null;
+        List<SaveMsnDailyStat> target_date = null;
+        List<SaveMsnDailyStat> target_idx = saveMsnDailyStatRepository.findByMsnIdx_(idx);
+
+
+        List<SaveMsnDailyStat> result;
+        boolean changed = false;
+
+        if(dto.getStartDate() != null || dto.getEndDate() != null) {
+            if (dto.getStartDate() != null) {
+                if (dto.getEndDate() == null) {
+                    target_date  = saveMsnDailyStatRepository.findByStartAt(dto.getStartDate());
+                } else {
+                    target_date  = saveMsnDailyStatRepository.findByBothAt(dto.getStartDate(), dto.getEndDate());
+                }
+
+            } else {
+                target_date  = saveMsnDailyStatRepository.findByEndAt(dto.getEndDate());
+            }
+        }
+
+        if(dto.getUrl() != null)
+            target_url = saveMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl());
+
+
+
+
+        result = new ArrayList<>(saveMsnDailyStatRepository.findAll());
+
+        if(target_idx  !=null) {
+            Set<Integer> idxSet = target_idx.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsnDailyStat -> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(target_date  !=null) {
+            Set<Integer> idxSet = target_date.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsnDailyStat -> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_url  !=null) {
+            Set<Integer> idxSet = target_url.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsnDailyStat -> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
+
 }

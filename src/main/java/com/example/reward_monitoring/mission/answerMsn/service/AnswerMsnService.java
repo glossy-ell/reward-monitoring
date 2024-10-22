@@ -7,6 +7,8 @@ import com.example.reward_monitoring.general.userServer.repository.ServerReposit
 import com.example.reward_monitoring.mission.answerMsn.dto.*;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.repository.AnswerMsnDailyStatRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -30,6 +33,8 @@ public class AnswerMsnService {
 
     @Autowired
     private AnswerMsnRepository answerMsnRepository;
+    @Autowired
+    private AnswerMsnDailyStatRepository answerMsnDailyStatRepository;
     @Autowired
     private AdvertiserRepository advertiserRepository;
     @Autowired
@@ -126,14 +131,12 @@ public class AnswerMsnService {
         }
         if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
             answerMsn.setImageName(dto.getImageName());
-            answerMsn.setImageData(dto.getImageData());
         }
 
         return answerMsn;
     }
 
     public AnswerMsn add(AnswerMsnReadDto dto) {
-
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
         Server serverEntity = null;
@@ -159,7 +162,6 @@ public class AnswerMsnService {
             dto.setReEngagementDay(null);
 
         dto.setDataType(true);
-
         return dto.toEntity(advertiserEntity,serverEntity);
     }
 
@@ -964,6 +966,116 @@ public class AnswerMsnService {
         }
         return sheet;
     }
+
+
+
+    //검색 조건에 맞는 리포트를 검색
+    public List<AnswerMsnDailyStat> searchReport(quizStaticListSearchDto dto,int idx) {
+
+        List<AnswerMsnDailyStat> target_url = null;
+        List<AnswerMsnDailyStat> target_date = null;
+        List<AnswerMsnDailyStat> target_idx = answerMsnDailyStatRepository.findByMsnIdx_(idx);
+
+
+        List<AnswerMsnDailyStat> result;
+        boolean changed = false;
+
+        if(dto.getStartDate() != null || dto.getEndDate() != null) {
+            if (dto.getStartDate() != null) {
+                if (dto.getEndDate() == null) {
+                    target_date  = answerMsnDailyStatRepository.findByStartAt(dto.getStartDate());
+                } else {
+                    target_date  = answerMsnDailyStatRepository.findByBothAt(dto.getStartDate(), dto.getEndDate());
+                }
+
+            } else {
+                target_date  = answerMsnDailyStatRepository.findByEndAt(dto.getEndDate());
+            }
+        }
+
+        if(dto.getUrl() != null)
+            target_url = answerMsnDailyStatRepository.findByServer_ServerUrl(dto.getUrl());
+
+
+
+
+        result = new ArrayList<>(answerMsnDailyStatRepository.findAll());
+
+        if(target_idx  !=null) {
+            Set<Integer> idxSet = target_idx.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat -> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(target_date  !=null) {
+            Set<Integer> idxSet = target_date.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat -> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(target_url  !=null) {
+            Set<Integer> idxSet = target_url.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat -> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
+
+
+    public Sheet reportExcelDownload(List<AnswerMsnDailyStat> list, Workbook wb){
+
+        int size = list.size();
+        Sheet sheet = wb.createSheet("정답 미션 목록");
+        Row row = null;
+        Cell cell = null;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("일시");
+        sheet.setColumnWidth(1, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("랜딩 카운트");
+        sheet.setColumnWidth(1, 16 * 256); //8자
+        cell.setCellStyle(cellStyle);
+
+
+        cell = row.createCell(2);
+        cell.setCellValue("참여 카운트");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(2, 16 * 256);
+
+        for (AnswerMsnDailyStat answerMsnDailyStat : list) {
+
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(answerMsnDailyStat.getPartDate().format(formatter_));
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue(answerMsnDailyStat.getLandingCnt());
+            cell.setCellStyle(cellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue(answerMsnDailyStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
+
+        }
+        return sheet;
+    }
+
+
 }
 
 

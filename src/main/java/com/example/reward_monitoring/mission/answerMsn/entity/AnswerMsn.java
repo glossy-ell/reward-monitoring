@@ -259,12 +259,6 @@ public class AnswerMsn {
     @Schema(description = "미션 데이터 타입")
     private boolean dataType = true;
 
-    @Comment("이미지 파일")
-    @Lob
-    @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
-    @Schema(description = "이미지 파일")
-    private byte[] imageData;
-
     @Comment("이미지 파일명")
     @Column(name = "image_name")
     @Schema(description = "이미지 파일명")
@@ -290,7 +284,7 @@ public class AnswerMsn {
     ,String missionTitle,String missionDetailTitle,String missionAnswer,String missionContent,ZonedDateTime startAtMsn,
                      ZonedDateTime endAtMsn,LocalDate  startAtCap,LocalDate endAtCap,boolean missionActive,boolean missionExposure,
                      boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl1,String msnUrl2,String msnUrl3,String msnUrl4,
-                     String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,String msnUrl10,byte[]imageData,String imageName,Server server) {
+                     String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,String msnUrl10,String imageName,String imagePath,Server server) {
 
         this.missionDefaultQty = missionDefaultQty;
         this.missionDailyCap = missionDailyCap;
@@ -319,7 +313,7 @@ public class AnswerMsn {
         this.msnUrl8 = msnUrl8;
         this.msnUrl9 = msnUrl9;
         this.msnUrl10 = msnUrl10;
-        this.imageData = imageData;
+        this.imagePath = imagePath;
         this.imageName = imageName;
         this.server = server;
     }

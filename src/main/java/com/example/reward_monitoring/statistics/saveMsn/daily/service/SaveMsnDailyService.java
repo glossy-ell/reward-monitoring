@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class SaveMsnDailyService {
     private SaveMsnDailyStatRepository saveMsnDailyStatRepository;
 
 
-
+    public List<SaveMsnDailyStat>  getSaveMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
 
 
     public Sheet excelDownload(List<SaveMsnDailyStat> list, Workbook wb){

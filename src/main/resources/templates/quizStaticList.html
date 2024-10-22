@@ -123,23 +123,57 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(idx) {
         var frm = document.searchFrm;
-        frm.action = "/Mission/quizStaticList";
-        frm.submit();
+        var formData = new FormData(frm);
+        var jsonData = {};
+		formData.forEach((value, key) => {
+			jsonData[key] = value; // FormData를 JSON 객체로 변환
+		});
+		$.ajax({
+			url: `/Mission/quizStaticList/search/${idx}`,
+			type: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(jsonData),
+
+			success: function(response) {
+				const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
+				quizListContainer.empty();
+
+				if (response.answerMsns.length === 0) {  //검색결과가 빈 리스트일경우
+				// 빈 리스트인 경우 메시지 추가
+						$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+				} else {
+					response.answerMsns.forEach(function(answerMsn,index) {
+					$('#quizList').append(
+						  '<tr>' +
+								'<td class="text-center font-weight-bold">' + answerMsn.partDate + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.landingCnt + '</td>' +
+								'<td class="text-center align-middle">' + answerMsn.partCnt + '</td>' +
+						  '</tr>'
+						);
+					});
+				}
+			},
+			error: function(xhr) {
+			  if (xhr.status === 429) { // 429 Too Many Requests
+					 alert(xhr.responseText); //
+				} else {
+				alert("검색중 오류가 발생하였습니다.");
+				}
+			}
+		});
+
     }
 
     //검색 초기화
-    function commSearchReset() {
-        location.href = "/Mission/quizStaticList";   
+    function commSearchReset(idx) {
+        location.href = "/Mission/quizStaticList/idx";
     }    
 
     //Excel 다운로드
-    function commDownExcel() {
-        var frm = document.searchFrm;        
-
-        frm.action ='/Mission/excelQuizStaticList';
-        frm.submit();
+    function commDownExcel(idx) {
+		window.location.href = '/Mission/quizStaticList/excel/' + idx;
     }
 
 </script></head>
@@ -152,7 +186,7 @@
 			<div class="k-portlet">
 				<div class="k-portlet__head">
 					<div class="k-portlet__head-label">
-						<h3 class="k-portlet__head-title font-weight-bold">밀짚파라솔                        
+						<h3 class="k-portlet__head-title font-weight-bold"  th:text="${answerMsn.missionTitle}">
 							<span class="text-danger" style="font-size:0.9rem;"> ( 검색기간을 입력해주세요. )</span>
                         </h3>
 					</div>
@@ -160,24 +194,26 @@
 
 				<div class="k-portlet__body">
 					<form method="get" name="searchFrm" class="k-form">
-                        <input type="hidden" name="quizIdx" value="46522" id="quizIdx">
                         <div class="k-portlet__body-tool row">
                             <div class="tool-btn col-xl-6 col-lg-6">
-                                <button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>                                    
-                            </div>
+								<button type="button" class="btn btn-secondary" th:onclick="'commDownExcel(' + ${answerMsn.idx} + ');'">Excel 다운로드</button>
+							</div>
                             <div class="toolbar col-xl-6 col-lg-6">                                                
                                 <div class="k-form__group">
                                     <div class="row">                                        
                                         <div class="input-group col-xl-4 col-lg-4 col-sm-12">
-                                            <select name="sUserServerIdx" class="k_selectpicker form-control" onchange="commSearch();">
-												<option value="1" selected="selected">https://ocb.srk.co.kr</option>
+											<select name="url" class="k_selectpicker form-control" th:onchange="'commSearch(' + ${answerMsn.idx} + ');'">
+												<option value="" disabled selected>URL을 선택하세요</option>
+												<th:block th:each="server : ${servers}">
+													<option th:value="${server.serverUrl}" th:text="${server.serverUrl}"></option>
+												</th:block>
 											</select>
                                         </div>	
                                         <div class="k-form__control col-xl-8 col-lg-8">
                                             <!-- datepicker 검색 기간 지정 -->
                                             <div class="input-daterange input-group">
                                                 <!-- 검색 시작일 -->
-                                                <input type="text" class="form-control btn-datepicker" name="startDate" placeholder="검색 시작일" value="2024-09-18" autocomplete="off">
+												<input type="text" class="form-control btn-datepicker" name="startDate" placeholder="검색 시작일" th:value="${past}" autocomplete="off">
 
                                                 <!-- ~ -->
                                                 <div class="input-group-append">
@@ -185,10 +221,11 @@
                                                 </div>
 
                                                 <!-- 검색 종료일 -->
-                                                <input type="text" class="form-control btn-datepicker" name="endDate" placeholder="검색 종료일" value="2024-10-18" autocomplete="off">
+												<input type="text" class="form-control btn-datepicker" name="endDate" placeholder="검색 종료일" th:value="${currentTime}" autocomplete="off">
                                                 <div class="input-group-append">
-                                                    <button type="button" class="btn btn-secondary" aria-expanded="false" onclick="commSearch();">검색</button>
-                                                </div>	
+													<button type="button" class="btn btn-secondary" aria-expanded="false" th:onclick="'commSearch(' + ${answerMsn.idx} + ');'">검색</button>
+
+												</div>
                                             </div>
                                             <!-- //datepicker 검색 기간 지정 -->
                                         </div>         
@@ -208,13 +245,22 @@
 									<th class="text-center font-weight-bold">전환 카운트</th>
 								</tr>
 							</thead>
-							<tbody>
-                                <tr>
-                                <td class="text-center align-middle">합계</td>
-                                <td class="text-center align-middle">108</td>
-                                <td class="text-center align-middle">50</td>
-                                </tr>                                
-								<tr><td class="text-center align-middle">2024-10-18</td><td class="text-center align-middle">108</td><td class="text-center align-middle">50</td></tr>								
+							<tbody id = "quizList">
+							<tr th:if="${#lists.isEmpty(answerMsnDailyStat)}">
+								<td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+							</tr>
+
+							<tr>
+								<td class="text-center font-weight-bold">합계</td>
+								<td class="text-center font-weight-bold" th:text="${totalLandingCount}"></td>
+								<td class="text-center font-weight-bold" th:text="${totalPartCount}"></td>
+							</tr>
+
+							<tr th:each="quiz, iterStat : ${answerMsnDailyStat}">
+								<td class="text-center font-weight-bold" th:text="${#temporals.format(quiz.partDate, 'yyyy-MM-dd')}"></td>
+								<td class="text-center font-weight-bold" th:text="${quiz.landingCnt}"></td>
+								<td class="text-center font-weight-bold" th:text="${quiz.partCnt}"></td>
+							</tr>
 							</tbody>
 						</table>
 

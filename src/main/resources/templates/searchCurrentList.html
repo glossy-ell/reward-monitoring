@@ -663,16 +663,14 @@
 			}
 		}
 
-        function commGoReport(missionIdx) {
-            var frm = document.searchFrm;
-            var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx+"&sUserServerIdx="+frm.sUserServerIdx.value;
+		function commGoReport(missionIdx) {
+			var popUrl = "/Mission/searchStaticList/" + missionIdx;
 
-            var width = 1200;
-            var height = 900;
+			var width = 1200;
+			var height = 900;
 
-            winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
-        }
-
+			winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
+		}
         //검색 초기화
         function commSearchReset() {
             location.href = "/Mission/searchCurrentList";

@@ -700,14 +700,15 @@
 			window.location.href = '/Mission/searchList/excel/download';
         }
 
-        function commGoReport(missionIdx) {
-            var popUrl = "/Mission/searchStaticList?searchIdx="+missionIdx;
 
-            var width = 1200;
-            var height = 900;
+		function commGoReport(missionIdx) {
+			var popUrl = "/Mission/searchStaticList/" + missionIdx;
 
-            winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
-        }
+			var width = 1200;
+			var height = 900;
+
+			winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
+		}
 
         function openSetOverlapModal(idx) {
 				$.ajax({

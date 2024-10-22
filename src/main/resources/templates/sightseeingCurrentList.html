@@ -670,6 +670,15 @@
         winPopupCenter(popUrl, "구경 미션 리포트", width, height, 'yes', 'yes');
     }
 
+	function commGoReport(missionIdx) {
+		var popUrl = "/Mission/sightseeingStaticList/" + missionIdx;
+
+		var width = 1200;
+		var height = 900;
+
+		winPopupCenter(popUrl, "저장 미션 리포트", width, height, 'yes', 'yes');
+	}
+
     //검색 초기화
     function commSearchReset() {
         location.href = "/Mission/sightseeingCurrentList";

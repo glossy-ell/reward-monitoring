@@ -671,14 +671,16 @@
 			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
 		}
 	}
-    function commGoReport(missionIdx) {
-        var popUrl = "/Mission/sightseeingStaticList?sightseeingIdx="+missionIdx;
 
-        var width = 1200;
-        var height = 900;
 
-        winPopupCenter(popUrl, "구경 미션 리포트", width, height, 'yes', 'yes');
-    }
+	function commGoReport(missionIdx) {
+		var popUrl = "/Mission/sightseeingStaticList/" + missionIdx;
+
+		var width = 1200;
+		var height = 900;
+
+		winPopupCenter(popUrl, "저장 미션 리포트", width, height, 'yes', 'yes');
+	}
 
 
     //검색 초기화

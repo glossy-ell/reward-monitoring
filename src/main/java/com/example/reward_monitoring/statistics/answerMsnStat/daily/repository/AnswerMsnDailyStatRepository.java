@@ -28,6 +28,13 @@ public interface AnswerMsnDailyStatRepository extends JpaRepository<AnswerMsnDai
 
     public List<AnswerMsnDailyStat> findByMediaCompany_CompanyName(String companyName);
 
-    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.answerMsn.idx = :idx ")
-    AnswerMsnDailyStat findByMsnIdx(@Param("idx") int idx);
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.answerMsn.idx = :idx AND a.partDate BETWEEN :startAt AND :endAt")
+    public List<AnswerMsnDailyStat> findByMsnIdx(@Param("idx") int idx,@Param("endAt") LocalDate endAt, @Param("startAt") LocalDate startAt);
+
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.answerMsn.idx = :idx")
+    public List<AnswerMsnDailyStat> findByMsnIdx_(@Param("idx") int idx);
+
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate= :startAt")
+    public List<AnswerMsnDailyStat> findByDate(@Param("startAt") LocalDate startAt);
+
 }

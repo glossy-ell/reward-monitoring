@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "answer_msn_daily_stat")
+@Table(name = "answer_msn_sum_stat")
 public class AnswerMsnSumStat {
 
     @Comment("광고주 정보)")

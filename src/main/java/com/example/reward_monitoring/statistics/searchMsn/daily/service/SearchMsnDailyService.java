@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -116,6 +117,7 @@ public class SearchMsnDailyService {
     public List<SearchMsnDailyStat> getSearchMsnsDailys() {
         return searchMsnDailyStatRepository.findAll();
     }
+    public List<SearchMsnDailyStat>  getSearchMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
 
     public List<SearchMsnDailyStat> searchSearchMsnDaily(SearchMsnDailyStatSearchDto dto) {
 

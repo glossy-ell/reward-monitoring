@@ -61,7 +61,7 @@ public class SaveMsnDetailsStat {
 
     @Comment("회원 My Place")  // true = 성공, false = 실패
     @Column(name = "place url")
-    @Schema(description = "My Place Url",example = "211.200.234.31")
+    @Schema(description = "My Place Url",example = "www.naver.com")
     private String url;
 
     @Comment("회원 ID")

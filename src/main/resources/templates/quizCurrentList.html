@@ -667,15 +667,14 @@
 		}
 	}
 
-    function commGoReport(missionIdx) {
-        var frm = document.searchFrm;
-        var popUrl = "/Mission/quizStaticList?quizIdx="+missionIdx+"&sUserServerIdx="+frm.sUserServerIdx.value;
+	function commGoReport(missionIdx) {
+			var popUrl = "/Mission/quizStaticList/" + missionIdx;
 
-        var width = 1200;
-        var height = 900;
+			var width = 1200;
+			var height = 900;
 
-        winPopupCenter(popUrl, "정답 미션 리포트", width, height, 'yes', 'yes');
-    }
+			winPopupCenter(popUrl, "정답 미션 리포트", width, height, 'yes', 'yes');
+	}
 
     //검색 초기화
     function commSearchReset() {

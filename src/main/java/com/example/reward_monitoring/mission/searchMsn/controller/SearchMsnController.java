@@ -9,13 +9,14 @@ import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.searchMsn.dto.ResponseDto;
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
 
 import com.example.reward_monitoring.mission.searchMsn.service.SearchMsnService;
+import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
+import com.example.reward_monitoring.statistics.searchMsn.daily.service.SearchMsnDailyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,9 +36,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -62,6 +65,8 @@ public class SearchMsnController{
     @Autowired
     private ServerService serverService;
 
+    @Autowired
+    private SearchMsnDailyService searchMsnDailyService;
 
     @Operation(summary = "검색미션 정보 수정", description = "검색미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 저장미션의 IDX")
@@ -76,8 +81,9 @@ public class SearchMsnController{
                                           @PathVariable int idx,
                                           @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                           @RequestPart(value="dto",required = true) SearchMsnEditDto dto,
-                                          HttpServletResponse response) {
+                                          HttpServletResponse response) throws IOException {
         Member sessionMember= (Member) session.getAttribute("member");
+        boolean result =true;
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } // 세션만료
@@ -109,6 +115,19 @@ public class SearchMsnController{
         if (edited == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        String directoryPath = "C:/images/search/";
+        String subDirectoryPath = directoryPath + edited.getIdx() + "/";
+        File subDirectory = new File(subDirectoryPath);
+        if (!subDirectory.exists()) {
+            result =subDirectory.mkdirs(); //
+        }
+        if(!result)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        File destinationFile = new File(subDirectoryPath + edited.getImageName());
+        if(multipartFile != null)
+            multipartFile.transferTo(destinationFile);
+        edited.setImagePath(subDirectoryPath + edited.getImageName());
+
         searchMsnRepository.save(edited);
         return ResponseEntity.status(HttpStatus.OK).body(edited);
     }
@@ -263,10 +282,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
 
@@ -299,7 +318,7 @@ public class SearchMsnController{
             return response;
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+        if(member.isNauthSearchMsn()) { // 비권한 활성화시
             response.put("error", "403");
             return response;
         }
@@ -362,7 +381,7 @@ public class SearchMsnController{
             return response;
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+        if(member.isNauthSearchMsn()) { // 비권한 활성화시
             response.put("error", "403");
             return response;
         }
@@ -390,7 +409,7 @@ public class SearchMsnController{
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullAnswerMsns",result);
+        response.put("fullSearchMsns",result);
         response.put("searchMsns", limitedSearchMsns);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
@@ -488,10 +507,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             boolean result = searchMsnService.readExcel(file);
@@ -523,10 +542,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
 
@@ -677,10 +696,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.setMissionIsUsed(idx);
@@ -710,10 +729,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.setMissionIsUsedFalse(idx);
@@ -743,10 +762,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.setMissionIsView(idx);
@@ -776,10 +795,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.setMissionIsViewFalse(idx);
@@ -950,10 +969,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.AllOffMission();
@@ -988,8 +1007,17 @@ public class SearchMsnController{
         model.addAttribute("currentTime", LocalTime.now());
         model.addAttribute("currentEndDate", LocalDate.now().plusDays(1));
         model.addAttribute("currentEndTime", LocalTime.now().plusHours(1));
-        if(image !=null)
-            model.addAttribute("image",image);
+        if(image !=null) {
+            try {
+                File imageFile = new File(searchMsn.getImagePath());
+                byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                model.addAttribute("image", base64Image ); // URL을 모델에 추가
+            } catch (IOException e) {
+                return "searchWrite";
+            }
+        }
+
         return "searchWrite";
     }
 
@@ -1061,10 +1089,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
@@ -1169,10 +1197,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         List<SearchMsn> dto = responseDto.getInnerSearchMsns();
@@ -1203,10 +1231,10 @@ public class SearchMsnController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSearchMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSearchMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         boolean result = searchMsnService.AllOffMissionCurrent();
@@ -1260,6 +1288,108 @@ public class SearchMsnController{
         }
 
         return "searchMultiTempList";
+    }
+
+    @GetMapping("/Mission/searchStaticList/{idx}")
+    public String searchReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Server> servers = serverService.getServers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        SearchMsn searchMsn = searchMsnService.getSearchMsn(idx);
+
+        LocalDate currentTime = LocalDate.now();
+        LocalDate past = LocalDate.now().minusMonths(1);
+        List<SearchMsnDailyStat> searchMsnDailyStat = searchMsnDailyService.getSearchMsnsDaily(searchMsn.getIdx(),currentTime,past);
+        Collections.reverse(searchMsnDailyStat);
+
+        int totalLandingCount = searchMsnDailyStat.stream().mapToInt(SearchMsnDailyStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =  searchMsnDailyStat.stream().mapToInt(SearchMsnDailyStat::getPartCnt).sum();  // 참여카운트 합
+
+
+        model.addAttribute("searchMsnDailyStat", searchMsnDailyStat);
+        model.addAttribute("currentTime",currentTime);
+        model.addAttribute("past",past);
+        model.addAttribute("totalLandingCount",totalLandingCount);
+        model.addAttribute("totalPartCount",totalPartCount);
+        return "searchStaticList";
+    }
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @PostMapping("/Mission/searchStaticList/search/{idx}")
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public Map<String, Object> searchReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, @RequestBody searchStaticListSearchDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthSearchMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+        List<SearchMsnDailyStat> result = searchMsnService.searchReport(dto,idx);
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+
+
+        response.put("searchMsns", result);
+        return response; // JSON 형태로 반환
+    }
+
+
+
+    @Operation(summary = "엑셀 다운로드", description = "정답미션 리스트 엑셀파일을 다운로드합니다")
+    @GetMapping("/Mission/searchStaticList/excel/{idx}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
+    public ResponseEntity<Void> reportExcelDownload(@PathVariable(required = true,value = "idx")int idx,HttpServletResponse response)throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+
+            LocalDate currentTime = LocalDate.now();
+            LocalDate past = LocalDate.now().minusMonths(1);
+            List<SearchMsnDailyStat> list = searchMsnDailyService.getSearchMsnsDaily(idx,currentTime,past);
+            Sheet sheet = searchMsnService.reportExcelDownload(list,wb);
+            if(sheet !=null) {
+                String fileName = idx +"번 정답 리포트.xlsx";
+                fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
 

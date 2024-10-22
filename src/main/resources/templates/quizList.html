@@ -710,7 +710,7 @@
 		}
 
 		function commGoReport(missionIdx) {
-			var popUrl = "/Mission/quizStaticList?quizIdx="+missionIdx;
+			var popUrl = "/Mission/quizStaticList/" + missionIdx;
 
 			var width = 1200;
 			var height = 900;
@@ -1218,7 +1218,8 @@
 												<tr th:each="quiz, iterStat : ${answerMsns}">
 														<td class="text-center align-middle" th:text="${quiz.idx}"></td>
 														<td class="text-center align-middle">
-															<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${quiz.idx} + ');">리포트</button>
+															<button class="btn btn-outline-accent btn-xs"
+																	th:onclick="'commGoReport(' + ${quiz.idx} + ');'">리포트</button>
 														</td>
 														<td class="text-center align-middle" th:text="${quiz.missionDefaultQty}"></td>
 														<td class="text-center align-middle" th:text="${quiz.missionDailyCap}"></td>
