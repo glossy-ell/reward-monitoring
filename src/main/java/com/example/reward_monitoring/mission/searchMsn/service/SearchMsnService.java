@@ -123,7 +123,6 @@ public class SearchMsnService {
 
         if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
             searchMsn.setImageName(dto.getImageName());
-            searchMsn.setImageData(dto.getImageData());
         }
 
 

@@ -99,7 +99,6 @@ public class SaveMsnService {
         }
         if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
             saveMsn.setImageName(dto.getImageName());
-            saveMsn.setImageData(dto.getImageData());
         }
 
         return saveMsn;

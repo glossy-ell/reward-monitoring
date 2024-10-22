@@ -135,7 +135,7 @@ public class SearchMsnDailyStatController {
 
         model.addAttribute("searchMsnDailyStats", limitedSearchMsnDailyStats);
         model.addAttribute("servers", servers);
-        model.addAttribute("advertisers ", advertisers);
+        model.addAttribute("advertisers", advertisers);
         model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
