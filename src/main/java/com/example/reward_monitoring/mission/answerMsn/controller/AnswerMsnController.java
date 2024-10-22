@@ -392,8 +392,9 @@ public class AnswerMsnController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
     })
-    public String  searchAnswerMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session){
-        Member sessionMember= (Member) session.getAttribute("member");
+    public String  searchAnswerMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -401,7 +402,38 @@ public class AnswerMsnController {
         if (member == null) {
             return "error/404";
         }
-        return "quizList"; // JSON 형태로 반환
+
+        List<AnswerMsn> answerMsns = answerMsnService.getAnswerMsns();
+        Collections.reverse(answerMsns);
+
+        // 페이지 번호가 없으면 기본값 1 사용
+
+        pageNumber = 1;
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsn> limitedAnswerMsns;
+        if (startIndex < answerMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsns.size());
+            limitedAnswerMsns = answerMsns.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) answerMsns.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("answerMsns",limitedAnswerMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "quizList";
     }
 
 

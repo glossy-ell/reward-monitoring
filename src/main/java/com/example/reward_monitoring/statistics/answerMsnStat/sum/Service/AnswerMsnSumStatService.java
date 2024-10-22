@@ -6,6 +6,8 @@ import com.example.reward_monitoring.statistics.answerMsnStat.daily.repository.A
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.repository.AnswerMsnSumStatRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class AnswerMsnSumStatService {
         return answerMsnSumStatRepository.findAll();
     }
 
+    public List<AnswerMsnSumStat> getAnswerMsnSumStatsMonth(LocalDate currentTime, LocalDate past){
+        return answerMsnSumStatRepository.findMonth(currentTime,past);
+    }
     public List<AnswerMsnSumStat> searchAnswerMsnSum(AnswerMsnSumStatSearchDto dto) {
 
         List<AnswerMsnSumStat> target_serverUrl = null;
@@ -85,22 +90,61 @@ public class AnswerMsnSumStatService {
         return result;
     }
 
-//    public void aggregateDataForDate(LocalDate date) {
-//        // 전날의 데이터를 DB에서 조회
-//        List<AnswerMsnDailyStat> data = answerMsnDailyStatRepository.findByDate(date);
-//
-//        // 데이터를 합산하는 로직 수행
-//        int landCnt = data.stream().mapToInt(AnswerMsnDailyStat::getLandingCnt).sum();
-//        int partCnt = data.stream().mapToInt(AnswerMsnDailyStat::getPartCnt).sum();
-//        // 결과를 저장하거나 다른 처리 수행
-//        saveAggregatedData(landCnt,partCnt, date);
-//    }
-//
-//    private void saveAggregatedData(int landCnt, int partCnt, LocalDate date) {
-//        // 합산된 결과를 저장하는 로직
-//        AnswerMsnSumStat  answerMsnSumStat= new AnswerMsnSumStat();
-//        answerMsnSumStat.setLandingCount(landCnt);
-//        answerMsnSumStat.setPartCount(landCnt);
-//        answerMsnSumStatRepository.save(answerMsnSumStat);
-//    }
+    public Sheet excelDownloadCurrent(List<AnswerMsnSumStat> list, Workbook wb,int landSum,int PartSum) {
+
+        int size = list.size();
+        Sheet sheet = wb.createSheet("정답 미션 합산 리포트");
+        Row row = null;
+        Cell cell = null;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(3, 16 * 256); //8자
+        cell.setCellValue("참여일");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(1);
+        cell.setCellValue("랜딩 카운트");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(2);
+        cell.setCellValue("참여 카운트");
+        cell.setCellStyle(cellStyle);
+        for (AnswerMsnSumStat answerMsnSumStat: list) {
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellValue(answerMsnSumStat.getDate());
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(1);
+            cell.setCellValue(answerMsnSumStat.getLandingCnt());
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(2);
+            cell.setCellValue(answerMsnSumStat.getPartCnt());
+        }
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("합산");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(1);
+        cell.setCellValue(landSum);
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(2);
+        cell.setCellValue(PartSum);
+
+        return sheet;
+    }
+
+    private void applyCellStyle(CellStyle cellStyle) {
+        XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+    }
+
+
 }

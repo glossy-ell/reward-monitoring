@@ -16,11 +16,11 @@ public class AnswerMsnDailyStatSearchDto {
 
 
     @Schema(description = "서버URL",example = "https://www.abc.com")
-    String url;
+    private String url;
     @Schema(description = "광고주",example = "시크릿 K")
-    String advertiser;
+    private String advertiser;
     @Schema(description = "매체사",example = "오케이캐시백(QA0")
-    String mediacompany;
+    private String mediacompany;
     @Schema(description = "검색 시작일", example = "2024-09-11")
     private LocalDate startAt;
     @Schema(description = "검색 종료일", example = "2024-09-11")

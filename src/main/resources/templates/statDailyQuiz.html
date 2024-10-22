@@ -458,14 +458,6 @@
 		<!-- end aside -->
 <script type="text/javascript">
 
-	 let innerAnswerMsns = [];
-     let innerAnswerMsnsPage;
-
-     function clearResults() {
-         innerAnswerMsns = []; // 리스트 초기화
-
-     }
-
      function enterkey() {
          if (window.event.keyCode == 13) {
              commSearch();
@@ -480,86 +472,48 @@
          formData.forEach((value, key) => {
              jsonData[key] = value; // FormData를 JSON 객체로 변환
          });
-
-         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+		if (page == null) {
+			page = 1;
+		}
           $.ajax({
-             url: `/Statistics/search`,
-             type: "POST",
-             contentType: "application/json",
-             data: JSON.stringify(jsonData),
+					 url: `/Statistics/statDailyQuiz/search/${page}`,
+					 type: "POST",
+					 contentType: "application/json",
+					 data: JSON.stringify(jsonData),
+					 success: function(response) {
+						 const statDailyQuizContainer = $('#statDailyQuiz'); // 회원 목록을 표시할 컨테이너 선택
+						 statDailyQuizContainer.empty();
 
-
-             success: function(response) {
-                 const statDailyQuizContainer = $('#statDailyQuiz'); // 회원 목록을 표시할 컨테이너 선택
-                 statDailyQuizContainer.empty();
-
-                 if (response.DailyQuizTables.length === 0) {
-                 //statDailyQuiz가 빈 리스트인 경우 메시지 추가
-                     $('#statDailyQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-                 } else {
-                     innerAnswerMsns = response.fullAnswerMsns;
-                          innerAnswerMsnsPage = 1;
-                     response.DailyQuizTables.forEach(function(DailyQuizTable,index) {
-                     $('#statDailyQuiz').append(
-                         '<tr>' +
-							 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.advertiser.idx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.idx + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.missionTitle + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.landingCnt + '</td>' +
-							 '<td class="text-center align-middle">' + DailyQuizTable.partCnt + '</td>' +
-							 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.partDate) + '</td>' +
-                         '</tr>'
-                     );
-                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-                  });
-             }
-          },
-             error: function(xhr) {
-                 alert("검색중 오류가 발생하였습니다.");
-             }
-         });
-     } //if 끝
-     else{ //이미 보유한 데이터가 있을경우
-             $.ajax({
-                     url: `/Statistics/search/${page}`,
-                     type: "POST",
-                     contentType: "application/json",
-                     data: JSON.stringify(jsonData),
-
-                     success: function(response) {
-                         const statDailyQuizContainer = $('#statDailyQuiz'); // 회원 목록을 표시할 컨테이너 선택
-                         statDailyQuizContainer.empty();
-
-                         if (response.answerMsnDailyStats.length === 0) {
-                         //statDailyQuiz가 빈 리스트인 경우 메시지 추가
-                             $('#statDailyQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-                         } else {
-                             response.answerMsnDailyStats.forEach(function(DailyQuizTable,index) {
-                             $('#statDailyQuiz').append(
-                             	'<tr>' +
+						 if (response.answerMsnDailyStats.length === 0) {
+						 //statDailyQuiz가 빈 리스트인 경우 메시지 추가
+							 $('#statDailyQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+							 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						 } else {
+							 response.answerMsnDailyStats.forEach(function(DailyQuizTable,index) {
+							 $('#statDailyQuiz').append(
+								 '<tr>' +
 									 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.advertiser.idx + '</td>' +
-									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.idx + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.missionTitle + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.landingCnt + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.partCnt + '</td>' +
 									 '<td class="text-center align-middle">' + formatDateTime(DailyQuizTable.partDate) + '</td>' +
-                         		'</tr>'
-                             );
-                             updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-                          });
-                     }
-                        },
-             error: function(xhr) {
-                 alert("검색중 오류가 발생하였습니다.");
-             }
-         });
+								 '</tr>'
+							 );
+							 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							 const newUrl = `/Statistics/statDailyQuiz/search/${response.currentPage}`;
+							 history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
+						  });
+					 }
+				  },
+				 error: function(xhr) {
+					 alert("검색중 오류가 발생하였습니다.");
+				 }
+			 });
+
      }
 
      // 페이지네이션 업데이트 함수
@@ -612,7 +566,7 @@
 
      //Excel 다운로드
      function commDownExcel() {
-         window.location.href = '/Statistics/excelStatDailyQuiz/excel/download';
+         window.location.href = '/Statistics/statDailyQuiz/excel/download';
      }
 
 </script>

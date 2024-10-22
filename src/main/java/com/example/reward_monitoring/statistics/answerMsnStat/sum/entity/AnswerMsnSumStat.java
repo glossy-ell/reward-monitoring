@@ -65,24 +65,14 @@ public class AnswerMsnSumStat {
     @Schema(description = "카운트")
     private int partCnt;
 
-    @Comment("랜딩 카운트")
-    @Column(name = "total_landing_cnt")
-    @Schema(description = "전체 랜딩수")
-    int landingCount;
 
 
-    @Comment("참여 카운트")
-    @Column(name = "total_part_cnt")
-    @Schema(description = "참여 카운트")
-    int partCount;
 
     @Builder
-    public AnswerMsnSumStat(LocalDate date, int landingCnt, int partCnt, int landingCount, int partCount) {
+    public AnswerMsnSumStat(LocalDate date,int landingCount, int partCount) {
         this.date = date;
-        this.landingCnt= landingCnt;
-        this.partCnt= partCnt;
-        this.landingCount = landingCount;
-        this.partCount = partCount;
+        this.landingCnt = landingCount;
+        this.partCnt = partCount;
 
     }
 }

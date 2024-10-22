@@ -457,13 +457,9 @@
 		</div>
 		<!-- end aside -->
 <script type="text/javascript">
-	let innerAnswerMsns = [];
-	let innerAnswerMsnsPage;
 
-    function clearResults() {
-		innerAnswerMsns = []; // 리스트 초기화
 
-	}
+
 
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -472,7 +468,7 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
 		var formData = new FormData(frm);
 		var jsonData = {};
@@ -480,9 +476,12 @@
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
 
-         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+		if(page ==null){
+			page = 1;
+		}
+
          $.ajax({
-        	url: `/Statistics/search`,
+        	url: `/Statistics/statSumQuiz/search/${page}`,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(jsonData),
@@ -492,19 +491,17 @@
             	const statSumQuizContainer = $('#statSumQuiz'); // 회원 목록을 표시할 컨테이너 선택
             	statSumQuizContainer.empty();
 
-            	if (response.SumQuizTables.length === 0) {
+            	if (response.answerMsnSumStats.length === 0) {
 				//statSumQuiz가 빈 리스트인 경우 메시지 추가
 					$('#staSumtQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				} else {
-					innerAnswerMsns = response.fullAnswerMsns;
-					innerAnswerMsnsPage = 1;
-					response.SumSearchTables.forEach(function(SumSearchTable,index) {
+					response.answerMsnSumStats.forEach(function(answerMsnSumStat,index) {
 					$('#statSumQuiz').append(
 						'<tr>' +
-							'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.date) + '</td>' +
-							'<td class="text-center align-middle">' + SumQuizTable.landingCount + '</td>' +
-							'<td class="text-center align-middle">' + SumQuizTable.partCount + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(answerMsnSumStat.date) + '</td>' +
+							'<td class="text-center align-middle">' + answerMsnSumStat.landingCnt + '</td>' +
+							'<td class="text-center align-middle">' + answerMsnSumStat.partCnt + '</td>' +
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -515,42 +512,38 @@
             	alert("검색중 오류가 발생하였습니다.");
         	}
     	});
-    } //if 끝
-    else{ //이미 보유한 데이터가 있을경우
-			$.ajax({
-   					url: `/Statistics/search/${page}`,
-					type: "POST",
-					contentType: "application/json",
-					data: JSON.stringify(jsonData),
-
-
-					success: function(response) {
-						const statSumQuizContainer = $('#statSumQuiz'); // 회원 목록을 표시할 컨테이너 선택
-						statSumQuizContainer.empty();
-
-						if (response.AnswerMsnSumStats.length === 0) {
-						//statSumQuiz가 빈 리스트인 경우 메시지 추가
-							$('#staSumtQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-
-						} else {
-							response.AnswerMsnSumStats.forEach(function(SumSearchTable,index) {
-							$('#statSumQuiz').append(
-								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SumQuizTable.date) + '</td>' +
-									'<td class="text-center align-middle">' + SumQuizTable.landingCount + '</td>' +
-									'<td class="text-center align-middle">' + SumQuizTable.partCount + '</td>' +
-								'</tr>'
-							);
-							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-							});
-						}
-					},
-				error: function(xhr) {
-						 alert("검색중 오류가 발생하였습니다.");
-				}
-			});
-		}
     }
+
+		// 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		if (currentPage > 1) {
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+		}
+	}
+
     // 날짜 포맷 함수
 	function formatDateTime(dateTimeStr) {
 		if (!dateTimeStr) {
@@ -571,7 +564,7 @@
 
     //Excel 다운로드
     function commDownExcel() {
-    	window.location.href = '/Statistics/StatSumQuiz/excel/download';
+    	window.location.href = '/Statistics/statSumQuiz/excel/download';
     }
 
 </script>
@@ -711,13 +704,13 @@
 											</tr>
 											</thead>
 											<tbody  id = "statSumQuiz">
-												<tr th:if="${#lists.isEmpty(AnswerMsnSumStats)}">
+												<tr th:if="${#lists.isEmpty(answerMsnSumStats)}">
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SumQuizTable,iterStat : ${AnswerMsnSumStats}">
+												<tr th:each="SumQuizTable,iterStat : ${answerMsnSumStats}">
 													<td th:text="${SumQuizTable?.date}" class="text-center align-middle"></td>
-													<td th:text="${totalLandingCnt}" class="text-center align-middle"></td>
-													<td th:text="${totalPartCount}" class="text-center align-middle"></td>
+													<td th:text="${SumQuizTable?.landingCnt}" class="text-center align-middle"></td>
+													<td th:text="${SumQuizTable?.partCnt}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 											<tfoot>

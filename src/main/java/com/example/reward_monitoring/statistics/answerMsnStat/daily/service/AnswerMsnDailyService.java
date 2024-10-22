@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class AnswerMsnDailyService {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("참여일");
         cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(3, 16 * 256); //8자
         cell = row.createCell(1);
         cell.setCellValue("매체사 IDX");
         cell.setCellStyle(cellStyle);
@@ -78,7 +80,8 @@ public class AnswerMsnDailyService {
         for (AnswerMsnDailyStat answerMsnDailyStat: list) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue(answerMsnDailyStat.getPartDate());
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(answerMsnDailyStat.getPartDate().format(formatter_));
             cell.setCellStyle(cellStyle);
             cell = row.createCell(1);
             cell.setCellValue(answerMsnDailyStat.getMediaCompany().getIdx());
@@ -101,6 +104,9 @@ public class AnswerMsnDailyService {
             cell = row.createCell(7);
             cell.setCellValue(answerMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
+            cell = row.createCell(8);
+            cell.setCellValue(answerMsnDailyStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
         }
         return sheet;
     }
@@ -120,6 +126,8 @@ public class AnswerMsnDailyService {
     }
 
     public List<AnswerMsnDailyStat>  getAnswerMsnsDaily(int idx,LocalDate currentTime, LocalDate past) {return answerMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
+
+    public List<AnswerMsnDailyStat>  getAnswerMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return answerMsnDailyStatRepository.findMonth(currentTime,past);}
 
     public List<AnswerMsnDailyStat> searchAnswerMsnDaily(AnswerMsnDailyStatSearchDto dto) {
 

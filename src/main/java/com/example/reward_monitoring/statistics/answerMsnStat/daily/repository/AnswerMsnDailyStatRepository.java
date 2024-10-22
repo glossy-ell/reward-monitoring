@@ -37,4 +37,6 @@ public interface AnswerMsnDailyStatRepository extends JpaRepository<AnswerMsnDai
     @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate= :startAt")
     public List<AnswerMsnDailyStat> findByDate(@Param("startAt") LocalDate startAt);
 
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE  a.partDate BETWEEN :past AND :currentTime")
+    public List<AnswerMsnDailyStat> findMonth(LocalDate currentTime, LocalDate past);
 }

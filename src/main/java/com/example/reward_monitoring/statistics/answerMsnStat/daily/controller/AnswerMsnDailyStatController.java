@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -50,13 +51,13 @@ public class AnswerMsnDailyStatController {
 
     @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
     @PostMapping({"/search","/search/{pageNumber}"})
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public  Map<String, Object> searchAnswerMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session,AnswerMsnDailyStatSearchDto dto){
+    public  Map<String, Object> searchAnswerMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session,@RequestBody AnswerMsnDailyStatSearchDto dto){
         Member sessionMember= (Member) session.getAttribute("member");
-        List<AnswerMsnDailyStat> result = answerMsnDailyService.searchAnswerMsnDaily(dto);
 
         Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
@@ -73,6 +74,7 @@ public class AnswerMsnDailyStatController {
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
         }
+        List<AnswerMsnDailyStat> result = answerMsnDailyService.searchAnswerMsnDaily(dto);
         // 한 페이지당 최대 15개 데이터
         int limit = 15;
         int startIndex = (pageNumber - 1) * limit;
@@ -94,6 +96,58 @@ public class AnswerMsnDailyStatController {
         return response; // JSON 형태로 반환
     }
 
+    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @GetMapping("/search/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+    })
+    public String  searchAnswerMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session ,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
+        List<Server> servers = serverService.getServers();
+
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+        LocalDate currentDate = LocalDate.now();
+        LocalDate past = currentDate.minusMonths(1);
+        List<AnswerMsnDailyStat> answerMsnDailyStats = answerMsnDailyService.getAnswerMsnsDailysMonth(currentDate,past);
+        Collections.reverse(answerMsnDailyStats);
+
+        pageNumber = 1;
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        List<AnswerMsnDailyStat> limitedAnswerMsnDailyStats;
+        if (startIndex < answerMsnDailyStats.size()) {
+            int endIndex = Math.min(startIndex + limit, answerMsnDailyStats.size());
+            limitedAnswerMsnDailyStats = answerMsnDailyStats.subList(startIndex, endIndex);
+        } else {
+            limitedAnswerMsnDailyStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) answerMsnDailyStats.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("answerMsnDailyStats", limitedAnswerMsnDailyStats);
+        model.addAttribute("servers", servers);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("mediaCompanys", mediaCompanys);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "statDailyQuiz";
+    }
+
 
     @GetMapping("/AnswerMsnDailyStats")  //전체 광고주 리스트 반환
     public ResponseEntity<List<AnswerMsnDailyStat>> getAnswerMsnDailyStats(){
@@ -102,7 +156,7 @@ public class AnswerMsnDailyStatController {
 
 
     @Operation(summary = "엑셀 다운로드", description = "정답미션 데일리 통계 엑셀파일을 다운로드합니다")
-    @GetMapping("/download")
+    @GetMapping("/excel/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
@@ -144,8 +198,9 @@ public class AnswerMsnDailyStatController {
         if (member == null) {
             return "error/404";
         }
-
-        List<AnswerMsnDailyStat> answerMsnDailyStats = answerMsnDailyService.getAnswerMsnsDailys();
+        LocalDate currentDate = LocalDate.now();
+        LocalDate past = currentDate.minusMonths(1);
+        List<AnswerMsnDailyStat> answerMsnDailyStats = answerMsnDailyService.getAnswerMsnsDailysMonth(currentDate,past);
         Collections.reverse(answerMsnDailyStats);
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
