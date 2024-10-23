@@ -7,14 +7,10 @@ import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
-import com.example.reward_monitoring.mission.answerMsn.dto.quizStaticListSearchDto;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
 import com.example.reward_monitoring.mission.saveMsn.service.SaveMsnService;
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.service.AnswerMsnDailyService;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.service.SaveMsnDailyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -296,8 +292,9 @@ public class SaveMsnController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+
     @Operation(summary = "저장미션 검색", description = "조건에 맞는 저장미션을 검색합니다")
-    @PostMapping("/Mission/sightseeingList/search")
+    @PostMapping({"/Mission/sightseeingList/search","/Mission/sightseeingList/search/","/Mission/sightseeingList/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -306,9 +303,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
     public Map<String, Object> searchSaveMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody SaveMsnSearchDto dto){
-
-        Member sessionMember= (Member)session.getAttribute("member");
-
+        Member sessionMember= (Member) session.getAttribute("member");
         Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
             response.put("error", "404"); // 멤버가 없는 경우
@@ -326,10 +321,7 @@ public class SaveMsnController {
             return response;
         }
 
-
         List<SaveMsn> result = saveMsnService.searchSaveMsn(dto);
-
-
         Collections.reverse(result);
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
@@ -353,77 +345,64 @@ public class SaveMsnController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullSavesns",result);
-        response.put("saveMsns", limitedSaveMsns);  // limitedMembers 리스트
+        response.put("saveMsns",  limitedSaveMsns);  //
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);
         response.put("endPage",endPage);
-
         return response; // JSON 형태로 반환
     }
-    
-    
-    @Operation(summary = "저장미션 페이지검색", description = "이미 검색한 미션의 페이지 이동시 처리하는 컨트롤러입니다")
-    @PostMapping("/Mission/sightseeingList/search/{pageNumber}")
-    @ResponseBody
+
+
+    @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 오류 발생을 방지합니다 ")
+    @GetMapping("/Mission/sightseeingList/search/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "403", description = "권한없음"),
-            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-
-    public Map<String, Object> searchSaveMsn_page(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody ResponseDto responseDto){
-        Member sessionMember= (Member) session.getAttribute("member");
-        Map<String, Object> response = new HashMap<>();
-        if(sessionMember == null){
-            response.put("error", "404"); // 멤버가 없는 경우
-            return response;
-        } // 세션만료
-
-        Member member =memberRepository.findById(sessionMember.getId());
+    public String  searchSaveMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
         if (member == null) {
-            response.put("error", "403"); // 비권한 사용자인 경우
-            return response;
-        }//데이터 없음
-
-        if(member.isNauthSaveMsn()) { // 비권한 활성화시
-            response.put("error", "403");
-            return response;
+            return "error/404";
         }
 
-        List<SaveMsn> result = responseDto.getInnerSaveMsns();
+        List<SaveMsn> saveMsns = saveMsnService.getSaveMsns();
+        Collections.reverse(saveMsns);
+
         // 페이지 번호가 없으면 기본값 1 사용
-        if (pageNumber == null || pageNumber < 1) {
-            pageNumber = 1;
-        }
 
-        // 한 페이지당 최대 15개 데이터
-        int limit = 15;
+        pageNumber = 1;
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
         int startIndex = (pageNumber - 1) * limit;
+
 
         // 전체 리스트의 크기 체크
         List<SaveMsn> limitedSaveMsns;
-        if (startIndex < result.size()) {
-            int endIndex = Math.min(startIndex + limit, result.size());
-            limitedSaveMsns = result.subList(startIndex, endIndex);
+        if (startIndex < saveMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsns.size());
+            limitedSaveMsns = saveMsns.subList(startIndex, endIndex);
         } else {
             limitedSaveMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
         }
-
-        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) saveMsns.size() / limit);
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullSaveMsns",result);
-        response.put("saveMsns", limitedSaveMsns);  // limitedMembers 리스트
-        response.put("currentPage", pageNumber);  // 현재 페이지 번호
-        response.put("totalPages", totalPages);    // 전체 페이지 수
-        response.put("startPage",startPage);
-        response.put("endPage",endPage);
-        return response; // JSON 형태로 반환
+        model.addAttribute("saveMsns",limitedSaveMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "sightseeingList";
     }
+
 
 
 
@@ -1137,9 +1116,9 @@ public class SaveMsnController {
 
         return "sightseeingMultiTempList";
     }
-    
-    @Operation(summary = "저장미션 소진량 검색", description = "조건에 맞는 저장미션 소진량 리스트를 검색합니다")
-    @PostMapping({"/Mission/sightseeingCurrentList/search","/Mission/sightseeingList/search/"})
+
+    @Operation(summary = "저장미션 소진량 검색", description = "조건에 맞는 저장미션소진량을 검색합니다")
+    @PostMapping({"/Mission/sightseeingCurrentList/search","/Mission/sightseeingCurrentList/search/","/Mission/sightseeingCurrentList/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -1161,7 +1140,7 @@ public class SaveMsnController {
             return response;
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+        if(member.isNauthSaveMsn()) { // 비권한 활성화시
             response.put("error", "403");
             return response;
         }
@@ -1201,65 +1180,58 @@ public class SaveMsnController {
     }
 
 
-    @Operation(summary = "저장미션 검색", description = "조건에 맞는 저장미션 소진량을 검색합니다")
-    @PostMapping("/Mission/sightseeingCurrentList/search/{pageNumber}")
-    @ResponseBody
+
+
+    @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 오류 캐치용 컨트롤러 ")
+    @GetMapping("/Mission/sightseeingCurrentList/search/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "403", description = "권한없음"),
-            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
+    public String  searchCurrentSaveMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<Server> servers = serverService.getServers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
 
-    public Map<String, Object> searchSaveMsnCurrent_page(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody ResponseDto responseDto){
-        Member sessionMember= (Member) session.getAttribute("member");
-        Map<String, Object> response = new HashMap<>();
-        if(sessionMember == null){
-            response.put("error", "404"); // 멤버가 없는 경우
-            return response;
-        } // 세션만료
-
-        Member member =memberRepository.findById(sessionMember.getId());
+        Member member = memberRepository.findById(sessionMember.getId());
         if (member == null) {
-            response.put("error", "403"); // 비권한 사용자인 경우
-            return response;
-        }//데이터 없음
-
-        if(member.isNauthSaveMsn()) { // 비권한 활성화시
-            response.put("error", "403");
-            return response;
+            return "error/404";
         }
 
-        List<SaveMsn> result = responseDto.getInnerSaveMsns();
+        ZonedDateTime now = ZonedDateTime.now();
+        List<SaveMsn> saveMsns = saveMsnRepository.findByCurrentList(now);
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
         }
 
-        // 한 페이지당 최대 15개 데이터
-        int limit = 15;
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
         int startIndex = (pageNumber - 1) * limit;
 
         // 전체 리스트의 크기 체크
         List<SaveMsn> limitedSaveMsns;
-        if (startIndex < result.size()) {
-            int endIndex = Math.min(startIndex + limit, result.size());
-            limitedSaveMsns = result.subList(startIndex, endIndex);
+        if (startIndex < saveMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, saveMsns.size());
+            limitedSaveMsns = saveMsns.subList(startIndex, endIndex);
         } else {
             limitedSaveMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
         }
-
-        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int totalPages = (int) Math.ceil((double) saveMsns.size() / limit);
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullSaveMsns",result);
-        response.put("saveMsns", limitedSaveMsns);  // limitedMembers 리스트
-        response.put("currentPage", pageNumber);  // 현재 페이지 번호
-        response.put("totalPages", totalPages);    // 전체 페이지 수
-        response.put("startPage",startPage);
-        response.put("endPage",endPage);
-        return response; // JSON 형태로 반환
+
+        model.addAttribute("saveMsns",limitedSaveMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("servers", servers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "sightseeingCurrentList";
     }
 
 
@@ -1357,10 +1329,10 @@ public class SaveMsnController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) // 비권한 활성화시
+        if(member.isNauthSaveMsn()) // 비권한 활성화시
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(member.getAuthAnswerMsn()== Auth.READ) // 읽기 권한만 존재할경우
+        if(member.getAuthSaveMsn()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         List<SaveMsn> dto = responseDto.getInnerSaveMsns();
@@ -1405,7 +1377,7 @@ public class SaveMsnController {
     }
 
     @GetMapping("/Mission/sightseeingStaticList/{idx}")
-    public String quizReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
+    public String sightseeingReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
         List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
@@ -1416,12 +1388,12 @@ public class SaveMsnController {
             return "error/404";
         }
 
-        SaveMsn answerMsn = saveMsnService.getSaveMsn(idx);
+        SaveMsn saveMsn = saveMsnService.getSaveMsn(idx);
 
         LocalDate currentTime = LocalDate.now();
         LocalDate past = LocalDate.now().minusMonths(1);
 
-        List<SaveMsnDailyStat> saveMsnDailyStat = saveMsnDailyService.getSaveMsnsDaily(answerMsn.getIdx(),currentTime,past);
+        List<SaveMsnDailyStat> saveMsnDailyStat = saveMsnDailyService.getSaveMsnsDaily(saveMsn.getIdx(),currentTime,past);
         Collections.reverse(saveMsnDailyStat);
 
 
@@ -1430,14 +1402,14 @@ public class SaveMsnController {
         int totalPartCount =  saveMsnDailyStat.stream().mapToInt(SaveMsnDailyStat::getPartCnt).sum();  // 참여카운트 합
 
 
-        model.addAttribute("saveMsn",answerMsn);
+        model.addAttribute("saveMsn",saveMsn);
         model.addAttribute("saveMsnDailyStat", saveMsnDailyStat);
         model.addAttribute("currentTime",currentTime);
         model.addAttribute("servers",servers);
         model.addAttribute("past",past);
         model.addAttribute("totalLandingCount",totalLandingCount);
         model.addAttribute("totalPartCount",totalPartCount);
-        return "quizStaticList";
+        return "sightseeingStaticList";
     }
 
 
@@ -1465,7 +1437,7 @@ public class SaveMsnController {
             return response;
         }//데이터 없음
 
-        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+        if(member.isNauthSaveMsn()) { // 비권한 활성화시
             response.put("error", "403");
             return response;
         }

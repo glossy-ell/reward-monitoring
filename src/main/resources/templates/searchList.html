@@ -459,97 +459,104 @@
 
 	<script type="application/javascript">
 
-		let innerSearchMsns = [];
-        let innerSearchMsnsPage;
+			let searched = false;
 
-        function enterkey() {
-            if (window.event.keyCode == 13) {
-                commSearch();
-            }
-        }
+			function enterkey() {
+				if (window.event.keyCode == 13) {
+					commSearch();
+				}
+			}
 
-        //검색
-        function commSearch(page) {
-            var frm = document.searchFrm;
-        	var formData = new FormData(frm);
-       		var jsonData = {};
-       		formData.forEach((value, key) => {
-            	jsonData[key] = value; // FormData를 JSON 객체로 변환
-        	});
-			if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+			//검색
+			function commSearch(page) {
+
+				var frm = document.searchFrm;
+				var formData = new FormData(frm);
+				var jsonData = {};
+				formData.forEach((value, key) => {
+					jsonData[key] = value; // FormData를 JSON 객체로 변환
+				});
+
+				if(page ==null){
+					page = 1;
+				}
+
+
 				$.ajax({
-					url: `/Mission/searchList/search`,
-					type: "POST",
-					contentType: "application/json",
-					data: JSON.stringify(jsonData),
+				url: `/Mission/searchList/search/${page}`,
+				type: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(jsonData),
 
-					success: function(response) {
-						const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
-						searchListContainer.empty();
+				success: function(response) {
+					const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
+					searchListContainer.empty();
 
-						if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
-
-								$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-						} else {
-							innerSearchMsns = response.fullSearchMsns;
-							innerSearchMsnsPage = 1;
-							response.searchMsns.forEach(function(search,index) {
-							$('#searchList').append(
-									 '<tr>' +
-										'<td class="text-center align-middle">' + search.idx + '</td>' +
+					if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
+					// 빈 리스트인 경우 메시지 추가
+							$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+							searched = true;
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+					} else {
+						searched = true;
+						response.searchMsns.forEach(function(searchMsn,index) {
+						$('#searchList').append(
+								  '<tr>' +
+										'<td class="text-center align-middle">' + searchMsn.idx + '</td>' +
 										'<td class="text-center align-middle">' +
-											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + search.idx + ');">리포트</button>' +
+											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + searchMsn.idx + ');">리포트</button>' +
 										'</td>' +
-										'<td class="text-center align-middle">' + search.missionDefaultQty + '</td>' +
-										'<td class="text-center align-middle">' + search.missionDailyCap + '</td>' +
-										'<td class="text-center align-middle">' + search.advertiser.advertiser + '</td>' +
-										'<td class="text-center align-middle">' + search.advertiserDetails + '</td>' +
-										'<td class="text-center align-middle">' + search.missionTitle + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDefaultQty + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiser.advertiser + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiserDetails + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.missionTitle + '</td>' +
 										'<td class="text-center align-middle">' +
 											'<a class="btn btn-outline-info btn-xs" ' +
-											   'href="' + (search.msnUrl != null && search.msnUrl.startsWith("http") ? search.msnUrl : "http://" + search.msnUrl) + '" ' +
-											   'target="_blank">랜딩 URL</a>' +
+												'href="' + (searchMsn.msnUrl1 != null && searchMsn.msnUrl1.startsWith("http") ? searchMsn.msnUrl1 : "http://" + searchMsn.msnUrl1) + '" ' +
+												'target="_blank">랜딩 URL</a>' +
 										'</td>' +
-										'<td class="text-center align-middle">' + search.searchKeyword + '</td>' +
-										'<td class="text-center align-middle">' + search.bothAtMsnLocalDateTime + '</td>' +
-										'<td class="text-center align-middle">' + search.bothAtCap + '</td>' +
+										'<td class="text-center align-middle">' + (searchMsn.searchKeyword != null ? searchMsn.searchKeyword : '') + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtMsnLocalDateTime + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.bothAtCap + '</td>' +
 										'<td class="text-center align-middle">' +
 											'<div class="btn-group">' +
-												'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (!search.missionActive ? 'text-danger' : '') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-													'<span>' + (search.missionActive ? '활성' : '비활성') + '</span>' +
+												'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (searchMsn.missionActive ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (searchMsn.missionActive ? '활성' : '비활성') + '</span>' +
 												'</button>' +
 												'<div class="dropdown-menu dropdown-menu-right">' +
-													'<a class="dropdown-item" onclick="setIsUsed(' + search.idx + ');">활성</a>' +
-													'<a class="dropdown-item" onclick="setIsUsedFalse(' + search.idx + ');">비활성</a>' +
+													'<a class="dropdown-item" onclick="setIsUsed(' + searchMsn.idx + ');">활성</a>' +
+													'<a class="dropdown-item" onclick="setIsUsedFalse(' + searchMsn.idx + ');">비활성</a>' +
 												'</div>' +
 											'</div>' +
 										'</td>' +
 										'<td class="text-center align-middle">' +
 											'<div class="btn-group">' +
-												'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (search.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-													'<span>' + (search.missionExposure ? '노출' : '비노출') + '</span>' +
+												'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (searchMsn.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+													'<span>' + (searchMsn.missionExposure ? '노출' : '비노출') + '</span>' +
 												'</button>' +
 												'<div class="dropdown-menu dropdown-menu-right">' +
-													'<a class="dropdown-item" onclick="setIsView(' + search.idx + ');">노출</a>' +
-													'<a class="dropdown-item" onclick="setIsViewFalse(' + search.idx + ');">비노출</a>' +
+													'<a class="dropdown-item" onclick="setIsView(' + searchMsn.idx + ');">노출</a>' +
+													'<a class="dropdown-item" onclick="setIsViewFalse(' + searchMsn.idx + ');">비노출</a>' +
 												'</div>' +
 											'</div>' +
 										'</td>' +
-										'<td class="text-center align-middle">' + (search.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-										'<td class="text-center align-middle">' + search.reEngagementDay + '</td>' +
+										'<td class="text-center align-middle">' + (searchMsn.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
+										'<td class="text-center align-middle">' + (searchMsn.reEngagementDay != null ? searchMsn.reEngagementDay : '') + '</td>' +
 										'<td class="text-center align-middle">' +
-											'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + search.idx + ');">가능일 변경하기</button>' +
+											'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + searchMsn.idx + ');">가능일 변경하기</button>' +
 										'</td>' +
 										'<td class="text-center align-middle">' +
-											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + search.idx + ');">수정</button>' +
+											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + searchMsn.idx + ');">수정</button>' +
 										'</td>' +
 										'<td class="text-center align-middle">' +
-											'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + search.idx + ');">삭제</button>' +
+											'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + searchMsn.idx + ');">삭제</button>' +
 										'</td>' +
 									'</tr>'
 								);
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+								const newUrl = `/Mission/searchList/search/${response.currentPage}`;
+								history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 							});
 						}
 					},
@@ -561,382 +568,454 @@
 						}
 					}
 				});
-			} //if 끝
-			else{ //이미 보유한 데이터가 있을경우
-				$.ajax({
-						url: `/Mission/searchList/search/${page}`,
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({innerSearchMsns}),
-						success: function(response) {
-								const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
-								searchListContainer.empty();
-								innerSearchMsnsPage = page;
+			}
 
-								if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
-								// members가 빈 리스트인 경우 메시지 추가
-									$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-								}else {
-									response.searchMsns.forEach(function(search,index) {
-									$('#searchList').append(
-										 '<tr>' +
-											'<td class="text-center align-middle">' + search.idx + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + search.idx + ');">리포트</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + search.missionDefaultQty + '</td>' +
-											'<td class="text-center align-middle">' + search.missionDailyCap + '</td>' +
-											'<td class="text-center align-middle">' + search.advertiser.advertiser + '</td>' +
-											'<td class="text-center align-middle">' + search.advertiserDetails + '</td>' +
-											'<td class="text-center align-middle">' + search.missionTitle + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<a class="btn btn-outline-info btn-xs" ' +
-												   'href="' + (search.msnUrl != null && search.msnUrl.startsWith("http") ? search.msnUrl : "http://" + search.msnUrl) + '" ' +
-												   'target="_blank">랜딩 URL</a>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + search.searchKeyword + '</td>' +
-											'<td class="text-center align-middle">' + search.bothAtMsnLocalDateTime + '</td>' +
-											'<td class="text-center align-middle">' + search.bothAtCap + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (!search.missionActive ? 'text-danger' : '') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (search.missionActive ? '활성' : '비활성') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsUsed(' + search.idx + ');">활성</a>' +
-														'<a class="dropdown-item" onclick="setIsUsedFalse(' + search.idx + ');">비활성</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (search.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (search.missionExposure ? '노출' : '비노출') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsView(' + search.idx + ');">노출</a>' +
-														'<a class="dropdown-item" onclick="setIsViewFalse(' + search.idx + ');">비노출</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + (search.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-											'<td class="text-center align-middle">' + search.reEngagementDay + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + search.idx + ');">가능일 변경하기</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + search.idx + ');">수정</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + search.idx + ');">삭제</button>' +
-											'</td>' +
-										'</tr>'
-										);
-										updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-									});
-								}
-							},
-				error: function(xhr, status, error) {
-					console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+
+
+			// 페이지네이션 업데이트 함수
+			function updatePagination(currentPage, totalPages, startPage, endPage) {
+				const paginationContainer = $('.intra-pagination-wrap');
+				paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+				if (currentPage > 1) {
+					paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+				}
+
+				// Previous 버튼
+				if (currentPage > 1) {
+					paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+				}
+
+				// 페이지 링크 생성
+				for (let i = startPage; i <= endPage; i++) {
+					paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+				}
+
+				// Next 버튼
+				if (currentPage < totalPages) {
+					paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+				}
+
+				// End 버튼
+				if (currentPage < totalPages) {
+					paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+				}
+			}
+
+
+			//검색 초기화
+			function commSearchReset() {
+				location.href = "/Mission/searchList";
+			}
+
+			function commGoAllReg() {
+				location.href = "/Mission/searchMultiTempList";
+			}
+
+			// 등록, 수정 버튼
+			function commGoDetail(idx) {
+				if(idx){
+					window.location.href ='/Mission/searchWrite/'+ idx;
+					return true;
+				} else {
+					window.location.href ='/Mission/searchWrite';
+					return true;
+				}
+			}
+
+			//Excel 다운로드
+			function commDownExcel() {
+				window.location.href = '/Mission/searchList/excel/download';
+			}
+
+
+			function commGoReport(missionIdx) {
+				var popUrl = "/Mission/searchStaticList/" + missionIdx;
+
+				var width = 1200;
+				var height = 900;
+
+				winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
+			}
+
+			function openSetOverlapModal(idx) {
+					$.ajax({
+						type: 'GET',
+						url: `/Mission/searchList/get/${idx}`,
+						dataType: 'json',
+						success: function(data) {
+						if (data) {
+							overlapFrm.idx.value = data.idx; // quiz의 idx
+							if (data.dupParticipation === true) {
+								$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+								$("#overlapDay").prop('disabled', false);  // 활성화
+							} else {
+								$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+								$("#overlapDay").prop('disabled', true);  // 비활성화
+							}
+
+							overlapFrm.reEngagementDay.value = data.reEngagementDay
+						}
+					},
+					error: function(error) {
+						console.error('데이터를 가져오는 데 실패했습니다:', error);
 					}
 				});
+
+
+				$("#setOverlap").modal();
 			}
-        }
 
-// 페이지네이션 업데이트 함수
-	function updatePagination(currentPage, totalPages, startPage, endPage) {
-		const paginationContainer = $('.intra-pagination-wrap');
-		paginationContainer.empty(); // 기존 페이지네이션 비우기
+			function setOverlap() {
 
-		if (currentPage > 1) {
-    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
-		}
+				var idx = document.getElementsByName('idx')[0].value;
+				var overlapFrm = document.overlapFrm;
+				var formData = new FormData(overlapFrm);
+				var jsonData = {};
+				formData.forEach((value, key) => {
 
-		// Previous 버튼
-		if (currentPage > 1) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
-		}
+				   jsonData[key] = value; // FormData를 JSON 객체로 변환
+			   });
 
-		// 페이지 링크 생성
-		for (let i = startPage; i <= endPage; i++) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
-		}
-
-		// Next 버튼
-		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
-		}
-
-		// End 버튼
-		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
-		}
-	}
-
-
-        //검색 초기화
-        function commSearchReset() {
-            location.href = "/Mission/searchList";
-        }
-
-        function commGoAllReg() {
-            location.href = "/Mission/searchMultiTempList";
-        }
-
-        // 등록, 수정 버튼
-        function commGoDetail(idx) {
-        	if(idx){
-           		window.location.href ='/Mission/searchWrite/'+ idx;
-            	return true;
-        	} else {
-				window.location.href ='/Mission/searchWrite';
-            	return true;
-       		}
-        }
-
-        //Excel 다운로드
-        function commDownExcel() {
-			window.location.href = '/Mission/searchList/excel/download';
-        }
-
-
-		function commGoReport(missionIdx) {
-			var popUrl = "/Mission/searchStaticList/" + missionIdx;
-
-			var width = 1200;
-			var height = 900;
-
-			winPopupCenter(popUrl, "검색 미션 리포트", width, height, 'yes', 'yes');
-		}
-
-        function openSetOverlapModal(idx) {
-				$.ajax({
-					type: 'GET',
-					url: `/Mission/searchList/get/${idx}`,
-					dataType: 'json',
-					success: function(data) {
-					if (data) {
-						overlapFrm.idx.value = data.idx; // quiz의 idx
-						if (data.dupParticipation === true) {
-							$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
-							$("#overlapDay").prop('disabled', false);  // 활성화
-						} else {
-							$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
-							$("#overlapDay").prop('disabled', true);  // 비활성화
-						}
-
-						overlapFrm.reEngagementDay.value = data.reEngagementDay
-					}
-				},
-				error: function(error) {
-					console.error('데이터를 가져오는 데 실패했습니다:', error);
-				}
-			});
-
-
-            $("#setOverlap").modal();
-        }
-
-        function setOverlap() {
-
-			var idx = document.getElementsByName('idx')[0].value;
-			var overlapFrm = document.overlapFrm;
-            var formData = new FormData(overlapFrm);
-            var jsonData = {};
-            formData.forEach((value, key) => {
-
-               jsonData[key] = value; // FormData를 JSON 객체로 변환
-           });
-
-    		if (jsonData.reEngagementDay > 10) {
-       		 	alert("재참여 가능일은 10을 넘길 수 없습니다.");
-        		return false; // 함수를 종료
-   			}
-
-   			if (jsonData.reEngagementDay < 1) {
-       		 	alert("유효한 데이터를 입력해주세요.");
-        		return false; // 함수를 종료
-   			}
-
-			if(jsonData.dupParticipation === true) {
-				if (jsonData.reEngagementDay === null || jsonData.reEngagementDay ==="") {
-					alert("재참여 가능일을 입력해주세요!");
+				if (jsonData.reEngagementDay > 10) {
+					alert("재참여 가능일은 10을 넘길 수 없습니다.");
 					return false; // 함수를 종료
 				}
+
+				if (jsonData.reEngagementDay < 1) {
+					alert("유효한 데이터를 입력해주세요.");
+					return false; // 함수를 종료
+				}
+
+				if(jsonData.dupParticipation === true) {
+					if (jsonData.reEngagementDay === null || jsonData.reEngagementDay ==="") {
+						alert("재참여 가능일을 입력해주세요!");
+						return false; // 함수를 종료
+					}
+				}
+
+
+				$.ajax({
+					type: 'post'
+					,url: `/Mission/searchList/reEngagement/${idx}`
+					,contentType: "application/json"
+					,data: JSON.stringify(jsonData)
+					, cache: false
+					, async: false
+					, success: function(response) {
+						alert("성공적으로 변경되었습니다.");
+						window.location.href = "/Mission/searchList";
+					},
+					error: function(xhr) {
+						alert("변경중 오류가 발생했습니다.");
+
+					}
+
+				});
+
+
+
+				$("#setOverlap").modal('hide');
+
 			}
 
 
-			$.ajax({
-				type: 'post'
-				,url: `/Mission/searchList/reEngagement/${idx}`
-				,contentType: "application/json"
-				,data: JSON.stringify(jsonData)
-				, cache: false
-				, async: false
-				, success: function(response) {
-					alert("성공적으로 변경되었습니다.");
-					window.location.href = "/Mission/searchList";
-				},
-                error: function(xhr) {
-                	alert("변경중 오류가 발생했습니다.");
-
-                }
-
-			});
-
-
-
-            $("#setOverlap").modal('hide');
-
-        }
-
-
-        function setIsUsed(idx) {
-
-                   $.ajax({
-                    type: 'get'
-                    , url: `/Mission/searchList/setMissionIsUsed/${idx}`
-                    , cache: false
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
-
-        }
-
-            function setIsUsedFalse(idx) {
-
-                $.ajax({
-                    type: 'get'
-                    , url: `/Mission/searchList/setMissionIsUsedFalse/${idx}`
-                    , cache: false
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
-
-            }
-
-        function setIsView(idx) {
-
-                  $.ajax({
-                    type: 'get'
-                    , url: `/Mission/searchList/setMissionIsView/${idx}`
-                    , cache: false
-                    , async: false
-
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
-
-        }
-
-
-        function setIsViewFalse(idx) {
-
-                $.ajax({
-                    type: 'get'
-                    , url: `/Mission/searchList/setMissionIsViewFalse/${idx}`
-                    , cache: false
-                    , async: false
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
-
-        }
-
-        function commSetAllIsUsed(idx) {
-			if (typeof innerSearchMsnsPage === 'undefined'){
-							if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
-								$.ajax({
-									type: 'get'
-									, url: `/Mission/searchList/setOffMissionIsUsed/${idx}`
-									, success: function(data) {
-											alert("비활성화 되었습니다");
-											location.reload(true);
-
-
-										}
-									,error: function(){
-											alert("오류가 발생했습니다.");
-											return false;
-									}
-								});
-							}
-						}
-						else{
-							if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
-								$.ajax({
-									type: 'post'
-									, url: `/Mission/searchList/setOffMissionIsUsedSearch/${innerSearchMsnsPage}`
-									,contentType: "application/json"
-									,data: JSON.stringify({innerSearchMsns})
-									, success: function(data) {
-											alert("비활성화 되었습니다");
-											window.location.href = "/Mission/searchList";
-										}
-									,error: function(){
-											alert("오류가 발생했습니다.");
-											return false;
-									}
-								});
-							}
-						}
-
-        }
-
-        function commSetAllIsView(idx) {
-			if (typeof innerSearchMsnsPage === 'undefined'){
-				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+			function setIsUsed(idx) {
+				if (searched == false) {
 					$.ajax({
 						type: 'get'
-						, url: `/Mission/searchList/setOffMissionIsView/${idx}`
+						, url: `/Mission/searchList/setMissionIsUsed/${idx}`
+						, cache: false
 						, success: function(data) {
-								alert("현재 페이지의 미션이 비노출로 되었습니다");
-								location.reload(true);
-
-
-							}
+							alert("변경되었습니다.");
+							location.reload(true);
+						}
 						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
+							alert("오류가 발생했습니다.");
+							return false;
 						}
 					});
 				}
-			}
-			else{
-				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+				else{
 					$.ajax({
-						type: 'post'
-						, url: `/Mission/searchList/setOffMissionIsViewSearch/${innerSearchMsnsPage}`
-						,contentType: "application/json"
-						,data: JSON.stringify({innerSearchMsns})
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsUsed/${idx}`
+						, cache: false
 						, success: function(data) {
-								alert("현재 페이지의 미션이 비노출로 되었습니다");
-								window.location.href = "/Mission/searchList";
+							alert("변경되었습니다.");
+							const currentUrl = window.location.href;
+							const url = new URL(currentUrl);
+							const pathSegments = url.pathname.split('/');
+							const page = pathSegments[pathSegments.length - 1];
+							commSearch(page);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+
+			}
+
+			function setIsUsedFalse(idx) {
+				if (searched == false) {
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsUsedFalse/${idx}`
+						, cache: false
+						, success: function(data) {
+							alert("변경되었습니다.");
+							location.reload(true);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+				else{
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsUsedFalse/${idx}`
+						, cache: false
+						, success: function(data) {
+							alert("변경되었습니다.");
+							const currentUrl = window.location.href;
+							const url = new URL(currentUrl);
+							const pathSegments = url.pathname.split('/');
+							const page = pathSegments[pathSegments.length - 1];
+							commSearch(page);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+			}
+
+
+		   function setIsView(idx) {
+				if (searched == false) {
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsView/${idx}`
+						, cache: false
+						, async: false
+
+						, success: function(data) {
+							alert("변경되었습니다.");
+							location.reload(true);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+				else{
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsView/${idx}`
+						, cache: false
+						, success: function(data) {
+							alert("변경되었습니다.");
+							const currentUrl = window.location.href;
+							const url = new URL(currentUrl);
+							const pathSegments = url.pathname.split('/');
+							const page = pathSegments[pathSegments.length - 1];
+							commSearch(page);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+			}
+
+
+
+
+
+			function setIsViewFalse(idx) {
+				if (searched == false) {
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsViewFalse/${idx}`
+						, cache: false
+						, async: false
+						, success: function(data) {
+							alert("변경되었습니다.");
+							location.reload(true);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+				else{
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/setMissionIsViewFalse/${idx}`
+						, cache: false
+						, success: function(data) {
+							alert("변경되었습니다.");
+							const currentUrl = window.location.href;
+							const url = new URL(currentUrl);
+							const pathSegments = url.pathname.split('/');
+							const page = pathSegments[pathSegments.length - 1];
+							commSearch(page);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
+			}
+
+
+				function commSetAllIsUsed(page) {
+				if (searched == false) {
+					if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
+						$.ajax({
+							type: 'get',
+							url: `/Mission/searchList/setOffMissionIsUsed/${page}`,
+							success: function(data) {
+								alert("비활성화 되었습니다");
+								location.reload(true);
+							},
+							error: function() {
+								alert("오류가 발생했습니다.");
+								return false;
+							}
+						});
+					}
+				} else {
+					if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
+
+						var frm = document.searchFrm;
+						var formData = new FormData(frm);
+						var jsonData = {};
+						formData.forEach((value, key) => {
+							jsonData[key] = value; // FormData를 JSON 객체로 변환
+						});
+
+						if (page == null) {
+							page = 1;
+						}
+
+						// 첫 번째 AJAX 요청
+						$.ajax({
+							url: `/Mission/searchList/search/${page}`,
+							type: "POST",
+							contentType: "application/json",
+							data: JSON.stringify(jsonData),
+							success: function(response) {
+								// 두 번째 AJAX 요청
+								$.ajax({
+									type: 'post',
+									url: `/Mission/searchList/setOffMissionIsUsedSearch/${page}`,
+									contentType: "application/json",
+									data: JSON.stringify({ innerSearchMsns: response.searchMsns }),
+									success: function(data) {
+										alert("비활성화 되었습니다");
+										const currentUrl = window.location.href;
+										const url = new URL(currentUrl);
+										const pathSegments = url.pathname.split('/');
+										const page = pathSegments[pathSegments.length - 1];
+										commSearch(page);
+									},
+									error: function() {
+										alert("오류가 발생했습니다.");
+										return false;
+									}
+								});
+							},
+							error: function() {
+								alert("검색 중 오류가 발생했습니다.");
+							}
+						});
+					}
+				}
+			}
+
+			function commSetAllIsView(page) {
+				if (searched == false) {
+					if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+						$.ajax({
+							type: 'get'
+							, url: `/Mission/searchList/setOffMissionIsView/${page}`
+							, success: function(data) {
+									alert("현재 페이지의 미션이 비노출로 되었습니다");
+									location.reload(true);
+								}
+							,error: function(){
+									alert("오류가 발생했습니다.");
+									return false;
+							}
+						});
+					}
+				}
+				else{
+					if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+						var frm = document.searchFrm;
+						var formData = new FormData(frm);
+						var jsonData = {};
+						formData.forEach((value, key) => {
+							jsonData[key] = value; // FormData를 JSON 객체로 변환
+						});
+
+						if (page == null) {
+							page = 1;
+						}
+						$.ajax({
+							url: `/Mission/searchList/search/${page}`,
+							type: "POST",
+							contentType: "application/json",
+							data: JSON.stringify(jsonData),
+							success: function(response) {
+								// 두 번째 AJAX 요청
+								$.ajax({
+									type: 'post',
+									url: `/Mission/searchList/setOffMissionIsViewSearch/${page}`,
+									contentType: "application/json",
+									data: JSON.stringify({ innerSearchMsns: response.searchMsns }), //
+									success: function(data) {
+										alert("비활성화 되었습니다");
+										const currentUrl = window.location.href;
+										const url = new URL(currentUrl);
+										const pathSegments = url.pathname.split('/');
+										const page = pathSegments[pathSegments.length - 1];
+										commSearch(page);
+									},
+									error: function() {
+										alert("오류가 발생했습니다.");
+										return false;
+									}
+								});
+							},
+							error: function() {
+								alert("검색 중 오류가 발생했습니다.");
+							}
+						});
+					}
+				}
+			}
+
+
+
+			function commAllOffMission() {
+				if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
+					$.ajax({
+						type: 'get'
+						, url: '/Mission/searchList/AllOffMission'
+						, success: function(data) {
+								alert("모든 미션이 종료/비노출 되었습니다.");
+								location.reload(true);
 							}
 						,error: function(){
 								alert("오류가 발생했습니다.");
@@ -946,69 +1025,54 @@
 				}
 			}
 
-        }
-        function commAllOffMission() {
-            if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
-                $.ajax({
-                    type: 'get'
-                    , url: '/Mission/searchList/AllOffMission'
-                    , success: function(data) {
-                            alert("모든 미션이 종료/비노출 되었습니다.");
-                            location.reload(true);
-                        }
-                    ,error: function(){
-                            alert("오류가 발생했습니다.");
-                            return false;
-                    }
-                });
-            }
-        }
 
-        function hiddenMission(idx) {
-            if(confirm("미션을 삭제합니다.")){
-                $.ajax({
-                    type: 'get'
-                    , url: `/Mission/searchList/hidden/${idx}`
-                    , cache: false
-                    , async: false
-                    , success: function(data) {
-                        alert("미션이 삭제되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
-            }
-        }
 
-		function updateInputName() {
-			const selectElement = document.getElementById("searchSelect");
-			const selectedValue = selectElement.value;
 
-			// input 요소를 가져옴
-			const inputElement = document.getElementById("searchInput");
-
-			if (selectedValue === "sTitle") {
-				inputElement.name = "missionTitle";
-				inputElement.placeholder = "검색 미션 제목을 입력하세요";
-			} else if (selectedValue === "sAdvertiserDetail") {
-				inputElement.name = "advertiserDetails";
-				inputElement.placeholder = "광고주 상세를 입력하세요";
+			function hiddenMission(idx) {
+				if(confirm("미션을 삭제합니다.")){
+					$.ajax({
+						type: 'get'
+						, url: `/Mission/searchList/hidden/${idx}`
+						, cache: false
+						, async: false
+						, success: function(data) {
+							alert("미션이 삭제되었습니다.");
+							location.reload(true);
+						}
+						,error: function(){
+							alert("오류가 발생했습니다.");
+							return false;
+						}
+					});
+				}
 			}
-		}
 
-		function toggleOverlapDay() {
-			$("#overlapDay").prop('disabled', false);  // 활성화
-			document.getElementById("overlapDay").value = 5;
-		}
+			function updateInputName() {
+				const selectElement = document.getElementById("searchSelect");
+				const selectedValue = selectElement.value;
 
-		function toggleOverlapDayFalse() {
-			$("#overlapDay").prop('disabled', true);  // 비활성화
-			document.getElementById("overlapDay").value = "";
-		}
-</script>
+				// input 요소를 가져옴
+				const inputElement = document.getElementById("searchInput");
+
+				if (selectedValue === "sTitle") {
+					inputElement.name = "missionTitle";
+					inputElement.placeholder = "검색 미션 제목을 입력하세요";
+				} else if (selectedValue === "sAdvertiserDetail") {
+					inputElement.name = "advertiserDetails";
+					inputElement.placeholder = "광고주 상세를 입력하세요";
+				}
+			}
+
+			function toggleOverlapDay() {
+				$("#overlapDay").prop('disabled', false);  // 활성화
+				document.getElementById("overlapDay").value = 5;
+			}
+
+			function toggleOverlapDayFalse() {
+				$("#overlapDay").prop('disabled', true);  // 비활성화
+				document.getElementById("overlapDay").value = "";
+			}
+	</script>
 <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
 

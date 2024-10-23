@@ -96,7 +96,7 @@ public class AnswerMsnDailyStatController {
         return response; // JSON 형태로 반환
     }
 
-    @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
+    @Operation(summary = "에러 방지", description = "검색 재진입시 원래 페이지로 리턴 ")
     @GetMapping("/search/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),

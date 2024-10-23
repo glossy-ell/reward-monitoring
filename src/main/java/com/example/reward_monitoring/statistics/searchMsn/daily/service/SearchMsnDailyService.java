@@ -125,6 +125,7 @@ public class SearchMsnDailyService {
     }
 
     public List<SearchMsnDailyStat>  getSearchMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
+    public List<SearchMsnDailyStat>  getSearchMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findMonth(currentTime,past);}
 
     public List<SearchMsnDailyStat>  getSearchMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findMonth(currentTime,past);}
 

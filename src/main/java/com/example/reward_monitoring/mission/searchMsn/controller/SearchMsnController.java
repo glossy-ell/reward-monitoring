@@ -9,6 +9,9 @@ import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchByConsumedDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchDto;
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.searchMsn.dto.ResponseDto;
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
@@ -296,7 +299,7 @@ public class SearchMsnController{
     }
 
     @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션을 검색합니다")
-    @PostMapping({"/Mission/searchList/search","/Mission/searchList/search/"})
+    @PostMapping({"/Mission/searchList/search","/Mission/searchList/search/","/Mission/searchList/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -304,7 +307,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public Map<String, Object> searchSearchMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, @RequestBody SearchMsnSearchDto dto){
+    public Map<String, Object> searchSearchMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody SearchMsnSearchDto dto){
         Member sessionMember= (Member) session.getAttribute("member");
         Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
@@ -318,7 +321,7 @@ public class SearchMsnController{
             return response;
         }//데이터 없음
 
-        if(member.isNauthSearchMsn()) { // 비권한 활성화시
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
             response.put("error", "403");
             return response;
         }
@@ -348,8 +351,7 @@ public class SearchMsnController{
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullSearchMsns",result);
-        response.put("searchMsns", limitedSearchMsns);  // limitedMembers 리스트
+        response.put("searchMsns", limitedSearchMsns);  // 검색 결과 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);
@@ -357,66 +359,57 @@ public class SearchMsnController{
         return response; // JSON 형태로 반환
     }
 
-    @Operation(summary = "검색미션 페이지 이동", description = "이미 검색한 미션의 페이지 이동시 처리하는 컨트롤러입니다")
-    @PostMapping("/Mission/searchList/search/{pageNumber}")
-    @ResponseBody
+
+    @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 ")
+    @GetMapping("/Mission/searchList/search/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
-            @ApiResponse(responseCode = "403", description = "권한없음"),
-            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-
-    public Map<String, Object> searchSearchMsn_page(@PathVariable(required = true,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody ResponseDto responseDto){
-        Member sessionMember= (Member) session.getAttribute("member");
-        Map<String, Object> response = new HashMap<>();
-        if(sessionMember == null){
-            response.put("error", "404"); // 멤버가 없는 경우
-            return response;
-        } // 세션만료
-
-        Member member =memberRepository.findById(sessionMember.getId());
+    public String  searchSearchMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
         if (member == null) {
-            response.put("error", "403"); // 비권한 사용자인 경우
-            return response;
-        }//데이터 없음
-
-        if(member.isNauthSearchMsn()) { // 비권한 활성화시
-            response.put("error", "403");
-            return response;
+            return "error/404";
         }
 
-        List<SearchMsn> result = responseDto.getInnerSearchMsns();
+        List<SearchMsn> searchMsns = searchMsnService.getSearchMsns();
+        Collections.reverse(searchMsns);
+
         // 페이지 번호가 없으면 기본값 1 사용
-        if (pageNumber == null || pageNumber < 1) {
-            pageNumber = 1;
-        }
 
-        // 한 페이지당 최대 15개 데이터
-        int limit = 15;
+        pageNumber = 1;
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
         int startIndex = (pageNumber - 1) * limit;
+
 
         // 전체 리스트의 크기 체크
         List<SearchMsn> limitedSearchMsns;
-        if (startIndex < result.size()) {
-            int endIndex = Math.min(startIndex + limit, result.size());
-            limitedSearchMsns = result.subList(startIndex, endIndex);
+        if (startIndex < searchMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, searchMsns.size());
+            limitedSearchMsns = searchMsns.subList(startIndex, endIndex);
         } else {
             limitedSearchMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
         }
-
-        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) searchMsns.size() / limit);
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("fullSearchMsns",result);
-        response.put("searchMsns", limitedSearchMsns);  // limitedMembers 리스트
-        response.put("currentPage", pageNumber);  // 현재 페이지 번호
-        response.put("totalPages", totalPages);    // 전체 페이지 수
-        response.put("startPage",startPage);
-        response.put("endPage",endPage);
-        return response; // JSON 형태로 반환
+        model.addAttribute("searchMsns",limitedSearchMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "searchList";
     }
+
+
 
 
 
@@ -1068,6 +1061,131 @@ public class SearchMsnController{
         model.addAttribute("endPage", endPage);
         return "searchCurrentList";
     }
+
+
+    @Operation(summary = "검색미션소진량 검색", description = "조건에 맞는 검색미션소진량을 검색합니다")
+    @PostMapping({"/Mission/searchCurrentList/search","/Mission/searchCurrentList/search/","/Mission/searchCurrentList/search/{pageNumber}"})
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public Map<String, Object> searchSearchMsnCurrent(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody SearchMsnSearchByConsumedDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+
+        List<SearchMsn> result = searchMsnService.searchSearchMsnCurrent(dto);
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedSearchMsns = result.subList(startIndex, endIndex);
+        } else {
+            limitedSearchMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("fullAnswerMsns",result);
+        response.put("searchMsns", limitedSearchMsns);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
+    }
+
+
+
+
+    @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 오류 캐치용 컨트롤러 ")
+    @GetMapping("/Mission/searchCurrentList/search/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+    })
+    public String  searchCurrentSearchMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+        List<Server> servers = serverService.getServers();
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        ZonedDateTime now = ZonedDateTime.now();
+        List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 10개 데이터
+        int limit = 10;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<SearchMsn> limitedSearchMsns;
+        if (startIndex < searchMsns.size()) {
+            int endIndex = Math.min(startIndex + limit, searchMsns.size());
+            limitedSearchMsns = searchMsns.subList(startIndex, endIndex);
+        } else {
+            limitedSearchMsns = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) searchMsns.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("searchMsns",limitedSearchMsns);
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("servers", servers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "searchCurrentList";
+    }
+
+
+
+
+
+
+
 
     @GetMapping("/Mission/searchCurrentList/setOffMissionIsUsed/{pageNumber}")
     @ApiResponses(value = {

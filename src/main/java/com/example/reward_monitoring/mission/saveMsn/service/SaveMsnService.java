@@ -543,13 +543,6 @@ public class SaveMsnService {
 
     }
 
-    public boolean changeMissionActive(int idx, SaveMsnActiveDto dto) {
-        SaveMsn target =saveMsnRepository.findByIdx(idx);
-        if(target ==null)
-            return false;
-        target.setMissionActive(dto.isActive());
-        return true;
-    }
     public boolean changeMissionExpose(int idx, SaveMsnExposeDto dto) {
 
         SaveMsn target =saveMsnRepository.findByIdx(idx);
@@ -560,6 +553,12 @@ public class SaveMsnService {
     }
 
     public boolean hidden(int idx) {
+
+        SaveMsn target= saveMsnRepository.findByIdx(idx);
+        if(target == null)
+            return false;
+        target.setDataType(false);
+        saveMsnRepository.save(target);
         return true;
     }
 
@@ -589,20 +588,7 @@ public class SaveMsnService {
 
     public boolean setOffMissionIsUsed(int idx,List<SaveMsn> target) {
 
-
-        // 한 페이지당 최대 10개 데이터
-        int limit = 10;
-        int startIndex = (idx - 1) * limit;
-
-        // 전체 리스트의 크기 체크
-        List<SaveMsn> limitedSaveMsns;
-        if (startIndex < target.size()) {
-            int endIndex = Math.min(startIndex + limit, target.size());
-            limitedSaveMsns = target.subList(startIndex, endIndex);
-        } else {
-            return false;
-        }
-        for (SaveMsn saveMsn : limitedSaveMsns) {
+        for (SaveMsn saveMsn : target) {
             saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정
             saveMsnRepository.save(saveMsn);
         }
@@ -632,19 +618,9 @@ public class SaveMsnService {
         return true;
     }
     public boolean setOffMissionIsView(int idx,List<SaveMsn> target) {
-        // 한 페이지당 최대 10개 데이터
-        int limit = 10;
-        int startIndex = (idx - 1) * limit;
 
-        // 전체 리스트의 크기 체크
-        List<SaveMsn> limitedSaveMsns;
-        if (startIndex < target.size()) {
-            int endIndex = Math.min(startIndex + limit, target.size());
-            limitedSaveMsns = target.subList(startIndex, endIndex);
-        } else {
-            return false;
-        }
-        for (SaveMsn saveMsn : limitedSaveMsns) {
+
+        for (SaveMsn saveMsn : target) {
             saveMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
             saveMsnRepository.save(saveMsn);
         }

@@ -1,6 +1,7 @@
 package com.example.reward_monitoring.statistics.saveMsn.daily.service;
 
 
+
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.dto.SaveMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
@@ -24,14 +25,22 @@ public class SaveMsnDailyService {
     @Autowired
     private SaveMsnDailyStatRepository saveMsnDailyStatRepository;
 
+<<<<<<< Updated upstream
 
 
 
+=======
+    public List<SaveMsnDailyStat> getSaveMsnsDailys() {
+        return saveMsnDailyStatRepository.findAll();
+    }
+    public List<SaveMsnDailyStat>  getSaveMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
+    public List<SaveMsnDailyStat>  getSaveMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findMonth(currentTime,past);}
+>>>>>>> Stashed changes
 
     public Sheet excelDownload(List<SaveMsnDailyStat> list, Workbook wb){
 
         int size = list.size();
-        Sheet sheet = wb.createSheet("정답 미션 목록");
+        Sheet sheet = wb.createSheet("저장 미션 목록");
         Row row = null;
         Cell cell = null;
         CellStyle cellStyle = wb.createCellStyle();
@@ -120,14 +129,14 @@ public class SaveMsnDailyService {
         cellStyle.setBorderBottom(BorderStyle.THIN);
     }
 
-    public List<SaveMsnDailyStat> getSaveMsnsDailys() {
-        return saveMsnDailyStatRepository.findAll();
-    }
 
+<<<<<<< Updated upstream
     public List<SaveMsnDailyStat>  getSaveMsnsDaily(int idx,LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
 
     public List<SaveMsnDailyStat>  getSaveMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findMonth(currentTime,past);}
 
+=======
+>>>>>>> Stashed changes
     public List<SaveMsnDailyStat> searchSaveMsnDaily(SaveMsnDailyStatSearchDto dto) {
 
         List<SaveMsnDailyStat>  target_date = null;

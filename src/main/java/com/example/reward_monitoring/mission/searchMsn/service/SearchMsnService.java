@@ -907,19 +907,8 @@ public class SearchMsnService {
     public boolean setOffMissionIsUsed(int idx,List<SearchMsn> target) {
 
 
-        // 한 페이지당 최대 10개 데이터
-        int limit = 10;
-        int startIndex = (idx - 1) * limit;
 
-        // 전체 리스트의 크기 체크
-        List<SearchMsn> limitedSearchMsns;
-        if (startIndex < target.size()) {
-            int endIndex = Math.min(startIndex + limit, target.size());
-            limitedSearchMsns = target.subList(startIndex, endIndex);
-        } else {
-            return false;
-        }
-        for (SearchMsn searchMsn : limitedSearchMsns) {
+        for (SearchMsn searchMsn : target) {
             searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정
             searchMsnRepository.save(searchMsn);
         }
@@ -952,19 +941,8 @@ public class SearchMsnService {
 
     public boolean setOffMissionIsView(int idx,List<SearchMsn> target) {
 
-        // 한 페이지당 최대 10개 데이터
-        int limit = 10;
-        int startIndex = (idx - 1) * limit;
 
-        // 전체 리스트의 크기 체크
-        List<SearchMsn> limitedSearchMsns;
-        if (startIndex < target.size()) {
-            int endIndex = Math.min(startIndex + limit, target.size());
-            limitedSearchMsns = target.subList(startIndex, endIndex);
-        } else {
-            return false;
-        }
-        for (SearchMsn searchMsn : limitedSearchMsns) {
+        for (SearchMsn searchMsn : target) {
             searchMsn.setMissionExposure(false); // missionExpose 필드를 false로 설정
             searchMsnRepository.save(searchMsn);
         }

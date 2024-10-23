@@ -2,7 +2,7 @@ package com.example.reward_monitoring.statistics.searchMsn.sum.service;
 
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
+
 import com.example.reward_monitoring.statistics.searchMsn.sum.dto.SearchMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.sum.entity.SearchMsnSumStat;
 import com.example.reward_monitoring.statistics.searchMsn.sum.repository.SearchMsnSumStatRepository;
@@ -30,7 +30,10 @@ public class SearchMsnSumStatService {
     public List<SearchMsnSumStat> getSearchMsnSumStatsMonth(LocalDate currentTime, LocalDate past){
         return searchMsnSumStatRepository.findMonth(currentTime,past);
     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     public List<SearchMsnSumStat> searchSearchMsnSum(SearchMsnSumStatSearchDto dto) {
         List<SearchMsnSumStat> target_serverUrl = null;
         List<SearchMsnSumStat> target_advertiser = null;
@@ -87,7 +90,11 @@ public class SearchMsnSumStatService {
         return result;
     }
 
+<<<<<<< Updated upstream
     public Sheet excelDownloadCurrent(List<SearchMsnSumStat> list, Workbook wb,int landSum,int PartSum) {
+=======
+    public Sheet excelDownloadCurrent(List<SearchMsnSumStat> list, Workbook wb, int landSum, int PartSum) {
+>>>>>>> Stashed changes
 
         int size = list.size();
         Sheet sheet = wb.createSheet("정답 미션 합산 리포트");

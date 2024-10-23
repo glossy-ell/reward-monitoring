@@ -459,8 +459,7 @@
 <script type="application/javascript">
 
 
-	let innerSaveMsns = [];
-	let innerSaveMsnsPage;
+	let searched = false;
 
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -475,9 +474,13 @@
        		formData.forEach((value, key) => {
             	jsonData[key] = value; // FormData를 JSON 객체로 변환
         	});
-			if (page === undefined || page === null){ // 이전 검색값이 없을 경우
+
+				if(page ==null){
+					page = 1;
+				}
+
 				$.ajax({
-					url: `/Mission/sightseeingList/search`,
+					url: `/Mission/sightseeingList/search/${page}`,
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
@@ -487,14 +490,12 @@
 						saveListContainer.empty();
 
 						if (response.saveMsns.length === 0) {  //검색결과가 빈 리스트일경우
-
 								$('#saveList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							innerSaveMsns = response.fullSaveMsns;
-							innerSaveMsnsPage = 1;
+							searched = true;
 							response.saveMsns.forEach(function(save,index) {
-							$('#searchList').append(
+							$('#saveList').append(
 									 '<tr>' +
 										'<td class="text-center align-middle">' + save.idx + '</td>' +
 										'<td class="text-center align-middle">' +
@@ -511,6 +512,7 @@
 											   'target="_blank">랜딩 URL</a>' +
 										'</td>' +
 										'<td class="text-center align-middle">' + save.searchKeyword + '</td>' +
+
 										'<td class="text-center align-middle">' + save.bothAtMsnLocalDateTime + '</td>' +
 										'<td class="text-center align-middle">' + save.bothAtCap + '</td>' +
 										'<td class="text-center align-middle">' +
@@ -549,6 +551,8 @@
 									'</tr>'
 								);
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+								const newUrl = `/Mission/sightseeingCurrentList/search/${response.currentPage}`;
+								history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 							});
 						}
 					},
@@ -560,180 +564,103 @@
 						}
 					}
 				});
-			} //if 끝
-			else{ //이미 보유한 데이터가 있을경우
+       	 	}
+
+
+		// 페이지네이션 업데이트 함수
+		function updatePagination(currentPage, totalPages, startPage, endPage) {
+			const paginationContainer = $('.intra-pagination-wrap');
+			paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+			if (currentPage > 1) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+			}
+
+			// Previous 버튼
+			if (currentPage > 1) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+			}
+
+			// 페이지 링크 생성
+			for (let i = startPage; i <= endPage; i++) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+			}
+
+			// Next 버튼
+			if (currentPage < totalPages) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+			}
+
+			// End 버튼
+			if (currentPage < totalPages) {
+				paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+			}
+		}
+
+
+		function commGoReport(missionIdx) {
+			var popUrl = "/Mission/sightseeingStaticList/" + missionIdx;
+
+			var width = 1200;
+			var height = 900;
+
+			winPopupCenter(popUrl, "저장 미션 리포트", width, height, 'yes', 'yes');
+		}
+
+
+		//검색 초기화
+		function commSearchReset() {
+			location.href = "/Mission/sightseeingList";
+		}
+
+		function commGoAllReg() {
+			location.href = "/Mission/sightseeingMultiTempList";
+		}
+
+		// 등록, 수정 버튼
+		function commGoDetail(idx) {
+			if(idx){
+				window.location.href ='/Mission/sightseeingWrite/'+ idx;
+				return true;
+			} else {
+				window.location.href ='/Mission/sightseeingWrite';
+				return true;
+			}
+		}
+
+		 //Excel 다운로드
+			function commDownExcel() {
+				window.location.href = '/Mission/sightseeingList/excel/download';
+			}
+
+
+		 function openSetOverlapModal(idx) {
 				$.ajax({
-						url: `/Mission/sightseeingList/search/${page}`,
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({innerSaveMsns}),
-						success: function(response) {
-								const saveListContainer = $('#saveList'); // 회원 목록을 표시할 컨테이너 선택
-								saveListContainer.empty();
-								innerSaveMsnsPage = page;
-
-								if (response.saveMsns.length === 0) {  //검색결과가 빈 리스트일경우
-								// members가 빈 리스트인 경우 메시지 추가
-									$('#saveList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-									updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-								}else {
-									response.saveMsns.forEach(function(search,index) {
-									$('#searchList').append(
-										 '<tr>' +
-											'<td class="text-center align-middle">' + save.idx + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + save.idx + ');">리포트</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + save.missionDefaultQty + '</td>' +
-											'<td class="text-center align-middle">' + save.missionDailyCap + '</td>' +
-											'<td class="text-center align-middle">' + save.advertiser.advertiser + '</td>' +
-											'<td class="text-center align-middle">' + save.advertiserDetails + '</td>' +
-											'<td class="text-center align-middle">' + save.missionTitle + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<a class="btn btn-outline-info btn-xs" ' +
-												   'href="' + (ssave.msnUrl != null && save.msnUrl.startsWith("http") ? save.msnUrl : "http://" + search.msnUrl) + '" ' +
-												   'target="_blank">랜딩 URL</a>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + save.searchKeyword + '</td>' +
-											'<td class="text-center align-middle">' + save.bothAtMsnLocalDateTime + '</td>' +
-											'<td class="text-center align-middle">' + save.bothAtCap + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" id="isActive" class="btn btn-outline-focus btn-sm dropdown-toggle ' + (!save.missionActive ? 'text-danger' : '') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (save.missionActive ? '활성' : '비활성') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsUsed(' + save.idx + ');">활성</a>' +
-														'<a class="dropdown-item" onclick="setIsUsedFalse(' + save.idx + ');">비활성</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<div class="btn-group">' +
-													'<button type="button" class="btn btn-outline-success btn-sm dropdown-toggle ' + (save.missionExposure ? '' : 'text-danger') + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-														'<span>' + (save.missionExposure ? '노출' : '비노출') + '</span>' +
-													'</button>' +
-													'<div class="dropdown-menu dropdown-menu-right">' +
-														'<a class="dropdown-item" onclick="setIsView(' + save.idx + ');">노출</a>' +
-														'<a class="dropdown-item" onclick="setIsViewFalse(' + save.idx + ');">비노출</a>' +
-													'</div>' +
-												'</div>' +
-											'</td>' +
-											'<td class="text-center align-middle">' + (save.dupParticipation ? '중복 허용' : '중복 비허용') + '</td>' +
-											'<td class="text-center align-middle">' + save.reEngagementDay + '</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-primary btn-xs" onclick="openSetOverlapModal(' + save.idx + ');">가능일 변경하기</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + save.idx + ');">수정</button>' +
-											'</td>' +
-											'<td class="text-center align-middle">' +
-												'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + save.idx + ');">삭제</button>' +
-											'</td>' +
-										'</tr>'
-										);
-										updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-									});
-								}
-							},
-				error: function(xhr, status, error) {
-					console.log("에러 발생:", error);  // 에러 발생 시 처리할 작업
+					type: 'GET',
+					url: `/Mission/sightseeingList/get/${idx}`,
+					dataType: 'json',
+					success: function(data) {
+					if (data) {
+						overlapFrm.idx.value = data.idx; //
+						if (data.dupParticipation === true) {
+							$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
+							$("#overlapDay").prop('disabled', false);  // 활성화
+						} else {
+							$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
+							$("#overlapDay").prop('disabled', true);  // 비활성화
+						}
+						overlapFrm.reEngagementDay.value = data.reEngagementDay
 					}
-				});
-			}
-        }
-	// 페이지네이션 업데이트 함수
-	function updatePagination(currentPage, totalPages, startPage, endPage) {
-		const paginationContainer = $('.intra-pagination-wrap');
-		paginationContainer.empty(); // 기존 페이지네이션 비우기
-
-		if (currentPage > 1) {
-    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
-		}
-
-		// Previous 버튼
-		if (currentPage > 1) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
-		}
-
-		// 페이지 링크 생성
-		for (let i = startPage; i <= endPage; i++) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
-		}
-
-		// Next 버튼
-		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
-		}
-
-		// End 버튼
-		if (currentPage < totalPages) {
-			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
-		}
-	}
-
-
-	function commGoReport(missionIdx) {
-		var popUrl = "/Mission/sightseeingStaticList/" + missionIdx;
-
-		var width = 1200;
-		var height = 900;
-
-		winPopupCenter(popUrl, "저장 미션 리포트", width, height, 'yes', 'yes');
-	}
-
-
-    //검색 초기화
-    function commSearchReset() {
-        location.href = "/Mission/sightseeingList";
-    }
-
-    function commGoAllReg() {
-        location.href = "/Mission/sightseeingMultiTempList";
-    }
-
-    // 등록, 수정 버튼
-    function commGoDetail(idx) {
-		if(idx){
-			window.location.href ='/Mission/sightseeingWrite/'+ idx;
-			return true;
-		} else {
-			window.location.href ='/Mission/sightseeingWrite';
-			return true;
-		}
-    }
-
-     //Excel 다운로드
-        function commDownExcel() {
-			window.location.href = '/Mission/sightseeingList/excel/download';
-        }
-
-
-	 function openSetOverlapModal(idx) {
-			$.ajax({
-				type: 'GET',
-				url: `/Mission/sightseeingList/get/${idx}`,
-				dataType: 'json',
-				success: function(data) {
-				if (data) {
-					overlapFrm.idx.value = data.idx; // quiz의 idx
-					if (data.dupParticipation === true) {
-						$("input:radio[name='dupParticipation'][value='true']").prop('checked', true);
-						$("#overlapDay").prop('disabled', false);  // 활성화
-					} else {
-						$("input:radio[name='dupParticipation'][value='false']").prop('checked', true);
-						$("#overlapDay").prop('disabled', true);  // 비활성화
-					}
-					overlapFrm.reEngagementDay.value = data.reEngagementDay
+				},
+				error: function(error) {
+					console.error('데이터를 가져오는 데 실패했습니다:', error);
 				}
-			},
-			error: function(error) {
-				console.error('데이터를 가져오는 데 실패했습니다:', error);
-			}
-		});
+			});
 
-		$("#setOverlap").modal();
-	}
+			$("#setOverlap").modal();
+		}
+
+
 
 		function setOverlap() {
 
@@ -780,125 +707,236 @@
         }
 
 
-       	function setIsUsed(idx) {
+		function setIsUsed(idx) {
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsUsed/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsUsed/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
 
-                   $.ajax({
-                    type: 'get'
-                    , url: `/Mission/sightseeingList/setMissionIsUsed/${idx}`
-                    , cache: false
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
+		}
 
-        }
+
 		function setIsUsedFalse(idx) {
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsUsedFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsUsedFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+		}
 
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/sightseeingList/setMissionIsUsedFalse/${idx}`
-				, cache: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
-
-        }
 
 		function setIsView(idx) {
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsView/${idx}`
+					, cache: false
+					, async: false
 
-                  $.ajax({
-                    type: 'get'
-                    , url: `/Mission/sightseeingList/setMissionIsView/${idx}`
-                    , cache: false
-                    , async: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsView/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+		}
 
-                    , success: function(data) {
-                        alert("변경되었습니다.");
-                        location.reload(true);
-                    }
-                    ,error: function(){
-                        alert("오류가 발생했습니다.");
-                        return false;
-                    }
-                });
 
-        }
+		function setIsViewFalse(idx) {
+			if (searched == false) {
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsViewFalse/${idx}`
+					, cache: false
+					, async: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						location.reload(true);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+			else{
+				$.ajax({
+					type: 'get'
+					, url: `/Mission/sightseeingList/setMissionIsViewFalse/${idx}`
+					, cache: false
+					, success: function(data) {
+						alert("변경되었습니다.");
+						const currentUrl = window.location.href;
+						const url = new URL(currentUrl);
+						const pathSegments = url.pathname.split('/');
+						const page = pathSegments[pathSegments.length - 1];
+						commSearch(page);
+					}
+					,error: function(){
+						alert("오류가 발생했습니다.");
+						return false;
+					}
+				});
+			}
+		}
 
-        function setIsViewFalse(idx) {
-			$.ajax({
-				type: 'get'
-				, url: `/Mission/sightseeingList/setMissionIsViewFalse/${idx}`
-				, cache: false
-				, async: false
-				, success: function(data) {
-					alert("변경되었습니다.");
-					location.reload(true);
-				}
-				,error: function(){
-					alert("오류가 발생했습니다.");
-					return false;
-				}
-			});
-        }
 
-        function commSetAllIsUsed(idx) {
-			if (typeof innerSearchMsnsPage === 'undefined'){
-				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+		function commSetAllIsUsed(page) {
+			if (searched == false) {
+				if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
 					$.ajax({
-						type: 'get'
-						, url: `/Mission/sightseeingList/setOffMissionIsUsed/${idx}`
-						, success: function(data) {
-								alert("비활성화 되었습니다");
-								location.reload(true);
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
+						type: 'get',
+						url: `/Mission/sightseeingList/setOffMissionIsUsed/${page}`,
+						success: function(data) {
+							alert("비활성화 되었습니다");
+							location.reload(true);
+						},
+						error: function() {
+							alert("오류가 발생했습니다.");
+							return false;
 						}
 					});
 				}
-			} else{
-				if(confirm("현재 페이지의 모든 미션을 비활성화 합니다.")){
+			} else {
+				if (confirm("현재 페이지의 모든 미션을 비활성화 합니다.")) {
+
+					var frm = document.searchFrm;
+					var formData = new FormData(frm);
+					var jsonData = {};
+					formData.forEach((value, key) => {
+						jsonData[key] = value; // FormData를 JSON 객체로 변환
+					});
+
+					if (page == null) {
+						page = 1;
+					}
+
+					// 첫 번째 AJAX 요청
 					$.ajax({
-						type: 'post'
-						, url: `/Mission/sightseeingList/setOffMissionIsUsedSearch/${innerSaveMsnsPage}`
-						,contentType: "application/json"
-						,data: JSON.stringify({innerSaveMsns})
-						, success: function(data) {
-								alert("비활성화 되었습니다");
-								window.location.href = "/Mission/sightseeingList";
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
+						url: `/Mission/sightseeingList/search/${page}`,
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify(jsonData),
+						success: function(response) {
+							// 두 번째 AJAX 요청
+							$.ajax({
+								type: 'post',
+								url: `/Mission/sightseeingList/setOffMissionIsUsedSearch/${page}`,
+								contentType: "application/json",
+								data: JSON.stringify({ innerSaveMsns: response.saveMsns }),
+								success: function(data) {
+									alert("비활성화 되었습니다");
+									const currentUrl = window.location.href;
+									const url = new URL(currentUrl);
+									const pathSegments = url.pathname.split('/');
+									const page = pathSegments[pathSegments.length - 1];
+									commSearch(page);
+								},
+								error: function() {
+									alert("오류가 발생했습니다.");
+									return false;
+								}
+							});
+						},
+						error: function() {
+							alert("검색 중 오류가 발생했습니다.");
 						}
 					});
 				}
 			}
-        }
+		}
 
-         function commSetAllIsView(idx) {
-			if (typeof innerSaveMsnsPage === 'undefined'){
+		function commSetAllIsView(page) {
+			if (searched == false) {
 				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
 					$.ajax({
 						type: 'get'
-						, url: `/Mission/sightseeingList/setOffMissionIsView/${idx}`
+						, url: `/Mission/sightseeingList/setOffMissionIsView/${page}`
 						, success: function(data) {
 								alert("현재 페이지의 미션이 비노출로 되었습니다");
 								location.reload(true);
-
-
 							}
 						,error: function(){
 								alert("오류가 발생했습니다.");
@@ -909,24 +947,50 @@
 			}
 			else{
 				if(confirm("현재 페이지의 모든 미션을 비노출로 변경 합니다.")){
+					var frm = document.searchFrm;
+					var formData = new FormData(frm);
+					var jsonData = {};
+					formData.forEach((value, key) => {
+						jsonData[key] = value; // FormData를 JSON 객체로 변환
+					});
+
+					if (page == null) {
+						page = 1;
+					}
 					$.ajax({
-						type: 'post'
-						, url: `/Mission/sightseeingList/setOffMissionIsViewSearch/${innerSaveMsnsPage}`
-						,contentType: "application/json"
-						,data: JSON.stringify({innerSearchMsns})
-						, success: function(data) {
-								alert("현재 페이지의 미션이 비노출로 되었습니다");
-								window.location.href = "/Mission/searchList";
-							}
-						,error: function(){
-								alert("오류가 발생했습니다.");
-								return false;
+						url: `/Mission/sightseeingList/search/${page}`,
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify(jsonData),
+						success: function(response) {
+							// 두 번째 AJAX 요청
+							$.ajax({
+								type: 'post',
+								url: `/Mission/sightseeingList/setOffMissionIsViewSearch/${page}`,
+								contentType: "application/json",
+								data: JSON.stringify({ innerSaveMsns: response.saveMsns }),
+								success: function(data) {
+									alert("비활성화 되었습니다");
+									const currentUrl = window.location.href;
+									const url = new URL(currentUrl);
+									const pathSegments = url.pathname.split('/');
+									const page = pathSegments[pathSegments.length - 1];
+									commSearch(page);
+								},
+								error: function() {
+									alert("오류가 발생했습니다.");
+									return false;
+								}
+							});
+						},
+						error: function() {
+							alert("검색 중 오류가 발생했습니다.");
 						}
 					});
 				}
 			}
+		}
 
-        }
 
         function commAllOffMission() {
             if(confirm("모든 미션을 종료 및 비노출 처리합니다. 이 작업은 되돌릴 수 없습니다!")){
@@ -973,7 +1037,7 @@
 
 			if (selectedValue === "sTitle") {
 				inputElement.name = "missionTitle";
-				inputElement.placeholder = "검색 미션 제목을 입력하세요";
+				inputElement.placeholder = "저장 미션 제목을 입력하세요";
 			} else if (selectedValue === "sAdvertiserDetail") {
 				inputElement.name = "advertiserDetails";
 				inputElement.placeholder = "광고주 상세를 입력하세요";
@@ -1058,10 +1122,10 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsOverlap" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="dupParticipation" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 중복 참여 여부 =</option>
-																	<option value="1">중복 참여 허용</option>
-																	<option value="2">중복 참여 불가</option>
+																	<option value="true">중복 참여 허용</option>
+																	<option value="false">중복 참여 불가</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -1075,20 +1139,20 @@
 														</div>
 														<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sOverOpenStartDate" placeholder="미션 시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAtMsn" placeholder="미션 시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sUnderOpenEndDate" placeholder="미션 종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAtMsn" placeholder="미션 종료일" value="" autocomplete="off">
 															</div>
 														</div>
 														<div class="k-form__control col-xl-4 col-lg-4 col-sm-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sOverDCapSDate" placeholder="데캡 시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAtCap" placeholder="데캡 시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sUnderDCapEDate" placeholder="데캡 종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name=" endAtCap" placeholder="데캡 종료일" value="" autocomplete="off">
 															</div>
 														</div>
 													</div>
@@ -1097,10 +1161,10 @@
 													<div class="row">
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsUsed" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="missionActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 미션 상태 =</option>
-																	<option value="1">활성</option>
-																	<option value="2">비활성</option>
+																	<option value="true">활성</option>
+																	<option value="false">비활성</option>
 																</select>
 																<div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
 																	<ul class="dropdown-menu inner show">
@@ -1112,10 +1176,10 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsView" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="missionExposure" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 미션 노출여부 =</option>
-																	<option value="1">노출</option>
-																	<option value="2">비노출</option>
+																	<option value="true">노출</option>
+																	<option value="false">비노출</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">
@@ -1144,12 +1208,13 @@
 														</div>
 														<div class="input-group col-xl-6 col-lg-6 col-sm-12">
 															<div class="input-group-prepend">
-																<select name="sOpt" class="custom-select form-control">
-																	<option value="sTitle">정답 미션 제목</option>
+																<select name="sOpt"  id="searchSelect" class="custom-select form-control" onchange="updateInputName();">
+																	<option value="" selected hidden>= 검색옵션 =</option>
+																	<option value="sTitle">저장 미션 제목</option>
 																	<option value="sAdvertiserDetail">광고주 상세</option>
 																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>

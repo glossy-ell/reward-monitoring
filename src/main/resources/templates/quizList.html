@@ -574,6 +574,7 @@
 		}
 
 
+
 	// 페이지네이션 업데이트 함수
 	function updatePagination(currentPage, totalPages, startPage, endPage) {
 		const paginationContainer = $('.intra-pagination-wrap');
@@ -751,7 +752,6 @@
 					}
 				});
 			}
-
 		}
 
 		function setIsUsedFalse(idx) {
@@ -789,7 +789,6 @@
 					}
 				});
 			}
-
 		}
 
 		function setIsView(idx) {
@@ -829,7 +828,6 @@
 					}
 				});
 			}
-
 		}
 
 		function setIsViewFalse(idx) {
@@ -897,7 +895,10 @@
 						jsonData[key] = value; // FormData를 JSON 객체로 변환
 					});
 
-					if (page == null) {
+					let currentUrl = window.location.href;
+					let parts = currentUrl.split('/');
+					let page = parts[parts.length - 1];
+					if (!page) {
 						page = 1;
 					}
 
@@ -963,10 +964,13 @@
 					formData.forEach((value, key) => {
 						jsonData[key] = value; // FormData를 JSON 객체로 변환
 					});
-
-					if (page == null) {
+					let currentUrl = window.location.href;
+					let parts = currentUrl.split('/');
+					let page = parts[parts.length - 1];
+					if (!page) {
 						page = 1;
 					}
+
 					$.ajax({
 						url: `/Mission/quizList/search/${page}`,
 						type: "POST",

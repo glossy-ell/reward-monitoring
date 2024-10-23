@@ -16,6 +16,8 @@ spring:
       jdbc:
         time_zone: Asia/Seoul
 
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 
 
   server:
@@ -24,6 +26,7 @@ spring:
       session:
         timeout: 1800s
         tracking-modes: cookie
+
 
   springdoc:
     default-consumes-media-type: application/json;charset=UTF-8

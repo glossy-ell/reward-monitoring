@@ -2,7 +2,7 @@ package com.example.reward_monitoring.statistics.saveMsn.sum.service;
 
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
+
 import com.example.reward_monitoring.statistics.saveMsn.sum.dto.SaveMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.repository.SaveMsnSumStatRepository;
@@ -90,10 +90,17 @@ public class SaveMsnSumStatService {
         return result;
     }
 
+<<<<<<< Updated upstream
     public Sheet excelDownloadCurrent(List<SaveMsnSumStat> list, Workbook wb,int landSum,int PartSum) {
 
         int size = list.size();
         Sheet sheet = wb.createSheet("정답 미션 합산 리포트");
+=======
+    public Sheet excelDownloadCurrent(List<SaveMsnSumStat> list, Workbook wb, int landSum, int PartSum) {
+
+        int size = list.size();
+        Sheet sheet = wb.createSheet("저장 미션 합산 리포트");
+>>>>>>> Stashed changes
         Row row = null;
         Cell cell = null;
         CellStyle cellStyle = wb.createCellStyle();
