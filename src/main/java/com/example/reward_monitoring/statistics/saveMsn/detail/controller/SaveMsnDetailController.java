@@ -95,7 +95,7 @@ public class SaveMsnDetailController {
 
         model.addAttribute("saveMsnDetailsStats", limitedSaveMsnDetailsStats);
         model.addAttribute("servers", servers);
-        model.addAttribute("advertisers ", advertisers);
+        model.addAttribute("advertisers", advertisers);
         model.addAttribute("mediaCompanys", mediaCompanys);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);

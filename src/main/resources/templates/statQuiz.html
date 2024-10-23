@@ -5,7 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Admin</title>
-	<link rel="stylesheet" href="/css/conan_aside_color.css">
 	<!-- favicon -->
 	<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
 
@@ -710,15 +709,15 @@
                                                         <div class="input-group col-lg-4 col-sm-12">
 															<select name="isAbuse" class="form-control" onchange="commSearch();">
 																<option value="">= 어뷰상태 =</option>
-																<option value="1">정상</option>
-																<option value="2">어뷰</option>
+																<option value="ture">정상</option>
+																<option value="false">어뷰</option>
 															</select>
 														</div>
                                                         <div class="input-group col-lg-4 col-sm-12">
 															<select name="response" class="form-control" onchange="commSearch();">
 																<option value="">= 응답 확인 =</option>
-																<option value="1">성공</option>
-																<option value="2">실패</option>
+																<option value="ture">성공</option>
+																<option value="false">실패</option>
 															</select>
 														</div>
                                                         
@@ -776,6 +775,7 @@
 									</form>
 
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
+										<div class="mb-3"></div>
 										<table class="table table--slim  table-bordered table-hover">
 											<thead class="thead-light">
                                                 <tr>

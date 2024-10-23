@@ -96,6 +96,7 @@ public class AnswerMsnSumStatController {
 
         // 전체 리스트의 크기 체크
         List<AnswerMsnSumStat> limitedAnswerMsns;
+
         if (startIndex < result.size()) {
             int endIndex = Math.min(startIndex + limit, result.size());
             limitedAnswerMsns = result.subList(startIndex, endIndex);

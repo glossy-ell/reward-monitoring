@@ -6,9 +6,12 @@ import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerM
 import com.example.reward_monitoring.statistics.saveMsn.sum.dto.SaveMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.repository.SaveMsnSumStatRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +25,10 @@ public class SaveMsnSumStatService {
 
     public List<SaveMsnSumStat> getSaveMsnSumStats(){
         return saveMsnSumStatRepository.findAll();
+    }
+
+    public List<SaveMsnSumStat> getSaveMsnSumStatsMonth(LocalDate currentTime, LocalDate past){
+        return saveMsnSumStatRepository.findMonth(currentTime,past);
     }
 
     public List<SaveMsnSumStat> searchSaveMsnSum(SaveMsnSumStatSearchDto dto) {
@@ -60,7 +67,7 @@ public class SaveMsnSumStatService {
 
         if(target_serverUrl!= null) {
             Set<Integer> idxSet = target_serverUrl.stream().map(SaveMsnSumStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(saveMsnSumStat -> idxSet.contains(saveMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_advertiser!= null) {
@@ -81,5 +88,61 @@ public class SaveMsnSumStatService {
         if(!changed)
             result = new ArrayList<>();
         return result;
+    }
+
+    public Sheet excelDownloadCurrent(List<SaveMsnSumStat> list, Workbook wb,int landSum,int PartSum) {
+
+        int size = list.size();
+        Sheet sheet = wb.createSheet("정답 미션 합산 리포트");
+        Row row = null;
+        Cell cell = null;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(3, 16 * 256); //8자
+        cell.setCellValue("참여일");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(1);
+        cell.setCellValue("랜딩 카운트");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(2);
+        cell.setCellValue("참여 카운트");
+        cell.setCellStyle(cellStyle);
+        for (SaveMsnSumStat saveMsnSumStat: list) {
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellValue(saveMsnSumStat.getDate());
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(1);
+            cell.setCellValue(saveMsnSumStat.getLandingCnt());
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(2);
+            cell.setCellValue(saveMsnSumStat.getPartCnt());
+        }
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("합산");
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(1);
+        cell.setCellValue(landSum);
+        cell.setCellStyle(cellStyle);
+        cell = row.createCell(2);
+        cell.setCellValue(PartSum);
+
+        return sheet;
+    }
+
+    private void applyCellStyle(CellStyle cellStyle) {
+        XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
     }
 }

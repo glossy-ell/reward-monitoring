@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,19 +54,20 @@ public class SaveMsnDailyStatController {
 
     @Operation(summary = "검색미션데일리 통계 검색", description = "조건에 맞는 검색미션 데일리 통계를 검색합니다")
     @PostMapping("/search")
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public ResponseEntity<List<SaveMsnDailyStat>> searchAnswerMsn(@RequestBody SaveMsnDailyStatSearchDto dto){
-        List<SaveMsnDailyStat> result = saveMsnDailyService.searchAnswerMsnDaily(dto);
+    public ResponseEntity<List<SaveMsnDailyStat>> searchsaveMsn(@RequestBody SaveMsnDailyStatSearchDto dto){
+        List<SaveMsnDailyStat> result = saveMsnDailyService.searchSaveMsnDaily(dto);
         return (result != null) ?
                 ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @GetMapping("/SaveMsnDailyStats")  //전체 광고주 리스트 반환
-    public ResponseEntity<List<SaveMsnDailyStat>> getAnswerMsnDailyStats(){
+    public ResponseEntity<List<SaveMsnDailyStat>> getSaveMsnDailyStats(){
         return ResponseEntity.status(HttpStatus.OK).body(saveMsnDailyService.getSaveMsnsDailys());
     }
 
@@ -103,6 +105,7 @@ public class SaveMsnDailyStatController {
         List<Advertiser> advertisers = advertiserService.getAdvertisers();
         List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
         List<Server> servers = serverService.getServers();
+
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -110,6 +113,8 @@ public class SaveMsnDailyStatController {
         if (member == null) {
             return "error/404";
         }
+        LocalDate currentDate = LocalDate.now();
+        LocalDate past = currentDate.minusMonths(1);
         List<SaveMsnDailyStat> saveMsnDailyStats = saveMsnDailyService.getSaveMsnsDailys();
         Collections.reverse(saveMsnDailyStats);
         if (pageNumber == null || pageNumber < 1) {

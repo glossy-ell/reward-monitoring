@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class SaveMsnDailyService {
     private SaveMsnDailyStatRepository saveMsnDailyStatRepository;
 
 
-    public List<SaveMsnDailyStat>  getSaveMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
+
 
 
     public Sheet excelDownload(List<SaveMsnDailyStat> list, Workbook wb){
@@ -42,6 +43,7 @@ public class SaveMsnDailyService {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("참여일");
         cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(3, 16 * 256); //8자
         cell = row.createCell(1);
         cell.setCellValue("매체사 IDX");
         cell.setCellStyle(cellStyle);
@@ -77,7 +79,8 @@ public class SaveMsnDailyService {
         for (SaveMsnDailyStat saveMsnDailyStat: list) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue(saveMsnDailyStat.getPartDate());
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(saveMsnDailyStat.getPartDate().format(formatter_));
             cell.setCellStyle(cellStyle);
             cell = row.createCell(1);
             cell.setCellValue(saveMsnDailyStat.getMediaCompany().getIdx());
@@ -100,6 +103,9 @@ public class SaveMsnDailyService {
             cell = row.createCell(7);
             cell.setCellValue(saveMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
+            cell = row.createCell(8);
+            cell.setCellValue(saveMsnDailyStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
         }
         return sheet;
     }
@@ -118,7 +124,11 @@ public class SaveMsnDailyService {
         return saveMsnDailyStatRepository.findAll();
     }
 
-    public List<SaveMsnDailyStat> searchAnswerMsnDaily(SaveMsnDailyStatSearchDto dto) {
+    public List<SaveMsnDailyStat>  getSaveMsnsDaily(int idx,LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
+
+    public List<SaveMsnDailyStat>  getSaveMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return saveMsnDailyStatRepository.findMonth(currentTime,past);}
+
+    public List<SaveMsnDailyStat> searchSaveMsnDaily(SaveMsnDailyStatSearchDto dto) {
 
         List<SaveMsnDailyStat>  target_date = null;
         List<SaveMsnDailyStat>  target_serverUrl = null;
@@ -158,7 +168,7 @@ public class SaveMsnDailyService {
         }
         if(target_serverUrl != null){
             Set<Integer> idxSet = target_serverUrl.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(saveMsnDailyStat-> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_advertiser != null){

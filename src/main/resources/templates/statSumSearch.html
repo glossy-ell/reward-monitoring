@@ -457,14 +457,7 @@
 		</div>
 		<!-- end aside -->
 <script type="text/javascript">
-	let innerAnswerMsns = [];
-	let innerAnswerMsnsPage;
 
-	function clearResults() {
-		innerAnswerMsns = []; // 리스트 초기화
-
-	}
-    
     function enterkey() {
         if (window.event.keyCode == 13) {
             commSearch();
@@ -480,43 +473,12 @@
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
 
-         if (page === undefined || page === null){ // 이전 검색값이 없을 경우
-         $.ajax({
-        	url: `/Statistics/search`,
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(jsonData),
+        if(page ==null){
+			page = 1;
+		}
 
-
-            success: function(response) {
-            	const statSumSearchContainer = $('#statSumSearch'); // 회원 목록을 표시할 컨테이너 선택
-            	statSumSearchContainer.empty();
-
-            	if (response.SumSearchTables.length === 0) { //검색결과가 빈 리스트일경우
-				//statSumSearch가 빈 리스트인 경우 메시지 추가
-					$('#staSumtSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-				} else {
-					response.SumSearchTables.forEach(function(SumSearchTable,index) {
-					$('#statSumSearch').append(
-						'<tr>' +
-							'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.date) + '</td>' +
-							'<td class="text-center align-middle">' + SumSearchTable.landingCnt + '</td>' +
-							'<td class="text-center align-middle">' + SumSearchTable.partCnt + '</td>' +
-						'</tr>'
-					);
-					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-				 });
-				}
-             },
-            error: function(xhr) {
-            	alert("검색중 오류가 발생하였습니다.");
-        	}
-    	});
-    } //if 끝
-    else{ //이미 보유한 데이터가 있을경우
 			$.ajax({
-   					url: `/Statistics/search/${page}`,
+   					url: `/Statistics/statSumSearch/search/${page}`,
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(jsonData),
@@ -529,14 +491,14 @@
 						if (response.SearchMsnDetailsStats.length === 0) { //검색결과가 빈 리스트일경우
 						//statSumSearch가 빈 리스트인 경우 메시지 추가
 							$('#staSumtSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-
+							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
-							response.SearchMsnDetailsStats.forEach(function(SumSearchTable,index) {
+							response.SearchMsnDetailsStats.forEach(function(searchMsnDetailsStat,index) {
 							$('#statSumSearch').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SumSearchTable.date) + '</td>' +
-									'<td class="text-center align-middle">' + SumSearchTable.landingCnt + '</td>' +
-									'<td class="text-center align-middle">' + SumSearchTable.partCnt + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(searchMsnDetailsStat.date) + '</td>' +
+									'<td class="text-center align-middle">' + searchMsnDetailsStat.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + searchMsnDetailsStat.partCnt + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -547,7 +509,6 @@
 						 alert("검색중 오류가 발생하였습니다.");
 				}
 			});
-		}
     }
     // 날짜 포맷 함수
 	function formatDateTime(dateTimeStr) {
@@ -569,7 +530,7 @@
 
     //Excel 다운로드
     function commDownExcel() {
-        window.location.href = '/Statistics/StatSumSearch/excel/download';
+        window.location.href = '/Statistics/statSumSearch/excel/download';
     }
 
 </script>
@@ -708,10 +669,10 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statSumSearch">
-												<tr th:if="${#lists.isEmpty(SearchMsnSumStats)}">
+												<tr th:if="${#lists.isEmpty(searchMsnSumStats)}">
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SumSearchTable,iterStat : ${SearchMsnSumStats}">
+												<tr th:each="SumSearchTable,iterStat : ${searchMsnSumStats}">
 													<td th:text="${SumSearchTable?.date}" class="text-center align-middle"></td>
 													<td th:text="${SumSearchTable?.landingCnt}" class="text-center align-middle"></td>
 													<td th:text="${SumSearchTable?.partCnt}" class="text-center align-middle"></td>
