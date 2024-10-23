@@ -133,8 +133,8 @@ public class SearchMsnSumStatController {
             searchMsnSumStats = searchMsnSumStats.subList(0, 30);
         }
 
-        int totalLandingCount = searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
-        int totalPartCount =  searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getPartCount).sum();  // 참여카운트 합
+        int totalLandingCount = searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =  searchMsnSumStats.stream().mapToInt(SearchMsnSumStat::getPartCnt).sum();  // 참여카운트 합
         model.addAttribute("searchMsnSumStats", searchMsnSumStats);
         model.addAttribute("servers", servers);
         model.addAttribute("advertisers", advertisers);
