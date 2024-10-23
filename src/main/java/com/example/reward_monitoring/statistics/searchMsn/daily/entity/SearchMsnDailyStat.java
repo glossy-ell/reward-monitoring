@@ -48,7 +48,7 @@ public class SearchMsnDailyStat {
     @ManyToOne()
     @JoinColumns({
             @JoinColumn(name = "advertiser_details", referencedColumnName = "advertiser_details"),
-            @JoinColumn(name = "answer_msn_idx", referencedColumnName = "idx"),
+            @JoinColumn(name = "search_msn_idx", referencedColumnName = "idx"),
             @JoinColumn(name = "mission_title" , referencedColumnName =  "mission_title")
     })
     @Schema(description = "정답 미션 IDX", example = "3")
@@ -62,12 +62,12 @@ public class SearchMsnDailyStat {
 
 
     @Comment("랜딩 카운트")
-    @Column(name = "total_landing_cnt")
+    @Column(name = "landing_cnt")
     @Schema(description = "전체 랜딩수")
     private int landingCnt;
 
     @Comment("참여 카운트")
-    @Column(name = "total_part_cnt")
+    @Column(name = "part_cnt")
     @Schema(description = "참여 카운트")
     private int partCnt;
 

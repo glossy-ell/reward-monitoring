@@ -62,12 +62,12 @@ public class SaveMsnDailyStat {
 
 
     @Comment("랜딩 카운트")
-    @Column(name = "total_landing_cnt")
+    @Column(name = "landing_cnt")
     @Schema(description = "전체 랜딩수")
     private int landingCnt;
 
     @Comment("참여 카운트")
-    @Column(name = "total_part_cnt")
+    @Column(name = "part_cnt")
     @Schema(description = "참여 카운트")
     private int partCnt;
 
