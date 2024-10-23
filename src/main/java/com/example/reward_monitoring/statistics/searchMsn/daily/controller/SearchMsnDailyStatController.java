@@ -13,8 +13,6 @@ import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.searchMsn.daily.dto.SearchMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.service.SearchMsnDailyService;
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
-import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,22 +50,14 @@ public class SearchMsnDailyStatController {
     @Autowired
     ServerService serverService;
 
-<<<<<<< Updated upstream
-    @Operation(summary = "검색미션데일리 통계 검색", description = "조건에 맞는 검색미션 데일리 통계를 검색합니다")
-=======
     @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
->>>>>>> Stashed changes
     @PostMapping({"/search","/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-<<<<<<< Updated upstream
-    public Map<String, Object> searchSearchMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session,@RequestBody SearchMsnDailyStatSearchDto dto){
-=======
     public Map<String, Object> searchSearchMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, @RequestBody SearchMsnDailyStatSearchDto dto){
->>>>>>> Stashed changes
         Member sessionMember= (Member) session.getAttribute("member");
 
         Map<String, Object> response = new HashMap<>();
@@ -105,61 +95,6 @@ public class SearchMsnDailyStatController {
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         return response; // JSON 형태로 반환
-<<<<<<< Updated upstream
-    }
-
-    @Operation(summary = "검색미션 검색", description = "조건에 맞는 검색미션을 검색합니다")
-    @GetMapping("/search/{pageNumber}")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
-    })
-    public String  searchSearchMsn_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session ,Model model){
-        Member sessionMember = (Member) session.getAttribute("member");
-        List<Advertiser> advertisers = advertiserService.getAdvertisers();
-        List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
-        List<Server> servers = serverService.getServers();
-
-        if (sessionMember == null) {
-            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
-        } // 세션 만료
-        Member member = memberRepository.findById(sessionMember.getId());
-        if (member == null) {
-            return "error/404";
-        }
-        LocalDate currentDate = LocalDate.now();
-        LocalDate past = currentDate.minusMonths(1);
-        List<SearchMsnDailyStat> searchMsnDailyStats = searchMsnDailyService.getSearchMsnsDailysMonth(currentDate,past);
-        Collections.reverse(searchMsnDailyStats);
-
-        pageNumber = 1;
-
-        // 한 페이지당 최대 10개 데이터
-        int limit = 10;
-        int startIndex = (pageNumber - 1) * limit;
-
-        List<SearchMsnDailyStat> limitedSearchMsnDailyStats;
-        if (startIndex < searchMsnDailyStats.size()) {
-            int endIndex = Math.min(startIndex + limit, searchMsnDailyStats.size());
-            limitedSearchMsnDailyStats = searchMsnDailyStats.subList(startIndex, endIndex);
-        } else {
-            limitedSearchMsnDailyStats = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
-        }
-        // 전체 페이지 수 계산
-        int totalPages = (int) Math.ceil((double) searchMsnDailyStats.size() / limit);
-        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
-        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
-
-        model.addAttribute("searchMsnDailyStats", limitedSearchMsnDailyStats);
-        model.addAttribute("servers", servers);
-        model.addAttribute("advertisers", advertisers);
-        model.addAttribute("mediaCompanys", mediaCompanys);
-        model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        return "statDailyQuiz";
-=======
->>>>>>> Stashed changes
     }
 
     @Operation(summary = "에러 방지", description = "검색 재진입시 원래 페이지로 리턴 ")
@@ -222,7 +157,7 @@ public class SearchMsnDailyStatController {
 
 
     @Operation(summary = "엑셀 다운로드", description = "정답미션 데일리 통계 엑셀파일을 다운로드합니다")
-    @GetMapping("/excel/download")
+    @GetMapping("/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")

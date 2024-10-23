@@ -19,10 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-<<<<<<< Updated upstream
-import jakarta.websocket.Session;
-=======
->>>>>>> Stashed changes
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -37,10 +33,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-<<<<<<< Updated upstream
-import java.time.ZonedDateTime;
-=======
->>>>>>> Stashed changes
 import java.util.*;
 
 @Controller
@@ -64,23 +56,15 @@ public class SaveMsnSumStatController {
         return ResponseEntity.status(HttpStatus.OK).body(saveMsnSumStatService.getSaveMsnSumStats());
     }
 
-<<<<<<< Updated upstream
-    @Operation(summary = "저장미션 검색", description = "조건에 맞는 저장미션을 검색합니다")
-=======
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션을 검색합니다")
->>>>>>> Stashed changes
     @PostMapping({"/search/{pageNumber}","/search/","/search",})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-<<<<<<< Updated upstream
-    public Map<String, Object> searchSaveMsnSum(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, Model model, @RequestBody SaveMsnSumStatSearchDto dto, HttpSession session){
-=======
     public Map<String, Object> searchSaveMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, Model model, @RequestBody SaveMsnSumStatSearchDto dto, HttpSession session){
->>>>>>> Stashed changes
         Member sessionMember = (Member) session.getAttribute("member");
         Map<String, Object> response = new HashMap<>();
         if(sessionMember == null){
@@ -123,11 +107,7 @@ public class SaveMsnSumStatController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-<<<<<<< Updated upstream
-        response.put("SaveMsnSumStats", limitedSaveMsns);  // limitedMembers 리스트
-=======
         response.put("answerMsnSumStats", limitedSaveMsns);  // limitedMembers 리스트
->>>>>>> Stashed changes
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);
@@ -148,18 +128,16 @@ public class SaveMsnSumStatController {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
         Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
         List<SaveMsnSumStat> saveMsnSumStats = saveMsnSumStatService.getSaveMsnSumStats();
         Collections.reverse(saveMsnSumStats);
         if (saveMsnSumStats.size() > 30) {
             saveMsnSumStats = saveMsnSumStats.subList(0, 30);
         }
-
-        if (member == null) {
-            return "error/404";
-        }
-        int totalLandingCount = saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
-        int totalPartCount =  saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getPartCnt).sum();  // 참여카운트 합
-
+        int totalLandingCount = saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getLandingCount).sum();  // 랜딩카운트 합
+        int totalPartCount =  saveMsnSumStats.stream().mapToInt(SaveMsnSumStat::getPartCount).sum();  // 참여카운트 합
         model.addAttribute("saveMsnSumStats", saveMsnSumStats);
         model.addAttribute("servers", servers);
         model.addAttribute("advertisers", advertisers);
@@ -168,14 +146,9 @@ public class SaveMsnSumStatController {
         model.addAttribute("totalPartCount",totalPartCount);
         return "statSumSightseeing";
     }
-<<<<<<< Updated upstream
-
-    @Operation(summary = "현재 리스트 소진량(정답) 엑셀 다운로드", description = "현재 리스트 소진량(정답) 엑셀파일을 다운로드합니다")
-=======
     
     
     @Operation(summary = "현재 리스트 소진량(저장) 엑셀 다운로드", description = "현재 리스트 소진량(저장) 엑셀파일을 다운로드합니다")
->>>>>>> Stashed changes
     @GetMapping("/excel/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
@@ -187,11 +160,7 @@ public class SaveMsnSumStatController {
         try (Workbook wb = new XSSFWorkbook()) {
             LocalDate currentDate = LocalDate.now();
             LocalDate past = currentDate.minusMonths(1);
-<<<<<<< Updated upstream
-            List<SaveMsnSumStat> list = saveMsnSumStatService. getSaveMsnSumStatsMonth(currentDate,past);
-=======
             List<SaveMsnSumStat> list = saveMsnSumStatService.getSaveMsnSumStatsMonth(currentDate,past);
->>>>>>> Stashed changes
             int totalLandingCount = list.stream().mapToInt(SaveMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
             int totalPartCount =  list.stream().mapToInt(SaveMsnSumStat::getPartCnt).sum();  // 참여카운트
             Sheet sheet = saveMsnSumStatService.excelDownloadCurrent(list,wb,totalLandingCount,totalPartCount);
@@ -211,9 +180,5 @@ public class SaveMsnSumStatController {
         }
 
     }
-<<<<<<< Updated upstream
-
-=======
     
->>>>>>> Stashed changes
 }

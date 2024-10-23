@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,6 @@ public class SearchMsnDailyService {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("참여일");
         cell.setCellStyle(cellStyle);
-        sheet.setColumnWidth(3, 16 * 256); //8자
         cell = row.createCell(1);
         cell.setCellValue("매체사 IDX");
         cell.setCellStyle(cellStyle);
@@ -79,8 +77,7 @@ public class SearchMsnDailyService {
         for (SearchMsnDailyStat searchMsnDailyStat: list) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            cell.setCellValue(searchMsnDailyStat.getPartDate().format(formatter_));
+            cell.setCellValue(searchMsnDailyStat.getPartDate());
             cell.setCellStyle(cellStyle);
             cell = row.createCell(1);
             cell.setCellValue(searchMsnDailyStat.getMediaCompany().getIdx());
@@ -103,9 +100,6 @@ public class SearchMsnDailyService {
             cell = row.createCell(7);
             cell.setCellValue(searchMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(8);
-            cell.setCellValue(searchMsnDailyStat.getPartCnt());
-            cell.setCellStyle(cellStyle);
         }
         return sheet;
     }
@@ -123,10 +117,7 @@ public class SearchMsnDailyService {
     public List<SearchMsnDailyStat> getSearchMsnsDailys() {
         return searchMsnDailyStatRepository.findAll();
     }
-
     public List<SearchMsnDailyStat>  getSearchMsnsDaily(int idx, LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findByMsnIdx(idx,currentTime,past);}
-    public List<SearchMsnDailyStat>  getSearchMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findMonth(currentTime,past);}
-
     public List<SearchMsnDailyStat>  getSearchMsnsDailysMonth(LocalDate currentTime, LocalDate past) {return searchMsnDailyStatRepository.findMonth(currentTime,past);}
 
     public List<SearchMsnDailyStat> searchSearchMsnDaily(SearchMsnDailyStatSearchDto dto) {

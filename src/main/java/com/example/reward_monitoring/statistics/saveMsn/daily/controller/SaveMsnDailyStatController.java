@@ -9,6 +9,7 @@ import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
+import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.dto.SaveMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.service.SaveMsnDailyService;
@@ -31,13 +32,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-<<<<<<< Updated upstream
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-=======
 import java.util.*;
->>>>>>> Stashed changes
 
 @Controller
 @RequestMapping("/Statistics/statDailySightseeing")
@@ -54,58 +49,13 @@ public class SaveMsnDailyStatController {
     MediaCompanyService mediaCompanyService;
     @Autowired
     ServerService serverService;
-<<<<<<< Updated upstream
-
-    @Operation(summary = "검색미션데일리 통계 검색", description = "조건에 맞는 검색미션 데일리 통계를 검색합니다")
-    @PostMapping("/search")
-=======
     @Operation(summary = "정답미션데일리 통계 검색", description = "조건에 맞는 정답미션 데일리 통계를 검색합니다")
     @PostMapping({"/search","/search/{pageNumber}"})
->>>>>>> Stashed changes
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-<<<<<<< Updated upstream
-    public ResponseEntity<List<SaveMsnDailyStat>> searchsaveMsn(@RequestBody SaveMsnDailyStatSearchDto dto){
-        List<SaveMsnDailyStat> result = saveMsnDailyService.searchSaveMsnDaily(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-
-    @GetMapping("/SaveMsnDailyStats")  //전체 광고주 리스트 반환
-    public ResponseEntity<List<SaveMsnDailyStat>> getSaveMsnDailyStats(){
-        return ResponseEntity.status(HttpStatus.OK).body(saveMsnDailyService.getSaveMsnsDailys());
-    }
-
-
-    @Operation(summary = "엑셀 다운로드", description = "정답미션 데일리 통계 엑셀파일을 다운로드합니다")
-    @GetMapping("/download")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
-    })
-    public ResponseEntity<Void> excelDownload(HttpServletResponse response)throws IOException {
-        try (Workbook wb = new XSSFWorkbook()) {
-            List<SaveMsnDailyStat> list = saveMsnDailyService.getSaveMsnsDailys();
-            Sheet sheet = saveMsnDailyService.excelDownload(list,wb);
-
-            if(sheet !=null) {
-                String fileName = URLEncoder.encode("정답미션 데일리 리포트.xlsx", StandardCharsets.UTF_8);
-                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-                wb.write(response.getOutputStream());
-                response.flushBuffer();
-                return ResponseEntity.status(HttpStatus.OK).build();
-            }
-            else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-=======
     public Map<String, Object> searchSaveMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, @RequestBody SaveMsnDailyStatSearchDto dto){
         Member sessionMember= (Member) session.getAttribute("member");
 
@@ -113,7 +63,6 @@ public class SaveMsnDailyStatController {
         if(sessionMember == null){
             response.put("error", "404"); // 멤버가 없는 경우
             return response;
->>>>>>> Stashed changes
         }
 
         Member member =memberRepository.findById( sessionMember.getId());
@@ -158,7 +107,6 @@ public class SaveMsnDailyStatController {
         List<Advertiser> advertisers = advertiserService.getAdvertisers();
         List<MediaCompany> mediaCompanys = mediaCompanyService.getMediaCompanys();
         List<Server> servers = serverService.getServers();
-
         if (sessionMember == null) {
             return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
         } // 세션 만료
@@ -166,8 +114,6 @@ public class SaveMsnDailyStatController {
         if (member == null) {
             return "error/404";
         }
-        LocalDate currentDate = LocalDate.now();
-        LocalDate past = currentDate.minusMonths(1);
         List<SaveMsnDailyStat> saveMsnDailyStats = saveMsnDailyService.getSaveMsnsDailys();
         Collections.reverse(saveMsnDailyStats);
         if (pageNumber == null || pageNumber < 1) {
@@ -207,7 +153,7 @@ public class SaveMsnDailyStatController {
 
 
     @GetMapping("/SaveMsnDailyStats")  //전체 광고주 리스트 반환
-    public ResponseEntity<List<SaveMsnDailyStat>> getSaveMsnDailyStats(){
+    public ResponseEntity<List<SaveMsnDailyStat>> getAnswerMsnDailyStats(){
         return ResponseEntity.status(HttpStatus.OK).body(saveMsnDailyService.getSaveMsnsDailys());
     }
 

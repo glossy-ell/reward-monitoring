@@ -30,10 +30,6 @@ public class SearchMsnSumStatService {
     public List<SearchMsnSumStat> getSearchMsnSumStatsMonth(LocalDate currentTime, LocalDate past){
         return searchMsnSumStatRepository.findMonth(currentTime,past);
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     public List<SearchMsnSumStat> searchSearchMsnSum(SearchMsnSumStatSearchDto dto) {
         List<SearchMsnSumStat> target_serverUrl = null;
         List<SearchMsnSumStat> target_advertiser = null;
@@ -67,22 +63,22 @@ public class SearchMsnSumStatService {
 
         if(target_serverUrl!= null) {
             Set<Integer> idxSet = target_serverUrl.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(searchMsnSumStat -> idxSet.contains(searchMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_advertiser!= null) {
             Set<Integer> idxSet = target_advertiser.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(searchMsnSumStat -> idxSet.contains(searchMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_mediaCompany!= null) {
             Set<Integer> idxSet = target_mediaCompany.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(searchMsnSumStat -> idxSet.contains(searchMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_date!= null) {
             Set<Integer> idxSet = target_date.stream().map(SearchMsnSumStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(searchMsnSumStat -> idxSet.contains(searchMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(answerMsnSumStat -> idxSet.contains(answerMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(!changed)
@@ -90,11 +86,7 @@ public class SearchMsnSumStatService {
         return result;
     }
 
-<<<<<<< Updated upstream
-    public Sheet excelDownloadCurrent(List<SearchMsnSumStat> list, Workbook wb,int landSum,int PartSum) {
-=======
     public Sheet excelDownloadCurrent(List<SearchMsnSumStat> list, Workbook wb, int landSum, int PartSum) {
->>>>>>> Stashed changes
 
         int size = list.size();
         Sheet sheet = wb.createSheet("정답 미션 합산 리포트");

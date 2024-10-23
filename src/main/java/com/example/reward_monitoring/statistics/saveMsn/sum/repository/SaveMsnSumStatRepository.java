@@ -1,11 +1,5 @@
 package com.example.reward_monitoring.statistics.saveMsn.sum.repository;
 
-<<<<<<< Updated upstream
-
-
-import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
-=======
->>>>>>> Stashed changes
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,10 +26,6 @@ public interface SaveMsnSumStatRepository extends JpaRepository<SaveMsnSumStat,I
 
     public List<SaveMsnSumStat>  findByMediaCompany_CompanyName(String companyName);
 
-<<<<<<< Updated upstream
-    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date BETWEEN :past AND :currentTime")
-=======
     @Query("SELECT s FROM SaveMsnSumStat s WHERE s.date BETWEEN :past AND :currentTime")
->>>>>>> Stashed changes
     public List<SaveMsnSumStat> findMonth(LocalDate currentTime, LocalDate past);
 }
