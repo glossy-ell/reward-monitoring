@@ -664,8 +664,8 @@
 											<thead class="thead-light">                                                
                                                 <tr>
 													<th class="text-center font-weight-bold">일시</th>													
-                                                    <th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${LandingCount}">0</span>)</th>
-													<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${PartCount}">0</span>)</th>
+                                                    <th class="text-center font-weight-bold">랜딩 카운트 (<span th:text="${totalLandingCount}">0</span>)</th>
+													<th class="text-center font-weight-bold">참여 카운트 (<span th:text="${totalPartCount}">0</span>)</th>
                                                 </tr>
 											</thead>
 											<tbody  id = "statSumSearch">
@@ -680,8 +680,8 @@
 											</tbody>
                                             <tfoot>
 												<tr><th class="text-center font-weight-bold">합산</th>													
-                                                <th class="text-center font-weight-bold" th:text="${LandingCount}">0</th>
-                                                <th class="text-center font-weight-bold" th:text="${PartCount}">0</th>
+                                                <th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
+                                                <th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>
