@@ -2,6 +2,7 @@ package com.example.reward_monitoring.general.member.controller;
 
 
 import com.example.reward_monitoring.config.RateLimited;
+import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.member.dto.MemberEditDto;
 import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
@@ -10,6 +11,7 @@ import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.member.service.MemberService;
 
+import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,10 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -271,12 +270,62 @@ public class MemberController {
         }
 
         int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
         response.put("members", limitedMembers);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
         return response; // JSON 형태로 반환
     }
 
+    @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 ")
+    @GetMapping("/member/search/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+    })
+    public String  searchMember_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        }
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        List<Member> members = memberService.getMembers();
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<Member> limitedMembers;
+        if (startIndex < members.size()) {
+            int endIndex = Math.min(startIndex + limit, members.size());
+            limitedMembers = members.subList(startIndex, endIndex);
+        } else {
+            limitedMembers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) members.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("members", limitedMembers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", (int) Math.ceil((double) members.size() / limit));
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "adminList";
+    }
 
     @GetMapping({"/adminList/{pageNumber}", "/adminList", "/", ""})
     public String adminList(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session, Model model) {
@@ -310,10 +359,14 @@ public class MemberController {
         }
 
         int totalPages = (int) Math.ceil((double) members.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
         model.addAttribute("members", limitedMembers);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", (int) Math.ceil((double) members.size() / limit));
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "adminList";
     }
 

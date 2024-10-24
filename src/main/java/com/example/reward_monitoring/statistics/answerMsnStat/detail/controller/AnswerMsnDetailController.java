@@ -41,7 +41,7 @@ public class AnswerMsnDetailController {
     ServerService serverService;
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션 디테일 통계을 검색합니다")
-    @PostMapping("/search")
+    @PostMapping({"/search","/search/","/search/{pageNumber}"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),

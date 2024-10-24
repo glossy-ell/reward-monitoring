@@ -21,8 +21,9 @@ public class SearchMsnDetailSearchDto {
     private Boolean response;
     @Schema(description = "광고주", example = "시크릿 K")
     private String advertiser;
-    @Schema(description =" 정답미션 idx", example = "3")
+    @Schema(description ="검색미션 idx", example = "3")
     private Integer idx;
-    @Schema(description =" 정렬방식", example = "3")
+
+    @Schema(description ="정렬방식", example = "3")
     private String sOrder;
 }

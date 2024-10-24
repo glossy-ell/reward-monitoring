@@ -456,7 +456,9 @@
 			</div>
 		</div>
 		<!-- end aside -->
-<script type="application/javascript">       
+<script type="application/javascript">
+
+	let searched = false;
 
     function enterkey() {
         if (window.event.keyCode == 13) {
@@ -465,13 +467,18 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
 		var formData = new FormData(frm);
 		var jsonData = {};
 		formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
+
+		if(page ==null){
+			page = 1;
+		}
+
         $.ajax({
         	url: `/Site/search`,
             type: "POST",
@@ -485,6 +492,8 @@
             	if (response.servers.length === 0) {
 				//servers가 빈 리스트인 경우 메시지 추가
 					$('#serverList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+					searched = true;
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 				} else {
 					response.servers.forEach(function(server,index) {
 					$('#serverList').append(
@@ -500,9 +509,10 @@
 						'</td>' +
 						'</tr>'
 					);
+					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+					const newUrl = `/Site/userServerList/search/${response.currentPage}`;
+					history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 				 });
-				$('#currentPage').text(response.currentPage);
-				$('#totalPages').text(response.totalPages);
 				}
                        },
             error: function(xhr) {
@@ -510,6 +520,37 @@
         	}
     	});
     }
+
+	// 페이지네이션 업데이트 함수
+	function updatePagination(currentPage, totalPages, startPage, endPage) {
+		const paginationContainer = $('.intra-pagination-wrap');
+		paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+		if (currentPage > 1) {
+    		paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(1)">First</a></div>');
+		}
+
+		// Previous 버튼
+		if (currentPage > 1) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+		}
+
+		// 페이지 링크 생성
+		for (let i = startPage; i <= endPage; i++) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+		}
+
+		// Next 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+		}
+
+		// End 버튼
+		if (currentPage < totalPages) {
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + totalPages + ')">End</a></div>');
+		}
+	}
+
 
 	// 날짜 포맷 함수
 	function formatDateTime(dateTimeStr) {

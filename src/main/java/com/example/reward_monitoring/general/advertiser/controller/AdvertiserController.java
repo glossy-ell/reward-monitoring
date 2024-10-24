@@ -175,7 +175,7 @@ public class AdvertiserController {
     }
 
     @Operation(summary = "광고주 검색", description = "조건에 맞는 광고주를 검색합니다")
-    @PostMapping({"/search","/search/{pageNumber}"})
+    @PostMapping({"/search","/search/{pageNumber}","/search/"})
     @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
@@ -224,9 +224,14 @@ public class AdvertiserController {
 
 
         int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
         response.put("advertisers", limitedAdvertisers);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+
         return response; // JSON 형태로 반환
     }
 
@@ -263,11 +268,15 @@ public class AdvertiserController {
         } else {
             limitedAdvertisers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
         }
-
+        int totalPages = (int) Math.ceil((double) advertisers.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
         model.addAttribute("advertisers", advertisers);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", (int) Math.ceil((double) advertisers.size() / limit));
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "/advertiserList";
     }
 

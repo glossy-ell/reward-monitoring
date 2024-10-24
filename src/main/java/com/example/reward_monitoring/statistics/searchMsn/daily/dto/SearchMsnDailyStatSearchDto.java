@@ -20,4 +20,6 @@ public class SearchMsnDailyStatSearchDto {
     @Schema(description = "검색 종료일", example = "2024-09-11")
     private LocalDate endAt;
 
+    @Schema(description =" 정렬방식", example = "3")
+    private String sOrder;
 }

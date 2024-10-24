@@ -120,10 +120,8 @@ public class AnswerMsnDetailService {
             changed = true;
         }
 
-
-        if(!changed)
-            result = new ArrayList<>();
         if(dto.getSOrder()!=null) {
+            changed = true;
             if (dto.getSOrder().equals("memberId")) {
                 Map<Integer, AnswerMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
                         AnswerMsnDetailsStat::getTX,
@@ -136,6 +134,9 @@ public class AnswerMsnDetailService {
                 result = groupedResult.values().stream().sorted(Comparator.comparing(AnswerMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
             }
         }
+        if(!changed)
+            result = new ArrayList<>();
+
 
         return result;
     }
