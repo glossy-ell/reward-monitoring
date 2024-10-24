@@ -1259,7 +1259,7 @@
 											<tr th:each="save, iterStat : ${saveMsns}">
 												<td class="text-center align-middle" th:text="${save.idx}"></td>
 												<td class="text-center align-middle">
-													<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${save.idx} + ');">리포트</button>
+													<button class="btn btn-outline-accent btn-xs" th:onclick="'commGoReport(' + ${save.idx} + ');'">리포트</button>
 												</td>
 												<td class="text-center align-middle" th:text="${save.missionDefaultQty}"></td>
 												<td class="text-center align-middle" th:text="${save.missionDailyCap}"></td>

@@ -1,16 +1,13 @@
 package com.example.reward_monitoring.statistics.saveMsn.detail.service;
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.dto.SaveMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
 import com.example.reward_monitoring.statistics.saveMsn.detail.repository.SaveMsnDetailStatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,6 +110,18 @@ public class SaveMsnDetailService {
 
         if(!changed)
             result = new ArrayList<>();
+
+        if(dto.getSOrder().equals("memberId")){
+            Map<Integer, SaveMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
+                    SaveMsnDetailsStat::getTX,
+                    stat -> stat, // 값은 AnswerMsnDetailsStat 객체
+                    (existing, replacement) -> {
+                        // 날짜 비교하여 최신 것 선택
+                        return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
+                    }
+            ));
+            result  = groupedResult.values().stream().sorted(Comparator.comparing(SaveMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+        }
         return result;
     }
 }

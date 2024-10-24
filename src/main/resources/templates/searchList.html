@@ -1279,7 +1279,7 @@
 											<tr th:each="search, iterStat : ${searchMsns}">
 												<td class="text-center align-middle" th:text="${search.idx}"></td>
 												<td class="text-center align-middle">
-													<button class="btn btn-outline-accent btn-xs" th:onclick="commGoReport(' + ${search.idx} + ');">리포트</button>
+													<button class="btn btn-outline-accent btn-xs" th:onclick="'commGoReport(' + ${search.idx} + ');'">리포트</button>
 												</td>
 												<td class="text-center align-middle" th:text="${search.missionDefaultQty}"></td>
 												<td class="text-center align-middle" th:text="${search.missionDailyCap}"></td>

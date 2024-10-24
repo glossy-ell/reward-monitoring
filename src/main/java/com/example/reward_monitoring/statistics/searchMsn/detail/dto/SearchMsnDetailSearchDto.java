@@ -23,4 +23,6 @@ public class SearchMsnDetailSearchDto {
     private String advertiser;
     @Schema(description =" 정답미션 idx", example = "3")
     private Integer idx;
+    @Schema(description =" 정렬방식", example = "3")
+    private String sOrder;
 }

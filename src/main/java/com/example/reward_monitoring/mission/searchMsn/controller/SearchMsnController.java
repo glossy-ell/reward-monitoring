@@ -1431,6 +1431,7 @@ public class SearchMsnController{
         int totalPartCount =  searchMsnDailyStat.stream().mapToInt(SearchMsnDailyStat::getPartCnt).sum();  // 참여카운트 합
 
 
+        model.addAttribute("searchMsn",searchMsn);
         model.addAttribute("searchMsnDailyStat", searchMsnDailyStat);
         model.addAttribute("currentTime",currentTime);
         model.addAttribute("past",past);

@@ -1,19 +1,13 @@
 package com.example.reward_monitoring.statistics.searchMsn.detail.service;
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
-import com.example.reward_monitoring.statistics.saveMsn.detail.dto.SaveMsnDetailSearchDto;
-import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDetailsStat;
-import com.example.reward_monitoring.statistics.saveMsn.detail.repository.SaveMsnDetailStatRepository;
 import com.example.reward_monitoring.statistics.searchMsn.detail.dto.SearchMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.detail.entity.SearchMsnDetailsStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.repository.SearchMsnDetailStatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,13 +78,6 @@ public class SearchMsnDetailService {
             changed = true;
         }
 
-        if(target_mediaCompany!= null) {
-            Set<Integer> idxSet = target_mediaCompany.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
-            result = result.stream().filter(searchMsnDetailsStat-> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
-            changed = true;
-        }
-
-
         if(target_isAbuse!= null) {
             Set<Integer> idxSet = target_isAbuse.stream().map(SearchMsnDetailsStat::getTX).collect(Collectors.toSet());
             result = result.stream().filter(searchMsnDetailsStat -> idxSet.contains(searchMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
@@ -116,6 +103,18 @@ public class SearchMsnDetailService {
 
         if(!changed)
             result = new ArrayList<>();
+        if(dto.getSOrder().equals("memberId")){
+            Map<Integer, SearchMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
+                    SearchMsnDetailsStat::getTX,
+                    stat -> stat, // 값은 AnswerMsnDetailsStat 객체
+                    (existing, replacement) -> {
+                        // 날짜 비교하여 최신 것 선택
+                        return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
+                    }
+            ));
+            result  = groupedResult.values().stream().sorted(Comparator.comparing(SearchMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+        }
+
         return result;
     }
 }
