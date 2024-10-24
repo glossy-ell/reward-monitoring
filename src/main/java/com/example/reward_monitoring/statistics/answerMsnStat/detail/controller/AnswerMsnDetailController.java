@@ -10,7 +10,6 @@ import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
-import com.example.reward_monitoring.mission.missionCS.entity.MissionCS;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.dto.AnswerMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.answerMsnStat.detail.service.AnswerMsnDetailService;
@@ -19,15 +18,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/Statistics/statQuiz")
@@ -47,15 +42,59 @@ public class AnswerMsnDetailController {
 
     @Operation(summary = "정답미션 검색", description = "조건에 맞는 정답미션 디테일 통계을 검색합니다")
     @PostMapping("/search")
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
     })
-    public ResponseEntity<List<AnswerMsnDetailsStat>> searchAnswerMsn(HttpSession session, @RequestBody AnswerMsnDetailSearchDto dto){
+    public Map<String, Object> searchAnswerMsn(@PathVariable(required = false,value = "pageNumber") Integer pageNumber,HttpSession session, @RequestBody AnswerMsnDetailSearchDto dto){
+        Member sessionMember= (Member) session.getAttribute("member");
+        Map<String, Object> response = new HashMap<>();
+        if(sessionMember == null){
+            response.put("error", "404"); // 멤버가 없는 경우
+            return response;
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            response.put("error", "403"); // 비권한 사용자인 경우
+            return response;
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            response.put("error", "403");
+            return response;
+        }
+
+
         List<AnswerMsnDetailsStat> result = answerMsnDetailService.searchAnswerMsnDetail(dto);
-        return (result != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(result): // 일치하는 결과가 없을경우 빈 리스트 반환
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Collections.reverse(result);
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        int limit = 30;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<AnswerMsnDetailsStat> limitedresult;
+        if (startIndex < result.size()) {
+            int endIndex = Math.min(startIndex + limit, result.size());
+            limitedresult = result.subList(startIndex, endIndex);
+        } else {
+            limitedresult = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+
+        int totalPages = (int) Math.ceil((double) result.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        response.put("answerMsns", limitedresult);  // limitedMembers 리스트
+        response.put("currentPage", pageNumber);  // 현재 페이지 번호
+        response.put("totalPages", totalPages);    // 전체 페이지 수
+        response.put("startPage",startPage);
+        response.put("endPage",endPage);
+        return response; // JSON 형태로 반환
     }
 
 

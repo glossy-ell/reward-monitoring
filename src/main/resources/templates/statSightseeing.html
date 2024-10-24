@@ -464,7 +464,7 @@
     }
 
      //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
         var formData = new FormData(frm);
         var jsonData = {};
@@ -482,10 +482,11 @@
 					data: JSON.stringify(jsonData),
 
 
-					success: function(response) {
-						const statSightseeingContainer = $('#statSightseeing'); // 회원 목록을 표시할 컨테이너 선택
-						statSightseeingContainer.empty();
+				success: function(response) {
+					const statSightseeingContainer = $('#statSightseeing'); // 회원 목록을 표시할 컨테이너 선택
+					statSightseeingContainer.empty();
 
+<<<<<<< Updated upstream
 						if (response.SaveMsnDetailsStats.length === 0) {
 						//statSightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statSightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
@@ -516,7 +517,40 @@
 					 alert("검색중 오류가 발생하였습니다.");
 				}
 			});
+=======
+					if (response.SaveMsnDetailsStats.length === 0) {
+					//statSightseeing가 빈 리스트인 경우 메시지 추가
+						$('#statSightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+					} else {
+						response.SaveMsnDetailsStats.forEach(function(SightseeingTable,index) {
+						$('#statSightseeing').append(
+							'<tr>' +
+								'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.idx + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.companyID + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.missionIdx + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.url + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.point + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.checkPassive + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.abuseState + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.passivityCheck + '</td>' +
+								'<td class="text-center align-middle">' + SightseeingTable.ip + '</td>' +
+								'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.createdAtLocalDateTime) + '</td>' +
+							'</tr>'
+						);
+						updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+						const newUrl = `/Statistics/statDailySightseeing/search/${response.currentPage}`;
+						history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
+						});
+					}
+				},
+			error: function(xhr) {
+				 alert("검색중 오류가 발생하였습니다.");
+			}
+		});
+>>>>>>> Stashed changes
     }
+
     // 페이지네이션 업데이트 함수
 	function updatePagination(currentPage, totalPages, startPage, endPage) {
 		const paginationContainer = $('.intra-pagination-wrap');

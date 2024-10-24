@@ -7,6 +7,8 @@ import com.example.reward_monitoring.statistics.answerMsnStat.detail.repository.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,18 +37,27 @@ public class AnswerMsnDetailService {
         List<AnswerMsnDetailsStat> result;
         boolean changed = false;
 
+        ZonedDateTime start= null;
+        ZonedDateTime end = null;
         if(dto.getUrl()!=null){
             target_serverUrl = answerMsnDetailStatRepository.findByServer_ServerUrl(dto.getUrl());
         }
         if(dto.getStartAt() != null || dto.getEndAt() != null)
             if(dto.getStartAt() != null) {
-                if (dto.getEndAt() == null)
-                    target_date = answerMsnDetailStatRepository.findByStartAt(dto.getStartAt());
-                else
-                    target_date = answerMsnDetailStatRepository.findByBothAt(dto.getStartAt(), dto.getEndAt());
+                if (dto.getEndAt() == null) {
+                    start = dto.getStartAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
+                    target_date = answerMsnDetailStatRepository.findByStartAt(start);
+                }
+                else {
+                    start = dto.getStartAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
+                    end = dto.getEndAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
+                    target_date = answerMsnDetailStatRepository.findByBothAt(start,end);
+                }
             }
-            else
-                target_date = answerMsnDetailStatRepository.findByEndAt(dto.getEndAt());
+            else {
+                end = dto.getEndAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
+                target_date = answerMsnDetailStatRepository.findByEndAt(end);
+            }
 
         if(dto.getMediacompany()!=null)
             target_mediaCompany = answerMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany());
@@ -112,17 +123,18 @@ public class AnswerMsnDetailService {
 
         if(!changed)
             result = new ArrayList<>();
-
-        if(dto.getSOrder().equals("memberId")){
-            Map<Integer, AnswerMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
-                    AnswerMsnDetailsStat::getTX,
-                    stat -> stat, // 값은 AnswerMsnDetailsStat 객체
-                    (existing, replacement) -> {
-                        // 날짜 비교하여 최신 것 선택
-                        return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
-                    }
-            ));
-            result  = groupedResult.values().stream().sorted(Comparator.comparing(AnswerMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+        if(dto.getSOrder()!=null) {
+            if (dto.getSOrder().equals("memberId")) {
+                Map<Integer, AnswerMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
+                        AnswerMsnDetailsStat::getTX,
+                        stat -> stat, // 값은 AnswerMsnDetailsStat 객체
+                        (existing, replacement) -> {
+                            // 날짜 비교하여 최신 것 선택
+                            return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
+                        }
+                ));
+                result = groupedResult.values().stream().sorted(Comparator.comparing(AnswerMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+            }
         }
 
         return result;

@@ -37,6 +37,6 @@ public interface SaveMsnDailyStatRepository extends JpaRepository<SaveMsnDailySt
     @Query("SELECT a FROM SaveMsnDailyStat a WHERE a.partDate= :startAt")
     public List<SaveMsnDailyStat> findByDate(@Param("startAt") LocalDate startAt);
 
-    @Query("SELECT s FROM SaveMsnDailyStat s WHERE  s.partDate BETWEEN :past AND :currentTime")
-    public List<SaveMsnDailyStat> findMonth(LocalDate currentTime, LocalDate past);
+    @Query("SELECT s FROM SaveMsnDailyStat s WHERE s.partDate BETWEEN :past AND :currentTime")
+    public List<SaveMsnDailyStat> findMonth(@Param("currentTime") LocalDate currentTime, @Param("past") LocalDate past);
 }
