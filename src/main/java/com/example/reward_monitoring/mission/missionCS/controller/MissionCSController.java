@@ -60,7 +60,8 @@ public class MissionCSController {
 
     }
     @Operation(summary = "미션CS 검색", description = "조건에 맞는 CS를 검색합니다")
-    @PostMapping({"/search","/search/","/search/{pageNumber}"})
+    @PostMapping({"/missionCsList/search","/missionCsList/search/","/missionCsList/search/{pageNumber}"})
+    @ResponseBody
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -121,7 +122,7 @@ public class MissionCSController {
     }
 
     @Operation(summary = "잘못된 URL 캐치 ", description = "검색중 재진입시 ")
-    @GetMapping("/search/{pageNumber}")
+    @GetMapping("/missionCsList/search/{pageNumber}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
     })

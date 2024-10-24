@@ -763,7 +763,7 @@
 													<td th:text="${QuizTable?.isAbuse}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable?.response}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable?.ip}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable?.registrationDate}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(QuizTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

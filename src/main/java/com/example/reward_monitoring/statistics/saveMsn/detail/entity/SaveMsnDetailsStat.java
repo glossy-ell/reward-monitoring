@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -98,12 +99,13 @@ public class SaveMsnDetailsStat {
     @Comment("등록일시")
     @Column(name = "registration_date", nullable = false)
     @Schema(description = "등록일시", example = "2024-09-13 16:01:51")
-    private ZonedDateTime registrationDate;
+    private LocalDateTime registrationDate;
+
 
 
     @Builder
     public SaveMsnDetailsStat(MediaCompany mediaCompany, Advertiser advertiser , Server server, String memberId, SaveMsn saveMsn
-            , int point, boolean isAbuse, boolean response, String ip, ZonedDateTime registrationDate) {
+            , int point, boolean isAbuse, boolean response, String ip, LocalDateTime registrationDate) {
 
         this.mediaCompany = mediaCompany;
         this.saveMsn=saveMsn;
@@ -117,4 +119,5 @@ public class SaveMsnDetailsStat {
         this.registrationDate = registrationDate;
 
     }
+
 }

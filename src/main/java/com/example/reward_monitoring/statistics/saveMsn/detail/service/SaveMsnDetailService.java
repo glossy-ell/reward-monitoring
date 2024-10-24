@@ -40,12 +40,12 @@ public class SaveMsnDetailService {
         if(dto.getStartAt() != null || dto.getEndAt() != null)
             if(dto.getStartAt() != null) {
                 if (dto.getEndAt() == null)
-                    target_date = saveMsnDetailStatRepository.findByStartAt(dto.getStartAt());
+                    target_date = saveMsnDetailStatRepository.findByStartAt(dto.getStartAt().atStartOfDay());
                 else
-                    target_date = saveMsnDetailStatRepository.findByBothAt(dto.getStartAt(), dto.getEndAt());
+                    target_date = saveMsnDetailStatRepository.findByBothAt(dto.getStartAt().atStartOfDay(), dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
             }
             else
-                target_date = saveMsnDetailStatRepository.findByEndAt(dto.getEndAt());
+                target_date = saveMsnDetailStatRepository.findByEndAt(dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
 
         if(dto.getMediacompany()!=null)
             target_mediaCompany = saveMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany());
@@ -78,11 +78,6 @@ public class SaveMsnDetailService {
             changed = true;
         }
 
-        if(target_mediaCompany!= null) {
-            Set<Integer> idxSet = target_mediaCompany.stream().map(SaveMsnDetailsStat::getTX).collect(Collectors.toSet());
-            result = result.stream().filter(saveMsnDetailsStat -> idxSet.contains(saveMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
-            changed = true;
-        }
 
 
         if(target_isAbuse!= null) {

@@ -507,7 +507,7 @@
 									'<td class="text-center align-middle">' + SightseeingTable.abuseState + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.passivityCheck + '</td>' +
 									'<td class="text-center align-middle">' + SightseeingTable.ip + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.createdAtLocalDateTime) + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.registrationDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -769,7 +769,7 @@
 													<td th:text="${SightseeingTable?.isAbuse}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable?.response}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable?.ip}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.registrationDate}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(SightseeingTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

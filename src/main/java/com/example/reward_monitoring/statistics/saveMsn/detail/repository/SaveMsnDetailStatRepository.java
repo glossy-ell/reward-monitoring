@@ -5,20 +5,19 @@ import com.example.reward_monitoring.statistics.saveMsn.detail.entity.SaveMsnDet
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SaveMsnDetailStatRepository extends JpaRepository<SaveMsnDetailsStat,Integer> {
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate > :startAt")
-    public List<SaveMsnDetailsStat> findByStartAt(LocalDate startAt);
+    public List<SaveMsnDetailsStat> findByStartAt(LocalDateTime startAt);
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate < :endAt")
-    public List<SaveMsnDetailsStat> findByEndAt(LocalDate endAt);
+    public List<SaveMsnDetailsStat> findByEndAt(LocalDateTime endAt);
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate BETWEEN :startAt AND :endAt")
-    public List<SaveMsnDetailsStat> findByBothAt(@Param("startAt") LocalDate startAt, @Param("endAt") LocalDate endAt);
+    public List<SaveMsnDetailsStat> findByBothAt(@Param("startAt") LocalDateTime startAt, @Param("endAt") LocalDateTime endAt);
 
     public List<SaveMsnDetailsStat> findByAdvertiser_Advertiser(String advertiser);
 

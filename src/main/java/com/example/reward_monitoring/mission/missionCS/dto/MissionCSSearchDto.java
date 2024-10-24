@@ -1,7 +1,6 @@
 package com.example.reward_monitoring.mission.missionCS.dto;
 
-import com.example.reward_monitoring.mission.missionCS.model.CSType;
-import com.example.reward_monitoring.mission.missionCS.model.MsnType;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import lombok.Getter;
@@ -13,10 +12,10 @@ import java.time.LocalDate;
 public class MissionCSSearchDto {
 
     @Schema(description = "CS 타입", example = "정답제목확인,URL확인,데이터유실")
-    private CSType csType;
+    private String csType;
 
     @Schema(description = "미션 타입",example = "정답,검색,저장")
-    private MsnType msnType;
+    private String msnType;
 
     @Schema(description = "미션시작시간")
     private LocalDate startAtMsn;

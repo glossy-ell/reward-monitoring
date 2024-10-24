@@ -306,10 +306,10 @@ public class AnswerMsnService {
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
         if(!changed)
             result = new ArrayList<>();
         return result;
+
     }
 
     public Sheet excelDownload( List<AnswerMsn> list,Workbook wb){

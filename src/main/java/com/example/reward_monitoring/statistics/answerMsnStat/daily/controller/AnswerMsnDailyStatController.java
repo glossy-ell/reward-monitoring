@@ -75,13 +75,13 @@ public class AnswerMsnDailyStatController {
             pageNumber = 1;
         }
         List<AnswerMsnDailyStat> result = answerMsnDailyService.searchAnswerMsnDaily(dto);
+        Collections.reverse(result);
         // 한 페이지당 최대 15개 데이터
         int limit = 15;
         int startIndex = (pageNumber - 1) * limit;
 
         // 전체 리스트의 크기 체크
         List<AnswerMsnDailyStat> limitedAnswerMsnDailyStats;
-
         if (startIndex < result.size()) {
             int endIndex = Math.min(startIndex + limit, result.size());
             limitedAnswerMsnDailyStats = result.subList(startIndex, endIndex);

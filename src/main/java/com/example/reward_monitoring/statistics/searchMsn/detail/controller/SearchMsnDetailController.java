@@ -95,7 +95,7 @@ public class SearchMsnDetailController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("searchMsns", limitedresult);  // limitedMembers 리스트
+        response.put("searchMsnDailyStats", limitedresult);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);

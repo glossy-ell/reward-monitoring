@@ -10,7 +10,9 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -90,12 +92,12 @@ public class AnswerMsnDetailsStat {
     @Comment("등록일시")
     @Column(name = "registration_date", nullable = false)
     @Schema(description = "등록일시", example = "2024-09-13 16:01:51")
-    private ZonedDateTime registrationDate;
+    private LocalDateTime registrationDate;
 
 
     @Builder
     public AnswerMsnDetailsStat(MediaCompany mediaCompany,Advertiser advertiser , Server server,String memberId, AnswerMsn answerMsn
-            , int point, boolean isAbuse,boolean response,String ip,ZonedDateTime registrationDate) {
+            , int point, boolean isAbuse,boolean response,String ip,LocalDateTime registrationDate) {
 
         this.mediaCompany = mediaCompany;
         this.answerMsn=answerMsn;
@@ -109,4 +111,5 @@ public class AnswerMsnDetailsStat {
         this.registrationDate = registrationDate;
 
     }
+
 }

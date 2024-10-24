@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -47,10 +49,10 @@ public class MissionCS {
     @Comment("최초 등록 일시")
     @Column(name = "first_reg_date")
     @Schema(description = "최초 등록 일시", example = "2024-09-05 16:19:55")
-    private ZonedDateTime firstRegDate;
+    private LocalDateTime firstRegDate;
 
     @Builder
-    public MissionCS(MsnType msnType,String msnTitle,CSType csType,ZonedDateTime firstRegDate){
+    public MissionCS(MsnType msnType,String msnTitle,CSType csType,LocalDateTime firstRegDate){
         this.msnType = msnType;
         this.msnTitle = msnTitle;
         this.csType = csType;

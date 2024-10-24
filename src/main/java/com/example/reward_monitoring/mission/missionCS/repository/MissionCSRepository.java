@@ -7,6 +7,8 @@ import com.example.reward_monitoring.mission.missionCS.entity.MissionCS;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -14,13 +16,13 @@ public interface MissionCSRepository extends JpaRepository<MissionCS,Integer> {
     public MissionCS findByIdx(int idx);
 
     @Query("SELECT m FROM MissionCS m WHERE m.firstRegDate BETWEEN :startDate AND :endDate")
-    public List<MissionCS> findByBothDate(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate);
+    public List<MissionCS> findByBothDate(@Param("startDate") LocalDateTime startDate, @Param("endDate")LocalDateTime endDate);
 
     @Query("SELECT m FROM MissionCS m WHERE m.firstRegDate > :startAt")
-    public List<MissionCS> findByStartAt(ZonedDateTime startAt);
+    public List<MissionCS> findByStartAt(LocalDateTime startAt);
 
     @Query("SELECT m FROM MissionCS m WHERE m.firstRegDate < :endAt")
-    public List<MissionCS> findByEndAt(ZonedDateTime endAt);
+    public List<MissionCS> findByEndAt(LocalDateTime endAt);
 
     public List<MissionCS> findByCsType(String type);
 

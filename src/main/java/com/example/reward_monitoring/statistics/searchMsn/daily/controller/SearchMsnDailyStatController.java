@@ -76,6 +76,7 @@ public class SearchMsnDailyStatController {
             pageNumber = 1;
         }
         List<SearchMsnDailyStat> result = searchMsnDailyService.searchSearchMsnDaily(dto);
+        Collections.reverse(result);
         // 한 페이지당 최대 15개 데이터
         int limit = 15;
         int startIndex = (pageNumber - 1) * limit;

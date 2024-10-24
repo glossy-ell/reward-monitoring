@@ -486,20 +486,20 @@
 						const statDailySightseeingContainer = $('#statDailySightseeing'); // 회원 목록을 표시할 컨테이너 선택
 						statDailySightseeingContainer.empty();
 
-						if (response.SaveMsnDailyStats.length === 0) {
+						if (response.saveMsnDailyStats.length === 0) {
 						//statDailySightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statDailySightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 
 						} else {
-							response.SaveMsnDailyStats.forEach(function(DailySightseeingTable,index) {
+							response.saveMsnDailyStats.forEach(function(DailySightseeingTable,index) {
 							$('#statDailySightseeing').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.idx + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.mediaCompany.idx + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.advertiser.idx + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.advertiserDetails + '</td>' +
-									'<td class="text-center align-middle">' + DailySightseeingTable.mission.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.idx + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.missionTitle + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.landingCnt + '</td>' +
 									'<td class="text-center align-middle">' + DailySightseeingTable.partCnt + '</td>' +
@@ -606,7 +606,7 @@
 													<div class="row">
 														<div class="input-group col-lg-2 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="url" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option

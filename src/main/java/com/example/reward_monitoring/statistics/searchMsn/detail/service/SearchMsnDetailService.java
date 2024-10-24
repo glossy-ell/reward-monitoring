@@ -40,12 +40,12 @@ public class SearchMsnDetailService {
         if(dto.getStartAt() != null || dto.getEndAt() != null)
             if(dto.getStartAt() != null) {
                 if (dto.getEndAt() == null)
-                    target_date = searchMsnDetailStatRepository.findByStartAt(dto.getStartAt());
+                    target_date = searchMsnDetailStatRepository.findByStartAt(dto.getStartAt().atStartOfDay());
                 else
-                    target_date = searchMsnDetailStatRepository.findByBothAt(dto.getStartAt(), dto.getEndAt());
+                    target_date = searchMsnDetailStatRepository.findByBothAt(dto.getStartAt().atStartOfDay(), dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
             }
             else
-                target_date = searchMsnDetailStatRepository.findByEndAt(dto.getEndAt());
+                target_date = searchMsnDetailStatRepository.findByEndAt(dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
 
         if(dto.getMediacompany()!=null)
             target_mediaCompany = searchMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany());
@@ -103,7 +103,6 @@ public class SearchMsnDetailService {
         if(dto.getSOrder()!=null) {
             changed = true;
             if (dto.getSOrder().equals("memberId")) {
-
                 Map<Integer, SearchMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
                         SearchMsnDetailsStat::getTX,
                         stat -> stat, // 값은 AnswerMsnDetailsStat 객체

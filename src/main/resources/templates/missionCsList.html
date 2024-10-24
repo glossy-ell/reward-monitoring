@@ -493,12 +493,12 @@
 						$('#missionCsList').append('<tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>');
 						updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 					} else {
-						response.missionLists.forEach(function(missionList,index) {
+						response.missionCSList.forEach(function(missionList,index) {
 						$('#missionCsList').append(
 							'<tr>' +
 							'<td class="text-center align-middle">' + missionList.msnType + '</td>' +
 							'<td class="text-center align-middle">' + missionList.msnTitle + '</td>' +
-							'<td class="text-center align-middle">' + missionList.CSCount + '</td>' +
+							'<td class="text-center align-middle">' + missionList.cscount + '</td>' +
 							'<td class="text-center align-middle">' + missionList.csType + '</td>' +
 							'<td class="text-center align-middle">' + formatDateTime(missionList.firstRegDate) + '</td>' +
 							'</tr>'
@@ -604,9 +604,9 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="csType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 문의 유형 =</option>
-																	<option value="1">정답/제목 확인</option>
-																	<option value="2">URL 확인</option>
-																	<option value="3">데이터 유실</option>
+																	<option value="A">정답/제목 확인</option>
+																	<option value="U">URL 확인</option>
+																	<option value="D">데이터 유실</option>
 																</select>
 																<div class="dropdown-menu" role="combobox" x-placement="bottom-start" style="max-height: 854px; overflow: hidden; min-height: 160px; position: absolute; transform: translate3d(1px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1" style="max-height: 824px; overflow-y: auto; min-height: 130px;">
@@ -658,11 +658,11 @@
 														</div>		
 														<div class="k-form__control col-xl-6 col-lg-12">
 															<div class="input-daterange input-group">
-																<input type="text" class="form-control btn-datepicker" name="sStartDate" placeholder="시작일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="startAtMsn" placeholder="시작일" value="" autocomplete="off">
 																<div class="input-group-append">
 																	<span class="input-group-text">~</span>
 																</div>
-																<input type="text" class="form-control btn-datepicker" name="sEndDate" placeholder="종료일" value="" autocomplete="off">
+																<input type="text" class="form-control btn-datepicker" name="endAtMsn" placeholder="종료일" value="" autocomplete="off">
 															</div>
 														</div>                                                                                                               
 													</div>
@@ -672,10 +672,10 @@
 														<div class="input-group col-lg-12 col-sm-12">
 															<div class="input-group-prepend">
 																<select name="sOpt" class="custom-select form-control">
-																	<option value="sTitle">미션 제목</option>
+																	<option value="msnTitle">미션 제목</option>
 																</select>
 															</div>
-															<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" class="form-control" name="msnTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -710,7 +710,7 @@
 													<td th:text="${missionList?.msnTitle}" class="text-center align-middle"></td>
 													<td th:text="${missionList?.CSCount}" class="text-center align-middle"></td>
 													<td th:text="${missionList?.csType}" class="text-center align-middle"></td>
-													<td th:text="${missionList?.firstRegDate}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(missionList?.firstRegDate, 'yyyy-MM-dd HH:mm')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>										
@@ -761,7 +761,7 @@
 		</div>
 	</div>
 
-
+    
 	
 
 </body><!-- end::Body --></html>

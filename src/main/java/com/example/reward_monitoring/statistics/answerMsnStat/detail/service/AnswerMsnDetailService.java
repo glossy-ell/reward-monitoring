@@ -44,20 +44,15 @@ public class AnswerMsnDetailService {
         }
         if(dto.getStartAt() != null || dto.getEndAt() != null)
             if(dto.getStartAt() != null) {
-                if (dto.getEndAt() == null) {
-                    start = dto.getStartAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
-                    target_date = answerMsnDetailStatRepository.findByStartAt(start);
-                }
-                else {
-                    start = dto.getStartAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
-                    end = dto.getEndAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
-                    target_date = answerMsnDetailStatRepository.findByBothAt(start,end);
-                }
+                if (dto.getEndAt() == null)
+                    target_date = answerMsnDetailStatRepository.findByStartAt(dto.getStartAt().atStartOfDay());
+                else
+                    target_date = answerMsnDetailStatRepository.findByBothAt(dto.getStartAt().atStartOfDay(),dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
+
             }
-            else {
-                end = dto.getEndAt().atStartOfDay().atZone(ZoneId.of("Asia/Seoul"));
-                target_date = answerMsnDetailStatRepository.findByEndAt(end);
-            }
+            else
+                target_date = answerMsnDetailStatRepository.findByEndAt(dto.getEndAt().atStartOfDay().plusHours(23).plusMinutes(59));
+
 
         if(dto.getMediacompany()!=null)
             target_mediaCompany = answerMsnDetailStatRepository.findByMediaCompany_companyName(dto.getMediacompany());

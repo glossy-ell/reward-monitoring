@@ -492,8 +492,8 @@
 							 response.answerMsnDailyStats.forEach(function(DailyQuizTable,index) {
 							 $('#statDailyQuiz').append(
 								 '<tr>' +
-									 '<td class="text-center align-middle">' + (index + 1) + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.idx + '</td>' +
+									 '<td class="text-center align-middle">' + DailyQuizTable.mediaCompany.idx + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.advertiser.idx + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.advertiserDetails + '</td>' +
 									 '<td class="text-center align-middle">' + DailyQuizTable.answerMsn.idx + '</td>' +
@@ -603,7 +603,7 @@
 													<div class="row">
 														<div class="input-group col-lg-2 col-sm-12"> 
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="serverUrl" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="url" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="" disabled selected>=서버=</option>
 																	<th:block th:each="server : ${servers}">
 																		<option

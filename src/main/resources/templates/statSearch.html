@@ -488,13 +488,13 @@
                 const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
                 statSearchContainer.empty();
 
-                if (response.searchMsns.length === 0) {
+                if (response.searchMsnDailyStats.length === 0) {
                 //statSearch가 빈 리스트인 경우 메시지 추가
                     $('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
                 } else {
 					searched = true;
-                    response.searchMsns.forEach(function(SearchTable,index) {
+                    response.searchMsnDailyStats.forEach(function(SearchTable,index) {
                     $('#statSearch').append(
                         '<tr>' +
 							'<td class="text-center align-middle">' + SearchTable.tx + '</td>' +
@@ -761,7 +761,7 @@
 													<td th:text="${SearchTable?.isAbuse}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable?.response}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable?.ip}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.registrationDate}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(SearchTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>
