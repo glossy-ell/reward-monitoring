@@ -130,21 +130,21 @@
 			jsonData[key] = value; // FormData를 JSON 객체로 변환
 		});
 		$.ajax({
-			url: `/Mission/quizStaticList/search/${idx}`,
+			url: `/Mission/searchStaticList/search/${idx}`,
 			type: "POST",
 			contentType: "application/json",
 			data: JSON.stringify(jsonData),
 
 			success: function(response) {
-				const quizListContainer = $('#quizList'); // 회원 목록을 표시할 컨테이너 선택
-				quizListContainer.empty();
+				const searchListContainer = $('#searchList); // 회원 목록을 표시할 컨테이너 선택
+				searchListContainer.empty();
 
 				if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
 				// 빈 리스트인 경우 메시지 추가
-						$('#quizList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+						$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 				} else {
 					response.searchMsns.forEach(function(searchMsn,index) {
-					$('#quizList').append(
+					$('#searchList').append(
 						  '<tr>' +
 								'<td class="text-center font-weight-bold">' + searchMsn.partDate + '</td>' +
 								'<td class="text-center align-middle">' + searchMsn.landingCnt + '</td>' +

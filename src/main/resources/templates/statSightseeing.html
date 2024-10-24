@@ -754,10 +754,10 @@
 													<td colspan="12" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
 												<tr th:each="SightseeingTable,iterStat : ${saveMsnDetailsStats}">
-													<td th:text="${SightseeingTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.TX}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.memberID}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable?.memberId}" class="text-center align-middle"></td>
+													<td th:text="${SightseeingTable.saveMsn?.idx}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable?.url}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable?.point}" class="text-center align-middle"></td>
 													<td th:text="${SightseeingTable?.passivityCheck}" class="text-center align-middle"></td>

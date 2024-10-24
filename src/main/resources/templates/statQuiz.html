@@ -791,13 +791,13 @@
                                                 </tr>
 											</thead>
 											<tbody  id = "statQuiz">
-												<tr th:if="${#lists.isEmpty(answerMsnDetailStats)}">
+												<tr th:if="${#lists.isEmpty(answerMsnDetailsStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="QuizTable,iterStat : ${answerMsnDetailStats}">
-													<td th:text="${QuizTable?.idx}" class="text-center align-middle"></td>
+												<tr th:each="QuizTable,iterStat : ${answerMsnDetailsStats}">
+													<td th:text="${QuizTable?.TX}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-													<td th:text="${QuizTable?.memberID}" class="text-center align-middle"></td>
+													<td th:text="${QuizTable?.memberId}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable.answerMsn?.idx}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable?.point}" class="text-center align-middle"></td>
 													<td th:text="${QuizTable?.isAbuse}" class="text-center align-middle"></td>

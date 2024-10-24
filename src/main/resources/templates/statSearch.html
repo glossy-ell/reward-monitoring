@@ -796,10 +796,10 @@
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
 												<tr th:each="SearchTable,iterStat : ${searchMsnDetailsStats}">
-													<td th:text="${SearchTable?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.TX}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.memberID}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.answerMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable?.memberId}" class="text-center align-middle"></td>
+													<td th:text="${SearchTable.searchMsn?.idx}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable?.point}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable?.isAbuse}" class="text-center align-middle"></td>
 													<td th:text="${SearchTable?.response}" class="text-center align-middle"></td>

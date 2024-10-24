@@ -1409,7 +1409,7 @@ public class SearchMsnController{
     }
 
     @GetMapping("/Mission/searchStaticList/{idx}")
-    public String searchReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
+    public String getReport(@PathVariable(required = true,value = "idx") Integer idx,HttpSession session, Model model) {
         Member sessionMember = (Member) session.getAttribute("member");
         List<Server> servers = serverService.getServers();
         if (sessionMember == null) {
@@ -1433,6 +1433,7 @@ public class SearchMsnController{
 
         model.addAttribute("searchMsn",searchMsn);
         model.addAttribute("searchMsnDailyStat", searchMsnDailyStat);
+        model.addAttribute("servers", servers);
         model.addAttribute("currentTime",currentTime);
         model.addAttribute("past",past);
         model.addAttribute("totalLandingCount",totalLandingCount);
