@@ -156,8 +156,8 @@ public class SearchMsnDailyStatController {
     }
 
 
-    @Operation(summary = "엑셀 다운로드", description = "검색미션 데일리 통계 엑셀파일을 다운로드합니다")
-    @GetMapping("/excel/download")
+    @Operation(summary = "엑셀 다운로드", description = "정답미션 데일리 통계 엑셀파일을 다운로드합니다")
+    @GetMapping("/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
@@ -168,7 +168,7 @@ public class SearchMsnDailyStatController {
             Sheet sheet = searchMsnDailyService.excelDownload(list,wb);
 
             if(sheet !=null) {
-                String fileName = URLEncoder.encode("검색미션 데일리 리포트.xlsx", StandardCharsets.UTF_8);
+                String fileName = URLEncoder.encode("정답미션 데일리 리포트.xlsx", StandardCharsets.UTF_8);
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
                 wb.write(response.getOutputStream());

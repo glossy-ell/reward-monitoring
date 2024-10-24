@@ -494,13 +494,13 @@
 							$('#statDailySearch').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + (index + 1) + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.mediaCompany.idx + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.company.idx + '</td>' +
 									'<td class="text-center align-middle">' + DailySearchTable.advertiser.idx + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.searchMsn.advertiserDetails + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.answerMsn.advertiserDetails + '</td>' +
 									'<td class="text-center align-middle">' + DailySearchTable.mission.idx + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.searchMsn.missionTitle + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.answerMsn.missionTitle + '</td>' +
 									'<td class="text-center align-middle">' + DailySearchTable.landingCnt + '</td>' +
-									'<td class="text-center align-middle">' + DailySearchTable.partCnt + '</td>' +
+									'<td class="text-center align-middle">' + DailySearchTable.attendCnt + '</td>' +
 									'<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
 								'</tr>'
 								);
@@ -727,11 +727,11 @@
 											</tr>
 											<tr th:each="DailySearchTable,iterStat : ${searchMsnDailyStats}">
 												<td th:text="${DailySearchTable?.idx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.advertiser?.idx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.searchMsn?.advertiserDetails}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.searchMsn?.idx}" class="text-center align-middle"></td>
-												<td th:text="${DailySearchTable.searchMsn?.missionTitle}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.company?.idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.advertiser?.Idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.advertiserDetails}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.idx}" class="text-center align-middle"></td>
+												<td th:text="${DailySearchTable.answerMsn?.missionTitle}" class="text-center align-middle"></td>
 												<td th:text="${DailySearchTable?.landingCnt}" class="text-center align-middle"></td>
 												<td th:text="${DailySearchTable?.partCnt}" class="text-center align-middle"></td>
 												<td th:text="${DailySearchTable?.partDate}" class="text-center align-middle"></td>

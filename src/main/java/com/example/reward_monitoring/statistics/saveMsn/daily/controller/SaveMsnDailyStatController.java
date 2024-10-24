@@ -158,8 +158,8 @@ public class SaveMsnDailyStatController {
     }
 
 
-    @Operation(summary = "엑셀 다운로드", description = "저장미션 데일리 통계 엑셀파일을 다운로드합니다")
-    @GetMapping("/excel/download")
+    @Operation(summary = "엑셀 다운로드", description = "정답미션 데일리 통계 엑셀파일을 다운로드합니다")
+    @GetMapping("/download")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
