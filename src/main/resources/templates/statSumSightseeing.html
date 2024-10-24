@@ -465,7 +465,7 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
         var formData = new FormData(frm);
         var jsonData = {};
@@ -488,12 +488,16 @@
 						const statSumSightseeingContainer = $('#statSumSightseeing'); // 회원 목록을 표시할 컨테이너 선택
 						statSumSightseeingContainer.empty();
 
-						if (response.SaveMsnSumStats.length === 0) { //검색결과가 빈 리스트일경우
+						if (response.saveMsnSumStats.length === 0) { //검색결과가 빈 리스트일경우
 						//statSumSightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statSumSightseeing').append('<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>');
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							const landingCountElement = document.getElementById('totalLandingCount');
+							const partCountElement = document.getElementById('totalPartCount');
+							landingCountElement.innerText = 0;
+							partCountElement.innerText = 0;
 						} else {
-							response.SaveMsnSumStats.forEach(function(SaveMsnSumStat,index) {
+							response.saveMsnSumStats.forEach(function(SaveMsnSumStat,index) {
 							$('#statSumSightseeing').append(
 								'<tr>' +
 									'<td class="text-center align-middle">' + formatDateTime(SaveMsnSumStat.date) + '</td>' +
@@ -502,6 +506,10 @@
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+							const landingCountElement = document.getElementById('totalLandingCount');
+							const partCountElement = document.getElementById('totalPartCount');
+							landingCountElement.innerText = totalLandingCount;
+							partCountElement.innerText =  totalPartCount;
 							});
 						}
 					},
@@ -712,8 +720,8 @@
 											</tbody>
 											<tfoot>
 											<tr><th class="text-center font-weight-bold">합산</th>
-												<th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
-												<th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
+												<th class="text-center font-weight-bold" id="totalLandingCount" th:text="${totalLandingCount}">0</th>
+												<th class="text-center font-weight-bold" id="totalPartCount" th:text="${totalPartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>

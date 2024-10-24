@@ -105,11 +105,16 @@ public class SearchMsnSumStatController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
+
+        int totalLandingCount =  limitedSearchMsns.stream().mapToInt(SearchMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =   limitedSearchMsns.stream().mapToInt(SearchMsnSumStat::getPartCnt).sum();  // 참여카운트 합
         response.put("searchMsnSumStats", limitedSearchMsns);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);
         response.put("endPage",endPage);
+        response.put("totalLandingCount",totalLandingCount);
+        response.put("totalPartCount",totalPartCount);
         return response; // JSON 형태로 반환
     }
     

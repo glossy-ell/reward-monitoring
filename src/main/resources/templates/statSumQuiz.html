@@ -495,6 +495,10 @@
 				//statSumQuiz가 빈 리스트인 경우 메시지 추가
 					$('#staSumtQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+					const landingCountElement = document.getElementById('totalLandingCount');
+    				const partCountElement = document.getElementById('totalPartCount');
+    				landingCountElement.innerText = 0;
+    				partCountElement.innerText = 0;
 				} else {
 					response.answerMsnSumStats.forEach(function(answerMsnSumStat,index) {
 					$('#statSumQuiz').append(
@@ -505,6 +509,10 @@
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+					const landingCountElement = document.getElementById('totalLandingCount');
+					const partCountElement = document.getElementById('totalPartCount');
+					landingCountElement.innerText = totalLandingCount;
+					partCountElement.innerText =  totalPartCount;
 				 });
 				}
               },
@@ -715,8 +723,8 @@
 											</tbody>
 											<tfoot>
 											<tr><th class="text-center font-weight-bold">합산</th>
-												<th class="text-center font-weight-bold" th:text="${totalLandingCount}">0</th>
-												<th class="text-center font-weight-bold" th:text="${totalPartCount}">0</th>
+												<th class="text-center font-weight-bold" id="totalLandingCount" th:text="${totalLandingCount}">0</th>
+												<th class="text-center font-weight-bold" id="totalPartCount" th:text="${totalPartCount}">0</th>
 											</tr>
 											</tfoot>
 										</table>

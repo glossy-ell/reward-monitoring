@@ -12,6 +12,7 @@ import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.Service.AnswerMsnSumStatService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
+import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -104,12 +105,16 @@ public class AnswerMsnSumStatController {
         int totalPages = (int) Math.ceil((double) result.size() / limit);
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+        int totalLandingCount =  limitedAnswerMsns.stream().mapToInt(AnswerMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
+        int totalPartCount =   limitedAnswerMsns.stream().mapToInt(AnswerMsnSumStat::getPartCnt).sum();  // 참여카운트 합
 
         response.put("answerMsnSumStats", limitedAnswerMsns);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);
         response.put("endPage",endPage);
+        response.put("totalLandingCount",totalLandingCount);
+        response.put("totalPartCount",totalPartCount);
         return response; // JSON 형태로 반환
     }
 
