@@ -467,7 +467,7 @@
     }
 
     //검색
-    function commSearch() {
+    function commSearch(page) {
         var frm = document.searchFrm;
 		var formData = new FormData(frm);
 		var jsonData = {};
@@ -488,12 +488,12 @@
 					const missionCsListContainer = $('#missionCsList'); // 회원 목록을 표시할 컨테이너 선택
 					missionCsListContainer.empty();
 
-					if (response.missionCSs.length === 0) {
+					if (response.missionCSList.length === 0) {
 					//missionCsList가 빈 리스트인 경우 메시지 추가
 						$('#missionCsList').append('<tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>');
 						updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 					} else {
-						response.missionCSs.forEach(function(missionList,index) {
+						response.missionLists.forEach(function(missionList,index) {
 						$('#missionCsList').append(
 							'<tr>' +
 							'<td class="text-center align-middle">' + missionList.msnType + '</td>' +
@@ -602,7 +602,7 @@
 													<div class="row">
                                                         <div class="input-group col-xl-3 col-lg-12 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="mscType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																<select name="csType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 문의 유형 =</option>
 																	<option value="1">정답/제목 확인</option>
 																	<option value="2">URL 확인</option>
@@ -675,7 +675,7 @@
 																	<option value="sTitle">미션 제목</option>
 																</select>
 															</div>
-															<input type="text" class="form-control" name="sVal" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
+															<input type="text" id="searchInput" class="form-control" name="missionTitle" value="" placeholder="검색 옵션을 선택해주세요." onkeyup="enterkey();" autocomplete="off">
 															<div class="input-group-append">
 																<button type="button" class="btn btn-secondary btn-main" aria-expanded="false" onclick="commSearch();">검색</button>
 																<button type="button" class="btn btn-secondary btn-outline--main" onclick="commSearchReset();">초기화</button>
@@ -702,10 +702,10 @@
 												</tr>
 											</thead>
 											<tbody  id = "missionCsList">
-												<tr th:if="${#lists.isEmpty(MissionCSs)}">
+												<tr th:if="${#lists.isEmpty(missionCSList)}">
 													<td colspan="5" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="missionList,iterStat : ${MissionCSs}">
+												<tr th:each="missionList,iterStat : ${missionCSList}">
 													<td th:text="${missionList?.msnType}" class="text-center align-middle"></td>
 													<td th:text="${missionList?.msnTitle}" class="text-center align-middle"></td>
 													<td th:text="${missionList?.CSCount}" class="text-center align-middle"></td>
@@ -761,7 +761,7 @@
 		</div>
 	</div>
 
-    
+
 	
 
 </body><!-- end::Body --></html>

@@ -474,7 +474,6 @@
         formData.forEach((value, key) => {
             jsonData[key] = value; // FormData를 JSON 객체로 변환
         });
-
         if(page ==null){
 			page = 1;
 		}
@@ -669,13 +668,13 @@
 															<select name="isAbuse" class="form-control" onchange="commSearch();">
 																<option value="">= 어뷰상태 =</option>
 																<option value="false">정상</option>
-																<option value="ture">어뷰</option>
+																<option value="true">어뷰</option>
 															</select>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
 															<select name="response" class="form-control" onchange="commSearch();">
 																<option value="">= 응답 확인 =</option>
-																<option value="ture">성공</option>
+																<option value="true">성공</option>
 																<option value="false">실패</option>
 															</select>
 														</div>
