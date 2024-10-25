@@ -68,14 +68,16 @@ public class AnswerMsnService {
         if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(LocalDateTime.of(date,time));
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setStartAtMsn(dto.getStartAtMsn());
+            answerMsn.setStartAtMsn(answerMsn.getStartAtMsn().plusHours(9));
         }
         if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(LocalDateTime.of(date,time));
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             answerMsn.setEndAtMsn(dto.getEndAtMsn());
+            answerMsn.setEndAtMsn(answerMsn.getEndAtMsn().plusHours(9));
         }
 
 
@@ -142,13 +144,13 @@ public class AnswerMsnService {
 
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(LocalDateTime.of(date,time));
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
         }
         if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
 
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(LocalDateTime.of(date,time));
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
         }
         if(dto.getUrl()!= null)
             serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
@@ -201,17 +203,20 @@ public class AnswerMsnService {
 
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
-
-                LocalDateTime start_time = dto.getStartAtMsn().atStartOfDay();
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
                 if(dto.getEndAtMsn() == null){
                     target_date = answerMsnRepository.findByStartDate(start_time);
                 }else{
-                    LocalDateTime end_time = dto.getEndAtMsn().atTime(23, 59);
+                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
                     target_date = answerMsnRepository.findByBothDate(start_time,end_time);
                 }
+
             }
             else {
-                LocalDateTime end_time = dto.getEndAtMsn().atTime(23, 59);
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
+
                 target_date = answerMsnRepository.findByEndDate(end_time);
             }
 
@@ -266,59 +271,31 @@ public class AnswerMsnService {
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
-
         if(target_dup_Participation!=null){
             Set<Integer> idxSet = target_dup_Participation.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_dup_Participation = answerMsnRepository.findAll();
-            Set<Integer> idxSet = target_dup_Participation.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_mission_active != null) {
             Set<Integer> idxSet = target_mission_active.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_mission_active = answerMsnRepository.findAll();
-            Set<Integer> idxSet = target_mission_active.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_mission_exposure != null) {
             Set<Integer> idxSet = target_mission_exposure.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_mission_active = answerMsnRepository.findAll();
-            Set<Integer> idxSet = target_mission_active.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
-
         if(target_data_Type != null) {
             Set<Integer> idxSet = target_data_Type.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
         if(target_advertiser != null) {
             Set<Integer> idxSet = target_advertiser.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_advertiser = answerMsnRepository.findAll();
-            Set<Integer> idxSet = target_advertiser.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_advertiser_details != null) {
             Set<Integer> idxSet = target_advertiser_details.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
@@ -329,7 +306,6 @@ public class AnswerMsnService {
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
         if(!changed)
             result = new ArrayList<>();
         return result;
@@ -529,9 +505,9 @@ public class AnswerMsnService {
                     dto.setMissionAnswer(df.format(row.getCell(6).getNumericCellValue()));
             }
             if(row.getCell(7)!=null)
-                dto.setEndAtMsn(LocalDateTime.parse(row.getCell(7).getStringCellValue(), formatter));
+                dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(7).getStringCellValue(),formatter),ZoneId.systemDefault()));
             if(row.getCell(8)!=null)
-                dto.setEndAtMsn(LocalDateTime.parse(row.getCell(8).getStringCellValue(), formatter));
+                dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
             if(row.getCell(9)!=null)
                 dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
             if(row.getCell(10)!=null)
@@ -763,7 +739,7 @@ public class AnswerMsnService {
         if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
             target_mission_title = answerMsnRepository.findByMissionTitle(dto.getMissionTitle());
 
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         result = new ArrayList<>(answerMsnRepository.findByCurrentList(now));
 
 
@@ -795,7 +771,7 @@ public class AnswerMsnService {
     }
 
     public boolean AllOffMissionCurrent() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         List<AnswerMsn> answerMsns = answerMsnRepository.findByCurrentList(now);
         for (AnswerMsn answerMsn : answerMsns) {
             answerMsn.setMissionActive(false); // isUsed 필드를 false로 설정

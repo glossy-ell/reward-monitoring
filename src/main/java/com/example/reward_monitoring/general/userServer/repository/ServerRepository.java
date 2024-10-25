@@ -11,7 +11,7 @@ public interface ServerRepository extends JpaRepository<Server,Integer> {
     public Server findByIdx(int idx);
 
     @Query("SELECT s FROM Server s WHERE s.isActive = :isActive")
-    public List<Server> findByIsActive(@Param("isActive") boolean isActive);
+    public List<Server> findByIsActive(boolean isActive);
 
     @Query("SELECT s FROM Server s WHERE s.serverUrl LIKE %:keyword% ")
     public List<Server> findByServerUrl(@Param("keyword") String keyword);

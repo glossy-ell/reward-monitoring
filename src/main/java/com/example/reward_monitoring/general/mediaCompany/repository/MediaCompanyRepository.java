@@ -15,7 +15,7 @@ public interface MediaCompanyRepository extends JpaRepository<MediaCompany,Integ
     public MediaCompany findByIdx(int idx);
 
     @Query("SELECT m FROM MediaCompany m WHERE m.isActive = :isActive")
-    public List<MediaCompany> findByIsActive(@Param("isActive") boolean isActive);
+    public List<MediaCompany> findByIsActive(boolean isActive);
 
     @Query("SELECT m FROM MediaCompany m WHERE m.companyName LIKE %:keyword% ")
     public List<MediaCompany> findByName(@Param("keyword") String keyword);

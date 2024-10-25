@@ -99,9 +99,6 @@ public class AdvertiserService {
         if(dto.getIsActive() != null) {
             target_is_active = advertiserRepository.findByIsActive(dto.getIsActive());
         }
-        else{
-            target_is_active = advertiserRepository.findAll();
-        }
 
         if(dto.getAdvertiser()!=null && !dto.getAdvertiser().isEmpty()){
             target_advertiser=advertiserRepository.findByAdvertiser(dto.getAdvertiser());

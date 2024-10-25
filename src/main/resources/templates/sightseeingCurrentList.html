@@ -619,12 +619,23 @@
             location.href = "/Mission/sightseeingMultiTempList";
         }
 
+        // 등록, 수정 버튼
+        function commGoDetail(idx) {
+            var frm = document.searchFrm;
 
+            frm.sightseeingIdx.value = "";
+
+            if(idx){
+                frm.sightseeingIdx.value = idx;
+            }
+            frm.action ='/Mission/sightseeingWrite';
+            frm.submit();
+        }
 
            // 등록, 수정 버튼
         function commGoDetail(idx) {
             if(idx){
-                window.location.href ='/Mission/sightseeingWrite/current/'+ idx;
+                window.location.href ='/Mission/sightseeingWrite/'+ idx;
                 return true;
             } else {
                 window.location.href ='/Mission/sightseeingWrite';

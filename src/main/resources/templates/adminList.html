@@ -511,8 +511,7 @@
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-					const baseUrl = '/Admin/member/search';
-					const newUrl = `${baseUrl}/${response.currentPage}`;
+					const newUrl = `/member/search/${response.currentPage}`;
 					history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 				});
 
@@ -667,8 +666,8 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 상태 =</option>
-																	<option value="true">활성</option>
-																	<option value="false">비활성</option>
+																	<option value="1">활성</option>
+																	<option value="0">비활성</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">

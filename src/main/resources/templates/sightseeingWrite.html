@@ -578,7 +578,6 @@
             return false;
         }
 		var frm = document.dto;
-		var isCurrent = $('input[name=current_check]').val();
 		var formData = new FormData(frm);
 		var jsonData = {};
 		var fileNameElement = document.getElementById("fileName");
@@ -619,7 +618,6 @@
 				   success: function(response) {
 					   alert("등록하였습니다.");
 					   window.location.href = "/Mission/sightseeingList";
-
 				   },
 				   error: function(xhr) {
 					   alert("미션 등록 실패.");
@@ -636,11 +634,7 @@
 				   success: function(response) {
 					   // 성공적으로 수정 시
 					   alert("정보가 수정되었습니다.");
-						   if (response.isCurrent) {
-								window.location.href = "/Mission/sightseeingCurrentList";
-						   } else {
-								window.location.href = "/Mission/sightseeingList";
-						   }
+					   window.location.href = "/Mission/sightseeingList";
 				   },
 				   error: function(xhr) {
 					   alert("미션 수정 실패.");
@@ -692,7 +686,6 @@
                                 </div>
                             </div>
 
-							<input type="hidden" name="current_check" th:value="${isCurrent}">
 
                             <!--begin::Form-->
                             <form class="k-form" name="dto" method="post" enctype="multipart/form-data">

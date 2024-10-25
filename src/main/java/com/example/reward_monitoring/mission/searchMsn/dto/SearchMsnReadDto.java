@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -44,13 +44,13 @@ public class SearchMsnReadDto {
     private String startTime;  // 시간 필드
 
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
-    private LocalDateTime  startAtMsn;
+    private ZonedDateTime startAtMsn;
 
     private String endAtMsnDate; // 날짜 필드
     private String endTime;  // 시간 필드
 
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
-    private LocalDateTime endAtMsn;
+    private ZonedDateTime endAtMsn;
 
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;
@@ -123,6 +123,7 @@ public class SearchMsnReadDto {
                 .msnAnswer(msnAnswer)
                 .msnAnswer2(msnAnswer2)
                 .dataType(dataType)
+                .imageData(imageData)
                 .imageName(imageName)
                 .build();
     }

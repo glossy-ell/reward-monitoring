@@ -54,8 +54,6 @@ public class AnswerMsn {
     @Schema(description = "광고주", example = "원픽")
     Advertiser advertiser;
 
-
-    @Builder.Default
     @Comment("광고주 상세")
     @Column(name = "advertiser_details")
     @Schema(description = "광고주 상세", example = "82652333318")
@@ -85,12 +83,12 @@ public class AnswerMsn {
     @Comment("미션 시작일시")
     @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
-    private LocalDateTime startAtMsn;
+    private ZonedDateTime startAtMsn;
 
     @Comment("미션 종료일시")
     @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
-    private LocalDateTime endAtMsn;
+    private ZonedDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
     @Column(name = "start_at", nullable = false)
@@ -283,8 +281,8 @@ public class AnswerMsn {
 
     @Builder
     public AnswerMsn(int missionDefaultQty,int missionDailyCap,Advertiser advertiser,String advertiserDetails
-    ,String missionTitle,String missionDetailTitle,String missionAnswer,String missionContent,LocalDateTime startAtMsn,
-                     LocalDateTime endAtMsn,LocalDate  startAtCap,LocalDate endAtCap,boolean missionActive,boolean missionExposure,
+    ,String missionTitle,String missionDetailTitle,String missionAnswer,String missionContent,ZonedDateTime startAtMsn,
+                     ZonedDateTime endAtMsn,LocalDate  startAtCap,LocalDate endAtCap,boolean missionActive,boolean missionExposure,
                      boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl1,String msnUrl2,String msnUrl3,String msnUrl4,
                      String msnUrl5,String msnUrl6,String msnUrl7,String msnUrl8,String msnUrl9,String msnUrl10,String imageName,String imagePath,Server server) {
 
@@ -319,17 +317,18 @@ public class AnswerMsn {
         this.imageName = imageName;
         this.server = server;
     }
-
     @PostLoad
     public void changeDTypeDateTime() {
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
         this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
         this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
 
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
         this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
         this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        bothAtMsnLocalDateTime= startAtMsn.format(formatter) + " ~ " + endAtMsn.format(formatter);
+        bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         bothAtCap= startAtCap.format(formatter) + " ~ " + endAtCap.format(formatter);

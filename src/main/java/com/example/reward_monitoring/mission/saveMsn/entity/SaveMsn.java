@@ -79,12 +79,12 @@ public class SaveMsn {
     @Comment("미션 시작일시")
     @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
-    private LocalDateTime startAtMsn;
+    private ZonedDateTime startAtMsn;
 
     @Comment("미션 종료일시")
     @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
-    private LocalDateTime endAtMsn;
+    private ZonedDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
     @Column(name = "start_at", nullable = false)
@@ -224,7 +224,7 @@ public class SaveMsn {
 
     @Builder
     public SaveMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails
-            ,String missionTitle,String missionDetailTitle,String missionContent,LocalDateTime startAtMsn,LocalDateTime endAtMsn
+            ,String missionTitle,String missionDetailTitle,String missionContent,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
             ,boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl,String msnFinalUrl,String searchKeyword,byte[]imageData,
                    String imageName,Server server) {
@@ -252,16 +252,19 @@ public class SaveMsn {
 
     @PostLoad
     public void changeDTypeDateTime() {
+        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
         this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
         this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
 
+        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
         this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
         this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        bothAtMsnLocalDateTime= startAtMsn.format(formatter) + " ~ " + endAtMsn.format(formatter);
+        bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         bothAtCap= startAtCap.format(formatter) + " ~ " + endAtCap.format(formatter);
+
     }
 }

@@ -6,10 +6,15 @@ import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnAbleDayDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchByConsumedDto;
+import com.example.reward_monitoring.mission.answerMsn.dto.quizStaticListSearchDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.dto.*;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import com.example.reward_monitoring.mission.saveMsn.repository.SaveMsnRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.repository.AnswerMsnDailyStatRepository;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.repository.SaveMsnDailyStatRepository;
 import jakarta.transaction.Transactional;
@@ -32,9 +37,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SaveMsnService {
-    private static final LocalDate TEMP_DATE = LocalDate.of(2000, 1, 1); // 예: 2000-01-01
-    private static final LocalDateTime TEMP_ZONED_DATE_TIME = TEMP_DATE.atStartOfDay();
-
+    private static final LocalDate TEMP_DATE = LocalDate.of(1111, 1, 1); // 예: 2000-01-01
+    private static final ZonedDateTime TEMP_ZONED_DATE_TIME = ZonedDateTime.of(TEMP_DATE.atStartOfDay(), ZoneId.systemDefault());
     @Autowired
     private SaveMsnRepository saveMsnRepository;
     @Autowired
@@ -58,21 +62,20 @@ public class SaveMsnService {
             saveMsn.setMissionTitle(dto.getMissionTitle());
         if(dto.getSearchKeyword()!=null)
             saveMsn.setSearchKeyword(dto.getSearchKeyword());
-
         if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(LocalDateTime.of(date,time));
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             saveMsn.setStartAtMsn(dto.getStartAtMsn());
+            saveMsn.setStartAtMsn(saveMsn.getStartAtMsn().plusHours(9));
         }
-
         if (dto.getEndAtMsn() != null) {
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(LocalDateTime.of(date,time));
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.of("Asia/Seoul")));
             saveMsn.setEndAtMsn(dto.getEndAtMsn());
+            saveMsn.setEndAtMsn(saveMsn.getEndAtMsn().plusHours(9));
         }
-
         if (dto.getStartAtCap() != null)
             saveMsn.setStartAtCap(dto.getStartAtCap());
         if (dto.getEndAtCap() != null)
@@ -81,23 +84,19 @@ public class SaveMsnService {
             boolean bool = dto.getMissionActive();
             saveMsn.setMissionActive(bool);
         }
-
         if (dto.getMissionExposure() != null) {
             boolean bool = dto.getMissionExposure();
             saveMsn.setMissionExposure(bool);
         }
-
         if (dto.getDupParticipation() != null) {
             boolean bool = dto.getDupParticipation();
             saveMsn.setDupParticipation(bool);
             if(!saveMsn.isDupParticipation())
                 saveMsn.setReEngagementDay(null);
         }
-
         if (dto.getReEngagementDay() != null) {
             saveMsn.setReEngagementDay(dto.getReEngagementDay());
         }
-
         if(dto.getImageName()!=null && !(dto.getImageName().isEmpty())){
             saveMsn.setImageName(dto.getImageName());
         }
@@ -115,13 +114,13 @@ public class SaveMsnService {
 
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(LocalDateTime.of(date,time));
+            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
         }
         if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
 
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(LocalDateTime.of(date,time));
+            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
         }
         if(dto.getUrl()!= null)
             serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
@@ -172,17 +171,19 @@ public class SaveMsnService {
 
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
-
-                LocalDateTime start_time = dto.getStartAtMsn().atStartOfDay();
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId).minusHours(9);
                 if(dto.getEndAtMsn() == null){
                     target_date = saveMsnRepository.findByStartDate(start_time);
                 }else{
-                    LocalDateTime end_time = dto.getEndAtMsn().atTime(23,59);
+                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
                     target_date = saveMsnRepository.findByBothDate(start_time,end_time);
                 }
             }
             else {
-                LocalDateTime end_time = dto.getEndAtMsn().atTime(23,59);
+                ZoneId zoneId = ZoneId.of("Asia/Seoul");
+                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).minusHours(9).plusHours(23).plusMinutes(59);
+
                 target_date = saveMsnRepository.findByEndDate(end_time);
             }
 
@@ -238,54 +239,27 @@ public class SaveMsnService {
             Set<Integer> idxSet = target_dup_Participation.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_dup_Participation = saveMsnRepository.findAll();
-            Set<Integer> idxSet = target_dup_Participation.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_mission_active != null) {
             Set<Integer> idxSet = target_mission_active.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsn-> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_mission_active = saveMsnRepository.findAll();
-            Set<Integer> idxSet = target_mission_active.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_mission_exposure != null) {
             Set<Integer> idxSet = target_mission_exposure.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_mission_exposure = saveMsnRepository.findAll();
-            Set<Integer> idxSet = target_mission_exposure.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
         if(target_data_Type != null) {
             Set<Integer> idxSet = target_data_Type.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
         if(target_advertiser != null) {
             Set<Integer> idxSet = target_advertiser.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
-        }else{
-            target_advertiser = saveMsnRepository.findAll();
-            Set<Integer> idxSet = target_advertiser.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
-            changed = true;
         }
-
-
-
         if(target_advertiser_details != null) {
             Set<Integer> idxSet = target_advertiser_details.stream().map(SaveMsn::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
@@ -296,7 +270,6 @@ public class SaveMsnService {
             result = result.stream().filter(saveMsn -> idxSet.contains(saveMsn.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
-
 
         if(!changed)
             result = new ArrayList<>();
@@ -491,7 +464,7 @@ public class SaveMsnService {
 
                 String startAtMsnValue = row.getCell(7).getStringCellValue();
                 try {
-                    dto.setStartAtMsn(LocalDateTime.parse(startAtMsnValue, formatter));
+                        dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(startAtMsnValue, formatter), ZoneId.systemDefault()));
                 } catch (DateTimeException e) {
                     dto.setStartAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
                 }
@@ -499,12 +472,11 @@ public class SaveMsnService {
             if (row.getCell(8) != null) {
                 String endAtMsnValue = row.getCell(8).getStringCellValue();
                 try {
-                    dto.setEndAtMsn(LocalDateTime.parse(endAtMsnValue, formatter));
+                    dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(endAtMsnValue, formatter), ZoneId.systemDefault()));
                 } catch (DateTimeException e) {
                     dto.setEndAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
                 }
             }
-
             if (row.getCell(9) != null) {
                 String startAtCapValue = row.getCell(9).getStringCellValue();
                 try {
@@ -894,7 +866,7 @@ public class SaveMsnService {
         if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
             target_mission_title = saveMsnRepository.findByMissionTitle(dto.getMissionTitle());
 
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         result = new ArrayList<>(saveMsnRepository.findByCurrentList(now));
 
 
@@ -925,7 +897,7 @@ public class SaveMsnService {
     }
 
     public boolean AllOffMissionCurrent() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         List<SaveMsn> saveMsns = saveMsnRepository.findByCurrentList(now);
         for (SaveMsn saveMsn : saveMsns) {
             saveMsn.setMissionActive(false); // isUsed 필드를 false로 설정

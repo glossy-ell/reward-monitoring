@@ -647,12 +647,8 @@
                                                 <div class="input-group">
                                                     <div class="dropdown bootstrap-select input-group-btn form-control k_">
 														<select name="serverUrl" class="form-control k_selectpicker" data-live-search="true" id="userServerIdx" tabindex="-98">
-															<option value="" th:selected="${affiliate == null}" hidden>서버 선택</option>
-															<option th:each="server : ${servers}"
-																	th:value="${server.serverUrl}"
-																	th:text="${server.serverUrl}"
-																	th:selected="${server.serverUrl == affiliate?.server?.serverUrl}"
-															></option>
+															<option value="" selected="selected" hidden>서버 선택</option>
+															<option th:each="server : ${servers}" th:value="${server.serverUrl}" th:text="${server.serverUrl}"></option>
 														</select>
 
 														<div class="dropdown-menu " role="combobox"><div class="bs-searchbox">
