@@ -489,25 +489,25 @@
 					statSightseeingContainer.empty();
 
 
-						if (response.saveMsns.length === 0) {
+						if (response.saveMsnDetailsStats.length === 0) {
 						//statSightseeing가 빈 리스트인 경우 메시지 추가
 							$('#statSightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
 						} else {
 							searched = true;
-							response.saveMsns.forEach(function(SightseeingTable,index) {
+							response.saveMsnDetailsStats.forEach(function(sightseeingTable,index) {
 							$('#statSightseeing').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + SightseeingTable.tx + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.mediaCompany?.idx + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.memberId + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.answerMsn?.idx  + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.url + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.point + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.checkPassive + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.abuseState + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.passivityCheck + '</td>' +
-									'<td class="text-center align-middle">' + SightseeingTable.ip + '</td>' +
-									'<td class="text-center align-middle">' + formatDateTime(SightseeingTable.registrationDate) + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.tx + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.mediaCompany?.idx + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.memberId + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.answerMsn?.idx  + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.url + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.point + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.checkPassive + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.abuseState + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.passivityCheck + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.ip + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(sightseeingTable.registrationDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -758,28 +758,25 @@
 												<tr th:if="${#lists.isEmpty(saveMsnDetailsStats)}">
 													<td colspan="12" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SightseeingTable,iterStat : ${saveMsnDetailsStats}">
-													<td th:text="${SightseeingTable?.TX}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.memberId}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable.saveMsn?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.url}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.point}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.passivityCheck}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.isAbuse}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.response}" class="text-center align-middle"></td>
-													<td th:text="${SightseeingTable?.ip}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(SightseeingTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="sightseeingTable,iterStat : ${saveMsnDetailsStats}">
+													<td th:text="${sightseeingTable?.TX}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.memberId}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable.saveMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.url}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.point}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.passivityCheck}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.isAbuse}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.response}" class="text-center align-middle"></td>
+													<td th:text="${sightseeingTable?.ip}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(sightseeingTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>
                                         
                                         <hr class="my-4">
 										<div class="intra-pagination-wrap">
-											<div class="intra-pagination">
-												<!-- 현재 페이지 표시 -->
-												<span th:text="${currentPage}"></span>
-											</div>
+
 											<!-- First 버튼 -->
 											<div class="intra-pagination" th:if="${currentPage > 1}">
 												<a th:href="@{/Statistics/statSightseeing/{page}(page=1)}">First</a>
@@ -790,9 +787,10 @@
 											</div>
 
 											<!-- 페이지 링크 생성 -->
-											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
-												<a th:href="@{/Statistics/statSightseeing/{page}(page=${i})}"
-												   th:classappend="${currentPage == i} ? 'on' : ''">
+											<div th:each="i : ${#numbers.sequence(startPage, endPage)}"
+												 th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+												 th:if="${i > 0}">
+												<a th:href="@{/Statistics/statSightseeing/{page}(page=${i})}">
 													<span th:text="${i}"></span>
 												</a>
 											</div>

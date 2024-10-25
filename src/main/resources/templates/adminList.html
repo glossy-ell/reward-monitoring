@@ -4,7 +4,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Admin</title>
-	<link rel="stylesheet" href="/css/conan_aside_color.css">
 	<!-- favicon -->
 	<link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
 
@@ -740,10 +739,7 @@
 
 										<hr class="my-4">
 										<div class="intra-pagination-wrap">
-											<div class="intra-pagination">
-												<!-- 현재 페이지 표시 -->
-												<span th:text="${currentPage}"></span>
-											</div>
+
 											<!-- First 버튼 -->
 											<div class="intra-pagination" th:if="${currentPage > 1}">
 												<a th:href="@{/Admin/adminList/{page}(page=1)}">First</a>
@@ -754,9 +750,10 @@
 											</div>
 
 											<!-- 페이지 링크 생성 -->
-											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}" th:if="${i > 0}">
-												<a th:href="@{/Admin/adminList/{page}(page=${i})}"
-												   th:classappend="${currentPage == i} ? 'on' : ''">
+											<div th:each="i : ${#numbers.sequence(1, totalPages)}"
+												 th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+												 th:if="${i > 0}">
+												<a th:href="@{/Admin/adminList/{page}(page=${i})}">
 													<span th:text="${i}"></span>
 												</a>
 											</div>

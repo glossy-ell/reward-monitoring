@@ -328,13 +328,13 @@ table caption {
 	font-size: 14px;
 }
 .intra-pagination.on {
-	padding :0 10px;
-	background: #a1a8c3;
+	padding :0 0px;
+	background: #ff9426;
 	color: white;
 }
 .intra-pagination-wrap > div > a {
 	padding: 0 10px;
-	color: #a1a8c3;
+	color: #5d5d5d;
 }
 
 /* 폼 인풋 */

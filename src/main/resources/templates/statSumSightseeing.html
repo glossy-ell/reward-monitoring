@@ -497,12 +497,12 @@
 							landingCountElement.innerText = 0;
 							partCountElement.innerText = 0;
 						} else {
-							response.saveMsnSumStats.forEach(function(SaveMsnSumStat,index) {
+							response.saveMsnSumStats.forEach(function(saveMsnSumStat,index) {
 							$('#statSumSightseeing').append(
 								'<tr>' +
-									'<td class="text-center align-middle">' + formatDateTime(SaveMsnSumStat.date) + '</td>' +
-									'<td class="text-center align-middle">' + SaveMsnSumStat.landingCnt + '</td>' +
-									'<td class="text-center align-middle">' + SaveMsnSumStat.partCnt + '</td>' +
+									'<td class="text-center align-middle">' + formatDateTime(saveMsnSumStat.date) + '</td>' +
+									'<td class="text-center align-middle">' + saveMsnSumStat.landingCnt + '</td>' +
+									'<td class="text-center align-middle">' + saveMsnSumStat.partCnt + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -712,10 +712,10 @@
 												<tr th:if="${#lists.isEmpty(saveMsnSumStats)}">
 													<td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SumSightseeingTable,iterStat : ${saveMsnSumStats}">
-													<td th:text="${SumSightseeingTable?.date}" class="text-center align-middle"></td>
-													<td th:text="${SumSightseeingTable?.LandingCnt}" class="text-center align-middle"></td>
-													<td th:text="${SumSightseeingTable?.PartCnt}" class="text-center align-middle"></td>
+												<tr th:each="sumSightseeingTable,iterStat : ${saveMsnSumStats}">
+													<td th:text="${sumSightseeingTable?.date}" class="text-center align-middle"></td>
+													<td th:text="${sumSightseeingTable?.LandingCnt}" class="text-center align-middle"></td>
+													<td th:text="${sumSightseeingTable?.PartCnt}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 											<tfoot>

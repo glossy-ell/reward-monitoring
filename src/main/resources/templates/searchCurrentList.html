@@ -492,7 +492,7 @@
 
 						if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우
 						// members가 빈 리스트인 경우 메시지 추가
-								$('#searchList').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+								$('#searchList').append('<tr><td colspan="19" class="text-center">검색 결과가 없습니다.</td></tr>');
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
 						} else {
 							searched = true;
@@ -1212,10 +1212,7 @@
 							</div>
 							<hr class="my-4">
 							<div class="intra-pagination-wrap">
-								<div class="intra-pagination">
-									<!-- 현재 페이지 표시 -->
-									<span th:text="${currentPage}"></span>
-								</div>
+
 								<!-- First 버튼 -->
 								<div class="intra-pagination" th:if="${currentPage > 1}">
 									<a th:href="@{/Mission/searchCurrentList/{page}(page=1)}">First</a>
@@ -1226,9 +1223,10 @@
 								</div>
 
 								<!-- 페이지 링크 생성 -->
-								<div class="intra-pagination" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:if="${i > 0}">
-									<a th:href="@{/Mission/searchCurrentList/{page}(page=${i})}"
-									   th:classappend="${currentPage == i} ? 'on' : ''">
+								<div th:each="i : ${#numbers.sequence(startPage, endPage)}"
+									 th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+									 th:if="${i > 0}">
+									<a th:href="@{/Mission/searchCurrentList/{page}(page=${i})}">
 										<span th:text="${i}"></span>
 									</a>
 								</div>

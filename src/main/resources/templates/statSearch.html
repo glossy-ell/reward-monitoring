@@ -488,24 +488,24 @@
                 const statSearchContainer = $('#statSearch'); // 회원 목록을 표시할 컨테이너 선택
                 statSearchContainer.empty();
 
-                if (response.searchMsnDailyStats.length === 0) {
+                if (response.searchMsnDetailsStats.length === 0) {
                 //statSearch가 빈 리스트인 경우 메시지 추가
                     $('#statSearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
                 } else {
 					searched = true;
-                    response.searchMsnDailyStats.forEach(function(SearchTable,index) {
+                    response.searchMsnDetailsStats.forEach(function(searchTable,index) {
                     $('#statSearch').append(
                         '<tr>' +
-							'<td class="text-center align-middle">' + SearchTable.tx + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.mediaCompany?.idx + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.memberId + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.searchMsn.idx + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.point + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.abuse + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.response + '</td>' +
-							'<td class="text-center align-middle">' + SearchTable.ip + '</td>' +
-							'<td class="text-center align-middle">' + formatDateTime(SearchTable.registrationDate) + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.tx + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.mediaCompany?.idx + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.memberId + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.searchMsn.idx + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.point + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.abuse + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.response + '</td>' +
+							'<td class="text-center align-middle">' + searchTable.ip + '</td>' +
+							'<td class="text-center align-middle">' + formatDateTime(searchTable.registrationDate) + '</td>' +
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -752,49 +752,47 @@
 												<tr th:if="${#lists.isEmpty(searchMsnDetailsStats)}">
 													<td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
 												</tr>
-												<tr th:each="SearchTable,iterStat : ${searchMsnDetailsStats}">
-													<td th:text="${SearchTable?.TX}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.mediaCompany?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.memberId}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable.searchMsn?.idx}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.point}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.isAbuse}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.response}" class="text-center align-middle"></td>
-													<td th:text="${SearchTable?.ip}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(SearchTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+												<tr th:each="searchTable,iterStat : ${searchMsnDetailsStats}">
+													<td th:text="${searchTable?.TX}" class="text-center align-middle"></td>
+													<td th:text="${searchTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+													<td th:text="${searchTable?.memberId}" class="text-center align-middle"></td>
+													<td th:text="${searchTable.searchMsn?.idx}" class="text-center align-middle"></td>
+													<td th:text="${searchTable?.point}" class="text-center align-middle"></td>
+													<td th:text="${searchTable?.isAbuse}" class="text-center align-middle"></td>
+													<td th:text="${searchTable?.response}" class="text-center align-middle"></td>
+													<td th:text="${searchTable?.ip}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(searchTable.registrationDate, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>
                                         
                                         <hr class="my-4">
 										<div class="intra-pagination-wrap">
-											<div class="intra-pagination">
-												<!-- 현재 페이지 표시 -->
-												<span th:text="${currentPage}"></span>
-											</div>
+
 											<!-- First 버튼 -->
 											<div class="intra-pagination" th:if="${currentPage > 1}">
-												<a th:href="@{/Mission/missionCsList/{page}(page=1)}">First</a>
+												<a th:href="@{/Statistics/statSearch/{page}(page=1)}">First</a>
 											</div>
 											<!-- Previous 버튼 -->
 											<div class="intra-pagination" th:if="${currentPage > 1}">
-												<a th:href="@{/Mission/missionCsList/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
+												<a th:href="@{/Statistics/statSearch/{page}(page=${currentPage - 1})}" rel="prev">Previous</a>
 											</div>
 
 											<!-- 페이지 링크 생성 -->
-											<div class="intra-pagination" th:each="i : ${#numbers.sequence(1, totalPages)}">
-												<a th:href="@{/Mission/missionCsList/{page}(page=${i})}"
-												   th:classappend="${currentPage == i} ? 'on' : ''">
+											<div th:each="i : ${#numbers.sequence(startPage, endPage)}"
+												 th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+												 th:if="${i > 0}">
+												<a th:href="@{/Statistics/statSearch/{page}(page=${i})}">
 													<span th:text="${i}"></span>
 												</a>
 											</div>
 											<!-- Next 링크 -->
 											<div class="intra-pagination" th:if="${currentPage < totalPages}">
-												<a th:href="@{/Mission/missionCsList/{page}(page=${currentPage + 1})}" rel="next">Next</a>
+												<a th:href="@{/Statistics/statSearch/{page}(page=${currentPage + 1})}" rel="next">Next</a>
 											</div>
 											<!-- End 링크 -->
 											<div class="intra-pagination" th:if="${currentPage < totalPages}">
-												<a th:href="@{/Mission/missionCsList/{page}(page=${totalPages})}">End</a>
+												<a th:href="@{/Statistics/statSearch/{page}(page=${totalPages})}">End</a>
 											</div>
 										</div>
 									</div>
