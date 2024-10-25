@@ -993,6 +993,7 @@ public class SearchMsnController{
 
         if(searchMsn==null)
             return "error/404";
+
         image = searchMsn.getImageName();
         model.addAttribute("searchMsn", searchMsn);
         model.addAttribute("advertisers", advertisers);
