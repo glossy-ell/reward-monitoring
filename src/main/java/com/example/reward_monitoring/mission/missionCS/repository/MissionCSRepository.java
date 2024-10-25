@@ -19,13 +19,13 @@ public interface MissionCSRepository extends JpaRepository<MissionCS,Integer> {
     public List<MissionCS> findByBothDate(@Param("startDate") LocalDateTime startDate, @Param("endDate")LocalDateTime endDate);
 
     @Query("SELECT m FROM MissionCS m WHERE m.firstRegDate > :startAt")
-    public List<MissionCS> findByStartAt(LocalDateTime startAt);
+    public List<MissionCS> findByStartAt(@Param("startAt")LocalDateTime startAt);
 
     @Query("SELECT m FROM MissionCS m WHERE m.firstRegDate < :endAt")
-    public List<MissionCS> findByEndAt(LocalDateTime endAt);
+    public List<MissionCS> findByEndAt(@Param("endAt")LocalDateTime endAt);
 
     public List<MissionCS> findByCsType(String type);
 
     @Query("SELECT m FROM MissionCS m  WHERE m.msnTitle LIKE %:keyword% ")
-    public List<MissionCS> findByMissionTitle(String keyword);
+    public List<MissionCS> findByMissionTitle(@Param("keyword") String keyword);
 }

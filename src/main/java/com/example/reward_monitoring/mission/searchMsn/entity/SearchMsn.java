@@ -3,8 +3,6 @@ package com.example.reward_monitoring.mission.searchMsn.entity;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.userServer.entity.Server;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +12,6 @@ import org.json.JSONArray;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -54,6 +51,7 @@ public class SearchMsn {
     @JoinColumn(name="advertiser", referencedColumnName = "advertiser" )
     Advertiser advertiser;
 
+    @Builder.Default
     @Comment("광고주 상세")
     @Column(name = "advertiser_details" )
     @Schema(description = "광고주 상세", example = "-")
@@ -78,12 +76,12 @@ public class SearchMsn {
     @Comment("미션 시작일시")
     @Column(name = "start_at_msn", nullable = false)
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
-    private ZonedDateTime startAtMsn;
+    private LocalDateTime startAtMsn;
 
     @Comment("미션 종료일시")
     @Column(name = "end_at_msn", nullable = false)
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
-    private ZonedDateTime endAtMsn;
+    private LocalDateTime endAtMsn;
 
     @Comment("데일리캡 시작일시")
     @Column(name = "start_at", nullable = false)
@@ -95,15 +93,12 @@ public class SearchMsn {
     @Schema(description = "데일리캡 종료일시", example = "2024-09-13")
     private LocalDate endAtCap;
 
-    @Transient
-    private LocalDateTime startAtMsnLocalDateTime;
+
     @Transient
     private LocalDate startAtMsnLocalDate;
     @Transient
     private LocalTime startAtMsnLocalTime;
 
-    @Transient
-    private LocalDateTime endAtMsnLocalDateTime;
     @Transient
     private LocalDate endAtMsnLocalDate;
     @Transient
@@ -227,7 +222,7 @@ public class SearchMsn {
 
     @Builder
     public SearchMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails
-            ,String missionTitle,String missionDetailTitle,String missionContent,ZonedDateTime startAtMsn,ZonedDateTime endAtMsn
+            ,String missionTitle,String missionDetailTitle,String missionContent,LocalDateTime startAtMsn,LocalDateTime endAtMsn
             ,LocalDate startAtCap,LocalDate endAtCap,boolean missionExposure
             ,boolean dupParticipation,int reEngagementDay,String exceptMedia,String msnUrl,String msnAnswer,String msnAnswer2,String searchKeyword,byte[]imageData,
                    String imageName,Server server) {
@@ -255,16 +250,14 @@ public class SearchMsn {
     }
     @PostLoad
     public void changeDTypeDateTime() {
-        this.startAtMsnLocalDateTime = this.startAtMsn.toLocalDateTime();
         this.startAtMsnLocalDate = this.startAtMsn.toLocalDate();
         this.startAtMsnLocalTime = this.startAtMsn.toLocalTime();
 
-        this.endAtMsnLocalDateTime = this.endAtMsn.toLocalDateTime();
         this.endAtMsnLocalDate = this.endAtMsn.toLocalDate();
         this.endAtMsnLocalTime = this.endAtMsn.toLocalTime();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        bothAtMsnLocalDateTime= startAtMsnLocalDateTime.format(formatter) + " ~ " + endAtMsnLocalDateTime.format(formatter);
+        bothAtMsnLocalDateTime= startAtMsn.format(formatter) + " ~ " + endAtMsn.format(formatter);
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         bothAtCap= startAtCap.format(formatter) + " ~ " + endAtCap.format(formatter);

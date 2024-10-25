@@ -158,6 +158,9 @@ public class MediaCompanyService {
         }
         if(dto.getIsActive() != null)
             target_is_active = mediaCompanyRepository.findByIsActive(dto.getIsActive());
+        else{
+            target_is_active = mediaCompanyRepository.findAll();
+        }
 
         if(dto.getOperationType()!=null && dto.getOperationType() != Type.none)
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());

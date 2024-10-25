@@ -661,8 +661,8 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 사용여부 =</option>
-																	<option value="1">사용함</option>
-																	<option value="0">사용안함</option>
+																	<option value="true">사용함</option>
+																	<option value="false">사용안함</option>
 																</select>
 
 																<div class="dropdown-menu " role="combobox">
@@ -731,7 +731,7 @@
                                                     <th class="text-center font-weight-bold">API키</th>													
                                                     <th class="text-center font-weight-bold">사용여부</th>
                                                     <th class="text-center font-weight-bold">등록일시</th>
-                                                    <th class="text-center font-weight-bold">매체 리포트</th>
+<!--                                                    <th class="text-center font-weight-bold">매체 리포트</th>-->
                                                     <th class="text-center font-weight-bold">수정</th>
 												</tr>
 											</thead>
@@ -749,9 +749,9 @@
 														<span class="color-red" th:if="${!affiliate.isActive}">사용안함</span>
 													</td>
 													<td th:text="${#temporals.format(affiliate.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
-													<td class="text-center align-middle">
-														<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>
-													</td>
+<!--													<td class="text-center align-middle">-->
+<!--														<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>-->
+<!--													</td>-->
 													<td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" th:onclick="'commGoDetail(' +${affiliate.idx} + ');'">수정</button></td>
 												</tr>
 											</tbody>

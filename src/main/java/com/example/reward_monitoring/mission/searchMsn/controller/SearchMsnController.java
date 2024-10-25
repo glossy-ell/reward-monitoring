@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +46,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -81,7 +82,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "500", description = "일치하는 미션을 찾을 수 없음")
     })
     public ResponseEntity<SearchMsn> edit(HttpSession session,
-                                          @PathVariable int idx,
+                                          @PathVariable(value ="idx")int idx,
                                           @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                           @RequestPart(value="dto",required = true) SearchMsnEditDto dto,
                                           HttpServletResponse response) throws IOException {
@@ -974,8 +975,8 @@ public class SearchMsnController{
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @GetMapping("/Mission/searchWrite/{idx}")
-    public String searchEdit(HttpSession session, Model model , @PathVariable int idx) {
+    @GetMapping({"/Mission/searchWrite/{idx}","/Mission/searchWrite/current/{idx}"})
+    public String searchEdit(HttpSession session, Model model , @PathVariable(required = true,value = "idx") int idx, HttpServletRequest request) {
 
         Member sessionMember = (Member) session.getAttribute("member");
         String image = null;
@@ -993,6 +994,13 @@ public class SearchMsnController{
 
         if(searchMsn==null)
             return "error/404";
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains("/Mission/searchWrite/current/")) {
+            model.addAttribute("isCurrent", true);
+        }else{
+            model.addAttribute("isCurrent", false);
+        }
+
         image = searchMsn.getImageName();
         model.addAttribute("searchMsn", searchMsn);
         model.addAttribute("advertisers", advertisers);
@@ -1027,7 +1035,7 @@ public class SearchMsnController{
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
 
         // 페이지 번호가 없으면 기본값 1 사용
@@ -1145,7 +1153,7 @@ public class SearchMsnController{
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
 
         // 페이지 번호가 없으면 기본값 1 사용
@@ -1372,7 +1380,7 @@ public class SearchMsnController{
     })
     public ResponseEntity<Void> excelDownloadCurrent(HttpServletResponse response)throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
-            ZonedDateTime now = ZonedDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
             List<SearchMsn> list = searchMsnRepository.findByCurrentList(now);
 
             Sheet sheet = searchMsnService.excelDownloadCurrent(list,wb);

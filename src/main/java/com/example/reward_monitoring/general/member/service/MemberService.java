@@ -276,6 +276,9 @@ public class MemberService {
         if(dto.getIsActive() != null){
             target_is_active = memberRepository.findByIsActive(dto.getIsActive());
         }
+        else{
+            target_is_active = memberRepository.findAll();
+        }
         if(dto.getId()!=null && !dto.getId().isEmpty()){
             target_id = memberRepository.findById_search(dto.getId());
         }

@@ -52,11 +52,6 @@ public class MemberController {
     private MemberService memberService;
 
 
-
-
-
-
-
     @Operation(summary = "관리자 정보 수정", description = "관리자 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 관리자의 IDX")
     @PostMapping("/member/edit/{idx}")

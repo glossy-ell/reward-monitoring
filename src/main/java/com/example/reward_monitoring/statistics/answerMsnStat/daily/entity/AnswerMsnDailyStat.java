@@ -60,12 +60,13 @@ public class AnswerMsnDailyStat {
     @Schema(description = "서버URL(외래키)")
     Server server;
 
-
+    @Builder.Default
     @Comment("랜딩 카운트")
     @Column(name = "landing_cnt")
     @Schema(description = "랜딩수")
     private int landingCnt=0;
 
+    @Builder.Default
     @Comment("참여 카운트")
     @Column(name = "part_cnt")
     @Schema(description = "카운트")

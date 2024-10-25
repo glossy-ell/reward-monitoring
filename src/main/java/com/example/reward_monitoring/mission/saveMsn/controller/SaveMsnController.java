@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,8 +38,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -71,7 +72,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "500", description = "일치하는 미션을 찾을 수 없음")
     })
     public ResponseEntity<SaveMsn> edit(HttpSession session,
-                                        @PathVariable int idx,
+                                        @PathVariable(value ="idx")int idx,
                                         @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                         @RequestPart(value="dto",required = true) SaveMsnEditDto dto,
                                         HttpServletResponse response) throws IOException {
@@ -508,7 +509,7 @@ public class SaveMsnController {
     })
     public ResponseEntity<Void> excelDownloadCurrent(HttpServletResponse response)throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
-            ZonedDateTime now = ZonedDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
             List<SaveMsn> list = saveMsnRepository.findByCurrentList(now);
 
             Sheet sheet = saveMsnService.excelDownloadCurrent(list,wb);
@@ -708,8 +709,8 @@ public class SaveMsnController {
         return "sightseeingWrite";
     }
 
-    @GetMapping("/Mission/sightseeingWrite/{idx}")
-    public String sightSeeingEdit(HttpSession session, Model model , @PathVariable int idx) {
+    @GetMapping({"/Mission/sightseeingWrite/{idx}","/Mission/sightseeingWrite/current/{idx}"})
+    public String sightSeeingEdit(HttpSession session, Model model , @PathVariable(required = true,value = "idx") int idx, HttpServletRequest request) {
 
         Member sessionMember = (Member) session.getAttribute("member");
         String image = null;
@@ -727,6 +728,14 @@ public class SaveMsnController {
 
         if(saveMsn==null)
             return "error/404";
+
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains("/Mission/sightseeingWrite/current/")) {
+            model.addAttribute("isCurrent", true);
+        }else{
+            model.addAttribute("isCurrent", false);
+        }
+
         image = saveMsn.getImageName();
 
         model.addAttribute("saveMsn", saveMsn);
@@ -1069,7 +1078,7 @@ public class SaveMsnController {
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<SaveMsn> saveMsns = saveMsnRepository.findByCurrentList(now);
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
@@ -1200,7 +1209,7 @@ public class SaveMsnController {
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<SaveMsn> saveMsns = saveMsnRepository.findByCurrentList(now);
         // 페이지 번호가 없으면 기본값 1 사용
         if (pageNumber == null || pageNumber < 1) {
