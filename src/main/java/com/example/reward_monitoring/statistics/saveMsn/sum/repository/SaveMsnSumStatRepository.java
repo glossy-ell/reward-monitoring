@@ -27,5 +27,5 @@ public interface SaveMsnSumStatRepository extends JpaRepository<SaveMsnSumStat,I
     public List<SaveMsnSumStat>  findByMediaCompany_CompanyName(String companyName);
 
     @Query("SELECT s FROM SaveMsnSumStat s WHERE s.date BETWEEN :past AND :currentTime")
-    public List<SaveMsnSumStat> findMonth(LocalDate currentTime, LocalDate past);
+    public List<SaveMsnSumStat> findMonth(@Param("currentTime")LocalDate currentTime, @Param("past") LocalDate past);
 }

@@ -25,12 +25,7 @@ public class AnswerMsnDailyService {
     @Autowired
     private AnswerMsnDailyStatRepository answerMsnDailyStatRepository;
 
-
-
-
-
-    public Sheet excelDownload(List<AnswerMsnDailyStat> list, Workbook wb){
-
+    public Sheet excelDownload(List<AnswerMsnDailyStat> list, Workbook wb) {
         int size = list.size();
         Sheet sheet = wb.createSheet("정답 미션 목록");
         Row row = null;
@@ -39,77 +34,110 @@ public class AnswerMsnDailyService {
         applyCellStyle(cellStyle);
         int rowNum = 0;
 
+        // 헤더 행 생성
         row = sheet.createRow(rowNum++);
-        cell = row.createCell(0);
+
+        cell = row.createCell(0); // 인덱스 0에서 1로 증가
+        cell.setCellValue("idx");
+        sheet.setColumnWidth(1, 16 * 256); // 인덱스 0에서 1로 증가
         cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1); // 인덱스 0에서 1로 증가
         cell.setCellValue("참여일");
+        sheet.setColumnWidth(1, 16 * 256); // 인덱스 0에서 1로 증가
         cell.setCellStyle(cellStyle);
-        sheet.setColumnWidth(3, 16 * 256); //8자
-        cell = row.createCell(1);
+
+        cell = row.createCell(2); // 인덱스 1에서 2로 증가
         cell.setCellValue("매체사 IDX");
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(2);
+
+        cell = row.createCell(3); // 인덱스 2에서 3로 증가
         cell.setCellValue("광고주 IDX");
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(3);
+
+        cell = row.createCell(4); // 인덱스 3에서 4로 증가
         cell.setCellValue("광고주 디테일");
-        sheet.setColumnWidth(3, 16 * 256); //8자
+        sheet.setColumnWidth(4, 16 * 256); // 인덱스 3에서 4로 증가
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(4);
+
+        cell = row.createCell(5); // 인덱스 4에서 5로 증가
         cell.setCellValue("광고주 상세");
-        sheet.setColumnWidth(4, 16 * 256);
-        cell.setCellStyle(cellStyle);
-        cell = row.createCell(5);
-        cell.setCellValue("미션 IDX");
-        cell.setCellStyle(cellStyle);
         sheet.setColumnWidth(5, 16 * 256);
-        cell = row.createCell(6);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(6); // 인덱스 5에서 6로 증가
+        cell.setCellValue("미션 IDX");
+        sheet.setColumnWidth(6, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(7); // 인덱스 6에서 7로 증가
         cell.setCellValue("미션 제목");
-        sheet.setColumnWidth(6, 20 * 256); //8자
+        sheet.setColumnWidth(7, 20 * 256); // 인덱스 6에서 7로 증가
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(7);
+
+        cell = row.createCell(8); // 인덱스 7에서 8로 증가
         cell.setCellValue("랜딩 카운트");
-        sheet.setColumnWidth(7, 20 * 256);
-        cell.setCellStyle(cellStyle);
-        cell = row.createCell(8);
-        cell.setCellValue("참여 카운트");
         sheet.setColumnWidth(8, 20 * 256);
         cell.setCellStyle(cellStyle);
 
+        cell = row.createCell(9); // 인덱스 8에서 9로 증가
+        cell.setCellValue("참여 카운트");
+        sheet.setColumnWidth(9, 20 * 256);
+        cell.setCellStyle(cellStyle);
 
-        for (AnswerMsnDailyStat answerMsnDailyStat: list) {
+        // 데이터 행 생성
+        for (AnswerMsnDailyStat answerMsnDailyStat : list) {
+
             row = sheet.createRow(rowNum++);
-            cell = row.createCell(0);
+            cell = row.createCell(0); // 인덱스 1에서 2로 증가
+            cell.setCellValue(answerMsnDailyStat.getIdx());
+            cell.setCellStyle(cellStyle);
+
+
+            cell = row.createCell(1); // 인덱스 0에서 1로 증가
             DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             cell.setCellValue(answerMsnDailyStat.getPartDate().format(formatter_));
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(1);
+
+            cell = row.createCell(2); // 인덱스 1에서 2로 증가
             cell.setCellValue(answerMsnDailyStat.getMediaCompany().getIdx());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(2);
+
+            cell = row.createCell(3); // 인덱스 2에서 3로 증가
             cell.setCellValue(answerMsnDailyStat.getAdvertiser().getIdx());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(3);
+
+            cell = row.createCell(4); // 인덱스 3에서 4로 증가
             cell.setCellValue(answerMsnDailyStat.getAnswerMsn().getAdvertiserDetails());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(4);
+
+            cell = row.createCell(5); // 인덱스 4에서 5로 증가
             cell.setCellValue(answerMsnDailyStat.getAnswerMsn().getIdx());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(5);
+
+            cell = row.createCell(6); // 인덱스 5에서 6로 증가
             cell.setCellValue(answerMsnDailyStat.getAnswerMsn().getMissionTitle());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(6);
+
+            cell = row.createCell(7); // 인덱스 6에서 7로 증가
             cell.setCellValue(answerMsnDailyStat.getLandingCnt());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(7);
+
+            cell = row.createCell(8); // 인덱스 7에서 8로 증가
             cell.setCellValue(answerMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
-            cell = row.createCell(8);
+
+            cell = row.createCell(9); // 인덱스 8에서 9로 증가
             cell.setCellValue(answerMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
         }
+
         return sheet;
     }
+
+
+
+
 
     private void applyCellStyle(CellStyle cellStyle) {
         XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;

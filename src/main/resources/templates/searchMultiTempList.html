@@ -513,6 +513,11 @@
         location.href = "/Mission/delTmpSearchAll";  
     }
 
+	function commGetForm() {
+        location.href = "/Mission/searchExcelForm";
+    }
+
+
 </script>
 <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
@@ -560,8 +565,10 @@
                                     <hr class="my-4">
                                     <!-- //버튼 영역 -->    
 
-									<div class="row">                                                                                      
-                                        <div class="col-12"><div class="card card-height__auto"><div class="card-header"><h4 class="card-title remove-mg"><i class="fas fa-search mx-2"></i>임시 등록된 미션이 없습니다.</h4> </div></div></div>									</div>
+									<div class="row">
+										<div>
+											<button id="formDownload" type="button" class="btn btn-secondary btn-main" onclick="commGetForm();">엑셀 업로드 양식 다운로드</button>
+										</div>
                                 </div>
 
                                 <hr class="my-4">

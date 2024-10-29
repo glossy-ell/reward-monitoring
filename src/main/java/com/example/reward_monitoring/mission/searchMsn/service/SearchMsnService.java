@@ -62,6 +62,8 @@ public class SearchMsnService {
             searchMsn.setMissionTitle(dto.getMissionTitle());
         if(dto.getMissionExpOrder()!=null)
             searchMsn.setMissionExpOrder(dto.getMissionExpOrder());
+        if(dto.getMissionContent()!=null && !(dto.getMissionContent().isEmpty()))
+            searchMsn.setMissionContent(dto.getMissionContent());
 
         if(dto.getSearchKeyword()!=null)
             searchMsn.setSearchKeyword(dto.getSearchKeyword());
@@ -1083,5 +1085,165 @@ public class SearchMsnService {
             result = new ArrayList<>();
 
         return result;
+    }
+
+    public Sheet downloadSearchForm(Workbook wb) {
+        Sheet sheet = wb.createSheet("정답 미션 목록");
+        Row row;
+        Cell cell;
+        CellStyle cellStyle = wb.createCellStyle();
+        applyCellStyle(cellStyle);
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("searchIdx(공란)");
+        sheet.setColumnWidth(0, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("기본 수량");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("데일리캡");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("광고주");
+        sheet.setColumnWidth(3, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue("광고주 상세");
+        sheet.setColumnWidth(4, 16 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(5);
+        cell.setCellValue("미션 제목");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(5, 16 * 256);
+
+        cell = row.createCell(6);
+        cell.setCellValue("미션 정답");
+        sheet.setColumnWidth(6, 30 * 256);
+
+        cell = row.createCell(7);
+        cell.setCellValue("검색 키워드");
+        sheet.setColumnWidth(7, 40 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(8);
+        cell.setCellValue("미션 시작일시");
+        sheet.setColumnWidth(8, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(9);
+        cell.setCellValue("미션 종료일시");
+        sheet.setColumnWidth(9, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(10);
+        cell.setCellValue("데일리캡 시작일");
+        sheet.setColumnWidth(10, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(11);
+        cell.setCellValue("데일리캡 종료일");
+        sheet.setColumnWidth(11, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(12);
+        cell.setCellValue("미션 사용여부");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(13);
+        cell.setCellValue("미션 노출여부");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(14);
+        cell.setCellValue("중복참여");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(15);
+        cell.setCellValue("재참여 가능일");
+        cell.setCellStyle(cellStyle);
+        sheet.setColumnWidth(15, 20 * 256);
+
+
+
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("100");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("10");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("시크릿 K");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue("0");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(5);
+        cell.setCellValue("title");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(6);
+        cell.setCellValue("answer");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(7);
+        cell.setCellValue("keyword");
+        cell.setCellStyle(cellStyle);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        cell = row.createCell(8);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("2024-01-01 00:00:00");
+
+        cell = row.createCell(9);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("2024-01-01 00:00:00");
+
+        cell = row.createCell(10);
+        cell.setCellStyle(cellStyle);
+        DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        cell.setCellValue("2024-01-01");
+
+        cell = row.createCell(11);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("2024-01-01");
+
+
+        cell = row.createCell(12);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("활성/비활성");
+
+
+        cell = row.createCell(13);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("노출/비노출");
+
+
+        cell = row.createCell(14);
+        cell.setCellStyle(cellStyle);
+       cell.setCellValue("중복 허용/중복 불가");
+
+
+        cell = row.createCell(15);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("5");
+
+
+        return sheet;
     }
 }

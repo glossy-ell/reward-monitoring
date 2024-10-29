@@ -364,7 +364,6 @@ public class MediaCompanyController {
         model.addAttribute("servers",server);
         return "affiliateWrite";
     }
-
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
         if (ex.getMessage().contains("Duplicate entry")) {
@@ -372,4 +371,75 @@ public class MediaCompanyController {
         }
         return new ResponseEntity<>("데이터베이스 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @GetMapping("/affiliateProfile/{idx}")
+    public String affiliateProfile(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+        MediaCompany mediaCompany = mediaCompanyService.getMediaCompany(idx);
+        List<Server> server = serverService.getServers();
+        if(mediaCompany==null)
+            return "error/404";
+        model.addAttribute("affiliate", mediaCompany);
+        model.addAttribute("servers",server);
+        return "affiliateProfile";
+    }
+
+    @GetMapping("/affiliateQuizDaily/{idx}")
+    public String affiliateQuizDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
+
+        return "affiliateQuizDaily";
+    }
+    @GetMapping("/affiliateQuizSum/{idx}")
+    public String affiliateQuizSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateQuizSum";
+    }
+    @GetMapping("/affiliateQuizCurrent/{idx}")
+    public String affiliateQuizList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateQuizCurrent";
+    }
+
+    @GetMapping("/affiliateSearchDaily/{idx}")
+    public String affiliateSearchDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
+
+        return "affiliateSearchDaily";
+    }
+    @GetMapping("/affiliateSearchSum/{idx}")
+    public String affiliateSearchSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateSearchSum";
+    }
+    @GetMapping("/affiliateSearchCurrent/{idx}")
+    public String affiliateSearchList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateSearchCurrent";
+    }
+
+    @GetMapping("/affiliateSightseeingDaily/{idx}")
+    public String affiliateSaveDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
+
+        return "affiliateSightseeingList";
+    }
+    @GetMapping("/affiliateSightseeingSum/{idx}")
+    public String affiliateSaveSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateSightseeingSum";
+    }
+    @GetMapping("/affiliateSightseeingCurrent/{idx}")
+    public String affiliateSaveList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
+
+        return "affiliateSightseeingCurrent";
+    }
+
 }

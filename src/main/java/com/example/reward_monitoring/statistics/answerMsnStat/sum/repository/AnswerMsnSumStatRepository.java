@@ -13,10 +13,10 @@ import java.util.List;
 public interface AnswerMsnSumStatRepository extends JpaRepository<AnswerMsnSumStat,Integer> {
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date > :startAt")
-    public List<AnswerMsnSumStat> findByStartAt(LocalDate startAt);
+    public List<AnswerMsnSumStat> findByStartAt(@Param("startAt") LocalDate startAt);
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date < :endAt")
-    public List<AnswerMsnSumStat> findByEndAt(LocalDate endAt);
+    public List<AnswerMsnSumStat> findByEndAt(@Param("endAt") LocalDate endAt);
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date BETWEEN :startAt AND :endAt")
     public List<AnswerMsnSumStat>  findByBothAt(@Param("startAt") LocalDate startAt, @Param("endAt") LocalDate endAt);
@@ -29,5 +29,5 @@ public interface AnswerMsnSumStatRepository extends JpaRepository<AnswerMsnSumSt
     public List<AnswerMsnSumStat>  findByMediaCompany_CompanyName(String companyName);
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date BETWEEN :past AND :currentTime")
-    public List<AnswerMsnSumStat> findMonth(LocalDate currentTime, LocalDate past);
+    public List<AnswerMsnSumStat> findMonth(@Param("currentTime")LocalDate currentTime,@Param("past")LocalDate past);
 }

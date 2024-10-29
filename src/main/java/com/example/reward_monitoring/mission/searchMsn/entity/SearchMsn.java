@@ -222,6 +222,7 @@ public class SearchMsn {
 
     @Comment("서버URL(외래키)")
     @ManyToOne()
+    @JoinColumn(name="server_url", referencedColumnName = "server_url", nullable = true)
     @Schema(description = "서버URL(외래키)")
     Server server;
 

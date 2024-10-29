@@ -507,17 +507,14 @@
 										'<td class="text-center align-middle">' +
 											'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + answerMsn.idx + ');">리포트</button>' +
 										'</td>' +
-										'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
-										'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.missionExpOrder + '</td>' +
 										'<td class="text-center align-middle">' + answerMsn.advertiser.advertiser + '</td>' +
 										'<td class="text-center align-middle">' + answerMsn.advertiserDetails + '</td>' +
-										'<td class="text-center align-middle">' + answerMsn.missionTitle + '</td>' +
-										'<td class="text-center align-middle">' +
-											'<a class="btn btn-outline-info btn-xs" ' +
-												'href="' + (answerMsn.msnUrl1 != null && answerMsn.msnUrl1.startsWith("http") ? answerMsn.msnUrl1 : "http://" + answerMsn.msnUrl1) + '" ' +
-												'target="_blank">랜딩 URL</a>' +
-										'</td>' +
-										'<td class="text-center align-middle">' + answerMsn.missionAnswer + '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.missionTitle+ '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.missionDefaultQty + '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.missionDailyCap + '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.totalLandingCnt + '</td>' +
+										'<td class="text-center align-middle">' + answerMsn.totalPartCnt + '</td>' +
 										'<td class="text-center align-middle">' + answerMsn.bothAtMsnLocalDateTime + '</td>' +
 										'<td class="text-center align-middle">' + answerMsn.bothAtCap + '</td>' +
 										'<td class="text-center align-middle">' +
@@ -549,9 +546,6 @@
 										'</td>' +
 										'<td class="text-center align-middle">' +
 											'<button class="btn btn-secondary btn-outline--main btn-xs" onclick="commGoDetail(' + answerMsn.idx + ');">수정</button>' +
-										'</td>' +
-										'<td class="text-center align-middle">' +
-											'<button class="btn btn-outline-danger btn-xs" onclick="hiddenMission(' + answerMsn.idx + ');">삭제</button>' +
 										'</td>' +
 									'</tr>'
 								);
@@ -1140,7 +1134,6 @@
 										</div>										
 									</form>
 									<div class="table-responsive"> <!--데이터 들어가는부분 -->
-										<div class="mb-3">Total : 23 Count (1/1)Page</div>
 										<table class="table table--slim table-bordered table-hover">
 											<thead class="thead-light">
 												<tr>                                               													

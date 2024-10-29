@@ -505,8 +505,9 @@
                                         '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.missionExpOrder + '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.advertiser.advertiser + '</td>' +
-                                        '<td class="text-center align-middle">' + saveMsn.advertiserDetail + '</td>' +
+                                        '<td class="text-center align-middle">' + saveMsn.advertiserDetails + '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.missionTitle + '</td>' +
+                                        '<td class="text-center align-middle">' + saveMsn.searchKeyword + '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.missionDefaultQty + '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.missionDailyCap + '</td>' +
                                         '<td class="text-center align-middle">' + saveMsn.totalLandingCnt + '</td>' +
@@ -634,7 +635,7 @@
             frm.submit();
         }
 
-           // 등록, 수정 버튼
+        // 등록, 수정 버튼
         function commGoDetail(idx) {
             if(idx){
                 window.location.href ='/Mission/sightseeingWrite/'+ idx;
@@ -1146,7 +1147,6 @@
 								</div>
 							</form>
 							<div class="table-responsive"> <!--데이터 들어가는부분 -->
-								<div class="mb-3">Total : 9 Count (1/1)Page</div>
 								<table class="table table--slim table-bordered table-hover">
 									<thead class="thead-light">
 									<tr>
@@ -1183,8 +1183,9 @@
 										</td>
 										<td class="text-center align-middle" th:text="${save.missionExpOrder}"></td>
 										<td class="text-center align-middle" th:text="${save.advertiser.advertiser}"></td>
-										<td class="text-center align-middle" th:text="${save.advertiserDetails}"></td>
+										<td class="text-center align-middle" th:text="${save.advertiserDetails}"></td>searchKeyword
 										<td class="text-center align-middle" th:text="${save.missionTitle}"></td>
+										<td class="text-center align-middle" th:text="${save.searchKeyword}"></td>
 										<td class="text-center align-middle" th:text="${save.missionDefaultQty}"></td>
 										<td class="text-center align-middle" th:text="${save.missionDailyCap}"></td>
 										<td class="text-center align-middle" th:text="${save.totalLandingCnt}"></td>

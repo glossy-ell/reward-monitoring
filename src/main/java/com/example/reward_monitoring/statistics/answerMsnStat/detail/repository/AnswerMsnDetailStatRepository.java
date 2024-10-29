@@ -14,10 +14,10 @@ import java.util.List;
 public interface AnswerMsnDetailStatRepository extends JpaRepository<AnswerMsnDetailsStat,Integer> {
 
     @Query("SELECT a FROM AnswerMsnDetailsStat a WHERE a.registrationDate > :startAt")
-    public List<AnswerMsnDetailsStat> findByStartAt(LocalDateTime startAt);
+    public List<AnswerMsnDetailsStat> findByStartAt(@Param("startAt")LocalDateTime startAt);
 
     @Query("SELECT a FROM AnswerMsnDetailsStat a WHERE a.registrationDate < :endAt")
-    public List<AnswerMsnDetailsStat> findByEndAt(LocalDateTime endAt);
+    public List<AnswerMsnDetailsStat> findByEndAt(@Param("endAt") LocalDateTime endAt);
 
     @Query("SELECT a FROM AnswerMsnDetailsStat a WHERE a.registrationDate BETWEEN :startAt AND :endAt")
     public List<AnswerMsnDetailsStat> findByBothAt(@Param("startAt") LocalDateTime startAt, @Param("endAt") LocalDateTime endAt);

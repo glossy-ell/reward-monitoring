@@ -505,8 +505,9 @@
 										'</td>' +
 										'<td class="text-center align-middle">' + searchMsn.missionExpOrder + '</td>' +
 										'<td class="text-center align-middle">' + searchMsn.advertiser.advertiser + '</td>' +
-										'<td class="text-center align-middle">' + searchMsn.advertiserDetail + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.advertiserDetails + '</td>' +
 										'<td class="text-center align-middle">' + searchMsn.missionTitle + '</td>' +
+										'<td class="text-center align-middle">' + searchMsn.searchKeyword + '</td>' +
 										'<td class="text-center align-middle">' + searchMsn.missionDefaultQty + '</td>' +
 										'<td class="text-center align-middle">' + searchMsn.missionDailyCap + '</td>' +
 										'<td class="text-center align-middle">' + searchMsn.totalLandingCnt + '</td>' +
@@ -1129,7 +1130,6 @@
 								</div>
 							</form>
 							<div class="table-responsive"> <!--데이터 들어가는부분 -->
-								<div class="mb-3">Total : 5 Count (1/1)Page</div>
 								<table class="table table--slim table-bordered table-hover">
 									<thead class="thead-light">
 									<tr>
@@ -1168,6 +1168,7 @@
 										<td class="text-center align-middle" th:text="${search.advertiser.advertiser}"></td>
 										<td class="text-center align-middle" th:text="${search.advertiserDetails}"></td>
 										<td class="text-center align-middle" th:text="${search.missionTitle}"></td>
+										<td class="text-center align-middle" th:text="${search.searchKeyword}"></td>
 										<td class="text-center align-middle" th:text="${search.missionDefaultQty}"></td>
 										<td class="text-center align-middle" th:text="${search.missionDailyCap}"></td>
 										<td class="text-center align-middle" th:text="${search.totalLandingCnt}"></td>

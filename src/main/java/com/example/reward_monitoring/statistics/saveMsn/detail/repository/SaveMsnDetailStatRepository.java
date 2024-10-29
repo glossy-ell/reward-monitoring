@@ -11,10 +11,10 @@ import java.util.List;
 public interface SaveMsnDetailStatRepository extends JpaRepository<SaveMsnDetailsStat,Integer> {
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate > :startAt")
-    public List<SaveMsnDetailsStat> findByStartAt(LocalDateTime startAt);
+    public List<SaveMsnDetailsStat> findByStartAt(@Param("startAt") LocalDateTime startAt);
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate < :endAt")
-    public List<SaveMsnDetailsStat> findByEndAt(LocalDateTime endAt);
+    public List<SaveMsnDetailsStat> findByEndAt(@Param("endAt") LocalDateTime endAt);
 
     @Query("SELECT s FROM SaveMsnDetailsStat s WHERE s.registrationDate BETWEEN :startAt AND :endAt")
     public List<SaveMsnDetailsStat> findByBothAt(@Param("startAt") LocalDateTime startAt, @Param("endAt") LocalDateTime endAt);

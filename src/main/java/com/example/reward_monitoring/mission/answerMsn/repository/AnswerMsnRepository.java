@@ -28,7 +28,7 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.endAtCap < :endCap")
     public List<AnswerMsn> findByEndAtCap(LocalDate endCap);
 
-    @Query("SELECT a FROM AnswerMsn a WHERE a.startAtCap > :startCap AND a.endAtCap < :endCap")
+    @Query("SELECT a FROM AnswerMsn a WHERE a.startAtCap >= :startCap AND a.endAtCap <= :endCap")
     public List<AnswerMsn> findByBothCap(@Param("startCap") LocalDate startCap, @Param("endCap") LocalDate endCap);
 
     @Query("SELECT a FROM AnswerMsn a WHERE a.missionActive = :missionActive")

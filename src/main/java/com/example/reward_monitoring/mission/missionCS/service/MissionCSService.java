@@ -4,6 +4,8 @@ package com.example.reward_monitoring.mission.missionCS.service;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.missionCS.dto.MissionCSSearchDto;
 import com.example.reward_monitoring.mission.missionCS.entity.MissionCS;
+import com.example.reward_monitoring.mission.missionCS.model.CSType;
+import com.example.reward_monitoring.mission.missionCS.model.MsnType;
 import com.example.reward_monitoring.mission.missionCS.repository.MissionCSRepository;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,19 +51,19 @@ public class MissionCSService {
 
         if(dto.getCsType() != null){
             if(dto.getCsType().equals("A"))
-                target_cs_type = missionCSRepository.findByCsType("정답제목확인");
+                target_cs_type = missionCSRepository.findByCsType(CSType.정답제목확인);
             else if(dto.getCsType().equals("U"))
-                target_cs_type = missionCSRepository.findByCsType("URL확인");
+                target_cs_type = missionCSRepository.findByCsType(CSType.URL확인);
             else if(dto.getCsType().equals("D"))
-                target_cs_type = missionCSRepository.findByCsType("데이터유실");
+                target_cs_type = missionCSRepository.findByCsType(CSType.데이터유실);
         }
         if(dto.getMsnType() != null){
             if(dto.getMsnType().equals("Q"))
-                target_cs_type = missionCSRepository.findByCsType("정답");
+                target_msn_type = missionCSRepository.findByMsnType(MsnType.정답);
             else if(dto.getMsnType().equals("R"))
-                target_cs_type = missionCSRepository.findByCsType("검색");
+                target_msn_type = missionCSRepository.findByMsnType(MsnType.검색);
             else if(dto.getMsnType().equals("S"))
-                target_cs_type = missionCSRepository.findByCsType("저장");
+                target_msn_type= missionCSRepository.findByMsnType(MsnType.저장);
         }
 
 
@@ -79,9 +81,6 @@ public class MissionCSService {
                 target_date = missionCSRepository.findByEndAt(dto.getEndAtMsn().atStartOfDay().plusHours(23).plusMinutes(59));
             }
 
-        }
-        if(dto.getMsnType() != null){
-            target_msn_type = missionCSRepository.findByMissionTitle(dto.getMsnType());
         }
         if(dto.getMsnTitle() != null){
             target_msn_title = missionCSRepository.findByMissionTitle(dto.getMsnTitle());

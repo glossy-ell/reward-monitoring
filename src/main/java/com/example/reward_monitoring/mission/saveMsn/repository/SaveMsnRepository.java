@@ -32,16 +32,16 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtCap > :startCap AND s.endAtCap < :endCap")
     public List<SaveMsn> findByBothCap(@Param("startCap") LocalDate startCap, @Param("endCap") LocalDate endCap);
 
-    @Query("SELECT s FROM SaveMsn s WHERE s.missionActive = : missionActive")
+    @Query("SELECT s FROM SaveMsn s WHERE s.missionActive = :missionActive")
     public List<SaveMsn> findByMissionActive(boolean missionActive);
 
-    @Query("SELECT s FROM SaveMsn s WHERE s.dupParticipation = : dupParticipation")
+    @Query("SELECT s FROM SaveMsn s WHERE s.dupParticipation = :dupParticipation")
     public List<SaveMsn> findByDupParticipation(boolean dupParticipation);
 
-    @Query("SELECT s FROM SaveMsn s WHERE s.missionExposure = : missionExposure")
+    @Query("SELECT s FROM SaveMsn s WHERE s.missionExposure = :missionExposure")
     public List<SaveMsn> findByMissionExposure(boolean missionExposure);
 
-    @Query("SELECT s FROM SaveMsn s WHERE s.dataType = : dataType")
+    @Query("SELECT s FROM SaveMsn s WHERE s.dataType = :dataType")
     public List<SaveMsn> findByDataType(boolean dataType);
 
     @Query("SELECT s FROM SaveMsn s  WHERE s.advertiser.advertiser LIKE %:keyword% ")
