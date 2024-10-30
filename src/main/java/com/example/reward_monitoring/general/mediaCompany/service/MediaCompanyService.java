@@ -2,6 +2,7 @@ package com.example.reward_monitoring.general.mediaCompany.service;
 
 
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyEditDto;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyProfileEditDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyReadDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
@@ -11,7 +12,6 @@ import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.RandomKeyGenerator;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -158,6 +158,9 @@ public class MediaCompanyService {
         }
         if(dto.getIsActive() != null)
             target_is_active = mediaCompanyRepository.findByIsActive(dto.getIsActive());
+        else{
+            target_is_active = mediaCompanyRepository.findAll();
+        }
 
         if(dto.getOperationType()!=null && dto.getOperationType() != Type.none)
             target_operation_type = mediaCompanyRepository.findByOperationType(dto.getOperationType());
@@ -200,5 +203,13 @@ public class MediaCompanyService {
             result = new ArrayList<>();
         return result;
 
+    }
+
+    public MediaCompany affiliateProfileEdit(int idx, MediaCompanyProfileEditDto dto) {
+        MediaCompany mediaCompany = mediaCompanyRepository.findByIdx(idx);
+        mediaCompany.setPassword(dto.getPassword());
+        mediaCompanyRepository.save(mediaCompany);
+
+        return mediaCompany;
     }
 }

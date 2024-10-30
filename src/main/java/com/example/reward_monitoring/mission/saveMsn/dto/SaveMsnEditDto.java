@@ -1,19 +1,14 @@
 package com.example.reward_monitoring.mission.saveMsn.dto;
 
-import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Comment;
-import org.json.JSONArray;
-
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+
 
 
 @Getter
@@ -48,13 +43,13 @@ public class SaveMsnEditDto {
     private String startTime;  // 시간 필드
 
     @Schema(description = "미션 시작일시", example = "2024-09-04 15:00:00")
-    private ZonedDateTime startAtMsn;
+    private LocalDateTime startAtMsn;
 
     private String endAtMsnDate; // 날짜 필드
     private String endTime;  // 시간 필드
 
     @Schema(description = "미션 종료일시", example = "2024-09-13 23:40:00")
-    private ZonedDateTime endAtMsn;
+    private LocalDateTime endAtMsn;
 
     @Schema(description = "데일리캡 시작일시", example = "2024-09-04 ")
     private LocalDate startAtCap;

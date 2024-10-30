@@ -168,13 +168,13 @@
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/affiliate/quizCurrentList" class="k-menu__link">
+                                        <a href="/affiliate/affiliateQuizSum" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/affiliate/quizMultiTempList" class="k-menu__link">
+                                        <a href="/affiliate/affiliateQuizCurrent" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">정답 미션 현재 리스트</span>
                                         </a>
@@ -192,19 +192,19 @@
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
                                 <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-                                    <a href="/Mission/quizList" class="k-menu__link">
+                                    <a href="/Mission/affiliateSearchDaily" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">검색 미션 데일리 통계</span>
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/quizCurrentList" class="k-menu__link">
+                                        <a href="/Mission/affiliateSearchSum" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/quizMultiTempList" class="k-menu__link">
+                                        <a href="/Mission/affiliateSearchCurrent" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">검색 미션 현재 리스트</span>
                                         </a>
@@ -222,19 +222,19 @@
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
                                 <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-                                    <a href="/Mission/quizList" class="k-menu__link">
+                                    <a href="/Mission/affiliateSightseeingList" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">저장 미션 데일리 통계</span>
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/quizCurrentList" class="k-menu__link">
+                                        <a href="/Mission/affiliateSightseeingSum" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/quizMultiTempList" class="k-menu__link">
+                                        <a href="/Mission/affiliateSightseeingCurrent" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">저장 미션 현재 리스트</span>
                                         </a>
@@ -250,13 +250,6 @@
                             <a href="/Profile/myProfileWrite" class="k-menu__link k-menu__toggle">
                                 <i class="k-menu__link-icon flaticon2-calendar-3 icon_active"></i>
                                 <span class="k-menu__link-text">내 프로필</span>
-                                <span class="k-menu__link-badge"></span>
-                            </a>
-                        </li>
-                        <li class="k-menu__item" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-                            <a href="/logout" class="k-menu__link k-menu__toggle">
-                                <i class="k-menu__link-icon flaticon2-power-button-symbol"></i>
-                                <span class="k-menu__link-text">로그아웃</span>
                                 <span class="k-menu__link-badge"></span>
                             </a>
                         </li>
@@ -279,43 +272,33 @@
                 return false; // 입력이 유효하면 false 반환
             }
 
-            function editMemberInfo() {
+            function editMemberInfo(idx) {
                 var frm = document.getElementById("writeFrm");
                 var formData = new FormData(frm);
-
                 var jsonData = {};
+
                 formData.forEach((value, key) => {
                     jsonData[key] = value; // FormData를 JSON 객체로 변환
                 });
 
-                // 모바일 번호 입력 체크
-                if (comInputCheck('text', 'adminMobile') === true) {
-                    alert("모바일 번호를 입력해 주세요.");
-                    document.getElementById('adminMobile').focus(); //
-                    return false;
+                  if (confirm("저장하시겠습니까?")) {
+                   // 신규 생성 요청
+                   $.ajax({
+                       url: `/affiliateProfile/edit/${idx}`,
+                       type: "POST",
+                       contentType: "application/json",
+                       data: JSON.stringify(jsonData),
+                       success: function(response) {
+                           alert("등록하였습니다.");
+                           window.location.href = "/affiliateProfile/edit/";
+                       },
+                       error: function(xhr) {
+                           alert("정보 수정 실패.");
+                       }
+                   });
+
                 }
 
-                if (confirm("저장하시겠습니까?")) {
-                    fetch("/Profile/myProfileWrite/edit", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json" // JSON 형식임을 명시
-                           },
-                           body: JSON.stringify(jsonData) // JSON 문자열로 변환
-                        // body: formData
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            // 성공적으로 수정된 경우
-                            window.location.href = "/"; // 이동할 URL
-                        } else {
-                            alert("회원 정보 수정에 실패했습니다.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                    });
-                }
             }
 
         </script>
@@ -340,52 +323,27 @@
                                 <!--begin::Form-->
                                 <form class="k-form" name="writeFrm" id="writeFrm" method="POST">
                                     <!--검색조건-->
-                                    <input type="hidden" name="adminIdx" id="adminIdx" th:value="${member.idx}">
-
 
                                     <div class="k-portlet__body">
                                         <div class="row">
                                             <div class="col-xl-4 col-md-6">
                                                 <div class="form-group">
-                                                    <label class="label__icon">관리자 아이디</label>
-                                                    <input type="text" class="form-control" name="adminId" id="adminId" th:value="${member.id}" placeholder="아이디를 입력해 주세요." disabled autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label__icon">관리자 이름</label>
-                                                    <input type="text" class="form-control" name="name" id="adminName" th:value=${member.name} placeholder="이름을 입력해 주세요." disabled="" autocomplete="off">
+                                                    <label class="label__icon">관리 아이디</label>
+                                                    <input type="text" class="form-control" name="adminId" id="adminId" th:value="${affiliate.companyID}" placeholder="아이디를 입력해 주세요." disabled autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="col-xl-4 col-md-6">
                                                 <div class="form-group">
                                                     <label class="label__icon">관리자 비밀번호</label>
-                                                    <input type="password" class="form-control" name="password" id="adminPw" value="" autocomplete="off">
+                                                    <input type="password" class="form-control" name="password" id="password" value="" autocomplete="off">
                                                     <span class="form-text text-danger">비밀번호 입력 시, 새로운 비밀번호로 수정됩니다.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label__icon">관리자 휴대폰 번호</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <select name="selectCountry" class="custom-select form-control" id="selectCountry">
-                                                                <option value="+852" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).HKG}">HKG +852</option>
-                                                                <option value="+81" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).JPN}">JPN +81</option>
-                                                                <option value="+82" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).KOR}">KOR +82</option>
-                                                                <option value="+1" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).USA}">USA +1</option>
-                                                                <option value="+86" th:selected="${member?.ctryCode == T(com.example.reward_monitoring.general.member.model.CtryCode).CHN}">CHN +86</option>
-                                                            </select>
-                                                        </div>
-                                                        <input type="text" name="phone" class="form-control" placeholder="모바일 번호를 입력해 주세요." id="adminMobile" th:value=${member.phone} autocomplete="off">
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="k-portlet__foot">
                                         <div class="k-form__actions">
-                                            <button type="button" class="btn btn-primary btn-main" onclick=" editMemberInfo();">저장</button>
+                                            <button type="button" class="btn btn-primary btn-main"  th:onclick="editMemberInfo(${affiliate.idx});">저장</button>
                                         </div>
                                     </div>
                                 </form>

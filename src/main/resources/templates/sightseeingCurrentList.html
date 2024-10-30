@@ -580,10 +580,8 @@
 
             // 페이지 링크 생성
             for (let i = startPage; i <= endPage; i++) {
-				paginationContainer.append(
-					'<div class="intra-pagination ' + (currentPage == i ? 'on' : '') + '"><a href="javascript:void(0);" onclick="commSearch(' + i + ')">' + i + '</a></div>'
-				);
-			}
+                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
+            }
 
             // Next 버튼
             if (currentPage < totalPages) {
@@ -622,23 +620,12 @@
             location.href = "/Mission/sightseeingMultiTempList";
         }
 
-        // 등록, 수정 버튼
-        function commGoDetail(idx) {
-            var frm = document.searchFrm;
 
-            frm.sightseeingIdx.value = "";
-
-            if(idx){
-                frm.sightseeingIdx.value = idx;
-            }
-            frm.action ='/Mission/sightseeingWrite';
-            frm.submit();
-        }
 
         // 등록, 수정 버튼
         function commGoDetail(idx) {
             if(idx){
-                window.location.href ='/Mission/sightseeingWrite/'+ idx;
+                window.location.href ='/Mission/sightseeingWrite/current/'+ idx;
                 return true;
             } else {
                 window.location.href ='/Mission/sightseeingWrite';

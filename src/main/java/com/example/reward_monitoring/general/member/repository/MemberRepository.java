@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
 
 
     @Query("SELECT m FROM Member m WHERE m.isActive = :isActive")
-    public List<Member> findByIsActive(boolean isActive);
+    public List<Member> findByIsActive(@Param("isActive") boolean isActive);
 
     @Query("SELECT m FROM Member m WHERE m.id LIKE %:keyword% ")
     public List<Member> findById_search(@Param("keyword") String keyword);

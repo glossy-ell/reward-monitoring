@@ -15,9 +15,9 @@ public class ErrorController {
 
         if (statusCode != null)
             if (statusCode == 404)
-                return "error404";
+                return "/Profile/myProfileWrite";
 
-        return "error";
+        return "/Profile/myProfileWrite";
     }
 
 }

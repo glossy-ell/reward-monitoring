@@ -32,7 +32,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SearchMsnService {
-
+    private static final LocalDate TEMP_DATE = LocalDate.of(2000, 1, 1); // 예: 2000-01-01
+    private static final LocalDateTime TEMP_ZONED_DATE_TIME = TEMP_DATE.atStartOfDay();
     @Autowired
     private SearchMsnRepository searchMsnRepository;
     @Autowired
@@ -71,17 +72,15 @@ public class SearchMsnService {
         if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(date.atTime(time).atZone(ZoneId.of("Asia/Seoul")));
+            dto.setStartAtMsn(LocalDateTime.of(date,time));
             searchMsn.setStartAtMsn(dto.getStartAtMsn());
-            searchMsn.setStartAtMsn(searchMsn.getStartAtMsn().plusHours(9));
         }
-        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
 
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(date.atTime(time).atZone(ZoneId.of("Asia/Seoul")));
+            dto.setEndAtMsn(LocalDateTime.of(date,time));
             searchMsn.setEndAtMsn(dto.getEndAtMsn());
-            searchMsn.setEndAtMsn(searchMsn.getEndAtMsn().plusHours(9));
         }
 
         if (dto.getStartAtCap() != null)
@@ -139,17 +138,17 @@ public class SearchMsnService {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
 
         if (dto.getStartAtMsnDate() != null && dto.getStartTime() != null) {
-
             LocalDate date = LocalDate.parse(dto.getStartAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getStartTime(), timeFormatter);
-            dto.setStartAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+            dto.setStartAtMsn(LocalDateTime.of(date,time));
         }
-        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
 
+        if (dto.getEndAtMsnDate() != null && dto.getEndTime() != null) {
             LocalDate date = LocalDate.parse(dto.getEndAtMsnDate(), dateFormatter);
             LocalTime time = LocalTime.parse(dto.getEndTime(), timeFormatter);
-            dto.setEndAtMsn(ZonedDateTime.of(date.atTime(time), ZoneId.systemDefault()));
+            dto.setEndAtMsn(LocalDateTime.of(date,time));
         }
+
         if(dto.getUrl()!= null)
             serverEntity = serverRepository.findByServerUrl_(dto.getUrl());
         else
@@ -209,22 +208,19 @@ public class SearchMsnService {
         if(dto.getStartAtMsn() != null || dto.getEndAtMsn() != null){
             if(dto.getStartAtMsn() != null){
 
-                ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartAtMsn().atStartOfDay(zoneId);
+
+                LocalDateTime start_time = dto.getStartAtMsn().atStartOfDay();
                 if(dto.getEndAtMsn() == null){
                     target_date = searchMsnRepository.findByStartDate(start_time);;
                 }else{
-                    ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
+                    LocalDateTime end_time = dto.getEndAtMsn().atTime(23,59);
                     target_date = searchMsnRepository.findByBothDate(start_time,end_time);
                 }
-
             }
             else {
-                ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndAtMsn().atStartOfDay(zoneId).plusHours(23).plusMinutes(59);
+                LocalDateTime end_time = dto.getEndAtMsn().atTime(23,59);
                 target_date = searchMsnRepository.findByEndDate(end_time);
             }
-
         }
 
         if(dto.getStartAtCap() != null || dto.getEndAtCap() != null){
@@ -553,17 +549,41 @@ public class SearchMsnService {
             if(row.getCell(7)!=null)
                 dto.setSearchKeyword(row.getCell(7).getStringCellValue());
 
-            if(row.getCell(8)!=null)
-                dto.setStartAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(8).getStringCellValue(),formatter),ZoneId.systemDefault()));
+            if (row.getCell(8) != null) {
 
-            if(row.getCell(9)!=null)
-                dto.setEndAtMsn(ZonedDateTime.of(LocalDateTime.parse(row.getCell(9).getStringCellValue(),formatter),ZoneId.systemDefault()));
+                String startAtMsnValue = row.getCell(7).getStringCellValue();
+                try {
+                    dto.setStartAtMsn(LocalDateTime.parse(startAtMsnValue, formatter));
+                } catch (DateTimeException e) {
+                    dto.setStartAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
+            if (row.getCell(9) != null) {
+                String endAtMsnValue = row.getCell(8).getStringCellValue();
+                try {
+                    dto.setEndAtMsn(LocalDateTime.parse(endAtMsnValue, formatter));
+                } catch (DateTimeException e) {
+                    dto.setEndAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
 
-            if(row.getCell(10)!=null)
-                dto.setStartAtCap(LocalDate.parse(row.getCell(10).getStringCellValue(),formatter_date));
 
-            if(row.getCell(11)!=null)
-                dto.setEndAtCap(LocalDate.parse(row.getCell(11).getStringCellValue(),formatter_date));
+            if (row.getCell(10) != null) {
+                String startAtCapValue = row.getCell(9).getStringCellValue();
+                try {
+                    dto.setStartAtCap(LocalDate.parse(startAtCapValue, formatter_date));
+                } catch (DateTimeException e) {
+                    dto.setStartAtCap(TEMP_DATE); // 임시 날짜 설정
+                }
+            }
+            if (row.getCell(11) != null) {
+                String endAtCapValue = row.getCell(10).getStringCellValue();
+                try {
+                    dto.setEndAtCap(LocalDate.parse(endAtCapValue, formatter_date));
+                } catch (DateTimeException e) {
+                    dto.setEndAtCap(TEMP_DATE); // 임시 날짜 설정
+                }
+            }
 
             if(Objects.equals(row.getCell(12).getStringCellValue(), "활성"))
                 dto.setMissionActive(true);
@@ -693,7 +713,7 @@ public class SearchMsnService {
         if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
             target_mission_title = searchMsnRepository.findByMissionTitle(dto.getMissionTitle());
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         result = new ArrayList<>(searchMsnRepository.findByCurrentList(now));
 
 
@@ -963,7 +983,7 @@ public class SearchMsnService {
     }
 
     public boolean AllOffMissionCurrent() {
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<SearchMsn> searchMsns = searchMsnRepository.findByCurrentList(now);
         for (SearchMsn searchMsn : searchMsns) {
             searchMsn.setMissionActive(false); // isUsed 필드를 false로 설정

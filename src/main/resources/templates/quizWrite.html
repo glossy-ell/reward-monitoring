@@ -688,7 +688,7 @@
                            } else {
                                // 정보 수정 요청
                                $.ajax({
-                                   url: `/Mission/quizWrite/edit/${idx}`,
+                                   url: `/Mission/quizWrite/${idx}`,
                                    type: "POST",
                                    processData: false,
                                    contentType: false,
@@ -696,7 +696,12 @@
                                    success: function(response) {
                                        // 성공적으로 수정 시
                                        alert("정보가 수정되었습니다.");
-                                       window.location.href = "/Mission/quizList";
+                                       var currentUrl = window.location.href;
+                                        if (currentUrl.includes("current")) {
+                                            window.location.href = "/Mission/quizCurrentList";
+                                        } else {
+                                            window.location.href = "/Mission/quizList";
+                                        }
                                    },
                                    error: function(xhr) {
                                        alert("미션 수정 실패.");

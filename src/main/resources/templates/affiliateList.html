@@ -505,7 +505,7 @@
 						'<td class="text-center align-middle">' + (affiliate.active ? '<span class="color-blue">사용함</span>' : '<span class="color-red">사용안함</span>') + '</td>' +
 						'<td class="text-center align-middle">' +  formatDateTime(affiliate.createdAtLocalDateTime) + '</td>' +
 						'<td class="text-center align-middle">' +
-							'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>' +
+							'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + affiliate.idx + ')">매체 리포트</button>' +
 						'</td>' +
 						'<td class="text-center align-middle">' +
 							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + affiliate.idx + ');">수정</button>' +
@@ -540,9 +540,7 @@
 
 		// 페이지 링크 생성
 		for (let i = startPage; i <= endPage; i++) {
-			paginationContainer.append(
-				'<div class="intra-pagination ' + (currentPage == i ? 'on' : '') + '"><a href="javascript:void(0);" onclick="commSearch(' + i + ')">' + i + '</a></div>'
-			);
+			paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + i + ')" class="' + (currentPage == i ? 'on' : '') + '">' + i + '</a></div>');
 		}
 
 		// Next 버튼
@@ -591,13 +589,13 @@
         }
     }
 
-    function commGoReport(affiliateId) {
-        var popUrl = "https://ocb-media.srk.co.kr/Auth/actAdminLogin?affiliateId="+affiliateId+"&adminKey=bHfk43PuKP6YeN7";
+    function commGoReport(idx) {
+        var popUrl = '/Affiliate/affiliateProfile/' + idx;
 
         var width = 2000;
         var height = 1200;
 
-        winPopupCenter(popUrl, "매체 리포트 리포트", width, height, 'yes', 'yes');
+        winPopupCenter(popUrl, "매체 리포트", width, height, 'yes', 'yes');
     }
 
 	function updateInputName() {
@@ -663,8 +661,8 @@
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
 																<select name="isActive" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
 																	<option value="">= 사용여부 =</option>
-																	<option value="1">사용함</option>
-																	<option value="0">사용안함</option>
+																	<option value="true">사용함</option>
+																	<option value="false">사용안함</option>
 																</select>
 
 																<div class="dropdown-menu " role="combobox">
@@ -733,7 +731,7 @@
                                                     <th class="text-center font-weight-bold">API키</th>													
                                                     <th class="text-center font-weight-bold">사용여부</th>
                                                     <th class="text-center font-weight-bold">등록일시</th>
-                                                    <th class="text-center font-weight-bold">매체 리포트</th>
+                                                   <th class="text-center font-weight-bold">매체 리포트</th>
                                                     <th class="text-center font-weight-bold">수정</th>
 												</tr>
 											</thead>
@@ -752,7 +750,7 @@
 													</td>
 													<td th:text="${#temporals.format(affiliate.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 													<td class="text-center align-middle">
-														<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(&quot;secretk&quot;)">매체 리포트</button>
+														<button class="btn btn-outline-accent btn-xs" th:onclick="'commGoReport(' + ${affiliate.idx} + ')'">매체 리포트</button>
 													</td>
 													<td class="text-center align-middle"><button class="btn btn-outline--main btn-xs" th:onclick="'commGoDetail(' +${affiliate.idx} + ');'">수정</button></td>
 												</tr>

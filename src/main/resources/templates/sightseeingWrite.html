@@ -618,6 +618,7 @@
 				   success: function(response) {
 					   alert("등록하였습니다.");
 					   window.location.href = "/Mission/sightseeingList";
+
 				   },
 				   error: function(xhr) {
 					   alert("미션 등록 실패.");
@@ -634,7 +635,14 @@
 				   success: function(response) {
 					   // 성공적으로 수정 시
 					   alert("정보가 수정되었습니다.");
-					   window.location.href = "/Mission/sightseeingList";
+						var currentUrl = window.location.href;
+
+						// URL에 'current'가 포함되어 있는지 확인
+						if (currentUrl.includes("current")) {
+							window.location.href = "/Mission/sightseeingCurrentList";
+						} else {
+							window.location.href = "/Mission/sightseeingList";
+						}
 				   },
 				   error: function(xhr) {
 					   alert("미션 수정 실패.");
@@ -685,6 +693,7 @@
                                     <h3 class="k-portlet__head-title font-weight-bold">저장 미션 등록 &amp; 수정</h3>
                                 </div>
                             </div>
+
 
 
                             <!--begin::Form-->

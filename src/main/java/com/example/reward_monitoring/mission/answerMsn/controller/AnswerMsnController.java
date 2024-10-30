@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -70,7 +71,7 @@ public class AnswerMsnController {
 
     @Operation(summary = "정답미션 정보 수정", description = "정답미션 정보를 수정합니다")
     @Parameter(name = "idx", description = "수정할 정답미션의 IDX")
-    @PostMapping("/Mission/quizWrite/edit/{idx}")
+    @PostMapping("/Mission/quizWrite/{idx}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
@@ -78,7 +79,7 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "500", description = "일치하는 미션을 찾을 수 없음/이미지 업로드 오류")
     })
     public ResponseEntity<AnswerMsn> edit(HttpSession session,
-                                          @PathVariable int idx,
+                                          @PathVariable(value ="idx") int idx,
                                           @RequestPart(value ="file",required = false)MultipartFile multipartFile,
                                           @RequestPart(value="dto",required = true) AnswerMsnEditDto dto,
                                           HttpServletResponse response) throws IOException {
@@ -698,8 +699,8 @@ public class AnswerMsnController {
 
     }
 
-    @GetMapping("/Mission/quizWrite/{idx}")
-    public String quizEdit(HttpSession session, Model model , @PathVariable int idx) {
+    @GetMapping({"/Mission/quizWrite/{idx}","/Mission/quizWrite/current/{idx}"})
+    public String quizEdit(HttpSession session, Model model , @PathVariable(required = true,value = "idx") int idx, HttpServletRequest request) {
 
         Member sessionMember = (Member) session.getAttribute("member");
         String image = null;
@@ -718,6 +719,7 @@ public class AnswerMsnController {
         if(answerMsn==null)
             return "error/404";
         image = answerMsn.getImageName();
+
 
         model.addAttribute("answerMsn", answerMsn);
         model.addAttribute("advertisers", advertisers);
@@ -1065,7 +1067,7 @@ public class AnswerMsnController {
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<AnswerMsn> answerMsns = answerMsnRepository.findByCurrentList(now);
 
         // 페이지 번호가 없으면 기본값 1 사용
@@ -1184,7 +1186,7 @@ public class AnswerMsnController {
             return "error/404";
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         List<AnswerMsn> answerMsns = answerMsnRepository.findByCurrentList(now);
 
         // 페이지 번호가 없으면 기본값 1 사용
@@ -1230,7 +1232,7 @@ public class AnswerMsnController {
     })
     public ResponseEntity<Void> excelDownloadCurrent(HttpServletResponse response)throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
-            ZonedDateTime now = ZonedDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
             List<AnswerMsn> list = answerMsnRepository.findByCurrentList(now);
 
             Sheet sheet = answerMsnService.excelDownloadCurrent(list,wb);
@@ -1528,7 +1530,21 @@ public class AnswerMsnController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
     })
-    public ResponseEntity<Void> reportExcelDownload(@PathVariable(required = true,value = "idx")int idx,HttpServletResponse response)throws IOException {
+    public ResponseEntity<Void> reportExcelDownload(@PathVariable(required = true,value = "idx")int idx,HttpSession session,HttpServletResponse response)throws IOException {
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         try (Workbook wb = new XSSFWorkbook()) {
 
             LocalDate currentTime = LocalDate.now();
@@ -1537,6 +1553,51 @@ public class AnswerMsnController {
             Sheet sheet = answerMsnService.reportExcelDownload(list,wb);
             if(sheet !=null) {
                 String fileName = idx +"번 정답 리포트.xlsx";
+                fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+    @Operation(summary = "엑셀 양식 다운로드", description = "정답미션 업로드 양식 다운로드")
+    @GetMapping("/Mission/quizExcelForm")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "예기치않은 오류발생")
+    })
+    public ResponseEntity<Void> excelFormDownload(HttpSession session,HttpServletResponse response)throws IOException {
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }//데이터 없음
+
+        if(member.isNauthAnswerMsn()) { // 비권한 활성화시
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try (Workbook wb = new XSSFWorkbook()) {
+
+            Sheet sheet = answerMsnService.downloadQuizForm(wb);
+            if(sheet !=null) {
+                String fileName = "정답 미션 리스트.xlsx";
                 fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");

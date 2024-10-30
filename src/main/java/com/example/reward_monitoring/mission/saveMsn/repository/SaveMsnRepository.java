@@ -1,13 +1,12 @@
 package com.example.reward_monitoring.mission.saveMsn.repository;
 
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.saveMsn.entity.SaveMsn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
@@ -15,13 +14,13 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
 
 
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtMsn > :startDate")
-    public List<SaveMsn> findByStartDate(ZonedDateTime startDate);
+    public List<SaveMsn> findByStartDate(@Param("startDate")LocalDateTime startDate);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.endAtMsn < :endDate")
-    public List<SaveMsn> findByEndDate(@Param("endDate") ZonedDateTime endDate);
+    public List<SaveMsn> findByEndDate(@Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtMsn > :startDate AND s.endAtMsn < :endDate")
-    public List<SaveMsn> findByBothDate(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate);
+    public List<SaveMsn> findByBothDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtCap > :startCap")
     public List<SaveMsn> findByStartAtCap(LocalDate startCap);
@@ -58,7 +57,7 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
 
 
     @Query("SELECT s FROM SaveMsn s WHERE s.endAtMsn > :currentTime AND s.dataType = true  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0)")
-    public List<SaveMsn> findByCurrentList(@Param("currentTime") ZonedDateTime currentTime);
+    public List<SaveMsn> findByCurrentList(@Param("currentTime") LocalDateTime currentTime);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.dataType = true")
     public List<SaveMsn> findAllMission();

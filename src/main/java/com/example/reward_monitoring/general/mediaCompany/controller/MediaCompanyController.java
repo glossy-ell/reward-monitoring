@@ -2,6 +2,7 @@ package com.example.reward_monitoring.general.mediaCompany.controller;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyEditDto;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyProfileEditDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyReadDto;
 import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDto;
 import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
@@ -9,6 +10,7 @@ import com.example.reward_monitoring.general.mediaCompany.repository.MediaCompan
 import com.example.reward_monitoring.general.mediaCompany.service.MediaCompanyService;
 
 
+import com.example.reward_monitoring.general.member.dto.MemberEditDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.model.Auth;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
@@ -32,6 +34,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Controller
@@ -394,49 +398,83 @@ public class MediaCompanyController {
         return "affiliateProfile";
     }
 
-    @GetMapping("/affiliateQuizDaily/{idx}")
+
+    @Operation(summary = "관리자 정보 수정", description = "관리자 정보를 수정합니다")
+    @Parameter(name = "/affiliateProfile/edit/{idx}", description = "수정할 관리자의 IDX")
+    @PostMapping("/{idx}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 수정됨"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
+
+    })
+    public ResponseEntity<MediaCompany> affiliateProfileEdit(HttpSession session, @PathVariable("idx") int idx, @RequestBody MediaCompanyProfileEditDto dto, HttpServletResponse response){
+        Member sessionMember= (Member) session.getAttribute("member");
+        if(sessionMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } // 세션만료
+
+        Member member =memberRepository.findById( sessionMember.getId());
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }//데이터 없음
+
+        if(member.getAuthMediacompany()== Auth.READ) // 읽기 권한만 존재할경우
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        MediaCompany edited = mediaCompanyService.affiliateProfileEdit(idx,dto);
+        if(edited == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(edited);
+    }
+
+
+
+    @GetMapping({"/affiliateQuizDaily","/affiliateQuizDaily/{idx}"})
     public String affiliateQuizDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
 
         return "affiliateQuizDaily";
     }
-    @GetMapping("/affiliateQuizSum/{idx}")
+    @GetMapping({"/affiliateQuizSum","/affiliateQuizSum/{idx}"})
     public String affiliateQuizSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateQuizSum";
     }
-    @GetMapping("/affiliateQuizCurrent/{idx}")
+    @GetMapping({"/affiliateQuizCurrent","/affiliateQuizCurrent/{idx}"})
     public String affiliateQuizList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateQuizCurrent";
     }
 
-    @GetMapping("/affiliateSearchDaily/{idx}")
+    @GetMapping({"/affiliateSearchDaily","/affiliateSearchDaily/{idx}"})
     public String affiliateSearchDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
 
         return "affiliateSearchDaily";
     }
-    @GetMapping("/affiliateSearchSum/{idx}")
+    @GetMapping({"/affiliateSearchSum","/affiliateSearchSum/{idx}"})
     public String affiliateSearchSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateSearchSum";
     }
-    @GetMapping("/affiliateSearchCurrent/{idx}")
+    @GetMapping({"/affiliateSearchCurrent","/affiliateSearchCurrent/{idx}"})
     public String affiliateSearchList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateSearchCurrent";
     }
 
-    @GetMapping("/affiliateSightseeingDaily/{idx}")
+    @GetMapping({"/affiliateSightseeingDaily","/affiliateSightseeingDaily/{idx}"})
     public String affiliateSaveDaily(HttpSession session, @PathVariable(required = true, value = "idx") int idx, Model model) {
 
         return "affiliateSightseeingList";
     }
-    @GetMapping("/affiliateSightseeingSum/{idx}")
+    @GetMapping({"/affiliateSightseeingSum","/affiliateSightseeingSum/{idx}"})
     public String affiliateSaveSum(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateSightseeingSum";
     }
-    @GetMapping("/affiliateSightseeingCurrent/{idx}")
+    @GetMapping({"/affiliateSightseeingCurrent","/affiliateSightseeingCurrent/{idx}"})
     public String affiliateSaveList(HttpSession session,@PathVariable(required = true,value = "idx") int idx,Model model){
 
         return "affiliateSightseeingCurrent";
