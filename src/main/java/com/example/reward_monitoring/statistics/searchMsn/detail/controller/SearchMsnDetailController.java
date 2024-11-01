@@ -11,9 +11,6 @@ import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.service.ServerService;
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
-import com.example.reward_monitoring.statistics.answerMsnStat.detail.dto.AnswerMsnDetailSearchDto;
-import com.example.reward_monitoring.statistics.answerMsnStat.detail.entity.AnswerMsnDetailsStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.dto.SearchMsnDetailSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.detail.entity.SearchMsnDetailsStat;
 import com.example.reward_monitoring.statistics.searchMsn.detail.service.SearchMsnDetailService;
@@ -22,8 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -95,7 +90,7 @@ public class SearchMsnDetailController {
         int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
         int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
 
-        response.put("searchMsnDailyStats", limitedresult);  // limitedMembers 리스트
+        response.put("searchMsnDetailsStats", limitedresult);  // limitedMembers 리스트
         response.put("currentPage", pageNumber);  // 현재 페이지 번호
         response.put("totalPages", totalPages);    // 전체 페이지 수
         response.put("startPage",startPage);

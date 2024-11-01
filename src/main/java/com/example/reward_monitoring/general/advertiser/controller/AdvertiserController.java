@@ -234,6 +234,57 @@ public class AdvertiserController {
 
         return response; // JSON 형태로 반환
     }
+    @Operation(summary = "광고주 검색", description = "조건에 맞는 광고주를 검색합니다")
+    @GetMapping("/advertiserList/search/{pageNumber}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 완료(조건에 맞는결과가없을경우 빈 리스트 반환)"),
+            @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
+            @ApiResponse(responseCode = "403", description = "권한없음"),
+            @ApiResponse(responseCode = "500", description = "검색 중 예기치않은 오류발생")
+    })
+    public String  searchAdvertiser_return(@PathVariable(required = false,value = "pageNumber") Integer pageNumber, HttpSession session,Model model){
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/actLogout"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        } // 세션 만료
+        Member member = memberRepository.findById(sessionMember.getId());
+        if (member == null) {
+            return "error/404";
+        }
+
+
+
+        List<Advertiser> advertisers = advertiserService.getAdvertisers();
+
+        // 페이지 번호가 없으면 기본값 1 사용
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        // 한 페이지당 최대 15개 데이터
+        int limit = 15;
+        int startIndex = (pageNumber - 1) * limit;
+
+        // 전체 리스트의 크기 체크
+        List<Advertiser> limitedAdvertisers;
+        if (startIndex < advertisers.size()) {
+            int endIndex = Math.min(startIndex + limit, advertisers.size());
+            limitedAdvertisers = advertisers.subList(startIndex, endIndex);
+        } else {
+            limitedAdvertisers = new ArrayList<>(); // 페이지 번호가 범위를 벗어난 경우 빈 리스트
+        }
+        int totalPages = (int) Math.ceil((double) advertisers.size() / limit);
+        int startPage = ((pageNumber - 1) / limit) * limit + 1; // 현재 페이지 그룹의 시작 페이지
+        int endPage = Math.min(startPage + limit - 1, totalPages); // 현재 페이지 그룹의 끝 페이지
+
+        model.addAttribute("advertisers", advertisers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", (int) Math.ceil((double) advertisers.size() / limit));
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "/advertiserList";
+    }
+
 
 
     @GetMapping({"/advertiserList/{pageNumber}","/advertiserList","/",""})

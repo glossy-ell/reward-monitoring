@@ -512,6 +512,8 @@
                         '</tr>'
                     );
                     updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                    const newUrl = `/Statistics/statQuiz/search/${response.currentPage}`;
+					history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
                  });
                 }
               },

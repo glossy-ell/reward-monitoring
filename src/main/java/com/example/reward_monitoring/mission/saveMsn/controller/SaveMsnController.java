@@ -119,9 +119,18 @@ public class SaveMsnController {
         }
         if(!result)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
         File destinationFile = new File(subDirectoryPath + edited.getImageName());
         if(multipartFile != null)
             multipartFile.transferTo(destinationFile);
+
+        if (edited.getImagePath() != null) { // 기존 이미지가 존재시 교체 후 삭제
+            File oldImageFile = new File(edited.getImagePath());
+            if (oldImageFile.exists() && oldImageFile.isFile()) {
+                oldImageFile.delete();
+            }
+        }
+
         edited.setImagePath(subDirectoryPath + edited.getImageName());
         saveMsnRepository.save(edited);
         return ResponseEntity.status(HttpStatus.OK).body(edited);
@@ -183,7 +192,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
     })
-    public ResponseEntity<SaveMsn> getSaveMsn(HttpSession session,@PathVariable int idx){
+    public ResponseEntity<SaveMsn> getSaveMsn(HttpSession session,@PathVariable(value = "idx") int idx){
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -234,7 +243,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음")
     })
-    public ResponseEntity<String> delete(HttpSession session,@PathVariable int idx)throws IOException {
+    public ResponseEntity<String> delete(HttpSession session,@PathVariable(value = "idx") int idx)throws IOException {
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -268,7 +277,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음")
     })
-    public ResponseEntity<Void>  hidden(HttpSession session, @PathVariable int idx)throws IOException {
+    public ResponseEntity<Void>  hidden(HttpSession session, @PathVariable(value = "idx") int idx)throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -539,7 +548,7 @@ public class SaveMsnController {
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "")
     })
-    public ResponseEntity<Void> changeMissionReEngagementDay(HttpSession session, @PathVariable int idx , @RequestBody SaveMsnAbleDayDto dto)throws IOException {
+    public ResponseEntity<Void> changeMissionReEngagementDay(HttpSession session, @PathVariable(value = "idx") int idx , @RequestBody SaveMsnAbleDayDto dto)throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){

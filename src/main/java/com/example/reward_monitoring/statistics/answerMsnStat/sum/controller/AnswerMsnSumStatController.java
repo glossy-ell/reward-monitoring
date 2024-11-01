@@ -12,7 +12,6 @@ import com.example.reward_monitoring.general.userServer.service.ServerService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.Service.AnswerMsnSumStatService;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.dto.AnswerMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
-import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -89,7 +88,7 @@ public class AnswerMsnSumStatController {
         }
 
         // 한 페이지당 최대 10개 데이터
-        int limit = 10;
+        int limit = 30;
         int startIndex = (pageNumber - 1) * limit;
 
         // 전체 리스트의 크기 체크
@@ -166,6 +165,7 @@ public class AnswerMsnSumStatController {
             LocalDate currentDate = LocalDate.now();
             LocalDate past = currentDate.minusMonths(1);
             List<AnswerMsnSumStat> list = answerMsnSumStatService. getAnswerMsnSumStatsMonth(currentDate,past);
+            Collections.reverse(list);
             int totalLandingCount = list.stream().mapToInt(AnswerMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
             int totalPartCount =  list.stream().mapToInt(AnswerMsnSumStat::getPartCnt).sum();  // 참여카운트
             Sheet sheet = answerMsnSumStatService.excelDownloadCurrent(list,wb,totalLandingCount,totalPartCount);

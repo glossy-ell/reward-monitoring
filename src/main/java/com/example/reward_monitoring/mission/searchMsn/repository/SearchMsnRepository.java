@@ -2,7 +2,6 @@ package com.example.reward_monitoring.mission.searchMsn.repository;
 
 
 
-
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -62,4 +61,7 @@ public interface SearchMsnRepository extends JpaRepository<SearchMsn,Integer> {
 
     @Query("SELECT s FROM SearchMsn s WHERE s.dataType = true")
     public List<SearchMsn> findAllMission();
+
+    @Query("SELECT s FROM SearchMsn s WHERE (s.endAtMsn >= :currentTime) AND (s.dataType = true)  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0) AND (s.mediaCompany.idx = :aidx) ")
+    public List<SearchMsn> findByCurrentListAffiliate(@Param("currentTime") LocalDateTime currentTime, @Param("aidx")int aidx);
 }

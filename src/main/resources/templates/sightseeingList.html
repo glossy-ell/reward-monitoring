@@ -551,7 +551,7 @@
 									'</tr>'
 								);
 								updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-								const newUrl = `/Mission/sightseeingCurrentList/search/${response.currentPage}`;
+								const newUrl = `/Mission/sightseeingList/search/${response.currentPage}`;
 								history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 							});
 						}
@@ -1192,9 +1192,9 @@
 														</div>
 														<div class="input-group col-xl-2 col-lg-6 col-sm-12">
 															<div class="dropdown bootstrap-select input-group-btn k_ form-control">
-																<select name="sIsHidden" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
-																	<option value="1">삭제 데이터</option>
-																	<option value="2" selected="selected">정상 데이터</option>
+																<select name="dataType" class="k_selectpicker form-control" onchange="commSearch();" tabindex="-98">
+																	<option value="false">삭제 데이터</option>
+																	<option value="true" selected="selected">정상 데이터</option>
 																</select>
 																<div class="dropdown-menu " role="combobox">
 																	<div class="inner show" role="listbox" aria-expanded="false" tabindex="-1">

@@ -89,7 +89,7 @@ public class SearchMsnSumStatController {
         }
 
         // 한 페이지당 최대 10개 데이터
-        int limit = 10;
+        int limit = 30;
         int startIndex = (pageNumber - 1) * limit;
 
         // 전체 리스트의 크기 체크
@@ -162,6 +162,7 @@ public class SearchMsnSumStatController {
             LocalDate currentDate = LocalDate.now();
             LocalDate past = currentDate.minusMonths(1);
             List<SearchMsnSumStat> list = searchMsnSumStatService. getSearchMsnSumStatsMonth(currentDate,past);
+            Collections.reverse(list);
             int totalLandingCount = list.stream().mapToInt(SearchMsnSumStat::getLandingCnt).sum();  // 랜딩카운트 합
             int totalPartCount =  list.stream().mapToInt(SearchMsnSumStat::getPartCnt).sum();  // 참여카운트
             Sheet sheet = searchMsnSumStatService.excelDownloadCurrent(list,wb,totalLandingCount,totalPartCount);

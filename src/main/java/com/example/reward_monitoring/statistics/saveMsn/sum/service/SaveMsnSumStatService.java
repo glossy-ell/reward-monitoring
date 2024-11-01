@@ -3,6 +3,8 @@ package com.example.reward_monitoring.statistics.saveMsn.sum.service;
 
 
 
+
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySightseeingSumSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.sum.dto.SaveMsnSumStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.sum.entity.SaveMsnSumStat;
 import com.example.reward_monitoring.statistics.saveMsn.sum.repository.SaveMsnSumStatRepository;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +34,10 @@ public class SaveMsnSumStatService {
         return saveMsnSumStatRepository.findMonth(currentTime,past);
     }
 
+    public List<SaveMsnSumStat> getSaveMsnSumStatsMonthByAffiliate(LocalDate currentTime, LocalDate past, int aidx){
+        return saveMsnSumStatRepository.findMonthByAffiliate(currentTime,past,aidx);
+    }
+
     public List<SaveMsnSumStat> searchSaveMsnSum(SaveMsnSumStatSearchDto dto) {
 
 
@@ -44,8 +51,8 @@ public class SaveMsnSumStatService {
         List<SaveMsnSumStat> result;
         boolean changed = false;
 
-        if(dto.getUrl() != null)
-            target_serverUrl = saveMsnSumStatRepository.findByServer_ServerUrl(dto.getUrl());
+        if(dto.getServerUrl() != null)
+            target_serverUrl = saveMsnSumStatRepository.findByServer_ServerUrl(dto.getServerUrl());
 
         if(dto.getAdvertiser()!=null)
             target_advertiser = saveMsnSumStatRepository.findByAdvertiser_Advertiser(dto.getAdvertiser());
@@ -101,37 +108,49 @@ public class SaveMsnSumStatService {
         int rowNum = 0;
 
         row = sheet.createRow(rowNum++);
+
         cell = row.createCell(0);
-        cell.setCellStyle(cellStyle);
-        sheet.setColumnWidth(3, 16 * 256); //8자
+        sheet.setColumnWidth(0, 16 * 256); //8자
         cell.setCellValue("참여일");
         cell.setCellStyle(cellStyle);
+
         cell = row.createCell(1);
+        sheet.setColumnWidth(1, 16 * 256); //8자
         cell.setCellValue("랜딩 카운트");
         cell.setCellStyle(cellStyle);
+
         cell = row.createCell(2);
         cell.setCellValue("참여 카운트");
+        sheet.setColumnWidth(2, 16 * 256); //8자
         cell.setCellStyle(cellStyle);
+
         for (SaveMsnSumStat saveMsnSumStat: list) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue(saveMsnSumStat.getDate());
+            DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            cell.setCellValue(saveMsnSumStat.getDate().format(formatter_));
             cell.setCellStyle(cellStyle);
+
             cell = row.createCell(1);
             cell.setCellValue(saveMsnSumStat.getLandingCnt());
             cell.setCellStyle(cellStyle);
+
             cell = row.createCell(2);
             cell.setCellValue(saveMsnSumStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
         }
         row = sheet.createRow(rowNum++);
         cell = row.createCell(0);
         cell.setCellValue("합산");
         cell.setCellStyle(cellStyle);
+
         cell = row.createCell(1);
         cell.setCellValue(landSum);
         cell.setCellStyle(cellStyle);
+
         cell = row.createCell(2);
         cell.setCellValue(PartSum);
+        cell.setCellStyle(cellStyle);
 
         return sheet;
     }
@@ -145,4 +164,40 @@ public class SaveMsnSumStatService {
         cellStyle.setBorderRight(BorderStyle.THIN);
         cellStyle.setBorderBottom(BorderStyle.THIN);
     }
+
+
+    public List<SaveMsnSumStat> getSaveMsnSumStatsByAffiliate(int aidx) {
+        return saveMsnSumStatRepository.findByMediaCompanyIdx(aidx);
+    }
+
+
+    public List<SaveMsnSumStat> searchByAffiliate(List<SaveMsnSumStat> target, MediaCompanySightseeingSumSearchDto dto) {
+
+        List<SaveMsnSumStat> target_date = null;
+        List<SaveMsnSumStat> result = target;
+
+        boolean changed = false;
+
+        if(dto.getStartAt() != null || dto.getEndAt() != null){
+            if(dto.getStartAt() != null){
+                if(dto.getEndAt() == null)
+                    target_date = saveMsnSumStatRepository.findByStartAt(dto.getStartAt());
+                else
+                    target_date = saveMsnSumStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
+            }
+            else
+                target_date = saveMsnSumStatRepository.findByEndAt(dto.getEndAt());
+        }
+
+        if(target_date!= null) {
+            Set<Integer> idxSet = target_date.stream().map(SaveMsnSumStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsnSumStat -> idxSet.contains(saveMsnSumStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
+
 }

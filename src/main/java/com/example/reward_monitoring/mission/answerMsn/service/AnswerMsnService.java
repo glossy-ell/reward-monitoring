@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.answerMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyQuizCurrentSearchDto;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
 import com.example.reward_monitoring.mission.answerMsn.dto.*;
@@ -9,6 +10,7 @@ import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.answerMsnStat.daily.repository.AnswerMsnDailyStatRepository;
+import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -28,6 +30,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AnswerMsnService {
+
+    private static final LocalDate TEMP_DATE = LocalDate.of(2000, 1, 1); // 예: 2000-01-01
+    private static final LocalDateTime TEMP_ZONED_DATE_TIME = TEMP_DATE.atStartOfDay();
 
     @Autowired
     private AnswerMsnRepository answerMsnRepository;
@@ -503,11 +508,58 @@ public class AnswerMsnService {
 
             Row row = worksheet.getRow(i);
 
-            if (row.getCell(1) != null) {
-                dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
+            Cell cell = row.getCell(1);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setMissionDefaultQty((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setMissionDefaultQty(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        // 변환 실패 시의 처리 (예: 로그 기록, 기본값 설정 등)
+                        dto.setMissionDefaultQty(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
             }
-            if(row.getCell(2)!=null)
-                dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
+
+            cell = row.getCell(2);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setMissionDailyCap((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setMissionDailyCap(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        // 변환 실패 시의 처리 (예: 로그 기록, 기본값 설정 등)
+                        dto.setMissionDailyCap(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
+            }
+
 
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
                 //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
@@ -526,10 +578,21 @@ public class AnswerMsnService {
                 else
                     dto.setMissionAnswer(df.format(row.getCell(6).getNumericCellValue()));
             }
-            if(row.getCell(7)!=null)
-                dto.setEndAtMsn(LocalDateTime.parse(row.getCell(7).getStringCellValue(), formatter));
-            if(row.getCell(8)!=null)
-                dto.setEndAtMsn(LocalDateTime.parse(row.getCell(8).getStringCellValue(), formatter));
+            if(row.getCell(7)!=null) {
+                try {
+                    dto.setStartAtMsn(LocalDateTime.parse(row.getCell(7).getStringCellValue(), formatter));
+                } catch (DateTimeException e) {
+                    dto.setStartAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
+
+            if(row.getCell(8)!=null) {
+                try {
+                    dto.setEndAtMsn(LocalDateTime.parse(row.getCell(8).getStringCellValue(), formatter));
+                } catch (DateTimeException e) {
+                    dto.setStartAtMsn(TEMP_ZONED_DATE_TIME); // 임시 날짜 설정
+                }
+            }
             if(row.getCell(9)!=null)
                 dto.setStartAtCap(LocalDate.parse(row.getCell(9).getStringCellValue(),formatter_date));
             if(row.getCell(10)!=null)
@@ -547,7 +610,31 @@ public class AnswerMsnService {
                 dto.setDupParticipation(true);
             else
                 dto.setDupParticipation(false);
-            dto.setReEngagementDay((int)row.getCell(14).getNumericCellValue());
+
+            cell = row.getCell(14);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setReEngagementDay((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setReEngagementDay(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        dto.setReEngagementDay(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setReEngagementDay(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setReEngagementDay(0); // 기본값 설정
+                    break;
+            }
 
             answerMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
@@ -1165,20 +1252,20 @@ public class AnswerMsnService {
 
         cell = row.createCell(7);
         cell.setCellStyle(cellStyle);
-
         cell.setCellValue("2024-01-01 00:00:00");
-        cell = row.createCell(8);
 
+        cell = row.createCell(8);
         cell.setCellStyle(cellStyle);
         cell.setCellValue("2024-01-01 00:00:00");
 
         cell = row.createCell(9);
-        cell.setCellValue("2024-01-01 00:00:00");
         cell.setCellStyle(cellStyle);
+        cell.setCellValue("2024-01-01");
 
         cell = row.createCell(10);
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("2024-01-01 00:00:00");
+        cell.setCellValue("2024-01-01");
+
 
         cell = row.createCell(11);
         cell.setCellStyle(cellStyle);
@@ -1200,6 +1287,37 @@ public class AnswerMsnService {
     }
 
 
+    public List<AnswerMsn> findByCurrentListAffiliate(LocalDateTime now, int aidx) {
+
+        return answerMsnRepository.findByCurrentListAffiliate(now,aidx);
+    }
+
+    public List<AnswerMsn> searchAnswerMsnCurrentByAffiliate(List<AnswerMsn> target, MediaCompanyQuizCurrentSearchDto dto) {
+
+
+        List<AnswerMsn> target_mission_title = null; // 선택 2
+
+
+
+        List<AnswerMsn> result;
+        boolean changed = false;
+
+        if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
+            target_mission_title = answerMsnRepository.findByMissionTitle(dto.getMissionTitle());
+
+
+        result = target;
+
+        if(target_mission_title !=null) {
+            Set<Integer> idxSet = target_mission_title.stream().map(AnswerMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsn -> idxSet.contains(answerMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
+    }
 }
 
 

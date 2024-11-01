@@ -130,8 +130,15 @@ public class SearchMsnController{
         File destinationFile = new File(subDirectoryPath + edited.getImageName());
         if(multipartFile != null)
             multipartFile.transferTo(destinationFile);
-        edited.setImagePath(subDirectoryPath + edited.getImageName());
 
+        if (edited.getImagePath() != null) { // 기존 이미지가 존재시 교체 후 삭제
+            File oldImageFile = new File(edited.getImagePath());
+            if (oldImageFile.exists() && oldImageFile.isFile()) {
+                oldImageFile.delete();
+            }
+        }
+
+        edited.setImagePath(subDirectoryPath + edited.getImageName());
         searchMsnRepository.save(edited);
         return ResponseEntity.status(HttpStatus.OK).body(edited);
     }
@@ -189,7 +196,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음"),
     })
-    public ResponseEntity<SearchMsn> getSearchMsn(HttpSession session, @PathVariable int idx) {
+    public ResponseEntity<SearchMsn> getSearchMsn(HttpSession session, @PathVariable(value = "idx") int idx) {
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -240,7 +247,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음")
     })
-    public ResponseEntity<String> delete(HttpSession session,@PathVariable int idx) throws IOException {
+    public ResponseEntity<String> delete(HttpSession session,@PathVariable(value = "idx")int idx) throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -274,7 +281,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨"),
             @ApiResponse(responseCode = "403", description = "권한없음")
     })
-    public ResponseEntity<Void>  hidden(HttpSession session, @PathVariable int idx)throws IOException {
+    public ResponseEntity<Void>  hidden(HttpSession session, @PathVariable(value = "idx") int idx)throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -524,7 +531,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "")
     })
-    public ResponseEntity<Void> changeMissionReEngagementDay(HttpSession session, @PathVariable int idx , @RequestBody SearchMsnAbleDayDto dto)throws IOException {
+    public ResponseEntity<Void> changeMissionReEngagementDay(HttpSession session, @PathVariable(value = "idx") int idx , @RequestBody SearchMsnAbleDayDto dto)throws IOException {
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -558,7 +565,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
     })
-    public ResponseEntity<Void> changeMissionExpose(HttpSession session, @PathVariable int idx , @RequestBody SearchMsnExposeDto dto)throws IOException {
+    public ResponseEntity<Void> changeMissionExpose(HttpSession session, @PathVariable(value = "idx")int idx , @RequestBody SearchMsnExposeDto dto)throws IOException {
 
         boolean result = searchMsnService.changeMissionExpose(idx,dto);
 
@@ -575,7 +582,7 @@ public class SearchMsnController{
             @ApiResponse(responseCode = "403", description = "권한없음"),
             @ApiResponse(responseCode = "500", description = "엑셀파일의 문제로 인한 데이터 삽입 실패")
     })
-    public ResponseEntity<Void> changeAbleDay(HttpSession session, SearchMsnAbleDayDto dto, @PathVariable int idx)throws IOException {
+    public ResponseEntity<Void> changeAbleDay(HttpSession session, SearchMsnAbleDayDto dto, @PathVariable(value = "idx") int idx)throws IOException {
 
 
 

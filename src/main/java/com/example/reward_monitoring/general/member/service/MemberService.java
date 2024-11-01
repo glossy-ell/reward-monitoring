@@ -49,7 +49,7 @@ public class MemberService {
             return null;
         
         // 기본 회원정보 설정
-        if(dto.getPassword()!=null)
+        if(dto.getPassword()!=null  && !dto.getPassword().isEmpty())
             member.setPassword(passwordEncoder.encode(dto.getPassword()));
         if(dto.getName()!=null)
             member.setName(dto.getName());

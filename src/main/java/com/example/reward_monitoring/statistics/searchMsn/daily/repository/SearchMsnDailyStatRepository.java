@@ -3,6 +3,7 @@ package com.example.reward_monitoring.statistics.searchMsn.daily.repository;
 
 
 
+import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,10 +15,10 @@ import java.util.List;
 
 public interface SearchMsnDailyStatRepository extends JpaRepository<SearchMsnDailyStat,Integer> {
 
-    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate > :startAt")
+    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate >= :startAt")
     public List<SearchMsnDailyStat> findByStartAt(@Param("startAt") LocalDate startAt);
 
-    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate < :endAt")
+    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate <= :endAt")
     public List<SearchMsnDailyStat> findByEndAt(@Param("endAt") LocalDate endAt);
 
     @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate BETWEEN :startAt AND :endAt")
@@ -39,4 +40,6 @@ public interface SearchMsnDailyStatRepository extends JpaRepository<SearchMsnDai
     @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.partDate BETWEEN :past AND :currentTime")
     public List<SearchMsnDailyStat> findMonth(@Param("currentTime")LocalDate currentTime, @Param("past") LocalDate past);
 
+    @Query("SELECT s FROM SearchMsnDailyStat s WHERE s.mediaCompany.idx = :aidx")
+    public List<SearchMsnDailyStat> findByMediaCompanyIdx(@Param("aidx")int aidx);
 }

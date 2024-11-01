@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.answerMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -12,7 +13,6 @@ import org.json.JSONArray;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -277,6 +277,12 @@ public class AnswerMsn {
     @JoinColumn(name="server_url", referencedColumnName = "server_url", nullable = true)
     @Schema(description = "서버URL(외래키)")
     Server server;
+
+    @Comment("매체사 idx")
+    @ManyToOne()
+    @JoinColumn(name="mediacompany_idx", referencedColumnName = "idx", nullable = true)
+    @Schema(description = "서버URL(외래키)")
+    MediaCompany mediaCompany;
 
 
 

@@ -61,4 +61,8 @@ public interface AnswerMsnRepository extends JpaRepository<AnswerMsn,Integer> {
     @Query("SELECT a FROM AnswerMsn a WHERE a.dataType = true")
     public List<AnswerMsn> findAllMission();
 
+
+    @Query("SELECT a FROM AnswerMsn a WHERE (a.endAtMsn >= :currentTime) AND (a.dataType = true)  AND (a.totalLandingCnt > 0 OR a.totalPartCnt > 0) AND (a.mediaCompany.idx = :aidx) ")
+    public List<AnswerMsn> findByCurrentListAffiliate(@Param("currentTime") LocalDateTime currentTime,@Param("aidx")int aidx);
+
 }

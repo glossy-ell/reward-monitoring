@@ -500,18 +500,18 @@
 									'<td class="text-center align-middle">' + sightseeingTable.tx + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.mediaCompany?.idx + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.memberId + '</td>' +
-									'<td class="text-center align-middle">' + sightseeingTable.answerMsn?.idx  + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.saveMsn?.idx  + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.url + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.point + '</td>' +
-									'<td class="text-center align-middle">' + sightseeingTable.checkPassive + '</td>' +
-									'<td class="text-center align-middle">' + sightseeingTable.abuseState + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.passivityCheck + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.Abuse + '</td>' +
+									'<td class="text-center align-middle">' + sightseeingTable.response + '</td>' +
 									'<td class="text-center align-middle">' + sightseeingTable.ip + '</td>' +
 									'<td class="text-center align-middle">' + formatDateTime(sightseeingTable.registrationDate) + '</td>' +
 								'</tr>'
 							);
 							updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-							const newUrl = `/Statistics/statDailySightseeing/search/${response.currentPage}`;
+							const newUrl = `/Statistics/statSightseeing/search/${response.currentPage}`;
 							history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
 							});
 						}
@@ -670,14 +670,14 @@
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
 															<select name="isAbuse" class="form-control" onchange="commSearch();">
-																<option value="">= 어뷰상태 =</option>
-																<option value="false">정상</option>
-																<option value="true">어뷰</option>
+																<option value="" disabled selected>= 어뷰상태 =</option>
+																<option value="true">정상</option>
+																<option value="false">어뷰</option>
 															</select>
 														</div>
 														<div class="input-group col-lg-4 col-sm-12">
 															<select name="response" class="form-control" onchange="commSearch();">
-																<option value="">= 응답 확인 =</option>
+																<option value="" disabled selected>= 응답 확인 =</option>
 																<option value="true">성공</option>
 																<option value="false">실패</option>
 															</select>
@@ -710,7 +710,7 @@
 														</div>
 														<div class="input-group col-lg-3 col-sm-12">
 															<select name="sOrder" class="form-control" onchange="commSearch();">
-																<option value="">= 정렬 방식 =</option>
+																<option value="" disabled selected>= 정렬 방식 =</option>
 																<option value="statQuizIdx">최신순</option>
 																<option value="memberId">회원별</option>
 															</select>

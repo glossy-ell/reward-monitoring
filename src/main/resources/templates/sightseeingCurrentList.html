@@ -1060,8 +1060,8 @@
 										&nbsp;
 										<div class="k-section">
 											<div class="k-section__content k-section__content--border">
-												<button type="button" class="btn btn-outline-focus" th:onclick="commSetAllIsUsed(' + ${currentPage} + ');">화면 비활성</button>
-												<button type="button" class="btn btn-outline-success" th:onclick="commSetAllIsView(' + ${currentPage} + ');">화면 비노출</button>
+												<button type="button" class="btn btn-outline-focus" th:onclick="'commSetAllIsUsed(' + ${currentPage} + ');'">화면 비활성</button>
+												<button type="button" class="btn btn-outline-success" th:onclick="'commSetAllIsView(' + ${currentPage} + ');'">화면 비노출</button>
 												<button type="button" class="btn btn-outline-danger" th:onclick="commAllOffMission();">모든 미션 종료 / 비노출</button>
 											</div>
 										</div>

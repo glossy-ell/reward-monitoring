@@ -4,9 +4,9 @@ package com.example.reward_monitoring.mission.searchMsn.service;
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchCurrentSearchDto;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import com.example.reward_monitoring.general.userServer.repository.ServerRepository;
-
 import com.example.reward_monitoring.mission.searchMsn.dto.*;
 import com.example.reward_monitoring.mission.searchMsn.entity.SearchMsn;
 import com.example.reward_monitoring.mission.searchMsn.repository.SearchMsnRepository;
@@ -528,12 +528,59 @@ public class SearchMsnService {
 
             Row row = worksheet.getRow(i);
 
-            if (row.getCell(1) != null && row.getCell(1).getCellType() == CellType.NUMERIC) {
-                dto.setMissionDefaultQty((int) row.getCell(1).getNumericCellValue());
+            Cell cell = row.getCell(1);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setMissionDefaultQty((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setMissionDefaultQty(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        // 변환 실패 시의 처리 (예: 로그 기록, 기본값 설정 등)
+                        dto.setMissionDefaultQty(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setMissionDefaultQty(0); // 기본값 설정
+                    break;
             }
 
-            if(row.getCell(2)!=null)
-                dto.setMissionDailyCap((int)row.getCell(2).getNumericCellValue());
+            cell = row.getCell(2);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setMissionDailyCap((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setMissionDailyCap(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        // 변환 실패 시의 처리 (예: 로그 기록, 기본값 설정 등)
+                        dto.setMissionDailyCap(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setMissionDailyCap(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setMissionDailyCap(0); // 기본값 설정
+                    break;
+            }
+
+
             advertiserEntity = advertiserRepository.findByAdvertiser_(row.getCell(3).getStringCellValue());
 
             //셀에있는 데이터를 읽어와 그걸로 repository 에서 일치하는 advertiser 를 가져온다.
@@ -600,8 +647,30 @@ public class SearchMsnService {
             else
                 dto.setDupParticipation(false);
 
-            dto.setReEngagementDay((int)row.getCell(15).getNumericCellValue());
-
+            cell = row.getCell(15);
+            switch (cell.getCellType()) {
+                case NUMERIC:
+                    dto.setReEngagementDay((int) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    try {
+                        // 텍스트 형식의 숫자를 정수로 변환
+                        String cellValue = cell.getStringCellValue();
+                        dto.setReEngagementDay(Integer.parseInt(cellValue));
+                    } catch (NumberFormatException e) {
+                        dto.setReEngagementDay(0); // 기본값 설정
+                    }
+                    break;
+                case BLANK:
+                    // 빈 셀인 경우 처리 (예: 기본값 설정 등)
+                    dto.setReEngagementDay(0); // 기본값 설정
+                    break;
+                default:
+                    // 숫자형식도 아니고 문자열도 아닌 경우
+                    System.err.println("지원하지 않는 셀 타입: " + cell.getCellType());
+                    dto.setReEngagementDay(0); // 기본값 설정
+                    break;
+            }
             searchMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
         }
@@ -1236,13 +1305,11 @@ public class SearchMsnService {
 
         cell = row.createCell(10);
         cell.setCellStyle(cellStyle);
-        DateTimeFormatter formatter_ = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         cell.setCellValue("2024-01-01");
 
         cell = row.createCell(11);
         cell.setCellStyle(cellStyle);
         cell.setCellValue("2024-01-01");
-
 
         cell = row.createCell(12);
         cell.setCellStyle(cellStyle);
@@ -1265,5 +1332,37 @@ public class SearchMsnService {
 
 
         return sheet;
+    }
+
+    public List<SearchMsn> findByCurrentListAffiliate(LocalDateTime now, int aidx) {
+
+        return searchMsnRepository.findByCurrentListAffiliate(now,aidx);
+    }
+
+    public List<SearchMsn> searchSearchMsnCurrentByAffiliate(List<SearchMsn> target, MediaCompanySearchCurrentSearchDto dto) {
+
+
+        List<SearchMsn> target_mission_title = null; // 선택 2
+
+
+
+        List<SearchMsn> result;
+        boolean changed = false;
+
+        if(dto.getMissionTitle() != null && !dto.getMissionTitle().isEmpty())
+            target_mission_title = searchMsnRepository.findByMissionTitle(dto.getMissionTitle());
+
+
+        result = target;
+
+        if(target_mission_title !=null) {
+            Set<Integer> idxSet = target_mission_title.stream().map(SearchMsn::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsn -> idxSet.contains(searchMsn.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+
+        if(!changed)
+            result = new ArrayList<>();
+        return result;
     }
 }

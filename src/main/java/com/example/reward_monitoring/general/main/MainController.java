@@ -69,11 +69,7 @@ public class MainController {
         if (member == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }//데이터 없음
-        log.info("check here");
-        log.info(member.getId());
-        log.info(dto.getPassword());
-        log.info(passwordEncoder.encode(dto.getPassword()));
-        if(dto.getPassword()!=null)
+        if(dto.getPassword()!=null  && !dto.getPassword().isEmpty())
             member.setPassword(passwordEncoder.encode(dto.getPassword()));
         if(dto.getPhoneNum()!=null)
             member.setPhone(dto.getPhoneNum());

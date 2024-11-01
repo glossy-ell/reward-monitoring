@@ -23,42 +23,45 @@ public interface SaveMsnRepository extends JpaRepository<SaveMsn,Integer> {
     public List<SaveMsn> findByBothDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtCap > :startCap")
-    public List<SaveMsn> findByStartAtCap(LocalDate startCap);
+    public List<SaveMsn> findByStartAtCap(@Param("startCap")LocalDate startCap);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.endAtCap < :endCap")
-    public List<SaveMsn> findByEndAtCap(LocalDate endCap);
+    public List<SaveMsn> findByEndAtCap(@Param("endCap")LocalDate endCap);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.startAtCap > :startCap AND s.endAtCap < :endCap")
     public List<SaveMsn> findByBothCap(@Param("startCap") LocalDate startCap, @Param("endCap") LocalDate endCap);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.missionActive = :missionActive")
-    public List<SaveMsn> findByMissionActive(boolean missionActive);
+    public List<SaveMsn> findByMissionActive(@Param("missionActive")boolean missionActive);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.dupParticipation = :dupParticipation")
-    public List<SaveMsn> findByDupParticipation(boolean dupParticipation);
+    public List<SaveMsn> findByDupParticipation(@Param("dupParticipation") boolean dupParticipation);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.missionExposure = :missionExposure")
-    public List<SaveMsn> findByMissionExposure(boolean missionExposure);
+    public List<SaveMsn> findByMissionExposure(@Param("missionExposure")boolean missionExposure);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.dataType = :dataType")
-    public List<SaveMsn> findByDataType(boolean dataType);
+    public List<SaveMsn> findByDataType(@Param("dataType") boolean dataType);
 
     @Query("SELECT s FROM SaveMsn s  WHERE s.advertiser.advertiser LIKE %:keyword% ")
-    public List<SaveMsn> findByAdvertiser(String keyword);
+    public List<SaveMsn> findByAdvertiser(@Param("keyword")String keyword);
 
     @Query("SELECT s FROM SaveMsn s  WHERE s.advertiserDetails LIKE %:keyword% ")
-    public List<SaveMsn> findByAdvertiserDetails(String keyword);
+    public List<SaveMsn> findByAdvertiserDetails(@Param("keyword")String keyword);
 
     @Query("SELECT s FROM SaveMsn s  WHERE s.missionTitle LIKE %:keyword% ")
-    public List<SaveMsn> findByMissionTitle(String keyword);
+    public List<SaveMsn> findByMissionTitle(@Param("keyword")String keyword);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.server.serverUrl LIKE %:keyword%")
     public List<SaveMsn> findByServer(@Param("keyword") String keyword);
 
 
-    @Query("SELECT s FROM SaveMsn s WHERE s.endAtMsn > :currentTime AND s.dataType = true  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0)")
+    @Query("SELECT s FROM SaveMsn s WHERE (s.endAtMsn >= :currentTime) AND (s.dataType = true)  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0)")
     public List<SaveMsn> findByCurrentList(@Param("currentTime") LocalDateTime currentTime);
 
     @Query("SELECT s FROM SaveMsn s WHERE s.dataType = true")
     public List<SaveMsn> findAllMission();
+
+    @Query("SELECT s FROM SaveMsn s WHERE (s.endAtMsn >= :currentTime) AND (s.dataType = true)  AND (s.totalLandingCnt > 0 OR s.totalPartCnt > 0) AND (s.mediaCompany.idx = :aidx) ")
+    List<SaveMsn> findByCurrentListAffiliate(@Param("currentTime")LocalDateTime now,@Param("aidx")int aidx);
 }

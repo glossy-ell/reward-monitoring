@@ -1,7 +1,7 @@
 package com.example.reward_monitoring.statistics.searchMsn.daily.service;
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySearchDailySearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.daily.dto.SearchMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.searchMsn.daily.entity.SearchMsnDailyStat;
 import com.example.reward_monitoring.statistics.searchMsn.daily.repository.SearchMsnDailyStatRepository;
@@ -49,29 +49,30 @@ public class SearchMsnDailyService {
         cell.setCellValue("광고주 IDX");
         cell.setCellStyle(cellStyle);
         cell = row.createCell(3);
-        cell.setCellValue("광고주 디테일");
+        cell.setCellValue("광고주 상세");
         sheet.setColumnWidth(3, 16 * 256); //8자
         cell.setCellStyle(cellStyle);
+
         cell = row.createCell(4);
-        cell.setCellValue("광고주 상세");
-        sheet.setColumnWidth(4, 16 * 256);
-        cell.setCellStyle(cellStyle);
-        cell = row.createCell(5);
         cell.setCellValue("미션 IDX");
         cell.setCellStyle(cellStyle);
-        sheet.setColumnWidth(5, 16 * 256);
-        cell = row.createCell(6);
+        sheet.setColumnWidth(4, 16 * 256);
+
+        cell = row.createCell(5);
         cell.setCellValue("미션 제목");
-        sheet.setColumnWidth(6, 20 * 256); //8자
+        sheet.setColumnWidth(5, 20 * 256); //8자
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(7);
+
+        cell = row.createCell(6);
         cell.setCellValue("랜딩 카운트");
+        sheet.setColumnWidth(6, 20 * 256);
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(7);
+        cell.setCellValue("참여 카운트");
         sheet.setColumnWidth(7, 20 * 256);
         cell.setCellStyle(cellStyle);
-        cell = row.createCell(8);
-        cell.setCellValue("참여 카운트");
-        sheet.setColumnWidth(8, 20 * 256);
-        cell.setCellStyle(cellStyle);
+
 
 
         for (SearchMsnDailyStat searchMsnDailyStat: list) {
@@ -171,6 +172,41 @@ public class SearchMsnDailyService {
 
         if(target_companyName != null){
             Set<Integer> idxSet = target_companyName.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
+
+    public List<SearchMsnDailyStat> findByMediaCompany(int aidx){
+        return searchMsnDailyStatRepository.findByMediaCompanyIdx(aidx);
+    }
+
+    public List<SearchMsnDailyStat> searchSearchMsnDailyByAffiliate(List<SearchMsnDailyStat> target, MediaCompanySearchDailySearchDto dto) {
+
+        List<SearchMsnDailyStat> target_date = null;
+
+
+        List<SearchMsnDailyStat> result = target;
+        boolean changed = false;
+
+        result = new ArrayList<>(searchMsnDailyStatRepository.findAll());
+        if(dto.getStartAt() != null || dto.getEndAt() != null){
+            if(dto.getStartAt() != null){
+                if(dto.getEndAt() == null)
+                    target_date = searchMsnDailyStatRepository.findByStartAt(dto.getStartAt());
+                else
+                    target_date = searchMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
+            }
+            else
+                target_date = searchMsnDailyStatRepository.findByEndAt(dto.getEndAt());
+        }
+
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(SearchMsnDailyStat::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(searchMsnDailyStat-> idxSet.contains(searchMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }

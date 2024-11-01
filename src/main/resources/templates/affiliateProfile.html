@@ -162,19 +162,19 @@
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
                                 <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-                                    <a href="/affiliate/affiliateQuizDaily" class="k-menu__link">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateQuizDaily/(idx=${affiliate.idx})}" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">정답 미션 데일리 통계</span>
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/affiliate/affiliateQuizSum" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateQuizSum/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/affiliate/affiliateQuizCurrent" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateQuizCurrent/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">정답 미션 현재 리스트</span>
                                         </a>
@@ -192,19 +192,19 @@
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
                                 <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-                                    <a href="/Mission/affiliateSearchDaily" class="k-menu__link">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/(idx=${affiliate.idx})}" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">검색 미션 데일리 통계</span>
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/affiliateSearchSum" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchSum/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/affiliateSearchCurrent" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchCurrent/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">검색 미션 현재 리스트</span>
                                         </a>
@@ -222,19 +222,19 @@
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
                                 <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
-                                    <a href="/Mission/affiliateSightseeingList" class="k-menu__link">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/(idx=${affiliate.idx})}" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">저장 미션 데일리 통계</span>
                                     </a>
                                 </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/affiliateSightseeingSum" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingSum/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a href="/Mission/affiliateSightseeingCurrent" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingCurrent(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">저장 미션 현재 리스트</span>
                                         </a>
@@ -247,7 +247,7 @@
 
 
                         <li class="k-menu__item k-menu__item--active" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
-                            <a href="/Profile/myProfileWrite" class="k-menu__link k-menu__toggle">
+                            <a th:href="@{/Affiliate/affiliateProfile/{idx}(idx=${affiliate.idx})}" class="k-menu__link k-menu__toggle">
                                 <i class="k-menu__link-icon flaticon2-calendar-3 icon_active"></i>
                                 <span class="k-menu__link-text">내 프로필</span>
                                 <span class="k-menu__link-badge"></span>
@@ -284,25 +284,22 @@
                   if (confirm("저장하시겠습니까?")) {
                    // 신규 생성 요청
                    $.ajax({
-                       url: `/affiliateProfile/edit/${idx}`,
+                       url: `/Affiliate/affiliateProfile/edit/${idx}`,
                        type: "POST",
                        contentType: "application/json",
                        data: JSON.stringify(jsonData),
                        success: function(response) {
                            alert("등록하였습니다.");
-                           window.location.href = "/affiliateProfile/edit/";
+                           window.location.href = "/Affiliate/affiliateProfile/"+idx;
                        },
                        error: function(xhr) {
                            alert("정보 수정 실패.");
                        }
                    });
-
                 }
-
             }
 
         </script>
-        <input type="hidden" id="memberIdx" th:value="${member.idx}">
 
         <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
 
@@ -343,7 +340,7 @@
                                     </div>
                                     <div class="k-portlet__foot">
                                         <div class="k-form__actions">
-                                            <button type="button" class="btn btn-primary btn-main"  th:onclick="editMemberInfo(${affiliate.idx});">저장</button>
+                                            <button type="button" class="btn btn-primary btn-main" th:onclick="'editMemberInfo(' + ${affiliate.idx} + ');'">저장</button>
                                         </div>
                                     </div>
                                 </form>
@@ -357,7 +354,7 @@
             </div>
             <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
                 <div class="k-footer__copyright">
-                    2023&nbsp;©&nbsp;<a href="/Profile/myProfileWrite" target="_blank" class="k-link">Conan</a>
+                    2023&nbsp;©&nbsp;<a th:href="@{/Affiliate/{idx}/affiliateProfile/(idx=${affiliate.idx})}" target="_blank" class="k-link">GLOSSY ELL</a>
                 </div>
             </div>
         </div>

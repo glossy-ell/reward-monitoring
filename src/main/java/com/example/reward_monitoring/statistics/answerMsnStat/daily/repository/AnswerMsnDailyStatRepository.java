@@ -12,10 +12,10 @@ import java.util.List;
 
 public interface AnswerMsnDailyStatRepository extends JpaRepository<AnswerMsnDailyStat,Integer> {
 
-    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate > :startAt")
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate >= :startAt")
     public List<AnswerMsnDailyStat> findByStartAt(@Param("startAt")LocalDate startAt);
 
-    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate < :endAt")
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate <= :endAt")
     public List<AnswerMsnDailyStat> findByEndAt(@Param("endAt")LocalDate endAt);
 
     @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.partDate BETWEEN :startAt AND :endAt")
@@ -39,4 +39,7 @@ public interface AnswerMsnDailyStatRepository extends JpaRepository<AnswerMsnDai
 
     @Query("SELECT a FROM AnswerMsnDailyStat a WHERE  a.partDate BETWEEN :past AND :currentTime")
     public List<AnswerMsnDailyStat> findMonth(@Param("currentTime")LocalDate currentTime,@Param("past") LocalDate past);
+
+    @Query("SELECT a FROM AnswerMsnDailyStat a WHERE a.mediaCompany.idx = :aidx")
+    public List<AnswerMsnDailyStat> findByMediaCompanyIdx(@Param("aidx")int aidx);
 }

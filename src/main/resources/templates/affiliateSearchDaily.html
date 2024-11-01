@@ -1,10 +1,519 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!-- saved from url=(0047)https://ocb-gm.srk.co.kr/Profile/myProfileWrite -->
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-</body>
-</html>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/css/conan_aside_color.css">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="https://ocb-gm.srk.co.kr/inc/intranet/common/images/favicon.ico" type="image/x-icon">
+
+    <!--begin:: Global Mandatory Vendors -->
+    <link href="/Front_files/perfect-scrollbar.css" rel="stylesheet" type="text/css">
+
+    <!--begin:: Global Optional Vendors -->
+    <link href="/Front_files/tether.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/bootstrap-datepicker3.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/bootstrap-timepicker.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/daterangepicker.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/bootstrap-select.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/nouislider.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/owl.carousel.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/owl.theme.default.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/dropzone.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/summernote.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/bootstrap-markdown.min.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/animate.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/toastr.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/morris.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/line-awesome.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/flaticon.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/flaticon(1).css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/all.min.css" rel="stylesheet" type="text/css">
+
+    <!--begin::Global Theme Styles -->
+    <link href="/Front_files/style.bundle.css" rel="stylesheet" type="text/css">
+
+    <!--begin::Layout Skins -->
+    <link href="/Front_files/light.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/light(1).css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/navy.css" rel="stylesheet" type="text/css">
+    <link href="/Front_files/navy(1).css" rel="stylesheet" type="text/css">
+
+    <!-- swiper gallery -->
+    <link href="/Front_files/swiper.min.css" rel="stylesheet">
+
+    <!-- Reform -->
+    <link href="/Front_files/reform.css" rel="stylesheet" type="text/css">
+
+    <!-- conan style -->
+    <link href="/Front_files/conan_style.css" rel="stylesheet" type="text/css">
+
+    <!--begin:: Global Mandatory Vendors -->
+    <script src="/Front_files/jquery.js" type="text/javascript"></script>
+    <script src="/Front_files/popper.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/Front_files/js.cookie.js" type="text/javascript"></script>
+    <script src="/Front_files/moment.min.js" type="text/javascript"></script>
+    <script src="/Front_files/tooltip.min.js" type="text/javascript"></script>
+    <script src="/Front_files/perfect-scrollbar.js" type="text/javascript"></script>
+    <script src="/Front_files/sticky.min.js" type="text/javascript"></script>
+    <script src="/Front_files/wNumb.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.form.min.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.blockUI.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/Front_files/init.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-timepicker.min.js" type="text/javascript"></script>
+    <script src="/Front_files/init(1).js" type="text/javascript"></script>
+    <script src="/Front_files/daterangepicker.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.bootstrap-touchspin.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-maxlength.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-multiselectsplitter.min.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-select.js" type="text/javascript"></script>
+    <script src="/Front_files/typeahead.bundle.js" type="text/javascript"></script>
+    <script src="/Front_files/handlebars.js" type="text/javascript"></script>
+    <script src="/Front_files/nouislider.js" type="text/javascript"></script>
+    <script src="/Front_files/owl.carousel.js" type="text/javascript"></script>
+    <script src="/Front_files/autosize.js" type="text/javascript"></script>
+    <script src="/Front_files/clipboard.min.js" type="text/javascript"></script>
+    <script src="/Front_files/dropzone.js" type="text/javascript"></script>
+    <script src="/Front_files/markdown.js" type="text/javascript"></script>
+    <script src="/Front_files/bootstrap-markdown.js" type="text/javascript"></script>
+    <script src="/Front_files/init(2).js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.validate.js" type="text/javascript"></script>
+    <script src="/Front_files/additional-methods.js" type="text/javascript"></script>
+    <script src="/Front_files/init(3).js" type="text/javascript"></script>
+    <script src="/Front_files/toastr.min.js" type="text/javascript"></script>
+    <script src="/Front_files/raphael.js" type="text/javascript"></script>
+    <script src="/Front_files/morris.js" type="text/javascript"></script>
+    <script src="/Front_files/Chart.bundle.js" type="text/javascript"></script><style type="text/css">/* Chart.js */
+@-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
+    <script src="/Front_files/bootstrap-session-timeout.min.js" type="text/javascript"></script>
+    <script src="/Front_files/idle-timer.min.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.waypoints.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.counterup.js" type="text/javascript"></script>
+    <script src="/Front_files/promise.min.js" type="text/javascript"></script>
+    <script src="/Front_files/lib.js" type="text/javascript"></script>
+    <script src="/Front_files/jquery.input.js" type="text/javascript"></script>
+    <script src="/Front_files/repeater.js" type="text/javascript"></script>
+    <script src="/Front_files/purify.js" type="text/javascript"></script>
+
+    <!--begin::Global Theme Bundle -->
+    <script src="/Front_files/scripts.bundle.js" type="text/javascript"></script>
+
+    <!--begin::Page Scripts -->
+    <script src="/Front_files/bootstrap-datepicker.js" type="text/javascript"></script>
+
+    <!--begin::Global App Bundle -->
+    <script src="/Front_files/app.bundle.js" type="text/javascript"></script>
+
+    <!--end::Global App Bundle -->
+    <script src="/Front_files/common.js"></script>
+
+    <!-- swiper gallery -->
+    <script src="/Front_files/swiper.min.js"></script>
+    <!-- //swiper gallery -->
+
+    <script src="chrome-extension://ecmeogcbcoalojmkfkmancobmiahaigg/content_script/content_script.js"></script></head>
+
+<body class="k-header--fixed k-header-mobile--fixed k-aside--enabled k-aside--fixed">
+
+<div id="k_header_mobile" class="k-header-mobile k-header-mobile--fixed">
+    <div class="k-header-mobile__logo">
+        <a href="/Profile/myProfileWrite"></a>
+    </div>
+    <div class="k-header-mobile__toolbar">
+        <button class="k-header-mobile__toolbar-toggler k-header-mobile__toolbar-toggler--left" id="k_aside_mobile_toggler"><span></span></button>
+    </div>
+</div>
+
+<div class="k-grid k-grid--hor k-grid--root">
+    <div class="k-grid__item k-grid__item--fluid k-grid k-grid--ver k-page">
+        <button class="k-aside-close" id="k_aside_close_btn"><i class="la la-close"></i></button>
+
+
+        <!-- begin aside -->
+        <div class="k-aside k-aside--fixed k-grid__item k-grid k-grid--desktop k-grid--hor-desktop" id="k_aside">
+
+            <div class="k-aside__brand k-grid__item " id="k_aside_brand" k-hidden-height="75" style="">
+                <div class="k-aside__brand-logo">
+                    <a href="/Profile/myProfileWrite">
+
+                    </a>
+                </div>
+                <div class="k-aside__brand-tools">
+                    <button class="k-aside__brand-aside-toggler k-aside__brand-aside-toggler--left k-aside__brand-aside-toggler" id="k_aside_toggler"><span></span></button>
+                </div>
+            </div>
+
+            <div class="k-aside-menu-wrapper k-grid__item k-grid__item--fluid" id="k_aside_menu_wrapper">
+                <div id="k_aside_menu" class="k-aside-menu k-scroll ps ps--active-y" data-kmenu-vertical="1" data-kmenu-scroll="1" data-kmenu-dropdown-timeout="500" style="height: 937px; overflow: hidden;">
+                    <ul class="k-menu__nav">
+                        <li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+                            <a href="javascript:;" class="k-menu__link k-menu__toggle">
+                                <i class="k-menu__link-icon flaticon2-contract "></i>
+                                <span class="k-menu__link-text">정답 미션 통계 관리</span>
+                                <i class="k-menu__ver-arrow la la-angle-right"></i>
+                            </a>
+                            <div class="k-menu__submenu">
+                                <span class="k-menu__arrow"></span>
+                                <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateQuizDaily/(idx=${affiliate.idx})}" class="k-menu__link">
+                                        <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                        <span class="k-menu__link-text">정답 미션 데일리 통계</span>
+                                    </a>
+                                </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateQuizSum/(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
+                                        </a>
+                                    </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateQuizCurrent/(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">정답 미션 현재 리스트</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+                            <a href="javascript:;" class="k-menu__link k-menu__toggle">
+                                <i class="k-menu__link-icon flaticon-customer icon_active"></i>
+                                <span class="k-menu__link-text">검색 미션 통계 관리</span>
+                                <i class="k-menu__ver-arrow la la-angle-right"></i>
+                            </a>
+                            <div class="k-menu__submenu">
+                                <span class="k-menu__arrow"></span>
+                                <ul class="k-menu__subnav"><li class="k-menu__item k-menu__item--active" aria-haspopup="true">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/(idx=${affiliate.idx})}" class="k-menu__link">
+                                        <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                        <span class="k-menu__link-text">검색 미션 데일리 통계</span>
+                                    </a>
+                                </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchSum/(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">검색 미션 일별 합산 통계</span>
+                                        </a>
+                                    </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchCurrent/(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">검색 미션 현재 리스트</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+                            <a href="javascript:;" class="k-menu__link k-menu__toggle">
+                                <i class="k-menu__link-icon flaticon2-contract "></i>
+                                <span class="k-menu__link-text">저장 미션 통계 관리</span>
+                                <i class="k-menu__ver-arrow la la-angle-right"></i>
+                            </a>
+                            <div class="k-menu__submenu">
+                                <span class="k-menu__arrow"></span>
+                                <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
+                                    <a th:href="@{/Affiliate/{idx}/affiliateSightseeingList/(idx=${affiliate.idx})}" class="k-menu__link">
+                                        <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                        <span class="k-menu__link-text">저장 미션 데일리 통계</span>
+                                    </a>
+                                </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingSum/(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">저장 미션 일별 합산 통계</span>
+                                        </a>
+                                    </li>
+                                    <li class="k-menu__item " aria-haspopup="true">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingCurrent(idx=${affiliate.idx})}" class="k-menu__link">
+                                            <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
+                                            <span class="k-menu__link-text">저장 미션 현재 리스트</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+
+
+
+                        <li class="k-menu__item k-menu__item--active" aria-haspopup="true" data-kmenu-submenu-toggle="hover">
+                            <a th:href="@{/Affiliate/affiliateProfile/{idx}(idx=${affiliate.idx})}" class="k-menu__link k-menu__toggle">
+                                <i class="k-menu__link-icon flaticon2-calendar-3 "></i>
+                                <span class="k-menu__link-text">내 프로필</span>
+                                <span class="k-menu__link-badge"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- end aside -->
+        <script type="text/javascript">
+
+            function enterkey() {
+                if (window.event.keyCode == 13) {
+                    commSearch();
+                }
+            }
+
+            //검색
+            function commSearch(idx,page) {
+                if(page ==null){
+        		    page = 1;
+        	    }
+                var frm = document.searchFrm;
+                var formData = new FormData(frm);
+                var jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value; // FormData를 JSON 객체로 변환
+                });
+               if (page == null) {
+                   page = 1;
+               }
+
+                 $.ajax({
+                            url: `/Affiliate/${idx}/affiliateSearchDaily/search/${page}`,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(jsonData),
+                            success: function(response) {
+                                const statDailySearchContainer = $('#statDailySearch'); // 회원 목록을 표시할 컨테이너 선택
+                                statDailySearchContainer.empty();
+
+                                if (response.searchMsnDailyStats.length === 0) {
+                                //statDailySearch가 빈 리스트인 경우 메시지 추가
+                                    $('#statDailySearch').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+                                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
+                                } else {
+                                    response.searchMsnDailyStats.forEach(function(DailySearchTable,index) {
+                                    $('#statDailySearch').append(
+                                        '<tr>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.mediaCompany.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.advertiser.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.searchMsn.advertiserDetails + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.searchMsn.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.searchMsn.missionTitle + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.landingCnt + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySearchTable.partCnt + '</td>' +
+                                            '<td class="text-center align-middle">' + formatDateTime(DailySearchTable.partDate) + '</td>' +
+                                        '</tr>'
+                                    );
+                                 });
+                                 updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage,response.aidx);
+                                 const newUrl = `/Affiliate/${response.aidx}/affiliateSearchDaily/search/${response.currentPage}`;
+                                 history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
+                            }
+                         },
+                        error: function(xhr) {
+                            alert("검색중 오류가 발생하였습니다.");
+                        }
+                    });
+
+            }
+
+            // 페이지네이션 업데이트 함수
+             function updatePagination(currentPage, totalPages, startPage, endPage, aidx) {
+                const paginationContainer = $('.intra-pagination-wrap');
+                paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+                // First 버튼
+                if (currentPage > 1) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', 1)">First</a></div>');
+                }
+
+                // Previous 버튼
+                if (currentPage > 1) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + i + ')">' + i + '</a></div>');
+                }
+
+                // Next 버튼
+                if (currentPage < totalPages) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+                }
+
+                // End 버튼
+                if (currentPage < totalPages) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + totalPages + ')">End</a></div>');
+                }
+            }
+
+            // 날짜 포맷 함수
+            function formatDateTime(dateTimeStr) {
+                if (!dateTimeStr) {
+                    return ''; // null 또는 undefined일 때 빈 문자열 반환
+                }
+                const date = new Date(dateTimeStr);
+                const year = date.getFullYear();
+                const month = ('0' + (date.getMonth() + 1)).slice(-2);
+                const day = ('0' + date.getDate()).slice(-2);
+
+                return `${year}-${month}-${day}`;
+            }
+
+            //검색 초기화
+            function commSearchReset(idx) {
+                location.href = '/Affiliate/' + idx + '/affiliateSearchDaily/';
+            }
+
+            //Excel 다운로드
+            function commDownExcel(idx) {
+                window.location.href = '/Affiliate/' + idx + '/affiliateSearchDaily/excel/download';
+            }
+
+        </script>
+        <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
+
+
+        <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
+            <div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
+
+                <div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
+                    <!-- k-portlet -->
+                    <div class="k-portlet">
+                        <div class="k-portlet__head">
+                            <div class="k-portlet__head-label">
+                                <h3 class="k-portlet__head-title font-weight-bold">검색 미션 데일리 통계</h3>
+                            </div>
+                        </div>
+
+                        <div class="k-portlet__body">
+                            <form method="get" name="searchFrm" class="k-form">
+                                <div class="k-portlet__body-tool row">
+
+                                    <!-- 버튼 영역 -->
+                                    <div class="tool-btn col-xl-6 col-lg-12">
+                                        <div>
+                                            <button type="button" class="btn btn-secondary btn-outline--sub" th:onclick="'commDownExcel(' + ${affiliate.idx} + ');'">EXCEL 다운로드</button>
+                                        </div>
+                                    </div>
+                                    <!--// 버튼 영역 -->
+
+                                    <!-- 툴바 영역 -->
+                                    <div class="toolbar col-xl-6 col-lg-12">
+                                        <div class="k-form__group">
+                                            <div class="row">
+
+                                                <div class="k-form__control col-xl-6 col-lg-12">
+                                                    <!-- datepicker 검색 기간 지정 -->
+                                                    <div class="input-daterange input-group">
+                                                        <!-- 검색 시작일 -->
+                                                        <input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
+
+                                                        <!-- ~ -->
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">~</span>
+                                                        </div>
+
+                                                        <!-- 검색 종료일 -->
+                                                        <input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-secondary" aria-expanded="false" th:onclick="'commSearch(' + ${affiliate.idx} + ');'">검색</button>
+                                                            <button type="button" class="btn btn-secondary" th:onclick="'commSearchReset(' + ${affiliate.idx} + ');'">초기화</button>
+                                                        </div>
+
+                                                    </div>
+                                                    <!-- //datepicker 검색 기간 지정 -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- //툴바 영역 -->
+                                </div>
+                            </form>
+
+                            <div class="table-responsive"> <!--데이터 들어가는부분 -->
+                                <table class="table table--slim  table-bordered table-hover">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center font-weight-bold">IDX</th>
+                                        <th class="text-center font-weight-bold">매체사 IDX</th>
+                                        <th class="text-center font-weight-bold">광고주 IDX</th>
+                                        <th class="text-center font-weight-bold">광고주 상세</th>
+                                        <th class="text-center font-weight-bold">미션 IDX</th>
+                                        <th class="text-center font-weight-bold">미션 제목</th>
+                                        <th class="text-center font-weight-bold">랜딩 카운트</th>
+                                        <th class="text-center font-weight-bold">참여 카운트</th>
+                                        <th class="text-center font-weight-bold">참여일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody  id = "statDailySearch">
+                                    <tr th:if="${#lists.isEmpty(searchMsnDailyStats)}">
+                                        <td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+                                    </tr>
+                                    <tr th:each="DailySearchTable,iterStat : ${searchMsnDailyStats}">
+                                        <td th:text="${DailySearchTable?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.mediaCompany?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.advertiser?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.searchMsn?.advertiserDetails}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.searchMsn?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.searchMsn?.missionTitle}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.landingCnt}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.partCnt}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySearchTable?.partDate}" class="text-center align-middle"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+                                <hr class="my-4">
+                                <div class="intra-pagination-wrap">
+                                    <!-- First 버튼 -->
+                                    <div class="intra-pagination" th:if="${currentPage > 1}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/{page}(idx=${affiliate.idx},page=1)}">First</a>
+                                    </div>
+                                    <!-- Previous 버튼 -->
+
+                                    <div class="intra-pagination" th:if="${currentPage > 1}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/{page}(idx=${affiliate.idx},page=${currentPage - 1})}" rel="prev">Previous</a>
+                                    </div>
+
+                                    <!-- 페이지 링크 생성 -->
+                                    <div th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                                         th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+                                         th:if="${i > 0}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/{page}(idx=${affiliate.idx},page=${i})}">
+                                            <span th:text="${i}"></span>
+                                        </a>
+                                    </div>
+                                    <!-- Next 링크 -->
+                                    <div class="intra-pagination" th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/{page}(idx=${affiliate.idx},page=${currentPage + 1})}" rel="next">Next</a>
+                                    </div>
+                                    <!-- End 링크 -->
+                                    <div class="intra-pagination" th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/{page}(idx=${affiliate.idx},page=${totalPages})}">End</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
+                <div class="k-footer__copyright">
+                    2023&nbsp;©&nbsp;<a th:href="@{/Affiliate/{idx}/affiliateSearchDaily/(idx=${affiliate.idx})}" target="_blank" class="k-link">GLOSSY ELL</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body><!-- end::Body --></html>

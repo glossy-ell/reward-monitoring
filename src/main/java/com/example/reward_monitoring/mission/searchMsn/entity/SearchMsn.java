@@ -2,6 +2,7 @@ package com.example.reward_monitoring.mission.searchMsn.entity;
 
 
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
+import com.example.reward_monitoring.general.mediaCompany.entity.MediaCompany;
 import com.example.reward_monitoring.general.userServer.entity.Server;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -220,6 +221,12 @@ public class SearchMsn {
     @JoinColumn(name="server_url", referencedColumnName = "server_url", nullable = true)
     @Schema(description = "서버URL(외래키)")
     Server server;
+
+    @Comment("매체사 idx")
+    @ManyToOne()
+    @JoinColumn(name="mediacompany_idx", referencedColumnName = "idx", nullable = true)
+    @Schema(description = "매체사 idx")
+    MediaCompany mediaCompany;
 
     @Builder
     public SearchMsn(int missionDefaultQty,int missionDailyCap,int missionExpOrder,Advertiser advertiser,String advertiserDetails

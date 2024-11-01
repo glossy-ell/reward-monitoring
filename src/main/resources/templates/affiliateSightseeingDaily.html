@@ -155,20 +155,19 @@
                     <ul class="k-menu__nav">
                         <li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
                             <a href="javascript:;" class="k-menu__link k-menu__toggle">
-                                <i class="k-menu__link-icon flaticon2-contract icon_active"></i>
+                                <i class="k-menu__link-icon flaticon2-contract"></i>
                                 <span class="k-menu__link-text">정답 미션 통계 관리</span>
                                 <i class="k-menu__ver-arrow la la-angle-right"></i>
                             </a>
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
-                                <ul class="k-menu__subnav">
-                                    <li class="k-menu__item " aria-haspopup="true">
+                                <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
                                     <a th:href="@{/Affiliate/{idx}/affiliateQuizDaily/(idx=${affiliate.idx})}" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">정답 미션 데일리 통계</span>
                                     </a>
                                 </li>
-                                    <li class="k-menu__item k-menu__item--active" aria-haspopup="true">
+                                    <li class="k-menu__item " aria-haspopup="true">
                                         <a th:href="@{/Affiliate/{idx}/affiliateQuizSum/(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">정답 미션 일별 합산 통계</span>
@@ -214,16 +213,15 @@
                             </div>
                         </li>
 
-
                         <li class="k-menu__item  k-menu__item--submenu " aria-haspopup="true" data-kmenu-submenu-toggle="hover">
                             <a href="javascript:;" class="k-menu__link k-menu__toggle">
-                                <i class="k-menu__link-icon flaticon2-contract "></i>
+                                <i class="k-menu__link-icon flaticon2-contract icon_active"></i>
                                 <span class="k-menu__link-text">저장 미션 통계 관리</span>
                                 <i class="k-menu__ver-arrow la la-angle-right"></i>
                             </a>
                             <div class="k-menu__submenu">
                                 <span class="k-menu__arrow"></span>
-                                <ul class="k-menu__subnav"><li class="k-menu__item " aria-haspopup="true">
+                                <ul class="k-menu__subnav"><li class="k-menu__item k-menu__item--active" aria-haspopup="true">
                                     <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/(idx=${affiliate.idx})}" class="k-menu__link">
                                         <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                         <span class="k-menu__link-text">저장 미션 데일리 통계</span>
@@ -236,7 +234,7 @@
                                         </a>
                                     </li>
                                     <li class="k-menu__item " aria-haspopup="true">
-                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingCurrent/(idx=${affiliate.idx})}" class="k-menu__link">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingCurrent(idx=${affiliate.idx})}" class="k-menu__link">
                                             <i class="k-menu__link-bullet k-menu__link-bullet--dot"><span></span></i>
                                             <span class="k-menu__link-text">저장 미션 현재 리스트</span>
                                         </a>
@@ -244,6 +242,8 @@
                                 </ul>
                             </div>
                         </li>
+
+
 
 
 
@@ -260,238 +260,261 @@
             </div>
         </div>
 
+
+        <!-- end aside -->
         <script type="text/javascript">
 
-
-
-
-        function enterkey() {
-            if (window.event.keyCode == 13) {
-                commSearch();
-            }
-        }
-
-        //검색
-        function commSearch(idx,page) {
-            var frm = document.searchFrm;
-            var formData = new FormData(frm);
-            var jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value; // FormData를 JSON 객체로 변환
-            });
-
-            if(page ==null){
-                page = 1;
-            }
-
-             $.ajax({
-                url: `/Affiliate/${idx}/affiliateQuizSum/search/${page}`,
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(jsonData),
-
-
-                success: function(response) {
-                    const statSumQuizContainer = $('#statSumQuiz'); // 회원 목록을 표시할 컨테이너 선택
-                    statSumQuizContainer.empty();
-
-                    if (response.answerMsnSumStats.length === 0) {
-                    //statSumQuiz가 빈 리스트인 경우 메시지 추가
-                        $('#staSumtQuiz').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
-                        updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-                        const landingCountElement = document.getElementById('totalLandingCount');
-                        const partCountElement = document.getElementById('totalPartCount');
-                        landingCountElement.innerText = 0;
-                        partCountElement.innerText = 0;
-                    } else {
-                        response.answerMsnSumStats.forEach(function(answerMsnSumStat,index) {
-                        $('#statSumQuiz').append(
-                            '<tr>' +
-                                '<td class="text-center align-middle">' + formatDateTime(answerMsnSumStat.date) + '</td>' +
-                                '<td class="text-center align-middle">' + answerMsnSumStat.landingCnt + '</td>' +
-                                '<td class="text-center align-middle">' + answerMsnSumStat.partCnt + '</td>' +
-                            '</tr>'
-                        );
-                     });
-                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
-                    const newUrl = `/Affiliate/${response.aidx}/affiliateQuizSum/search/${response.currentPage}`;
-                    history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
-                    const landingCountElement = document.getElementById('totalLandingCount');
-                    const partCountElement = document.getElementById('totalPartCount');
-                    landingCountElement.innerText = response.totalLandingCount;
-                    partCountElement.innerText =  response.totalPartCount;
-                    }
-                  },
-                error: function(xhr) {
-                    alert("검색중 오류가 발생하였습니다.");
+            function enterkey() {
+                if (window.event.keyCode == 13) {
+                    commSearch();
                 }
-            });
-        }
-
-
-
-
-		// 페이지네이션 업데이트 함수
-        function updatePagination(currentPage, totalPages, startPage, endPage, aidx) {
-            const paginationContainer = $('.intra-pagination-wrap');
-            paginationContainer.empty(); // 기존 페이지네이션 비우기
-
-            // First 버튼
-            if (currentPage > 1) {
-                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', 1)">First</a></div>');
             }
 
-            // Previous 버튼
-            if (currentPage > 1) {
-                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+            //검색
+            function commSearch(idx,page) {
+                if(page ==null){
+        		    page = 1;
+        	    }
+                var frm = document.searchFrm;
+                var formData = new FormData(frm);
+                var jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value; // FormData를 JSON 객체로 변환
+                });
+               if (page == null) {
+                   page = 1;
+               }
+
+                 $.ajax({
+                            url: `/Affiliate/${idx}/affiliateSightseeingDaily/search/${page}`,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(jsonData),
+                            success: function(response) {
+                                const statDailySightseeingContainer = $('#statDailySightseeing'); // 회원 목록을 표시할 컨테이너 선택
+                                statDailySightseeingContainer.empty();
+
+                                if (response.saveMsnDailyStats.length === 0) {
+                                //statDailySightseeing가 빈 리스트인 경우 메시지 추가
+                                    $('#statDailySightseeing').append('<tr><td colspan="9" class="text-center">검색 결과가 없습니다.</td></tr>');
+                                    updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage,response.aidx);
+                                } else {
+                                    response.saveMsnDailyStats.forEach(function(DailySightseeingTable,index) {
+                                    $('#statDailySightseeing').append(
+                                        '<tr>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.mediaCompany.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.advertiser.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.advertiserDetails + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.idx + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.saveMsn.missionTitle + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.landingCnt + '</td>' +
+                                            '<td class="text-center align-middle">' + DailySightseeingTable.partCnt + '</td>' +
+                                            '<td class="text-center align-middle">' + formatDateTime(DailySightseeingTable.partDate) + '</td>' +
+                                        '</tr>'
+                                    );
+                                 });
+                                updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage,response.aidx);
+                                const newUrl = `/Affiliate/${response.aidx}/affiliateSightseeingDaily/search/${response.currentPage}`;
+                                history.pushState({}, '', newUrl);  // pushState를 사용하여 URL을 변경, 페이지 이동은 없음
+                            }
+                         },
+                        error: function(xhr) {
+                            alert("검색중 오류가 발생하였습니다.");
+                        }
+                    });
+
             }
 
-            for (let i = startPage; i <= endPage; i++) {
-                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + i + ')">' + i + '</a></div>');
+            function updatePagination(currentPage, totalPages, startPage, endPage, aidx) {
+                const paginationContainer = $('.intra-pagination-wrap');
+                paginationContainer.empty(); // 기존 페이지네이션 비우기
+
+                // First 버튼
+                if (currentPage > 1) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', 1)">First</a></div>');
+                }
+
+                // Previous 버튼
+                if (currentPage > 1) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage - 1) + ')" rel="prev">Previous</a></div>');
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + i + ')">' + i + '</a></div>');
+                }
+
+                // Next 버튼
+                if (currentPage < totalPages) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+                }
+
+                // End 버튼
+                if (currentPage < totalPages) {
+                    paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + totalPages + ')">End</a></div>');
+                }
             }
 
-            // Next 버튼
-            if (currentPage < totalPages) {
-                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + (currentPage + 1) + ')" rel="next">Next</a></div>');
+            // 날짜 포맷 함수
+            function formatDateTime(dateTimeStr) {
+                if (!dateTimeStr) {
+                    return ''; // null 또는 undefined일 때 빈 문자열 반환
+                }
+                const date = new Date(dateTimeStr);
+                const year = date.getFullYear();
+                const month = ('0' + (date.getMonth() + 1)).slice(-2);
+                const day = ('0' + date.getDate()).slice(-2);
+
+                return `${year}-${month}-${day}`;
             }
 
-            // End 버튼
-            if (currentPage < totalPages) {
-                paginationContainer.append('<div class="intra-pagination"><a href="javascript:void(0);" onclick="commSearch(' + aidx + ', ' + totalPages + ')">End</a></div>');
+            //검색 초기화
+            function commSearchReset(idx) {
+                location.href = '/Affiliate/' + idx + '/affiliateSightseeingDaily/';
             }
-        }
+
+            //Excel 다운로드
+            function commDownExcel(idx) {
+                window.location.href = '/Affiliate/' + idx + '/affiliateSightseeingDaily/excel/download';
+            }
+
+        </script>
+        <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
 
-    // 날짜 포맷 함수
-	function formatDateTime(dateTimeStr) {
-		if (!dateTimeStr) {
-			return ''; // null 또는 undefined일 때 빈 문자열 반환
-		}
-		const date = new Date(dateTimeStr);
-		const year = date.getFullYear();
-		const month = ('0' + (date.getMonth() + 1)).slice(-2);
-		const day = ('0' + date.getDate()).slice(-2);
+        <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
+            <div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
 
-		return `${year}-${month}-${day}`;
-	}
-
-    //검색 초기화
-    function commSearchReset(idx) {
-        location.href = '/Affiliate/' + idx + '/affiliateQuizDaily/';
-    }
-
-    //Excel 다운로드
-    function commDownExcel(idx) {
-    	window.location.href = '/Affiliate/' + idx + '/affiliateQuizSum/excel/download';
-    }
-
-</script>
-<script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
-
-
-    <div class="k-grid__item k-grid__item--fluid k-grid k-grid--hor k-wrapper" id="k_wrapper">
-        <div class="k-content k-grid__item k-grid__item--fluid k-grid k-grid--hor" id="k_content">
-
-            <div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
-                <!-- k-portlet -->
-                <div class="k-portlet">
-                    <div class="k-portlet__head">
-                        <div class="k-portlet__head-label">
-                            <h3 class="k-portlet__head-title font-weight-bold">정답 미션 합산 통계
-                            </h3>
+                <div class="k-content__body	k-grid__item k-grid__item--fluid" id="k_content_body">
+                    <!-- k-portlet -->
+                    <div class="k-portlet">
+                        <div class="k-portlet__head">
+                            <div class="k-portlet__head-label">
+                                <h3 class="k-portlet__head-title font-weight-bold">정답 미션 데일리 통계</h3>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="k-portlet__body">
-                        <form method="get" name="searchFrm" class="k-form">
-                            <div class="k-portlet__body-tool row">
+                        <div class="k-portlet__body">
+                            <form method="get" name="searchFrm" class="k-form">
+                                <div class="k-portlet__body-tool row">
 
-                                <!-- 버튼 영역 -->
-                                <div class="tool-btn col-xl-6 col-lg-12">
-                                    <div>
-                                        <button type="button" class="btn btn-secondary btn-outline--sub"  th:onclick="'commDownExcel(' + ${affiliate.idx} + ');'">EXCEL 다운로드</button>
-                                        <span class="ml-2">한달간의 데이터를 다운로드합니다.</span>
+                                    <!-- 버튼 영역 -->
+                                    <div class="tool-btn col-xl-6 col-lg-12">
+                                        <div>
+                                            <button type="button" class="btn btn-secondary btn-outline--sub" th:onclick="'commDownExcel(' + ${affiliate.idx} + ');'">EXCEL 다운로드</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <!--// 버튼 영역 -->
+                                    <!--// 버튼 영역 -->
 
-                                <!-- 툴바 영역 -->
-                                <div class="toolbar col-xl-6 col-lg-12">
-                                    <div class="k-form__group">
-                                        <div class="row">
-                                            <div class="k-form__control col-xl-6 col-lg-12">
-                                                <!-- datepicker 검색 기간 지정 -->
-                                                <div class="input-daterange input-group">
+                                    <!-- 툴바 영역 -->
+                                    <div class="toolbar col-xl-6 col-lg-12">
+                                        <div class="k-form__group">
+                                            <div class="row">
 
-                                                    <!-- 검색 시작일 -->
-                                                    <input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
-                                                    <!-- ~ -->
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">~</span>
+                                                <div class="k-form__control col-xl-6 col-lg-12">
+                                                    <!-- datepicker 검색 기간 지정 -->
+                                                    <div class="input-daterange input-group">
+                                                        <!-- 검색 시작일 -->
+                                                        <input type="text" class="form-control btn-datepicker" name="startAt" placeholder="검색 시작일" value="" autocomplete="off">
+
+                                                        <!-- ~ -->
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">~</span>
+                                                        </div>
+
+                                                        <!-- 검색 종료일 -->
+                                                        <input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-secondary" aria-expanded="false" th:onclick="'commSearch(' + ${affiliate.idx} + ');'">검색</button>
+                                                            <button type="button" class="btn btn-secondary" th:onclick="'commSearchReset(' + ${affiliate.idx} + ');'">초기화</button>
+                                                        </div>
+
                                                     </div>
-                                                    <!-- 검색 종료일 -->
-                                                    <input type="text" class="form-control btn-datepicker" name="endAt" placeholder="검색 종료일" value="" autocomplete="off">
-                                                    <div class="input-group-append">
-                                                        <button type="button" class="btn btn-secondary" aria-expanded="false" th:onclick="'commSearch(' + ${affiliate.idx} + ');'">검색</button>
-                                                        <button type="button" class="btn btn-secondary" th:onclick="'commSearchReset(' + ${affiliate.idx} + ');'">초기화</button>
-                                                    </div>
-
+                                                    <!-- //datepicker 검색 기간 지정 -->
                                                 </div>
-                                                <!-- //datepicker 검색 기간 지정 -->
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- //툴바 영역 -->
                                 </div>
-                                <!-- //툴바 영역 -->
+                            </form>
+
+                            <div class="table-responsive"> <!--데이터 들어가는부분 -->
+                                <table class="table table--slim  table-bordered table-hover">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center font-weight-bold">IDX</th>
+                                        <th class="text-center font-weight-bold">매체사 IDX</th>
+                                        <th class="text-center font-weight-bold">광고주 IDX</th>
+                                        <th class="text-center font-weight-bold">광고주 상세</th>
+                                        <th class="text-center font-weight-bold">미션 IDX</th>
+                                        <th class="text-center font-weight-bold">미션 제목</th>
+                                        <th class="text-center font-weight-bold">랜딩 카운트</th>
+                                        <th class="text-center font-weight-bold">참여 카운트</th>
+                                        <th class="text-center font-weight-bold">참여일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody  id = "statDailySightseeing">
+                                    <tr th:if="${#lists.isEmpty(saveMsnDailyStats)}">
+                                        <td colspan="9" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+                                    </tr>
+                                    <tr th:each="DailySightseeingTable,iterStat : ${saveMsnDailyStats}">
+                                        <td th:text="${DailySightseeingTable?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable.mediaCompany?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable.advertiser?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable.saveMsn?.advertiserDetails}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable.saveMsn?.idx}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable.saveMsn?.missionTitle}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable?.landingCnt}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable?.partCnt}" class="text-center align-middle"></td>
+                                        <td th:text="${DailySightseeingTable?.partDate}" class="text-center align-middle"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+                                <hr class="my-4">
+                                <div class="intra-pagination-wrap">
+                                    <!-- First 버튼 -->
+                                    <div class="intra-pagination" th:if="${currentPage > 1}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/{page}(idx=${affiliate.idx},page=1)}">First</a>
+                                    </div>
+                                    <!-- Previous 버튼 -->
+
+                                    <div class="intra-pagination" th:if="${currentPage > 1}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/{page}(idx=${affiliate.idx},page=${currentPage - 1})}" rel="prev">Previous</a>
+                                    </div>
+
+                                    <!-- 페이지 링크 생성 -->
+                                    <div th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                                         th:classappend="${currentPage == i} ? 'intra-pagination on' : 'intra-pagination'"
+                                         th:if="${i > 0}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/{page}(idx=${affiliate.idx},page=${i})}">
+                                            <span th:text="${i}"></span>
+                                        </a>
+                                    </div>
+                                    <!-- Next 링크 -->
+                                    <div class="intra-pagination" th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/{page}(idx=${affiliate.idx},page=${currentPage + 1})}" rel="next">Next</a>
+                                    </div>
+                                    <!-- End 링크 -->
+                                    <div class="intra-pagination" th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/{page}(idx=${affiliate.idx},page=${totalPages})}">End</a>
+                                    </div>
+                                </div>
 
                             </div>
-                        </form>
-
-                        <div class="table-responsive"> <!--데이터 들어가는부분 -->
-                            <div class="mb-3"></div>
-                            <table class="table table--slim  table-bordered table-hover">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th class="text-center font-weight-bold">일시</th>
-                                    <th class="text-center font-weight-bold">랜딩 카운트 </th>
-                                    <th class="text-center font-weight-bold">참여 카운트 </th>
-                                </tr>
-                                </thead>
-                                <tbody  id = "statSumQuiz">
-                                <tr th:if="${#lists.isEmpty(answerMsnSumStats)}">
-                                    <td colspan="3" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
-                                </tr>
-                                <tr th:each="SumQuizTable,iterStat : ${answerMsnSumStats}">
-                                    <td th:text="${SumQuizTable?.date}" class="text-center align-middle"></td>
-                                    <td th:text="${SumQuizTable?.landingCnt}" class="text-center align-middle"></td>
-                                    <td th:text="${SumQuizTable?.partCnt}" class="text-center align-middle"></td>
-                                </tr>
-                                </tbody>
-                                <tfoot>
-                                <tr><th class="text-center font-weight-bold">합산</th>
-                                    <th class="text-center font-weight-bold" id="totalLandingCount" th:text="${totalLandingCount}">0</th>
-                                    <th class="text-center font-weight-bold" id="totalPartCount" th:text="${totalPartCount}">0</th>
-                                </tr>
-                                </tfoot>
-                            </table>
-
-                            <hr class="my-4">
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
+                <div class="k-footer__copyright">
+                    2023&nbsp;©&nbsp;<a th:href="@{/Affiliate/{idx}/affiliateSightseeingDaily/(idx=${affiliate.idx})}" target="_blank" class="k-link">GLOSSY ELL</a>
 
-        <div class="k-footer k-grid__item k-grid k-grid--desktop k-grid--ver-desktop justify-content-center">
-            <div class="k-footer__copyright">
-                2023&nbsp;©&nbsp;<a th:href="@{/Affiliate/{idx}/affiliateQuizSum/(idx=${affiliate.idx})}" target="_blank" class="k-link">GLOSSY ELL</a>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
-
-
-
-    </body><!-- end::Body --></html>
+</div>
+</body><!-- end::Body --></html>

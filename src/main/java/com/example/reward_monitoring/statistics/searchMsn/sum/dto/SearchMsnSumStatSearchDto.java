@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class SearchMsnSumStatSearchDto {
 
     @Schema(description = "서버url",example = "https://www.abc.com")
-    private String url;
+    private String serverUrl;
 
     @Schema(description = "광고주",example = "시크릿 K")
     private String advertiser;

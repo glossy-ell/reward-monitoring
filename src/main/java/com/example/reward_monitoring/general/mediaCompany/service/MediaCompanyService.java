@@ -207,7 +207,8 @@ public class MediaCompanyService {
 
     public MediaCompany affiliateProfileEdit(int idx, MediaCompanyProfileEditDto dto) {
         MediaCompany mediaCompany = mediaCompanyRepository.findByIdx(idx);
-        mediaCompany.setPassword(dto.getPassword());
+        if(dto.getPassword() != null && !dto.getPassword().isEmpty())
+            mediaCompany.setPassword(dto.getPassword());
         mediaCompanyRepository.save(mediaCompany);
 
         return mediaCompany;

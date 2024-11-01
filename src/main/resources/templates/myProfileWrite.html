@@ -497,6 +497,7 @@
             .then(response => {
                 if (response.ok) {
                     // 성공적으로 수정된 경우
+                    alert("회원정보가 수정되었습니다. 로그인페이지로 이동합니다.");
                     window.location.href = "/"; // 이동할 URL
                 } else {
                     alert("회원 정보 수정에 실패했습니다.");

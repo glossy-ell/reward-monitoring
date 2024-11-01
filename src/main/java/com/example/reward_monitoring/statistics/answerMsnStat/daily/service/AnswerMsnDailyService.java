@@ -1,5 +1,6 @@
 package com.example.reward_monitoring.statistics.answerMsnStat.daily.service;
 
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanyQuizDailySearchDto;
 import com.example.reward_monitoring.mission.answerMsn.dto.AnswerMsnSearchDto;
 import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import com.example.reward_monitoring.mission.answerMsn.repository.AnswerMsnRepository;
@@ -217,4 +218,38 @@ public class AnswerMsnDailyService {
         return result;
     }
 
+    public List<AnswerMsnDailyStat> findByMediaCompany(int aidx){
+        return answerMsnDailyStatRepository.findByMediaCompanyIdx(aidx);
+    }
+
+    public List<AnswerMsnDailyStat> searchAnswerMsnDailyByAffiliate(List<AnswerMsnDailyStat> target,MediaCompanyQuizDailySearchDto dto) {
+
+        List<AnswerMsnDailyStat> target_date = null;
+
+
+        List<AnswerMsnDailyStat> result = target;
+        boolean changed = false;
+
+        result = new ArrayList<>(answerMsnDailyStatRepository.findAll());
+        if(dto.getStartAt() != null || dto.getEndAt() != null){
+            if(dto.getStartAt() != null){
+                if(dto.getEndAt() == null)
+                    target_date = answerMsnDailyStatRepository.findByStartAt(dto.getStartAt());
+                else
+                    target_date = answerMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
+            }
+            else
+                target_date = answerMsnDailyStatRepository.findByEndAt(dto.getEndAt());
+        }
+
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(AnswerMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
 }

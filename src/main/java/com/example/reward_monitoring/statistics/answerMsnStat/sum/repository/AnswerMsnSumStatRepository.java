@@ -1,7 +1,7 @@
 package com.example.reward_monitoring.statistics.answerMsnStat.sum.repository;
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+
 import com.example.reward_monitoring.statistics.answerMsnStat.sum.entity.AnswerMsnSumStat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +12,10 @@ import java.util.List;
 
 public interface AnswerMsnSumStatRepository extends JpaRepository<AnswerMsnSumStat,Integer> {
 
-    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date > :startAt")
+    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date >= :startAt")
     public List<AnswerMsnSumStat> findByStartAt(@Param("startAt") LocalDate startAt);
 
-    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date < :endAt")
+    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date <= :endAt")
     public List<AnswerMsnSumStat> findByEndAt(@Param("endAt") LocalDate endAt);
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date BETWEEN :startAt AND :endAt")
@@ -30,4 +30,10 @@ public interface AnswerMsnSumStatRepository extends JpaRepository<AnswerMsnSumSt
 
     @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.date BETWEEN :past AND :currentTime")
     public List<AnswerMsnSumStat> findMonth(@Param("currentTime")LocalDate currentTime,@Param("past")LocalDate past);
+
+    @Query("SELECT a FROM AnswerMsnSumStat a WHERE a.mediaCompany.idx = :aidx")
+    public List<AnswerMsnSumStat> findByMediaCompanyIdx(@Param("aidx")int aidx);
+
+    @Query("SELECT a FROM AnswerMsnSumStat a WHERE (a.date BETWEEN :past AND :currentTime) AND (a.mediaCompany.idx = :aidx)")
+    public List<AnswerMsnSumStat> findMonthByAffiliate(@Param("currentTime")LocalDate currentTime,@Param("past")LocalDate past,@Param("aidx")int aidx);
 }

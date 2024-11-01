@@ -2,7 +2,7 @@ package com.example.reward_monitoring.statistics.saveMsn.daily.service;
 
 
 
-import com.example.reward_monitoring.statistics.answerMsnStat.daily.entity.AnswerMsnDailyStat;
+import com.example.reward_monitoring.general.mediaCompany.dto.MediaCompanySightseeingDailySearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.dto.SaveMsnDailyStatSearchDto;
 import com.example.reward_monitoring.statistics.saveMsn.daily.entity.SaveMsnDailyStat;
 import com.example.reward_monitoring.statistics.saveMsn.daily.repository.SaveMsnDailyStatRepository;
@@ -158,7 +158,7 @@ public class SaveMsnDailyService {
         }
         if(target_serverUrl != null){
             Set<Integer> idxSet = target_serverUrl.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
-            result = result.stream().filter(answerMsnDailyStat-> idxSet.contains(answerMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            result = result.stream().filter(saveMsnDailyStat-> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }
         if(target_advertiser != null){
@@ -169,6 +169,41 @@ public class SaveMsnDailyService {
 
         if(target_companyName != null){
             Set<Integer> idxSet = target_companyName.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
+            result = result.stream().filter(saveMsnDailyStat-> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
+            changed = true;
+        }
+        if(!changed)
+            result = new ArrayList<>();
+
+        return result;
+    }
+
+    public List<SaveMsnDailyStat> findByMediaCompany(int aidx){
+        return saveMsnDailyStatRepository.findByMediaCompanyIdx(aidx);
+    }
+
+    public List<SaveMsnDailyStat> searchSaveMsnDailyByAffiliate(List<SaveMsnDailyStat> target, MediaCompanySightseeingDailySearchDto dto) {
+
+        List<SaveMsnDailyStat> target_date = null;
+
+
+        List<SaveMsnDailyStat> result = target;
+        boolean changed = false;
+
+        result = new ArrayList<>(saveMsnDailyStatRepository.findAll());
+        if(dto.getStartAt() != null || dto.getEndAt() != null){
+            if(dto.getStartAt() != null){
+                if(dto.getEndAt() == null)
+                    target_date = saveMsnDailyStatRepository.findByStartAt(dto.getStartAt());
+                else
+                    target_date = saveMsnDailyStatRepository.findByBothAt(dto.getStartAt(),dto.getEndAt());
+            }
+            else
+                target_date = saveMsnDailyStatRepository.findByEndAt(dto.getEndAt());
+        }
+
+        if(target_date != null){
+            Set<Integer> idxSet = target_date.stream().map(SaveMsnDailyStat::getIdx).collect(Collectors.toSet());
             result = result.stream().filter(saveMsnDailyStat-> idxSet.contains(saveMsnDailyStat.getIdx())).distinct().collect(Collectors.toList());
             changed = true;
         }

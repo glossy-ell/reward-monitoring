@@ -102,17 +102,19 @@ public class SaveMsnDetailService {
             result = result.stream().filter(saveMsnDetailsStat -> idxSet.contains(saveMsnDetailsStat.getTX())).distinct().collect(Collectors.toList());
             changed = true;
         }
-        if(dto.getSOrder().equals("memberId")){
+        if(dto.getSOrder()!=null) {
             changed = true;
-            Map<Integer, SaveMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
-                    SaveMsnDetailsStat::getTX,
-                    stat -> stat, // 값은 AnswerMsnDetailsStat 객체
-                    (existing, replacement) -> {
-                        // 날짜 비교하여 최신 것 선택
-                        return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
-                    }
-            ));
-            result  = groupedResult.values().stream().sorted(Comparator.comparing(SaveMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+            if (dto.getSOrder().equals("memberId")) {
+                Map<Integer, SaveMsnDetailsStat> groupedResult = result.stream().collect(Collectors.toMap(
+                        SaveMsnDetailsStat::getTX,
+                        stat -> stat, // 값은 AnswerMsnDetailsStat 객체
+                        (existing, replacement) -> {
+                            // 날짜 비교하여 최신 것 선택
+                            return existing.getRegistrationDate().isAfter(replacement.getRegistrationDate()) ? existing : replacement;
+                        }
+                ));
+                result = groupedResult.values().stream().sorted(Comparator.comparing(SaveMsnDetailsStat::getRegistrationDate).reversed()).collect(Collectors.toList());
+            }
         }
         if(!changed)
             result = new ArrayList<>();
