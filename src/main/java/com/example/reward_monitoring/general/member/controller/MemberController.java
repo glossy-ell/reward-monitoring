@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -82,7 +83,7 @@ public class MemberController {
         if(edited == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        ZonedDateTime editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime editedAt = LocalDateTime.now();
         edited.setEditedAt(editedAt); //수정시간 설정
         return ResponseEntity.status(HttpStatus.OK).body(edited);
     }

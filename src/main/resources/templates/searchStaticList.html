@@ -196,7 +196,7 @@
                         <input type="hidden" name="searchIdx" value="28004" id="searchIdx">
                         <div class="k-portlet__body-tool row">
                             <div class="tool-btn col-xl-6 col-lg-6">
-                                <button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>                                    
+								<button type="button" class="btn btn-secondary" th:onclick="'commDownExcel(' + ${searchMsn.idx} + ');'">Excel 다운로드</button>
                             </div>
                             <div class="toolbar col-xl-6 col-lg-6">                                                
                                 <div class="k-form__group">

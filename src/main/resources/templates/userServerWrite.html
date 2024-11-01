@@ -498,7 +498,9 @@
 			}
 		}
 		if (!isChecked) {
+			$('#saveBtn').attr('disabled',false);
         	alert("활성여부를 입력해주세요.");
+        	$('#userServerUrl').focus();
         	return false;
    		}
 

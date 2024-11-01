@@ -6,13 +6,11 @@ import com.example.reward_monitoring.general.advertiser.dto.AdvertiserReadDto;
 import com.example.reward_monitoring.general.advertiser.dto.AdvertiserSearchDto;
 import com.example.reward_monitoring.general.advertiser.entity.Advertiser;
 import com.example.reward_monitoring.general.advertiser.repository.AdvertiserRepository;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -79,19 +77,17 @@ public class AdvertiserService {
 
         if(dto.getStartDate() != null || dto.getEndDate() != null){
             if(dto.getStartDate() != null){
-                ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId);
+                LocalDateTime start_time = dto.getStartDate().atStartOfDay();
                 if(dto.getEndDate() == null){
                     target_date = advertiserRepository.findByStartDate(start_time);
                 }else{
-                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                    LocalDateTime end_time = dto.getEndDate().atTime(23,59);
                     target_date = advertiserRepository.findByBothDate(start_time,end_time);
                 }
 
             }
             else {
-                ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                LocalDateTime end_time = dto.getEndDate().atTime(23,59);
                 target_date = advertiserRepository.findByEndDate(end_time);
             }
         }

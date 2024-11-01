@@ -506,8 +506,8 @@
 						'<td class="text-center align-middle">' + member.name + '</td>' +
 						'<td class="text-center align-middle">' + member.department + '</td>' +
 						'<td class="text-center align-middle">' + (member.active ? '<span class="color-blue">활성</span>' : '<span class="color-red">비활성</span>') + '</td>' +
-						'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? formatDateTime(member.lastLoginAtLocalDateTime) : '기록 없음') + '</td>' +
-						'<td class="text-center align-middle">' + formatDateTime(member.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' + (member.lastLoginAt !== null ? formatDateTime(member.lastLoginAt) : '기록 없음') + '</td>' +
+						'<td class="text-center align-middle">' + formatDateTime(member.createdAt) + '</td>' +
 						'</tr>'
 					);
 					updatePagination(response.currentPage, response.totalPages, response.startPage, response.endPage);
@@ -732,8 +732,8 @@
 														<span class="color-blue" th:if="${member.isActive}">활성</span>
 														<span class="color-red" th:if="${!member.isActive}">비활성</span>
 													</td>
-													<td th:text="${member.lastLoginAtLocalDateTime != null ? #temporals.format(member.lastLoginAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss') : '기록 없음'}" class="text-center align-middle"></td>
-													<td th:text="${#temporals.format(member.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+													<td th:text="${member.lastLoginAt != null ? #temporals.format(member.lastLoginAt, 'yyyy-MM-dd HH:mm:ss') : '기록 없음'}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 												</tr>
 											</tbody>
 										</table>

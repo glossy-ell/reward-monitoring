@@ -6,15 +6,12 @@ import com.example.reward_monitoring.general.member.dto.MemberReadDto;
 import com.example.reward_monitoring.general.member.dto.MemberSearchDto;
 import com.example.reward_monitoring.general.member.entity.Member;
 import com.example.reward_monitoring.general.member.repository.MemberRepository;
-import com.example.reward_monitoring.mission.answerMsn.entity.AnswerMsn;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -228,9 +225,7 @@ public class MemberService {
 
         if (member != null) {
             LocalDateTime currentDateTime = LocalDateTime.now();
-            ZoneId zoneId = ZoneId.of("Asia/Seoul");
-            ZonedDateTime zonedDateTime = currentDateTime.atZone(zoneId).plusHours(9);;// LocalDateTime을 ZonedDateTime으로 변환
-            member.setLastLoginAt(zonedDateTime); // 현재 시간으로 설정
+            member.setLastLoginAt(currentDateTime); // 현재 시간으로 설정
             memberRepository.save(member); // 업데이트
         }
     }
@@ -253,22 +248,18 @@ public class MemberService {
             if(dto.getStartDate() != null){
 
                 if(dto.getEndDate() == null){
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId).minusHours(9);;
+                    LocalDateTime start_time = dto.getStartDate().atStartOfDay();
                     target_date = memberRepository.findByStartDate(start_time);
                 }else{
-                    ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                    ZonedDateTime start_time = dto.getStartDate().atStartOfDay(zoneId).minusHours(9);;
-                    ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId);
+                    LocalDateTime start_time = dto.getStartDate().atStartOfDay();
+                    LocalDateTime  end_time = dto.getEndDate().atTime(23,59);
 
                     target_date = memberRepository.findByBothDate(start_time,end_time);
                 }
 
             }
             else {
-                ZoneId zoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime end_time = dto.getEndDate().atStartOfDay(zoneId).minusHours(9);;
-
+                LocalDateTime  end_time = dto.getEndDate().atTime(23,59);
                 target_date = memberRepository.findByEndDate(end_time);
             }
 

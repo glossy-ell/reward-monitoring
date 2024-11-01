@@ -503,7 +503,7 @@
     					'<td class="text-center align-middle">' + (affiliate.companyManagePhoneNum || '미정') + '</td>' +
 						'<td class="text-center align-middle">' + affiliate.apikey + '</td>' +
 						'<td class="text-center align-middle">' + (affiliate.active ? '<span class="color-blue">사용함</span>' : '<span class="color-red">사용안함</span>') + '</td>' +
-						'<td class="text-center align-middle">' +  formatDateTime(affiliate.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' +  formatDateTime(affiliate.createdAt) + '</td>' +
 						'<td class="text-center align-middle">' +
 							'<button class="btn btn-outline-accent btn-xs" onclick="commGoReport(' + affiliate.idx + ')">매체 리포트</button>' +
 						'</td>' +
@@ -748,7 +748,7 @@
 														<span class="color-blue" th:if="${affiliate.isActive}">사용함</span>
 														<span class="color-red" th:if="${!affiliate.isActive}">사용안함</span>
 													</td>
-													<td th:text="${#temporals.format(affiliate.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(affiliate.createdAt, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 													<td class="text-center align-middle">
 														<button class="btn btn-outline-accent btn-xs" th:onclick="'commGoReport(' + ${affiliate.idx} + ')'">매체 리포트</button>
 													</td>

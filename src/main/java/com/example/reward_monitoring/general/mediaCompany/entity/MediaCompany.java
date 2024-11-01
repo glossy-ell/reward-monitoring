@@ -6,12 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Objects;
+
 
 @Getter
 @Setter
@@ -76,12 +72,8 @@ public class MediaCompany {
     @Comment("생성일시")
     @Column(name = "created_at", nullable = false, updatable = false)
     @Schema(description = "생성일시")
-    private ZonedDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    @Transient
-    private LocalDateTime createdAtLocalDateTime;
-    @Transient
-    private LocalDate createdAtLocalDate;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -126,7 +118,7 @@ public class MediaCompany {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        createdAt = LocalDateTime.now();
     }
 
 
@@ -152,10 +144,5 @@ public class MediaCompany {
 
     }
 
-    @PostLoad
-    public void changeDTypeDateTime(){
-        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime().minusHours(9);
-        this.createdAtLocalDate = this.createdAt.toLocalDateTime().minusHours(9).toLocalDate();
 
-    }
 }

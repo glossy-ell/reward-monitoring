@@ -172,7 +172,7 @@
     }
 
     //Excel 다운로드
-    function commDownExcel() {
+    function commDownExcel(idx) {
 		window.location.href = '/Mission/sightseeingStaticList/excel/' + idx;
     }
 
@@ -196,7 +196,7 @@
 					<form method="get" name="searchFrm" class="k-form">
 						<div class="k-portlet__body-tool row">
                             <div class="tool-btn col-xl-6 col-lg-6">
-                                <button type="button" class="btn btn-outline--main" onclick="commDownExcel();">EXCEL 다운로드</button>                                    
+								<button type="button" class="btn btn-secondary" th:onclick="'commDownExcel(' + ${saveMsn.idx} + ');'">Excel 다운로드</button>
                             </div>
                             <div class="toolbar col-xl-6 col-lg-6">                                                
                                 <div class="k-form__group">
@@ -213,7 +213,7 @@
                                             <!-- datepicker 검색 기간 지정 -->
                                             <div class="input-daterange input-group">
                                                 <!-- 검색 시작일 -->
-                                                <input type="text" class="form-control btn-datepicker" name="startDate" placeholder="검색 시작일" value="2024-09-18" autocomplete="off">
+												<input type="text" class="form-control btn-datepicker" name="startDate" placeholder="검색 시작일" th:value="${past}" autocomplete="off">
 
                                                 <!-- ~ -->
                                                 <div class="input-group-append">
@@ -221,9 +221,9 @@
                                                 </div>
 
                                                 <!-- 검색 종료일 -->
-                                                <input type="text" class="form-control btn-datepicker" name="endDate" placeholder="검색 종료일" value="2024-10-18" autocomplete="off">
+												<input type="text" class="form-control btn-datepicker" name="endDate" placeholder="검색 종료일" th:value="${currentTime}" autocomplete="off">
                                                 <div class="input-group-append">
-                                                    <button type="button" class="btn btn-secondary" aria-expanded="false" onclick="commSearch();">검색</button>
+													<button type="button" class="btn btn-secondary" aria-expanded="false" th:onclick="'commSearch(' + ${saveMsn.idx} + ');'">검색</button>
                                                 </div>	
                                             </div>
                                             <!-- //datepicker 검색 기간 지정 -->

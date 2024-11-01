@@ -282,7 +282,7 @@ public class AdvertiserController {
         model.addAttribute("totalPages", (int) Math.ceil((double) advertisers.size() / limit));
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        return "/advertiserList";
+        return "advertiserList";
     }
 
 
@@ -328,7 +328,7 @@ public class AdvertiserController {
         model.addAttribute("totalPages", (int) Math.ceil((double) advertisers.size() / limit));
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        return "/advertiserList";
+        return "advertiserList";
     }
 
 

@@ -9,10 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 
 @Data
@@ -74,12 +71,9 @@ public class Member {
     @Comment("마지막 로그인 일시")
     @Column(name = "last_login_at")
     @Schema(description = "마지막 로그인 일시",example = "2024-09-05 12:56:16")
-    private ZonedDateTime lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
-    @Transient
-    private LocalDateTime lastLoginAtLocalDateTime;
-    @Transient
-    private LocalDate lastLoginAtLocalDate;
+
 
 
     @Enumerated(EnumType.STRING)
@@ -90,22 +84,15 @@ public class Member {
     @Comment("생성 일시")
     @Column(name = "created_at", nullable = false, updatable = false)
     @Schema(description = "계정 생성일시",example = "2024-09-05 12:56:16")
-    private ZonedDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    @Transient
-    private LocalDateTime createdAtLocalDateTime;
-    @Transient
-    private LocalDate createdAtLocalDate;
+
 
     @Comment("정보 수정 일시")
     @Column(name = "edited_at")
     @Schema(description = "정보 수정 일시")
-    private ZonedDateTime editedAt;
+    private LocalDateTime editedAt;
 
-    @Transient
-    private LocalDateTime editedAtLocalDateTime;
-    @Transient
-    private LocalDate editedAtLocalDate;
 
     @Comment("관리자 메모")
     @Column(name = "memo")
@@ -398,9 +385,10 @@ public class Member {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusHours(9); //시간 호환 문제
+        createdAt = LocalDateTime.now(); //시간
         isActive = true;
     }
+
 
     @Builder
     public Member(String id,String password,String name,String department,CtryCode ctryCode,String phone,Lang lang) {
@@ -411,23 +399,5 @@ public class Member {
         this.ctryCode=ctryCode;
         this.phone=phone;
         this.lang = lang;
-    }
-
-
-    @PostLoad
-    public void changeDTypeDateTime(){
-
-        this.createdAtLocalDateTime = this.createdAt.toLocalDateTime().minusHours(9);
-        this.createdAtLocalDate = this.createdAt.toLocalDateTime().minusHours(9).toLocalDate();
-
-        if(editedAt !=null) {
-            this.editedAtLocalDateTime = this.editedAt.toLocalDateTime().minusHours(9);
-            this.editedAtLocalDate = this.editedAt.toLocalDateTime().minusHours(9).toLocalDate();
-        }
-
-        if(lastLoginAt != null) {
-            this.lastLoginAtLocalDateTime = this.lastLoginAt.toLocalDateTime().minusHours(9);
-            this.lastLoginAtLocalDate = this.lastLoginAt.toLocalDateTime().minusHours(9).toLocalDate();
-        }
     }
 }

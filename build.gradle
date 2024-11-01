@@ -44,7 +44,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'com.bucket4j:bucket4j-core:8.3.0' //Bucket4j
 }
-
-tasks.named('test') {
-	useJUnitPlatform()
+bootJar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE // 중복된 파일을 제외
 }
+

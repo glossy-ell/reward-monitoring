@@ -519,7 +519,7 @@
 						'<td class="text-center align-middle">' + advertiser.manager + '</td>' +
 						'<td class="text-center align-middle">' + advertiser.managerPhoneNum + '</td>' +
 						'<td class="text-center align-middle">' + (advertiser.active ? '<span class="color-blue">사용함</span>' : '<span class="color-red">사용안함</span>') + '</td>' +
-						'<td class="text-center align-middle">' +formatDateTime(advertiser.createdAtLocalDateTime) + '</td>' +
+						'<td class="text-center align-middle">' +formatDateTime(advertiser.createdAt) + '</td>' +
 						'<td class="text-center align-middle">' +
 							'<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" onclick="commGoDetail(' + advertiser.idx + ');">수정</button>' +
 						'</td>' +
@@ -725,7 +725,7 @@
 														<span class="color-blue" th:if="${advertiser.isActive}">사용함</span>
 														<span class="color-red" th:if="${!advertiser.isActive}">사용안함</span>
 													</td>
-													<td th:text="${#temporals.format(advertiser.createdAtLocalDateTime, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
+													<td th:text="${#temporals.format(advertiser.createdAt, 'yyyy-MM-dd HH:mm:ss')}" class="text-center align-middle"></td>
 													<td class="text-center align-middle">
 														<button type="button" class="btn btn-secondary btn-outline--main btn-xs btn-upper" th:onclick="'commGoDetail(' +${advertiser.idx} + ');'">수정</button>
 													</td>

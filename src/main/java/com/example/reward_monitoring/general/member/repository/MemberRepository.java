@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -26,13 +27,13 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
     public List<Member> findByName_search(@Param("keyword")String keyword);
 
     @Query("SELECT m FROM Member m WHERE m.createdAt BETWEEN :startDate AND :endDate")
-    public List<Member> findByBothDate(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate);
+    public List<Member> findByBothDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT m FROM Member m WHERE m.createdAt > :startDate")
-    public List<Member> findByStartDate(@Param("startDate") ZonedDateTime startDate);
+    public List<Member> findByStartDate(@Param("startDate") LocalDateTime startDate);
 
     @Query("SELECT m FROM Member m WHERE m.createdAt < :endDate")
-    public List<Member> findByEndDate(@Param("endDate") ZonedDateTime endDate);
+    public List<Member> findByEndDate(@Param("endDate") LocalDateTime endDate);
 
 
 }
