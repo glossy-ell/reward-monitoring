@@ -103,6 +103,9 @@ public class SaveMsnDailyService {
             cell = row.createCell(7);
             cell.setCellValue(saveMsnDailyStat.getPartCnt());
             cell.setCellStyle(cellStyle);
+            cell = row.createCell(8);
+            cell.setCellValue(saveMsnDailyStat.getPartCnt());
+            cell.setCellStyle(cellStyle);
         }
         return sheet;
     }

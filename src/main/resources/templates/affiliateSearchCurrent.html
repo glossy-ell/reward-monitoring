@@ -449,7 +449,7 @@
                                     </thead>
                                     <tbody id = "searchList">
                                     <tr th:if="${#lists.isEmpty(searchMsns)}">
-                                        <td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+                                        <td colspan="5" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
                                     </tr>
 
                                     <tr th:each="search, iterStat : ${searchMsns}">

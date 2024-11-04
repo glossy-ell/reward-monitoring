@@ -384,6 +384,7 @@
 
 
         </script>
+
         <script src="/Front_files/bootstrap-select(1).js" type="text/javascript"></script>
 
 
@@ -448,7 +449,7 @@
                                     </thead>
                                     <tbody id = "sightseeingList">
                                     <tr th:if="${#lists.isEmpty(saveMsns)}">
-                                        <td colspan="2" style="text-align: center; vertical-align: middle;">데이터가 없습니다</td>
+                                        <td colspan="4"  class="text-center align-middle">데이터가 없습니다</td>
                                     </tr>
 
                                     <tr th:each="sightseeing, iterStat : ${saveMsns}">
