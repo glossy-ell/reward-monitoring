@@ -436,7 +436,10 @@ public class SaveMsnService {
                 cell.setCellValue("중복 불가");
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(saveMsn.getReEngagementDay());
+            if(saveMsn.getReEngagementDay()!=null)
+                cell.setCellValue(saveMsn.getReEngagementDay());
+            else
+                cell.setCellValue("-");
         }
         return sheet;
     }
@@ -892,7 +895,10 @@ public class SaveMsnService {
 
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(saveMsn.getReEngagementDay());
+            if(saveMsn.getReEngagementDay()!=null)
+                cell.setCellValue(saveMsn.getReEngagementDay());
+            else
+                cell.setCellValue("-");
         }
         return sheet;
     }

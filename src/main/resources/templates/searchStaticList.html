@@ -109,7 +109,6 @@
 
 	<!--end::Global App Bundle -->
 	<script src="/Front_files/common.js"></script>
-
 	<!-- swiper gallery -->
 	<script src="/Front_files/swiper.min.js"></script>
 	<!-- //swiper gallery -->
@@ -136,7 +135,7 @@
 			data: JSON.stringify(jsonData),
 
 			success: function(response) {
-				const searchListContainer = $('#searchList); // 회원 목록을 표시할 컨테이너 선택
+				const searchListContainer = $('#searchList'); // 회원 목록을 표시할 컨테이너 선택
 				searchListContainer.empty();
 
 				if (response.searchMsns.length === 0) {  //검색결과가 빈 리스트일경우

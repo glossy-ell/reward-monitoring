@@ -465,7 +465,10 @@ public class AnswerMsnService {
                 cell.setCellValue("중복 불가");
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getReEngagementDay());
+            if(answerMsn.getReEngagementDay()!=null)
+                cell.setCellValue(answerMsn.getReEngagementDay());
+            else
+                cell.setCellValue("-");
         }
         return sheet;
     }
@@ -1044,7 +1047,10 @@ public class AnswerMsnService {
 
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(answerMsn.getReEngagementDay());
+            if(answerMsn.getReEngagementDay()!=null)
+                cell.setCellValue(answerMsn.getReEngagementDay());
+            else
+                cell.setCellValue("-");
         }
         return sheet;
     }

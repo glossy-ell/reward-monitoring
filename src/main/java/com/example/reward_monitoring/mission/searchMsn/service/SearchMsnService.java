@@ -966,7 +966,10 @@ public class SearchMsnService {
 
             cell = row.createCell(14);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(searchMsn.getReEngagementDay());
+            if(searchMsn.getReEngagementDay()!=null)
+                cell.setCellValue(searchMsn.getReEngagementDay());
+            else
+                cell.setCellValue("-");
         }
         return sheet;
     }
