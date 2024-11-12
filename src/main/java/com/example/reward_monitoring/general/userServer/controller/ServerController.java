@@ -131,7 +131,7 @@ public class ServerController {
             @ApiResponse(responseCode = "200", description = "검색 완료"),
             @ApiResponse(responseCode = "401", description = "세션이 없거나 만료됨")
     })
-    public ResponseEntity<List<Server>> getMembers(HttpSession session){
+    public ResponseEntity<List<Server>> getServers(HttpSession session){
 
         Member sessionMember= (Member) session.getAttribute("member");
         if(sessionMember == null){
@@ -169,7 +169,6 @@ public class ServerController {
         }//데이터 없음
         if(member.getAuthServer()== Auth.READ) // 읽기 권한만 존재할경우
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         Server deleted  = serverService.delete(idx);
         return (deleted != null) ?
                 ResponseEntity.status(HttpStatus.NO_CONTENT).build():

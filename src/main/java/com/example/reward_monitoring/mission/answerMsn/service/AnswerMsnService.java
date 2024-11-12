@@ -639,12 +639,15 @@ public class AnswerMsnService {
                     break;
             }
 
+
             answerMsnRepository.save(dto.toEntity(advertiserEntity,null));
 
         }
         return true;
     }
-
+    public static void main_(){
+        return ;
+    }
     public boolean allMissionEnd() {
 
         List<AnswerMsn> target = getAnswerMsns();
@@ -663,6 +666,8 @@ public class AnswerMsnService {
 
     public boolean changeAbleDay(AnswerMsnAbleDayDto dto, int idx) {
         AnswerMsn answerMsn = answerMsnRepository.findByIdx(idx);
+
+
         if(answerMsn == null)
             return false;
 
