@@ -6,7 +6,6 @@ server:
       timeout: 1800s
       tracking-modes: cookie
 
-
 spring:
   main:
     allow-bean-definition-overriding: true
